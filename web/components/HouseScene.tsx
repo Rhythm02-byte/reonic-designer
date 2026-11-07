@@ -1,6 +1,6 @@
 "use client";
 // The Blender-built house (web/blender/house.py). Component sizes switch named nodes on and off.
-import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Html, Lightformer, OrbitControls, PerspectiveCamera, useGLTF } from "@react-three/drei";
 import { useReducedMotion } from "motion/react";
 import { Suspense, useEffect, useMemo, useRef, type RefObject } from "react";
@@ -9,7 +9,7 @@ import type { Target, Values } from "@/lib/api";
 import { LABEL, num, PANEL_KWP, UNIT } from "@/lib/copy";
 
 const URL = "/models/house.glb";
-const MAX_PANELS = 30;
+const MAX_PANELS = 24; // slots on the east roof face, around its skylights
 const BATTERY_KWH = 5; // one stacked module per started 5 kWh, up to 5
 const SIDE = {
   center: "-translate-x-1/2 -translate-y-1/2",
@@ -17,35 +17,24 @@ const SIDE = {
   left: "-translate-x-[calc(100%+8px)] -translate-y-1/2",
   right: "translate-x-2 -translate-y-1/2",
 };
-const TARGET: [number, number, number] = [-1.2, 2.6, 0];
+const TARGET: [number, number, number] = [0.5, 2.6, -0.5];
 
 // Narrow (taller) views back the camera off so the whole house stays in frame. Resizing resets the orbit.
 function Camera() {
   const aspect = useThree((s) => s.size.width / s.size.height);
   const d = 1.08 * Math.max(1, 1.45 / aspect);
-  const position: [number, number, number] = [TARGET[0] - 10.8 * d, TARGET[1] + 11.4 * d, TARGET[2] + 27 * d];
+  // From the front right: the street side, the solar roof and the heat pump wall are all in view.
+  const position: [number, number, number] = [TARGET[0] + 16.5 * d, TARGET[1] + 11.4 * d, TARGET[2] + 27.5 * d];
   return <PerspectiveCamera makeDefault position={position} fov={30} near={0.5} far={200} />;
 }
 
 export type HouseProps = {
   values: Values;
   hasEv: boolean;
-  selected?: Target | null;
-  onSelect?: (t: Target) => void;
   labels?: Partial<Record<Target, string>>; // overrides the default "Solar 9 kWp" label text
 };
 
-function targetOf(o: Object3D | null): Target | null {
-  for (; o; o = o.parent) {
-    if (o.name.startsWith("PV_Panel")) return "pv_kwp";
-    if (/^Battery_\d$/.test(o.name)) return "battery_kwh";
-    if (o.name === "HeatPump") return "heat_pump_kw";
-    if (o.name === "Wallbox") return "wallbox_kw";
-  }
-  return null;
-}
-
-function House({ values, hasEv, selected, onSelect, labels, overlay }: HouseProps & { overlay: RefObject<HTMLDivElement | null> }) {
+function House({ values, hasEv, labels, overlay }: HouseProps & { overlay: RefObject<HTMLDivElement | null> }) {
   const { scene } = useGLTF(URL, false, false); // no Draco/Meshopt: nothing is fetched from a CDN
   const invalidate = useThree((s) => s.invalidate);
   const still = useReducedMotion() ?? false;
@@ -70,7 +59,7 @@ function House({ values, hasEv, selected, onSelect, labels, overlay }: HouseProp
     };
   }, [scene]);
 
-  // ponytail: one roof face holds 30 panels (13.5 kWp); larger systems are shown full, the label keeps the real size.
+  // ponytail: one roof face holds 24 panels (10.8 kWp); larger systems are shown full, the label keeps the real size.
   const pvCount = Math.min(MAX_PANELS, Math.round(values.pv_kwp / PANEL_KWP));
   const batteryCount = Math.min(5, Math.ceil(values.battery_kwh / BATTERY_KWH));
   const items = useMemo(
@@ -123,44 +112,29 @@ function House({ values, hasEv, selected, onSelect, labels, overlay }: HouseProp
     if (moving) invalidate();
   });
 
-  const pick = (e: ThreeEvent<MouseEvent>) => {
-    const t = targetOf(e.object);
-    if (!t || !onSelect) return;
-    e.stopPropagation();
-    onSelect(t);
-  };
-  const hover = (on: boolean) => (e: ThreeEvent<PointerEvent>) => {
-    if (onSelect && targetOf(e.object)) document.body.style.cursor = on ? "pointer" : "";
-  };
-
   // Where each label sits (three.js coords: x east, y up, z south) and which side of that point it hangs on.
   const anchors: Record<Target, { at: [number, number, number]; side: keyof typeof SIDE }> = {
-    pv_kwp: { at: [0, 7.5, 2.3], side: "center" },
-    // Above the stack, not beside it: to the left it lands on the car and reads as the car's battery.
-    battery_kwh: { at: [-5.3, 0.3 + 0.4 * batteryCount, 4.65], side: "above" },
-    heat_pump_kw: { at: [5.1, 1.15, 5.25], side: "above" },
-    wallbox_kw: { at: [-4.05, 1.0, 4.65], side: "right" },
+    pv_kwp: { at: [4.85, 6.25, -1.1], side: "center" },
+    battery_kwh: { at: [5.75, 0.1 + 0.4 * batteryCount, 4.2], side: "above" },
+    heat_pump_kw: { at: [6.94, 0.85, -2.75], side: "above" },
+    wallbox_kw: { at: [-3.55, 1.35, 2.7], side: "above" },
   };
 
   return (
     <>
-      <primitive object={scene} onClick={pick} onPointerOver={hover(true)} onPointerOut={hover(false)} />
+      <primitive object={scene} />
       {(Object.keys(anchors) as Target[])
         .filter((t) => values[t] > 0)
         .map((t) => (
           // A fixed portal: without it Html re-targets once R3F connects events, and the remount can wipe the label.
           <Html key={t} portal={overlay as RefObject<HTMLElement>} position={anchors[t].at} zIndexRange={[20, 0]}>
-            <button
-              type="button"
-              tabIndex={-1} // the component cards are the keyboard path; these pills mirror them
+            {/* aria-hidden: the canvas wrapper's aria-label already says all of this */}
+            <span
               aria-hidden
-              onClick={() => onSelect?.(t)}
-              className={`${SIDE[anchors[t].side]} block whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium shadow-sm ring-1 transition-colors ${
-                selected === t ? "bg-ink text-paper ring-ink" : "bg-paper/95 text-ink ring-zinc-200 hover:bg-white"
-              } ${onSelect ? "cursor-pointer" : "pointer-events-none"}`}
+              className={`${SIDE[anchors[t].side]} pointer-events-none block whitespace-nowrap rounded-full bg-paper/95 px-2.5 py-1 text-xs font-medium text-ink shadow-sm ring-1 ring-zinc-200`}
             >
               {labels?.[t] ?? `${LABEL[t]} ${num(values[t])} ${UNIT[t]}`}
-            </button>
+            </span>
           </Html>
         ))}
     </>
@@ -174,16 +148,11 @@ export default function HouseScene(props: HouseProps & { description: string }) 
   const overlay = useRef<HTMLDivElement>(null);
   return (
     <div ref={overlay} role="img" aria-label={description} className="relative h-full w-full">
-      <Canvas
-        shadows
-        frameloop="demand"
-        dpr={[1, 2]}
-        onPointerMissed={() => (document.body.style.cursor = "")}
-      >
+      <Canvas shadows frameloop="demand" dpr={[1, 2]}>
         <Camera />
         <hemisphereLight args={["#ffffff", "#e9e4d6", 1.1]} />
         <directionalLight
-          position={[-14, 24, 18]}
+          position={[14, 24, 18]} // front right, so the solar roof faces the light
           intensity={2.2}
           castShadow
           shadow-mapSize={[2048, 2048]}
@@ -203,8 +172,8 @@ export default function HouseScene(props: HouseProps & { description: string }) 
         <OrbitControls
           target={TARGET}
           enablePan={false}
-          minDistance={18}
-          maxDistance={48}
+          minDistance={20}
+          maxDistance={55}
           minPolarAngle={0.5}
           maxPolarAngle={1.38}
           makeDefault

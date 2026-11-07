@@ -14,47 +14,19 @@ export type Meta = {
   synthetic: boolean;
 };
 
-export type Economics = {
-  cost_eur: number;
-  pv_yield_kwh: number;
-  demand_kwh: number | null;
-  self_use_share: number | null;
-  solar_share_of_demand: number | null;
-  savings_eur: number | null;
-  payback_years: number | null;
-};
+export type Economics = { cost_eur: number; savings_eur: number | null; payback_years: number | null };
+export type Design = { values: Values; explanation: string[]; economics: Economics };
+export type Validation = { economics: Economics };
 
-export type Alternative = { value: number; values: Values; flags: string[]; economics: Economics };
-
-export type Design = {
-  values: Values;
-  probability: Values;
-  explanation: string[];
-  rules_applied: string[];
-  flags: string[];
-  economics: Economics;
-  alternatives: Partial<Record<Target, Alternative>>;
-};
-
-export type Validation = { flags: string[]; economics: Economics };
-
-type Metrics = { include_accuracy: number; within_tolerance: number; size_mae: number | null; expert_include_rate: number };
-export type Evaluation = {
-  n_train: number;
-  n_test: number;
-  split: string;
-  model: Record<Target, Metrics> & { whole_design_within_tolerance: number };
-  baseline: Record<Target, Metrics> & { whole_design_within_tolerance: number };
-  by_installer: Record<string, number>;
-};
+// reports/eval.json; {} until `python -m reonic eval` has run.
+type Whole = { whole_design_within_tolerance: number };
+export type Evaluation = { n_test: number; model: Whole; baseline: Whole };
 
 export type HoldoutRow = {
   project_id: string;
-  installer_id: string;
   inputs: Inputs;
   expert: Record<Target, number | null>; // null = PV offered, size unknown in the export
   ours: Values;
-  baseline: Values;
 };
 
 async function call<T>(path: string, body?: unknown): Promise<T> {

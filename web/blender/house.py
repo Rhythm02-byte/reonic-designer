@@ -1,36 +1,46 @@
-"""Builds the 3D house for the web frontend and exports web/public/models/house.glb.
+"""Turns the bought house model into web/public/models/house.glb.
 
-    blender --background --python web/blender/house.py
+    blender -b /path/to/3D_house10.blend --python web/blender/house.py
 
-Node names are the contract with the web app (web/components/house/):
-  PV_Panel_01..30  roof slots in fill order (show the first N), 450 Wp each like the Reonic modules
+The model is "House 10" by TomaszCGB (TurboSquid licence). Only the GLB built from it is in the repo, never the .blend.
+Its image textures aren't shipped with it, so every material becomes a flat colour from PALETTE.
+
+Node names are the contract with web/components/HouseScene.tsx:
+  PV_Panel_01..NN  slots on the east roof face in fill order (show the first N), 450 Wp each like the Reonic modules;
+                   NN is printed on export and must match MAX_PANELS
   HeatPump, HeatPump_Fan (spin around its local Y in three.js), Battery_1..5 (one per ~5 kWh), Wallbox, Car
-Units are metres. South is -Y here, which becomes +Z (towards the default camera) after glTF's Y-up conversion.
+Units are metres. The street side (garage, balcony) faces -Y, which becomes +Z in three.js after glTF's Y-up conversion.
 """
 import math
 from pathlib import Path
 
 import bmesh
 import bpy
-import mathutils
+from mathutils import Matrix, Vector
 
 OUT = Path(__file__).resolve().parents[1] / "public" / "models" / "house.glb"
 
-W, D, WALL = 12.0, 9.0, 6.0  # house width (x), depth (y), eave height
-PITCH = math.radians(30)
-OVERHANG = 0.6
-ROOF_T = 0.18
-RIDGE = WALL + D / 2 * math.tan(PITCH)
-PANEL = (1.134, 1.762, 0.04)  # portrait module, x along the ridge, y up the slope
-COLS, ROWS, GAP = 10, 3, 0.02
+PANEL = (1.134, 1.762, 0.04)  # portrait module: width along the ridge, height down the slope
+GAP = 0.02
 BATTERIES = 5
+PAVING, LAWN = -0.19, -0.55  # top of the model's paving and of its (removed) grass platform
+DRIVEWAY_END = -8.5  # the model's driveway runs 15 m to the street; cut it so the scene stays compact
+DROP = ("floor", "ceiling", "door_wing", "door_frame", "grass", "camera_")  # interior, grass blades, camera rig
+KEEP = {"door_wing.011", "door_frame.011", "door_wing.013", "door_frame.013"}  # the front and back door
 
 PALETTE = {  # Reonic-ish: warm off-whites, anthracite, emerald accent
     "wall": ("#F4F1EA", 0.85), "plinth": ("#ECE8DE", 0.9), "lawn": ("#CBD6BF", 1.0), "paving": ("#D6D3CB", 0.95),
-    "roof": ("#3B3E44", 0.7), "ridge": ("#2E3136", 0.6), "frame": ("#FFFFFF", 0.5), "glass": ("#26303C", 0.15),
+    "roof": ("#9A6150", 0.8), "ridge": ("#3A3D42", 0.6), "frame": ("#FFFFFF", 0.5), "glass": ("#26303C", 0.15),
     "pv_frame": ("#C9CED4", 0.35), "pv_cell": ("#17233A", 0.2), "device": ("#F7F7F5", 0.45), "dark": ("#24272B", 0.6),
     "led": ("#10B981", 0.4), "car": ("#4A5562", 0.3), "tyre": ("#1E1F22", 0.9), "trunk": ("#8A6C4D", 0.9),
-    "leaf": ("#9DB69A", 0.9),
+    "leaf": ("#9DB69A", 0.9), "wood": ("#8F6E52", 0.8), "metal": ("#9AA0A6", 0.45), "base": ("#BDB8AE", 0.9),
+    "curb": ("#C8C4BB", 0.9), "soil": ("#6B5A48", 1.0), "terrace": ("#CFCBC2", 0.85),
+}
+MODEL_MATS = {  # the model's material names -> PALETTE
+    "plaster_white": "wall", "roof_01": "roof", "metal_blue": "ridge", "wood_brown": "wood", "wood_balls_brown": "wood",
+    "window_glass": "glass", "window_glass_old": "glass", "glass_door": "glass", "metal_grey": "metal",
+    "plate_grey": "terrace", "foundation_grey_brick": "base", "brick_hexagonal": "paving", "curb": "curb",
+    "parapet": "frame", "ground": "soil",
 }
 
 
@@ -61,7 +71,7 @@ def material(name: str) -> bpy.types.Material:
 def obj(name: str, mesh: bpy.types.Mesh, loc=(0, 0, 0), rot=(0, 0, 0), parent=None) -> bpy.types.Object:
     o = bpy.data.objects.new(name, mesh)
     o.location, o.rotation_euler, o.parent = loc, rot, parent
-    bpy.context.scene.collection.children["House"].objects.link(o)
+    bpy.data.collections["House"].objects.link(o)
     return o
 
 
@@ -111,88 +121,100 @@ def bevel(o, width=0.04, segments=2):
 
 
 # -- model ---------------------------------------------------------------------------------------
-def clear():
+def strip():
+    """Keep the outside of the house, move it into the House collection, swap every material for a flat colour."""
+    house = bpy.data.collections.new("House")
+    bpy.context.scene.collection.children.link(house)
+    for m in list(bpy.data.materials):  # out of PALETTE's way: the model has its own "curb"
+        m.name = "model_" + m.name
     for o in list(bpy.data.objects):
-        bpy.data.objects.remove(o, do_unlink=True)
-    for coll in (bpy.data.meshes, bpy.data.materials, bpy.data.cameras, bpy.data.lights):
-        for item in list(coll):
-            coll.remove(item)
-    if "House" not in bpy.data.collections:
-        bpy.context.scene.collection.children.link(bpy.data.collections.new("House"))
+        if o.type != "MESH" or (o.name.startswith(DROP) and o.name not in KEEP):
+            bpy.data.objects.remove(o, do_unlink=True)
+            continue
+        for c in list(o.users_collection):
+            c.objects.unlink(o)
+        house.objects.link(o)
+        for slot in o.material_slots:
+            if slot.material:
+                slot.material = material(MODEL_MATS[slot.material.name.removeprefix("model_")])  # KeyError = unmapped
+
+    g = bpy.data.objects["ground_around_house"]
+    bm = bmesh.new()
+    bm.from_mesh(g.data)
+    bm.transform(g.matrix_world)
+    cut = bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, DRIVEWAY_END, 0),
+                                 plane_no=(0, 1, 0), clear_inner=True)["geom_cut"]
+    bmesh.ops.holes_fill(bm, edges=[e for e in cut if isinstance(e, bmesh.types.BMEdge) and e.is_boundary])
+    bm.transform(g.matrix_world.inverted())
+    bm.to_mesh(g.data)
+    bm.free()
 
 
 def ground():
-    # plinth with a lawn top, slightly rounded like an architectural model
-    bevel(box("Plinth", (23, 17, 0.4), (-1, -0.5, -0.2), "plinth"), 0.15, 3)
-    box("Lawn", (22.6, 16.6, 0.02), (-1, -0.5, 0.01), "lawn")
-    box("Driveway", (4.2, 12.5, 0.03), (-8.4, -2.2, 0.025), "paving")
-    box("Path", (1.6, 3.6, 0.03), (0, -6.3, 0.025), "paving")
+    # plinth with a lawn top, slightly rounded like an architectural model, in place of the 60 m grass platform
+    bevel(box("Plinth", (22, 19.5, 0.4), (0.6, 0.5, LAWN - 0.21), "plinth"), 0.15, 3)
+    box("Lawn", (21.6, 19.1, 0.02), (0.6, 0.5, LAWN - 0.005), "lawn")
 
 
-def house():
-    # walls + gables as one pentagonal prism along x
-    h, y = W / 2, D / 2
-    prof = [(-y, 0), (y, 0), (y, WALL), (0, RIDGE), (-y, WALL)]
-    verts = [(-h, a, b) for a, b in prof] + [(h, a, b) for a, b in prof]
-    faces = [(4, 3, 2, 1, 0), (5, 6, 7, 8, 9)] + [(i, (i + 1) % 5, (i + 1) % 5 + 5, i + 5) for i in range(5)]
-    bevel(obj("Walls", mesh("Walls", verts, faces, ["wall"])), 0.05, 2)
-
-    # roof slabs: underside sits on the plane through wall top and ridge, overhang on all sides
-    run = y + OVERHANG
-    eave_z = WALL - OVERHANG * math.tan(PITCH)
-    n_s, n_c = math.sin(PITCH), math.cos(PITCH)
-    for side, sgn in (("South", -1), ("North", 1)):
-        lo, hi = (sgn * run, eave_z), (0.0, RIDGE)
-        off = (sgn * n_s * ROOF_T, n_c * ROOF_T)  # outward normal * thickness
-        pts = [lo, hi, (hi[0] + off[0], hi[1] + off[1]), (lo[0] + off[0], lo[1] + off[1])]
-        xr = h + OVERHANG * 0.7
-        v = [(-xr, a, b) for a, b in pts] + [(xr, a, b) for a, b in pts]
-        f = [(0, 1, 2, 3), (7, 6, 5, 4), (0, 4, 5, 1), (1, 5, 6, 2), (2, 6, 7, 3), (3, 7, 4, 0)]
-        obj(f"Roof_{side}", mesh(f"Roof_{side}", v, f, ["roof"]))
-    box("Ridge", (W + OVERHANG * 1.4, 0.36, 0.2), (0, 0, RIDGE + ROOF_T * 0.9), "ridge")
-
-    # south facade: door, windows; west facade gets two windows so the orbit view isn't blank
-    def window(name, x, z, w=1.2, ht=1.4, face_y=-y, normal=-1, axis="y"):
-        if axis == "y":
-            box(f"{name}_Frame", (w + 0.16, 0.08, ht + 0.16), (x, face_y + normal * 0.03, z), "frame")
-            box(f"{name}_Glass", (w, 0.08, ht), (x, face_y + normal * 0.06, z), "glass")
-        else:
-            box(f"{name}_Frame", (0.08, w + 0.16, ht + 0.16), (face_y + normal * 0.03, x, z), "frame")
-            box(f"{name}_Glass", (0.08, w, ht), (face_y + normal * 0.06, x, z), "glass")
-
-    box("Door_Frame", (1.3, 0.08, 2.35), (0, -y - 0.03, 1.17), "frame")
-    box("Door", (1.1, 0.1, 2.2), (0, -y - 0.05, 1.1), "dark")
-    for i, x in enumerate((-2.4, 2.4, 4.4)):
-        window(f"Window_G{i}", x, 1.55)
-    for i, x in enumerate((-4.4, -1.6, 1.6, 4.4)):
-        window(f"Window_U{i}", x, 4.4)
-    for i, (yy, z) in enumerate(((1.8, 1.55), (1.8, 4.4), (-1.6, 4.4))):
-        window(f"Window_W{i}", yy, z, face_y=-h, normal=-1, axis="x")
-    for i, (yy, z) in enumerate(((-1.8, 4.4), (1.8, 4.4), (1.8, 1.55))):
-        window(f"Window_E{i}", yy, z, face_y=h, normal=1, axis="x")
+def wall(origin, direction) -> Vector:
+    """Where a ray first hits the model, so devices sit flush on the real facade."""
+    hit, loc, *_ = bpy.context.scene.ray_cast(bpy.context.evaluated_depsgraph_get(), Vector(origin), Vector(direction))
+    if not hit:
+        raise RuntimeError(f"nothing hit from {origin} towards {direction}")
+    return loc
 
 
-def pv_panels():
-    """30 slots on Roof_South; ordered bottom row first, centred, so any N reads as a tidy block."""
-    pm = box_mesh("PV_Panel", PANEL, ("pv_frame", "pv_cell"), top_mat=1)
-    eave_y, eave_z = -(D / 2 + OVERHANG), WALL - OVERHANG * math.tan(PITCH)
-    up = (math.cos(PITCH), math.sin(PITCH))  # along the slope (y, z)
-    nrm = (-math.sin(PITCH), math.cos(PITCH))
-    slope_len = (D / 2 + OVERHANG) / math.cos(PITCH)
-    block_h = ROWS * PANEL[1] + (ROWS - 1) * GAP
-    s0 = (slope_len - block_h) / 2 - 0.08  # small bias towards the eave, the ridge cap eats the top
-    slots = [(r, c) for r in range(ROWS) for c in range(COLS)]
-    slots.sort(key=lambda rc: (rc[0], abs(rc[1] - (COLS - 1) / 2), rc[1]))
-    for i, (r, c) in enumerate(slots, 1):
-        x = (c - (COLS - 1) / 2) * (PANEL[0] + GAP)
-        s = s0 + r * (PANEL[1] + GAP) + PANEL[1] / 2
-        lift = ROOF_T + 0.07  # mounting rails
-        loc = (x, eave_y + up[0] * s + nrm[0] * lift, eave_z + up[1] * s + nrm[1] * lift)
-        obj(f"PV_Panel_{i:02d}", pm, loc, (PITCH, 0, 0))
+def pv_panels() -> int:
+    """Slots on the east face of the main roof, around its two skylights and the chimney.
+
+    Fill order: the fullest rows first, each centred, so any N reads as a tidy block."""
+    roof = bpy.data.objects["roof"]
+    rot = roof.matrix_world.to_3x3()
+    east = Vector((0.67, 0, 0.74)).normalized()
+    faces = [p for p in roof.data.polygons if (rot @ p.normal).normalized().dot(east) > 0.99]
+    pts = [roof.matrix_world @ roof.data.vertices[i].co for p in faces for i in p.vertices]
+    n = sum(((rot @ p.normal).normalized() for p in faces), Vector()).normalized()
+    d = max(n.dot(p) for p in pts)  # the outer surface, not the rafters underneath
+    top = max(pts, key=lambda p: p.z)
+    top += (d - n.dot(top)) * n
+    down = Vector((n.z, 0, -n.x)).normalized()  # down the slope, towards the eave
+    slope = max((p - top).dot(down) for p in pts)
+    y0, y1 = min(p.y for p in pts), max(p.y for p in pts)
+
+    obstacles = []
+    for name in ("window_roof", "chimney.002"):
+        o = bpy.data.objects[name]
+        for v in o.data.vertices:
+            p = o.matrix_world @ v.co
+            if -0.5 < n.dot(p) - d < 2.0 and (p - top).dot(down) > -0.5:
+                obstacles.append(((p - top).dot(down), p.y))
+
+    step_s, step_y = PANEL[1] + GAP, PANEL[0] + GAP
+    rows = int((slope - 0.45 - 0.25 + GAP) // step_s)  # 45 cm below the ridge cap, 25 cm above the gutter
+    cols = int((y1 - y0 - 0.6 + GAP) // step_y)
+    slots = []
+    for r in range(rows):
+        s = 0.45 + r * step_s + PANEL[1] / 2
+        for c in range(cols):
+            y = (y0 + y1) / 2 + (c - (cols - 1) / 2) * step_y
+            if not any(abs(os - s) < PANEL[1] / 2 + 0.12 and abs(oy - y) < PANEL[0] / 2 + 0.12 for os, oy in obstacles):
+                slots.append((r, c, s, y))
+    per_row = {r: sum(1 for x in slots if x[0] == r) for r in range(rows)}
+    slots.sort(key=lambda x: (-per_row[x[0]], -x[0], abs(x[1] - (cols - 1) / 2), x[1]))
+
+    pm = box_mesh("PV_Panel", (PANEL[1], PANEL[0], PANEL[2]), ("pv_frame", "pv_cell"), top_mat=1)
+    orient = Matrix((down, n.cross(down), n)).transposed().to_euler()
+    for i, (_, _, s, y) in enumerate(slots, 1):
+        loc = Vector((top.x, y, top.z)) + down * s + n * (PANEL[2] / 2 + 0.1)  # 10 cm of mounting rails
+        obj(f"PV_Panel_{i:02d}", pm, loc, orient)
+    return len(slots)
 
 
 def heat_pump():
-    hp = bevel(box("HeatPump", (1.1, 0.48, 0.86), (W / 2 - 0.9, -D / 2 - 0.75, 0.53), "device"), 0.03, 2)
+    # outdoor unit on the windowless stretch of the east facade, blowing away from the house
+    y = 2.75
+    x = wall((12, y, 1.2), (-1, 0, 0)).x + 0.3
+    hp = bevel(box("HeatPump", (1.1, 0.48, 0.86), (x, y, PAVING + 0.53), "device", rot=(0, 0, math.pi / 2)), 0.03, 2)
     box("HeatPump_Feet", (0.9, 0.4, 0.1), (0, 0, -0.48), "dark", parent=hp)
     cylinder("HeatPump_Grille", 0.33, 0.03, (-0.17, -0.25, 0.02), "dark", rot=(math.pi / 2, 0, 0), parent=hp)
     fan = bpy.data.objects.new("HeatPump_Fan", None)  # empty pivot; blades are its children
@@ -201,23 +223,27 @@ def heat_pump():
     bpy.data.collections["House"].objects.link(fan)
     for k in range(3):
         box(f"HeatPump_Blade{k}", (0.07, 0.29, 0.012), (0, 0, 0), "pv_frame", rot=(0, 0, k * 2 * math.pi / 3),
-            parent=fan).data.transform(mathutils.Matrix.Translation((0, 0.15, 0)))
+            parent=fan).data.transform(Matrix.Translation((0, 0.15, 0)))
     box("HeatPump_Panel", (0.28, 0.02, 0.6), (0.36, -0.25, 0.02), "pv_frame", parent=hp)
 
 
 def batteries_and_wallbox():
-    # outdoor-rated storage on the south facade next to the driveway, modules stacked bottom up
-    y = -D / 2 - 0.12
+    # battery modules stacked on the main block's front wall under the balcony
+    bx = 5.75
+    by = wall((bx, -12, 1.2), (0, 1, 0)).y - 0.12
     for i in range(BATTERIES):
-        b = bevel(box(f"Battery_{i + 1}", (0.62, 0.2, 0.36), (-5.3, y, 0.45 + i * 0.4), "device"), 0.02, 2)
+        b = bevel(box(f"Battery_{i + 1}", (0.62, 0.2, 0.36), (bx, by, PAVING + 0.45 + i * 0.4), "device"), 0.02, 2)
         box(f"Battery_{i + 1}_LED", (0.36, 0.01, 0.025), (0, -0.105, 0.1), "led", parent=b)
-    wb = bevel(box("Wallbox", (0.32, 0.12, 0.44), (-4.35, -D / 2 - 0.08, 1.3), "dark"), 0.02, 2)
+    # the wallbox on a charging post beside the car: on the wing's wall the main block would hide it from the camera
+    wb = bevel(box("Wallbox", (0.32, 0.12, 0.44), (-3.55, -2.7, PAVING + 1.25), "dark"), 0.02, 2)
+    box("Wallbox_Post", (0.12, 0.12, 1.25), (0, 0.1, -0.625), "dark", parent=wb)
     box("Wallbox_LED", (0.16, 0.01, 0.025), (0, -0.065, 0.12), "led", parent=wb)
     cylinder("Wallbox_Plug", 0.05, 0.06, (0, -0.07, -0.08), "pv_frame", rot=(math.pi / 2, 0, 0), segs=12, parent=wb)
 
 
 def car():
-    c = bevel(box("Car", (1.82, 4.3, 0.62), (-8.4, -2.6, 0.62), "car"), 0.12, 3)
+    # on the driveway in front of the garage door
+    c = bevel(box("Car", (1.82, 4.3, 0.62), (-5.14, -3.6, PAVING + 0.62), "car"), 0.12, 3)
     prof = [(-1.05, 0), (1.35, 0), (1.05, 0.55), (-0.3, 0.55)]  # raked windscreen at the front (-y)
     v = [(-0.78, a, b) for a, b in prof] + [(0.78, a, b) for a, b in prof]
     f = [(3, 2, 1, 0), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
@@ -228,22 +254,22 @@ def car():
 
 
 def trees():
-    for i, (x, y, s) in enumerate(((8.6, 5.2, 1.0), (-11.0, 5.6, 1.2), (8.9, -6.6, 0.75))):
-        cylinder(f"Tree{i}_Trunk", 0.14 * s, 1.6 * s, (x, y, 0.8 * s), "trunk", segs=8)
+    for i, (x, y, s) in enumerate(((-9.0, 8.2, 1.2), (10.0, 7.6, 1.0))):
+        cylinder(f"Tree{i}_Trunk", 0.14 * s, 1.6 * s, (x, y, LAWN + 0.8 * s), "trunk", segs=8)
         me = bm_mesh(f"Tree{i}_Crown", lambda bm: bmesh.ops.create_icosphere(bm, subdivisions=1, radius=1.3 * s),
                      "leaf")
-        obj(f"Tree{i}_Crown", me, (x, y, 2.2 * s))
+        obj(f"Tree{i}_Crown", me, (x, y, LAWN + 2.2 * s))
 
 
-def build():
-    clear()
+def build() -> int:
+    strip()
     ground()
-    house()
-    pv_panels()
+    panels = pv_panels()
     heat_pump()
     batteries_and_wallbox()
     car()
     trees()
+    return panels
 
 
 # -- preview render and export -----------------------------------------------------------------
@@ -253,15 +279,14 @@ def preview(path: str, res=(1400, 900)):
     cam = bpy.data.objects.new("PreviewCam", bpy.data.cameras.new("PreviewCam"))
     sc.collection.objects.link(cam)
     cam.data.lens = 40
-    cam.location = (-12.0, -27.0, 14.0)
-    target = mathutils.Vector((-1.2, 0.0, 2.6))
+    cam.location = (17.0, -27.0, 14.0)
+    target = Vector((0.5, 0.5, 2.6))
     cam.rotation_euler = (target - cam.location).to_track_quat("-Z", "Y").to_euler()
     sun = bpy.data.objects.new("PreviewSun", bpy.data.lights.new("PreviewSun", "SUN"))
     sc.collection.objects.link(sun)
     sun.data.energy, sun.data.angle = 3.5, math.radians(8)
     sun.rotation_euler = (math.radians(50), math.radians(-20), math.radians(-35))
-    world = sc.world or bpy.data.worlds.new("World")
-    sc.world = world
+    world = sc.world = bpy.data.worlds.new("Preview")  # the model's own world wants an HDR that isn't shipped
     if world.node_tree is None:
         world.use_nodes = True
     world.node_tree.nodes["Background"].inputs["Color"].default_value = srgb("#FDFDFB")
@@ -283,10 +308,11 @@ def export(path: Path = OUT):
     for o in bpy.data.collections["House"].all_objects:
         o.select_set(True)
     bpy.ops.export_scene.gltf(filepath=str(path), export_format="GLB", use_selection=True, export_apply=True,
-                              export_yup=True, export_cameras=False, export_lights=False)
+                              export_yup=True, export_cameras=False, export_lights=False,
+                              export_texcoords=False)  # flat colours only: UVs would just add bytes
     return {"exported": str(path), "bytes": path.stat().st_size}
 
 
 if __name__ == "__main__":
-    build()
-    print(export())
+    panels = build()
+    print({**export(), "panels": panels})

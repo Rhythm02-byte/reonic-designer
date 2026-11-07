@@ -1,6 +1,5 @@
 // Small Reonic-style building blocks shared by the planner and the homeowner view.
 import type { ComponentProps, ReactNode } from "react";
-import type { Tone } from "@/lib/copy";
 
 export function Logo() {
   return (
@@ -47,18 +46,9 @@ export function Card({ className = "", ...props }: ComponentProps<"div">) {
   return <div className={`rounded-2xl bg-white shadow-sm ring-1 ring-zinc-200 ${className}`} {...props} />;
 }
 
-const TONE: Record<Tone, string> = {
-  good: "bg-emerald-50 text-emerald-700",
-  ok: "bg-sky-50 text-sky-700",
-  warn: "bg-amber-50 text-amber-800",
-};
-export function Badge({ tone, children, title }: { tone: Tone | "neutral"; children: ReactNode; title?: string }) {
-  const look = tone === "neutral" ? "bg-sand text-body" : TONE[tone];
-  return (
-    <span title={title} className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${look}`}>
-      {children}
-    </span>
-  );
+const TONE = { good: "bg-emerald-50 text-emerald-700", warn: "bg-amber-50 text-amber-800" };
+export function Badge({ tone, children }: { tone: keyof typeof TONE; children: ReactNode }) {
+  return <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${TONE[tone]}`}>{children}</span>;
 }
 
 export function Stat({ label, value, sub }: { label: string; value: ReactNode; sub?: ReactNode }) {
@@ -67,20 +57,6 @@ export function Stat({ label, value, sub }: { label: string; value: ReactNode; s
       <div className="text-xs text-muted">{label}</div>
       <div className="truncate text-lg font-semibold tracking-tight text-ink tabular-nums">{value}</div>
       {sub && <div className="text-xs text-muted">{sub}</div>}
-    </div>
-  );
-}
-
-export function Flags({ flags, title = "Check before sending" }: { flags: string[]; title?: string }) {
-  if (!flags.length) return null;
-  return (
-    <div role="status" className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">
-      <div className="mb-1 font-medium">{title}</div>
-      <ul className="list-disc space-y-0.5 pl-5">
-        {flags.map((f) => (
-          <li key={f}>{f}</li>
-        ))}
-      </ul>
     </div>
   );
 }

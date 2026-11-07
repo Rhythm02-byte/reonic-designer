@@ -13,8 +13,10 @@ pnpm dev            # http://localhost:3000, /api/* is proxied to 127.0.0.1:8000
 pnpm lint && pnpm build
 ```
 
-- **3D house:** `public/models/house.glb`, built in Blender. `components/HouseScene.tsx` shows and hides its named
-  nodes (`PV_Panel_01…30`, `Battery_1…5`, `HeatPump`, `Wallbox`, `Car`). Without WebGL the page falls back to text.
+- **3D house:** `public/models/house.glb`, built in Blender from a bought TurboSquid model (`3D_house10.blend`).
+  Only the GLB is committed; the `.blend` stays out of the repo (licence). To rebuild it:
+  `blender -b /path/to/3D_house10.blend --python blender/house.py`. `components/HouseScene.tsx` shows and hides its
+  named nodes (`PV_Panel_01…24`, `Battery_1…5`, `HeatPump`, `Wallbox`, `Car`). Without WebGL the page falls back to text.
 - **Share link:** the offer (home inputs, recommendation, allowed options) travels in the URL hash, so it never
   reaches a server log. It carries the home's data: share it only with that customer.
 - **Not deployed:** the API reads the Reonic data and model, which stay with the team.

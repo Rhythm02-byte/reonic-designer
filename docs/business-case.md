@@ -6,8 +6,8 @@
 
 - **We claim:** a first design that the planner reviews and adjusts takes less time than designing from scratch, and the time saved is worth money and frees capacity for work on site.
 - **We do not claim:** that the tool replaces the planner, that it raises win rates, or what it should cost. We have no data on any of those.
-- **Why review time is real:** our design agrees with the installer's on every component for only about 14% of homes (random split; 9.8-18.5% on an installer the model has not seen). PV and battery sizes land within tolerance for 46% and 39% of homes. So the planner still checks and edits most designs; the tool provides a starting point.
-- **What is solid:** the include decisions. On held-out homes the model correctly includes PV for 93% of homes that have it and a battery for 86% (precision 98% and 94%). That is the part a planner no longer has to start from nothing on.
+- **Why review time is real:** our design agrees with the installer's on every component for only about 15% of homes, and a "typical design" that ignores the home scores about the same (16%). So the planner still checks and edits most designs; the tool provides a starting point.
+- **What is measurable:** PV size. The model lands within ±20% of the installer's PV size about 8 points more often than a typical size does (49.6% vs 41.4%, 95% interval +5 to +11). On the battery and on the whole design we cannot tell the model from a typical design. So the time saving rests on having a draft with reasons and a validation view in front of the planner, not on model precision.
 
 ## The model
 

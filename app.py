@@ -202,8 +202,10 @@ with tab_eval:
         r = json.loads(path.read_text())
         st.caption(f"Trained on {r['n_train']} projects, tested on {r['n_test']} unseen projects (random split).")
         st.metric("Whole design within tolerance", f"{r['model']['whole_design_within_tolerance']:.0%}",
-                  f"baseline {r['baseline']['whole_design_within_tolerance']:.0%}", delta_color="off")
-        rows = [{"component": LABEL[t], "metric": k, "model": r["model"][t][k], "baseline": r["baseline"][t][k]}
+                  f"rule of thumb {r['baseline']['whole_design_within_tolerance']:.0%}"
+                  + (f", typical design {r['typical']['whole_design_within_tolerance']:.0%}" if "typical" in r else ""), delta_color="off")
+        rows = [{"component": LABEL[t], "metric": k, "model": r["model"][t][k], "rule of thumb": r["baseline"][t][k],
+                 **({"typical design": r["typical"][t][k]} if "typical" in r else {})}
                 for t in TARGETS for k in r["model"][t]]
         st.dataframe(pd.DataFrame(rows), hide_index=True)
         if "by_installer" in r:

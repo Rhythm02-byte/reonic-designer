@@ -33,7 +33,7 @@ Commands: `python -m reonic build` writes `data/projects.csv` for inspection. `p
 | Projects (usable)   | 336          | 1,257            |
 | With >1 option      | 6%           | 22%              |
 | PV size recoverable | 99%          | 93%              |
-| Period              | 2025         | mid-2024 → 2025 |
+| Offers dated | June 2025 to April 2026 | June 2024 to April 2026 |
 
 - Chosen designs (`OPTION_CHOICE=first`): batteries in about 89%, PV in about 86%, wallbox in 26% (much more likely with an EV). Heat pumps in **13 of 1,593 (0.8%)**. The export has 31 heat pump line items across all options, which is where the earlier 0.3% figure came from. Too few to learn sizing from.
 - Storage-only retrofits exist for homes that already have PV.

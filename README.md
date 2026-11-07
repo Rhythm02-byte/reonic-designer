@@ -7,24 +7,29 @@ lets the planner override any part, and measures how close it gets to real exper
 
 ## Results
 
-Measured on the real Reonic export (1,593 projects from two installers), always against a simple rule-of-thumb baseline. A design counts as matching when every component agrees with what the installer delivered: same include/exclude and, for PV and battery, a size within ±20% (PV) or ±25% (battery).
+Measured on the real Reonic export (1,593 projects from two installers). A design counts as matching when every component agrees with what the installer delivered: same include/exclude and, for PV and battery, a size within ±20% (PV) or ±25% (battery).
 
-| Test | Whole design matches | Baseline |
-|---|---|---|
-| Random 80/20 split (319 unseen projects) | **13.5%** | 3.8% |
-| Trained on installer `2a8ba8e2`, tested on `23c108b7` | **18.5%** | 4.2% |
-| Trained on `23c108b7`, tested on `2a8ba8e2` | **9.8%** | 5.6% |
+We compare against two references, because one of them is easy to beat:
+- **Rule of thumb:** a naive sizing rule.
+- **Typical design:** ignores the home and proposes what most homes got, at the median size. This is the fair "no information" reference. A model trained on shuffled answers lands close to it.
 
-| Component (random split) | Matches the installer | Baseline |
-|---|---|---|
-| PV size | 45.8% | 16.0% |
-| Battery size | 38.9% | 23.8% |
-| Wallbox | 74.0% (precision 0.50, recall 0.07, F2 0.09) | same, it is the same rule |
-| Heat pump | not meaningful: 13 of 1,593 designs include one | |
+Out-of-fold predictions over all 1,593 projects, with bootstrap 95% intervals:
 
-What this says, plainly: the model beats the baseline clearly on PV and battery and carries over to an installer it has not seen, but a design still needs a planner's review. It is a first draft. Where we disagree with the installers, and why, is in [docs/specs/deviation-analysis.md](docs/specs/deviation-analysis.md). What a faster first draft is worth, with every assumption labelled, is in [docs/business-case.md](docs/business-case.md).
+| | Our model | Typical design | Rule of thumb | Model minus typical |
+|---|---|---|---|---|
+| **PV size** | **49.6%** | 41.4% | 18.3% | **+8.2 points** (+5.0 to +11.4) |
+| Battery size | 40.1% | 38.7% | 27.8% | +1.3 points (-1.5 to +4.2), no clear difference |
+| Whole design | 15.3% | 16.1% | 5.3% | -0.8 points (-2.8 to +1.1), no clear difference |
+| Wallbox | fixed rule: a wallbox if the home has an EV; precision 0.50, recall 0.07 | same | same | none |
+| Heat pump | not meaningful: 13 of 1,593 designs include one | | | |
 
-Numbers come from single runs, so differences of a few points are within noise. Details, including sensitivity to the open assumptions, are in `.claude/skills/reonic-evaluate/SKILL.md`.
+**What this says, plainly:**
+- The model's measurable edge is **PV size**, about 8 points better than proposing a typical size, within the installers it trained on.
+- On battery and on the whole design, it is not distinguishable from proposing the typical design.
+- On an installer it never saw, it does not beat the typical design (whole design 18.5% vs 31.5% in one direction, 9.8% vs 9.9% in the other). It mostly learns each installer's habits.
+- A design is a first draft for a planner to review, not a finished offer. The value of the tool is the draft, the reasons it shows, and the validation view, more than model precision.
+
+Checks that the score is not inflated: grouping the split by customer changes nothing (15.4% vs 14.1%), and a time split shows no decay. Details: `.claude/skills/reonic-evaluate/SKILL.md`. Where we disagree with the installers, and why: [docs/specs/deviation-analysis.md](docs/specs/deviation-analysis.md). What a faster first draft is worth, with every assumption labelled: [docs/business-case.md](docs/business-case.md).
 
 ## Setup
 
@@ -69,6 +74,6 @@ and simple physics and economics.
 - **Wallbox.** A wallbox follows a fixed rule (home has an EV). Only 9% of homes with a wallbox have an EV on record, so the rule finds 7% of them.
 - **Heat pump.** Too few examples to learn sizing; the model effectively never proposes one.
 - **Homes that already have PV.** Only 18 of 1,593 homes do. Installers add no new PV for 12 of 17 of them (and a battery for 13 of 18), but the model still proposes new PV. A hard rule would be wrong for 5 of 17, and 18 examples are too few to learn it.
-- **Training size.** A model trained on the smaller installer alone (336 projects) barely beats the baseline on battery.
+- **The model adds little beyond a typical design** except for PV size, and does not carry over to an unseen installer better than a typical design. More data per installer, and inputs the export lacks (roof area, orientation, budget, location), are what would change that.
 - **Physics and cost constants** (yield, self-consumption, heat pump efficiency, prices) are rough German defaults, not calibrated; savings and payback are labelled as rough assumptions. Heat pump fuel savings are not modelled.
 - **The business case is assumptions only**, not Reonic data.

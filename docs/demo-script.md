@@ -27,7 +27,7 @@ Follows the four-step demo Reonic describes (brief, p. 7): a home is described, 
 **2:30 Step 4: check against reality (1 min).**
 - Compare tab, same typical home: expert PV 9.45 vs ours 8.9, battery 10 vs 9.2, all four components agree.
 - Switch to **Home with an EV and a wallbox**: expert PV 13.5 vs ours 10.8, battery 9 vs 9.2, wallbox 11 vs 11, all agree.
-- Evaluation tab: whole design matches for **13.5%** of unseen homes against **3.8%** for the simple baseline. Trained on one installer and tested on the other: **18.5%** and **9.8%** against 4-6%.
+- Evaluation tab, said plainly: PV size matches the installer for **45.8%** of unseen homes against **36.1%** for a "typical design" that ignores the home. On the whole design the model (13.5%) is not better than the typical design (15.0%). Our measurable edge is PV size. Do not quote the 3.8% rule-of-thumb figure on its own: it is an easy reference.
 
 **3:30 Where we are wrong, and why (1 min).** Honest part, do not skip.
 - Choose **Home that already has PV** (6.7 kWp already): the installer added only a 5 kWh battery; we also propose 9.4 kWp of new PV. Only 18 homes in the data already have PV, too few to learn from.

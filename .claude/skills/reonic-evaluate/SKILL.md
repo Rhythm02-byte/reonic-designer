@@ -18,19 +18,58 @@ Outputs: `reports/eval.json` (all metrics, per installer) and `reports/test_pred
 
 Headline: `whole_design_within_tolerance`. Always read component accuracy against `expert_include_rate`. Heat pump accuracy of 99% is trivial because experts include one in 0.8% of chosen designs (13 of 1,593).
 
+## Read this first: which reference is fair
+
+Three references appear in this file. They are not equally demanding.
+
+| Reference | What it is | How hard to beat |
+|---|---|---|
+| Rule of thumb | A naive sizing rule (about 1 kWp per 1,000 kWh) | Easy. Beating it alone proves little. |
+| **Typical design** | Ignores the home. Proposes what most homes got, at the median size, plus the EV rule for the wallbox | **The fair "no information" reference.** |
+| Shuffled labels | A model trained on scrambled answers | Lands close to the typical design |
+
+The typical design was added after the leakage checks showed a model with no information scores 11.7% on whole design, far above the rule of thumb (about 5%). Earlier results here were quoted against the rule of thumb only and **overstated the model's advantage.**
+
+**Honest summary (out-of-fold, 1,593 projects, bootstrap 95% intervals):**
+
+| | Model | Typical design | Model minus typical |
+|---|---|---|---|
+| Whole design | 15.3% | 16.1% | -0.8 points [-2.8, +1.1] (not different) |
+| **PV size ±20%** | **49.6%** | 41.4% | **+8.2 points [+5.0, +11.4]** |
+| Battery size ±25% | 40.1% | 38.7% | +1.3 points [-1.5, +4.2] (not different) |
+
+- The model's measurable edge is **PV size, within the installers it trained on**.
+- On whole design and battery, it is not distinguishable from proposing the typical design.
+- On an installer it has not seen, it does not beat the typical design (see the unseen-installer table).
+
+## Leakage checks (`scripts/leakage_checks.py`)
+
+| Check | Result | Reading |
+|---|---|---|
+| 1a. Group the split by customer (35 customers with 2+ projects, 71 projects) | Whole design 15.4% grouped vs 14.1% random (10 seeds); 3.6% of test projects share a customer with train | No inflation from repeat customers |
+| 1b. Shuffled labels (5 seeds) | Whole design 11.7% shuffled vs 14.1% real; PV 35.3% vs 48.3%; battery 32.6% vs 41.9% | Most of the whole-design score needs no information about the home. The model's real signal is mainly PV. |
+| 1c. Time split: earliest 80% of each installer's offers train, latest 20% test | 13.7% vs 16.1% for random splits of the same rows | No sign of decay over time; the difference is within noise |
+
+Same-customer project pairs have an identical battery size 38% of the time (37 pairs) against 23% for random pairs at the same installer, so repeat customers are somewhat alike, but there are too few of them to matter.
+
+## Repeated splits and intervals (`scripts/repeated_splits.py`)
+
+30 random 80/20 splits: whole design 14.6% (sd 1.9, range across splits 11.3-18.5%) for the model, 16.4% for the typical design, 5.4% for the rule of thumb. The model beat the typical design on whole design in 6 of 30 splits. PV: 49.5% vs 40.9% (+8.6 points, [+3.8, +14.0]). Battery: 41.9% vs 38.6% (+3.2, [-1.5, +7.8]). The bootstrap on out-of-fold predictions (table above) is the better interval, because the splits share training data.
+
 ## Unseen-installer evaluation (`scripts/unseen_installer.py`)
 
 Trains on one installer and tests on the other, then swaps. Wallbox is the deterministic EV rule. Output: `reports/unseen_installer.json`.
 
-| Split | Train | Test | Whole design | Baseline | PV ±20% | Baseline PV | Battery ±25% | Baseline battery | Wallbox P / R / F2 |
-|---|---|---|---|---|---|---|---|---|---|
-| Random 80/20 | 1,274 | 319 | 13.5% | 3.8% | 45.8% | 16.0% | 38.9% | 23.8% | 0.50 / 0.07 / 0.09 |
-| Train `2a8ba8e2`, test `23c108b7` | 1,257 | 336 | **18.5%** | 4.2% | 39.9% | 13.1% | 47.3% | 18.2% | 0.67 / 0.19 / 0.22 |
-| Train `23c108b7`, test `2a8ba8e2` | 336 | 1,257 | **9.8%** | 5.6% | 33.8% | 19.6% | 32.0% | 30.4% | 0.54 / 0.07 / 0.08 |
+| Split | Train | Test | Whole design: model / rule of thumb / **typical design** | PV ±20%: model / rule / **typical** | Battery ±25%: model / rule / **typical** | Wallbox P / R / F2 |
+|---|---|---|---|---|---|---|
+| Random 80/20 | 1,274 | 319 | 13.5% / 3.8% / **15.0%** | 45.8% / 16.0% / **36.1%** | 38.9% / 23.8% / **34.8%** | 0.50 / 0.07 / 0.09 |
+| Train `2a8ba8e2`, test `23c108b7` | 1,257 | 336 | 18.5% / 4.2% / **31.5%** | 39.9% / 13.1% / **45.2%** | 47.3% / 18.2% / **61.9%** | 0.67 / 0.19 / 0.22 |
+| Train `23c108b7`, test `2a8ba8e2` | 336 | 1,257 | 9.8% / 5.6% / **9.9%** | 33.8% / 19.6% / **31.7%** | 32.0% / 30.4% / **32.5%** | 0.54 / 0.07 / 0.08 |
 
 Reading:
-- The model beats the baseline on the whole design in both directions, so it carries over to an installer it has not seen.
-- Transfer is uneven. Training on the large installer and testing on the small one gives 18.5%. The reverse gives 9.8%, and the battery result there (32.0% vs 30.4%) is no better than the baseline. A model trained on 336 projects does not learn enough.
+- **Against the rule of thumb the model wins in both directions. Against the typical design it does not.** Training on the large installer and testing on the small one, the typical design scores 31.5% against the model's 18.5%. In the reverse direction they tie (9.9% vs 9.8%).
+- The earlier reading, "it carries over to an installer it has not seen", only held against the weak rule of thumb. Across installers the model mostly learns each installer's habits.
+- The small installer's designs are package-driven (batteries cluster at a few sizes), so a typical design lands inside the tolerance more often than a model trained on a different installer.
 - The PV score for `2a8ba8e2` as the test installer depends on the assumed 450 W module wattage (see the sensitivity table), because that installer's PV sizes are rebuilt from module counts.
 - Each direction is one run with no repeats, and the test sets are 336 and 1,257 projects, so treat differences of a few points as noise. Report both directions, not just the better one.
 
@@ -123,7 +162,7 @@ Use these to say: the pipeline works, missing inputs cost accuracy, and simulati
 ## Rules for reporting
 
 1. **Test set is for reporting only.** Tune thresholds on a validation split carved from the training data, never on the test set.
-2. **Report against the baseline every time.** If the model loses on a component, say so in the same table.
+2. **Report against the typical design every time**, not only the rule of thumb. If the model does not beat it, say so in the same table.
 3. **Use the unseen-installer split** for anything shown to judges, and report both.
 4. **Show sensitivity** to the open questions: rerun with `OPTION_CHOICE=last` and with another module wattage, and report the range, not one lucky number.
 5. **Synthetic numbers never go in the pitch.** They are for tests only.

@@ -99,6 +99,7 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - 2026-11-07: Wallbox is a deterministic rule (has an EV → wallbox), not a model. CV showed no gain from learning it; the cost is a lower whole-design score (13.2% vs 15.7%).
 - 2026-11-07: LLM optional and last-mile only. It must never change numbers.
 - 2026-11-07: No ticket tool. Tasks live in PLAN.md. Everyone reads the PDF before starting.
+- 2026-11-07: A typical design (ignores the home, median sizes) is now a permanent baseline next to the rule of thumb. Leakage checks showed a no-information model scores 11.7%, so beating the rule of thumb alone overstated the model. The honest claim: a measurable edge on PV size only (+8 points), none on battery or whole design, and none across installers.
 - 2026-11-07: Build on the real data and report the honest result, rather than tuning on the test set or hiding weak areas (wallbox, heat pump).
 
 ## 7. Team workflow

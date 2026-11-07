@@ -41,7 +41,7 @@ def test_ev_increases_pv_on_average(df, designer):
 
 def test_evaluation_report_shape(df, tmp_path):
     r = evaluate.run(df, out_dir=tmp_path)
-    assert {"n_train", "n_test", "split", "model", "baseline"} <= set(r)
+    assert {"n_train", "n_test", "split", "model", "baseline", "typical"} <= set(r)
     assert 0 <= r["model"]["whole_design_within_tolerance"] <= 1
     assert (tmp_path / "test_predictions.csv").exists()
 
@@ -82,3 +82,15 @@ def test_include_precision_recall_f1_f2():
     assert m["include_recall"] == pytest.approx(0.5)
     assert m["include_f1"] == pytest.approx(2 / 3)
     assert m["include_f2"] == pytest.approx(2.5 / 4.5)
+
+
+def test_typical_design_ignores_the_home_and_uses_training_medians():
+    from reonic.baseline import typical_design
+
+    train = pd.DataFrame({"pv_kwp": [6.0, 8.0, 10.0, 0.0], "battery_kwh": [5.0, 5.0, 10.0, 0.0],
+                          "heat_pump_kw": [0.0, 0.0, 0.0, 0.0], "wallbox_kw": [0.0] * 4})
+    test = pd.DataFrame({"has_ev": [True, False, None]}, index=[10, 11, 12])
+    out = typical_design(train, test)
+    assert (out["pv_kwp"] == 8.0).all() and (out["battery_kwh"] == 5.0).all()  # medians of the included homes
+    assert (out["heat_pump_kw"] == 0).all()  # most homes got none
+    assert list(out["wallbox_kw"]) == [11.0, 0.0, 0.0]  # the EV rule, unknown EV means none

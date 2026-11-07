@@ -10,6 +10,9 @@ dependencies = [
     "joblib>=1.4",
     "streamlit>=1.40",
     "openpyxl>=3.1",
+    "starlette>=0.40",  # web API (src/reonic/api.py)
+    "uvicorn>=0.30",
+    "threadpoolctl>=3.1",
 ]
 
 [project.optional-dependencies]

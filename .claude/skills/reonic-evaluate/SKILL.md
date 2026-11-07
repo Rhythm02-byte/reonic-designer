@@ -34,6 +34,14 @@ Reading:
 - The PV score for `2a8ba8e2` as the test installer depends on the assumed 450 W module wattage (see the sensitivity table), because that installer's PV sizes are rebuilt from module counts.
 - Each direction is one run with no repeats, and the test sets are 336 and 1,257 projects, so treat differences of a few points as noise. Report both directions, not just the better one.
 
+## Battery and heat pump cut-offs (`scripts/battery_threshold.py`)
+
+Battery cut-off, chosen by 5-fold CV on the training split only: no effect. Mean out-of-fold battery agreement is 42.0% at every cut-off from 0.30 to 0.75 (80%: 41.7%), fold sd 2.3%. Test split, looked at once: 38.9% at 0.35 and at 0.5. **Decision: keep 0.5.**
+
+Why it is flat: 89% of homes have a battery, so almost every prediction is above 0.7, and any cut-off in 0.30-0.75 makes the same decisions. The probabilities are reasonably calibrated where the data is (0.7-0.9 bin: predicted 0.78, actual 0.79, n=247; 0.9-1.0 bin: predicted 0.99, actual 0.95, n=995). The few predictions below 0.5 (n=29) are too few to judge calibration.
+
+Heat pump: not tuned on purpose. Only 13 of 1,593 designs include one, so a cut-off would be fitted to noise.
+
 ## Effect of treating 0 kWh consumption as unknown
 
 13 projects (0.8%, all at `2a8ba8e2`) carry an annual consumption of exactly 0 kWh, which is impossible. `data.py` now loads these as unknown. Random-split whole-design score moved from 13.2% to 13.5%; the other numbers in this file were re-run after the change.

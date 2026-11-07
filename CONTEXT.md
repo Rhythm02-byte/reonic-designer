@@ -88,7 +88,7 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [x] Wallbox decided: deterministic "has an EV → wallbox" rule (CV showed no gain from a model). Whole-design score is 13.5% with it. Precision, recall and F2 reported (see `reonic-evaluate`)
 - [x] Unseen-installer evaluation run in both directions: 18.5% / 9.8% whole design vs baseline 4.2% / 5.6% (see `reonic-evaluate`)
 - [x] Demo flow works on real data: example held-out homes in the sidebar, live design next to the expert's, refine (EV) and override steps, app trained on the training split only. Covered by `tests/test_app.py`
-- [ ] Tune battery and heat pump include thresholds on a validation split
+- [x] Battery cut-off tuned by CV: no effect between 0.30 and 0.75, kept at 0.5. Heat pump not tuned (13 examples). See `reonic-evaluate`
 - [x] Deviation analysis done: three patterns with counts and rates, chart in `docs/figures/` (see `docs/specs/deviation-analysis.md`)
 - [ ] Alternatives/confidence · homeowner view (specs in `docs/specs/`)
 - [ ] Pitch deck · demo recording · final README

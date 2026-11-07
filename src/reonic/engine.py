@@ -27,10 +27,10 @@ class Designer:
     catalog: dict[str, list[float]]
 
     @classmethod
-    def train(cls, df: pd.DataFrame) -> "Designer":
+    def train(cls, df: pd.DataFrame, sizing: str = "mean") -> "Designer":
         X, Y = features(df), df[list(TARGETS)].astype(float)
         catalog = {t: rules.common_sizes(Y[t].to_numpy()) for t in TARGETS}
-        return cls(DesignModel().fit(X, Y), Neighbours().fit(X, Y), catalog)
+        return cls(DesignModel(sizing).fit(X, Y), Neighbours().fit(X, Y), catalog)
 
     def save(self, path: str | Path) -> None:
         joblib.dump(self, path)

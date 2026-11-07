@@ -64,6 +64,28 @@ class _Const:
         return np.column_stack([1 - p, p])
 
 
+class _Cols:
+    """A fitted estimator that only looks at the columns it was trained on."""
+
+    def __init__(self, model, cols):
+        self.model, self.cols = model, cols
+
+    def predict(self, X):
+        return self.model.predict(X[self.cols])
+
+    def predict_proba(self, X):
+        return self.model.predict_proba(X[self.cols])
+
+
+def _fit_usable(est, X: pd.DataFrame, y, sample_weight=None, fallback: float = 0.0):
+    """Fit on the columns that vary in this subset. A column with a single value (or none) breaks the binning, which
+    happens when a small training subset has, say, no heat pump at all. If nothing varies, predict the fallback."""
+    cols = [c for c in X.columns if X[c].nunique(dropna=True) > 1]
+    if not cols:
+        return _Const(fallback)
+    return _Cols(est.fit(X[cols], y, sample_weight=sample_weight), cols)
+
+
 class DesignModel:
     def __init__(self, sizing: str = "mean", params: dict | None = None):
         """sizing: "mean" = one regressor's point estimate; "coverage" = the size that fits the most plausible expert sizes."""
@@ -86,18 +108,18 @@ class DesignModel:
                 continue
             present = ((y > 0) | np.isnan(y)).astype(int)  # NaN = offered, size unknown
             if 0 < present.sum() < len(present):
-                clf = HistGradientBoostingClassifier(**hp(dict(max_iter=200, learning_rate=0.08, random_state=0))).fit(Xc, present, sample_weight=w)
+                clf = _fit_usable(HistGradientBoostingClassifier(**hp(dict(max_iter=200, learning_rate=0.08, random_state=0))), Xc, present, w, present.mean())
             else:
                 clf = _Const(present.mean() if len(present) else 0.0)
             mask = (present == 1) & ~np.isnan(y)
             if mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
-                reg = HistGradientBoostingRegressor(**hp(dict(max_iter=300, learning_rate=0.06, random_state=0))).fit(Xc[mask], y[mask], sample_weight=None if w is None else w[mask])
+                reg = _fit_usable(HistGradientBoostingRegressor(**hp(dict(max_iter=300, learning_rate=0.06, random_state=0))), Xc[mask], y[mask], None if w is None else w[mask], float(np.median(y[mask])))
             else:
                 reg = _Const(np.median(y[mask]) if mask.any() else 0.0)
             quants = None
             if self.sizing == "coverage" and mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
-                quants = [HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=120, learning_rate=0.08, random_state=0).fit(Xc[mask], y[mask], sample_weight=None if w is None else w[mask])
-                          for q in QUANTILES]
+                quants = [_fit_usable(HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=120, learning_rate=0.08, random_state=0), Xc[mask], y[mask],
+                                      None if w is None else w[mask], float(np.median(y[mask]))) for q in QUANTILES]
             self.steps[t] = (clf, reg, list(Xc.columns), quants)
             Xc[t] = y  # teacher forcing: downstream steps learn from the expert's upstream choice
         return self

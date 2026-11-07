@@ -51,3 +51,12 @@ def test_blend_pulls_size_toward_similar_homes():
     a = Designer.train(df).design_batch(df.head(60))
     b = Designer.train(df, blend=1.0).design_batch(df.head(60))
     assert not np.allclose(a["pv_kwp"], b["pv_kwp"])
+
+
+def test_small_training_set_without_a_heat_pump_still_trains():
+    df = synth.generate(300, seed=5)
+    df["heat_pump_kw"] = 0.0  # a column that only ever holds one value breaks the gradient-boosting binning
+    small = df.head(60)
+    for sizing in ("mean", "coverage"):
+        out = Designer.train(small, sizing=sizing).design_batch(df.tail(20))
+        assert np.isfinite(out.to_numpy()).all()

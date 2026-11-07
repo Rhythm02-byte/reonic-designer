@@ -47,8 +47,16 @@ Gain is on whole design over the current model (15.3%).
 Unseen installer for the best setting (whole design): 9.8% → 11.1% and 18.5% → 18.8%. PV is worse in one direction
 (−3.9). The typical design still wins when training on the smaller installer.
 
-**Caveat:** the winner was picked after looking at 21 variants on the same 5 folds, so +3.6 is optimistic until it is
-confirmed on fresh folds.
+### Remaining checks (`scripts/remaining_tests.py confirm | curve | nested | installer`)
+
+| Check | Result | Verdict |
+|---|---|---|
+| **Confirm the best setting on fresh folds** (fold seeds 1-3; the search used seed 0) | Whole design 14.7% → 18.7%, **+4.0 (+2.8 to +5.1)**; PV +1.9 (+0.6 to +3.4); battery +5.2 (+3.7 to +6.7). Gain over the typical design: +2.3 (+0.5 to +4.1) | **Holds.** Not a selection artefact. |
+| Learning curve (20% to 100% of training data) | Current model 15.9 / 14.7 / 15.4 / 15.2 / 14.6%; best setting 17.1 / 16.9 / 18.5 / 17.3 / 17.8% | **Flat.** More data of this kind will not help; the limit is what the inputs tell us. |
+| Nested tuning (6 settings, picked by inner CV) | Whole +1.4 (-0.1 to +3.0); PV +1.1; battery +0.9 | Not proven. Small and the interval includes 0. |
+| One model per installer | Whole +0.2 (-1.3 to +1.7); battery -1.5 | **No help.** |
+
+The best setting beats both the current model and the typical design on folds it was not chosen on.
 
 ## 4. Code that exists but is opt-in
 
@@ -70,11 +78,11 @@ Each run overwrites `reports/improvement_ideas.json`; copy the printed table if 
 
 ## 6. Left to do
 
-- [ ] Confirm the best setting on fresh folds (different fold seed, 30 splits). Most important.
+- [x] Confirm the best setting on fresh folds: holds (+4.0, interval +2.8 to +5.1).
 - [ ] Decide whether to make coverage + 40-size catalogue the default, then regenerate numbers, README, deck, demo script.
 - [ ] Save the trained model to disk so the app starts fast.
 - [ ] PVGIS yield (phase 1: cached lookup with fallback to 950 kWh/kWp). Cannot change the evaluated score: the export has no location.
-- [ ] Nested-CV tuning, learning curve (score against training size), per-installer models.
+- [x] Nested-CV tuning, learning curve, per-installer models: done, none needed (see section 3).
 - [ ] Ask Reonic: which option was signed, module wattage at 2a8ba8e2, is 4,500 kWh a default; time per design, offers per week.
 - [ ] Record the fallback demo video; rehearse twice; team review of the deck.
 - [ ] Faris's PRs #2 and #4 conflict with `main` in `CONTEXT.md` and `README.md`; keep both sides when resolving. His Evaluation tab should show the new `typical` key in `eval.json`.
@@ -86,4 +94,5 @@ Each run overwrites `reports/improvement_ideas.json`; copy the printed table if 
 - Battery and heat pump include cut-offs stay at 0.5 (flat from 0.30 to 0.75).
 - The original headline "beats the baseline" was misleading: the rule of thumb is weak. The fair reference is the typical design.
 - Placeholder rows are noisy but dropping them hurts PV by 9 points; keep them.
+- A model fit used to crash on a small training subset with no heat pump at all (a column with one value); fixed in `model.py` and covered by a test.
 - Overconfident probabilities and "placeholder rows are no worse" were hypotheses I tested and dropped.

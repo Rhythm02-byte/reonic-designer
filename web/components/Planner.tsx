@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target } from "@/lib/api";
 import { CHOICE_LABEL, DEMO_INPUTS, defaultOptions, describe, encodeOffer, eur, FIELD_COPY, LABEL, pct, size, UNIT, years } from "@/lib/copy";
 import { House } from "./House";
@@ -19,11 +19,14 @@ export default function Planner() {
     api.meta().then(setMeta, (e: Error) => setMetaError(e.message));
   }, []);
 
-  const key = JSON.stringify(inputs);
+  // Without an electric car the distance means nothing; sent anyway, the model reads it as one and adds a wallbox.
+  // The value stays in state so switching back to "Yes" restores it.
+  const sent = useMemo(() => (inputs.has_ev === false ? { ...inputs, ev_km_per_year: null } : inputs), [inputs]);
+  const key = JSON.stringify(sent);
   useEffect(() => {
     let live = true;
     const id = setTimeout(() => {
-      api.design(inputs).then(
+      api.design(sent).then(
         (design) => live && setState({ key, design, error: null }),
         (e: Error) => live && setState((s) => ({ ...s, key, error: e.message })),
       );
@@ -32,7 +35,7 @@ export default function Planner() {
       live = false;
       clearTimeout(id);
     };
-  }, [inputs, key]);
+  }, [sent, key]);
 
   const { design } = state;
   const busy = state.key !== key;
@@ -52,7 +55,7 @@ export default function Planner() {
             <span aria-live="polite" className="text-xs text-muted">
               {busy ? "Updating…" : ""}
             </span>
-            <ShareLink meta={meta} design={busy ? null : design} inputs={inputs} />
+            <ShareLink meta={meta} design={busy ? null : design} inputs={sent} />
           </div>
         </div>
       </header>
@@ -73,6 +76,7 @@ export default function Planner() {
                 <Card className="space-y-3 p-4">
                   {Object.keys(FIELD_COPY)
                     .flatMap((name) => meta.fields.filter((f) => f.name === name))
+                    .filter((f) => f.name !== "ev_km_per_year" || inputs.has_ev !== false)
                     .map((f) => (
                       <FieldInput key={f.name} field={f} value={inputs[f.name] ?? null} set={(v) => setInput(f.name, v)} />
                     ))}

@@ -34,7 +34,7 @@ export type HouseProps = {
 };
 
 const NONE: Existing = { pv_kwp: 0, battery_kwh: 0, wallbox: false };
-const HIGHLIGHT = new Color("#F2784A");
+const HIGHLIGHT = new Color("#2E9E6B");
 const GREY = new Color("#A7ACB3");
 
 // Which proposal a clicked part belongs to, by its node name (see web/blender/house.py).

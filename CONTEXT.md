@@ -86,6 +86,7 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [ ] Reonic answers to the open questions (`reonic-data` skill, "Open questions")
 - [ ] Physics constants checked with Reonic experts
 - [x] Wallbox decided: deterministic "has an EV → wallbox" rule (CV showed no gain from a model). Whole-design score is 13.2% with it. Precision, recall and F2 reported (see `reonic-evaluate`)
+- [x] Unseen-installer evaluation run in both directions: 16.7% / 9.8% whole design vs baseline 4.2% / 5.6% (see `reonic-evaluate`)
 - [ ] Tune battery and heat pump include thresholds on a validation split
 - [ ] Deviation analysis · alternatives/confidence · homeowner view (specs in `docs/specs/`)
 - [ ] Pitch deck · demo recording · final README

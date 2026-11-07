@@ -18,6 +18,22 @@ Outputs: `reports/eval.json` (all metrics, per installer) and `reports/test_pred
 
 Headline: `whole_design_within_tolerance`. Always read component accuracy against `expert_include_rate`. Heat pump accuracy of 99% is trivial because experts include one in 0.8% of chosen designs (13 of 1,593).
 
+## Unseen-installer evaluation (`scripts/unseen_installer.py`)
+
+Trains on one installer and tests on the other, then swaps. Wallbox is the deterministic EV rule. Output: `reports/unseen_installer.json`.
+
+| Split | Train | Test | Whole design | Baseline | PV ±20% | Baseline PV | Battery ±25% | Baseline battery | Wallbox P / R / F2 |
+|---|---|---|---|---|---|---|---|---|---|
+| Random 80/20 | 1,274 | 319 | 13.2% | 3.8% | 45.1% | 16.0% | 39.2% | 23.8% | 0.50 / 0.07 / 0.09 |
+| Train `2a8ba8e2`, test `23c108b7` | 1,257 | 336 | **16.7%** | 4.2% | 39.9% | 13.1% | 46.1% | 18.2% | 0.67 / 0.19 / 0.22 |
+| Train `23c108b7`, test `2a8ba8e2` | 336 | 1,257 | **9.8%** | 5.6% | 33.8% | 19.6% | 32.1% | 30.8% | 0.54 / 0.07 / 0.08 |
+
+Reading:
+- The model beats the baseline on the whole design in both directions, so it carries over to an installer it has not seen.
+- Transfer is uneven. Training on the large installer and testing on the small one gives 16.7%. The reverse gives 9.8%, and the battery result there (32.1% vs 30.8%) is no better than the baseline. A model trained on 336 projects does not learn enough.
+- The PV score for `2a8ba8e2` as the test installer depends on the assumed 450 W module wattage (see the sensitivity table), because that installer's PV sizes are rebuilt from module counts.
+- Each direction is one run with no repeats, and the test sets are 336 and 1,257 projects, so treat differences of a few points as noise. Report both directions, not just the better one.
+
 ## Wallbox decision: deterministic rule
 
 **Decision (2026-11-07): the wallbox follows the rule "home has an EV → wallbox, else none"** (`src/reonic/model.py`, `RULE_BASED`). Size is the most common installed size (11 kW). An unknown EV flag counts as no EV. Reason: 5-fold CV showed the learned model did no better than this rule (see below).
@@ -45,7 +61,8 @@ Test split, scored once: isolated model 74.9% vs EV baseline 74.0%. The 0.9-poin
 |---|---|---|---|---|---|
 | 2026-11-07 | real export, `OPTION_CHOICE=first`, untuned | random | 15.7% | 3.8% | PV 45% vs 16%; battery 39% vs 24%; wallbox 61% vs 74% (model worse) |
 | 2026-11-07 | real export, wallbox cut-off 0.78 (chosen by 5-fold CV on train) | random | 15.7% | 3.8% | wallbox 67% vs 74% (still worse). Isolated wallbox classifier: 74.9% vs 74.0% on test, within noise |
-| 2026-11-07 | real export, wallbox = deterministic EV rule | random | 13.2% | 3.8% | wallbox 74% = baseline; precision 0.50, recall 0.07, F2 0.09. PV and battery unchanged. Unseen-installer split not yet run |
+| 2026-11-07 | real export, wallbox = deterministic EV rule | random | 13.2% | 3.8% | wallbox 74% = baseline; precision 0.50, recall 0.07, F2 0.09. PV and battery unchanged |
+| 2026-11-07 | real export, wallbox = EV rule | unseen installer | 16.7% (train 2a8ba8e2) / 9.8% (train 23c108b7) | 4.2% / 5.6% | see the unseen-installer table. Battery gain vanishes when training on the small installer |
 
 Add a row every time the model, thresholds, option choice or data changes. Never overwrite an old row.
 

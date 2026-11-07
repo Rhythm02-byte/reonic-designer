@@ -1,22 +1,16 @@
 "use client";
 // The Blender-built house (web/blender/house.py). Component sizes switch named nodes on and off.
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, type ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Html, Lightformer, OrbitControls, PerspectiveCamera, useGLTF } from "@react-three/drei";
 import { useReducedMotion } from "motion/react";
 import { Suspense, useEffect, useMemo, useRef, type RefObject } from "react";
-import type { Mesh, Object3D } from "three";
-import type { Target, Values } from "@/lib/api";
+import { Box3, type BufferGeometry, Color, type Material, type Mesh, type MeshStandardMaterial, type Object3D, Vector3 } from "three";
+import { TARGETS, type Target, type Values } from "@/lib/api";
 import { LABEL, num, PANEL_KWP, UNIT } from "@/lib/copy";
 
 const URL = "/models/house.glb";
 const MAX_PANELS = 24; // slots on the east roof face, around its skylights
 const BATTERY_KWH = 5; // one stacked module per started 5 kWh, up to 5
-const SIDE = {
-  center: "-translate-x-1/2 -translate-y-1/2",
-  above: "-translate-x-1/2 -translate-y-[calc(100%+6px)]",
-  left: "-translate-x-[calc(100%+8px)] -translate-y-1/2",
-  right: "translate-x-2 -translate-y-1/2",
-};
 const TARGET: [number, number, number] = [0.5, 2.6, -0.5];
 
 // Narrow (taller) views back the camera off so the whole house stays in frame. Resizing resets the orbit.
@@ -28,50 +22,111 @@ function Camera() {
   return <PerspectiveCamera makeDefault position={position} fov={30} near={0.5} far={200} />;
 }
 
+export type Existing = { pv_kwp: number; battery_kwh: number; wallbox: boolean };
+
 export type HouseProps = {
   values: Values;
   hasEv: boolean;
-  labels?: Partial<Record<Target, string>>; // overrides the default "Solar 9 kWp" label text
+  existing?: Existing; // already on the house: drawn in grey, before the proposed parts
+  labels?: Partial<Record<Target, string>>; // overrides the default "PV 9 kWp" label text
+  selected?: Target | null;
+  onSelect?: (t: Target) => void; // markers and parts become clickable when set
 };
 
-function House({ values, hasEv, labels, overlay }: HouseProps & { overlay: RefObject<HTMLDivElement | null> }) {
+const NONE: Existing = { pv_kwp: 0, battery_kwh: 0, wallbox: false };
+const HIGHLIGHT = new Color("#F2784A");
+const GREY = new Color("#A7ACB3");
+
+// Which proposal a clicked part belongs to, by its node name (see web/blender/house.py).
+function targetOf(o: Object3D | null): Target | null {
+  for (; o; o = o.parent) {
+    if (o.name.startsWith("PV_Panel_")) return "pv_kwp";
+    if (o.name.startsWith("Battery_")) return "battery_kwh";
+    if (o.name === "HeatPump") return "heat_pump_kw";
+    if (o.name === "Wallbox") return "wallbox_kw";
+  }
+  return null;
+}
+
+type Part = { o: Object3D; on: boolean; old?: boolean };
+
+function House({ values, hasEv, existing = NONE, labels, selected = null, onSelect, overlay }: HouseProps & { overlay: RefObject<HTMLDivElement | null> }) {
   const { scene } = useGLTF(URL, false, false); // no Draco/Meshopt: nothing is fetched from a CDN
   const invalidate = useThree((s) => s.invalidate);
   const still = useReducedMotion() ?? false;
 
   const nodes = useMemo(() => {
-    scene.traverse((o) => {
-      if ((o as Mesh).isMesh) o.castShadow = o.receiveShadow = true;
-    });
+    scene.updateMatrixWorld(true);
     const get = (name: string) => {
       const o = scene.getObjectByName(name);
       if (!o) throw new Error(`house.glb is missing node ${name}; re-export web/blender/house.py`);
+      // Measured once, at full size: hidden parts are scaled to 0 later, and labels still need their place.
+      o.userData.box = new Box3().setFromObject(o);
       return o;
     };
     const range = (n: number, f: (i: number) => string) => Array.from({ length: n }, (_, i) => get(f(i + 1)));
-    return {
-      pv: range(MAX_PANELS, (i) => `PV_Panel_${String(i).padStart(2, "0")}`),
-      battery: range(5, (i) => `Battery_${i}`),
-      heatPump: get("HeatPump"),
-      fan: get("HeatPump_Fan"),
-      wallbox: get("Wallbox"),
-      car: get("Car"),
-    };
+    const groups = {
+      pv_kwp: range(MAX_PANELS, (i) => `PV_Panel_${String(i).padStart(2, "0")}`),
+      battery_kwh: range(5, (i) => `Battery_${i}`),
+      heat_pump_kw: [get("HeatPump")],
+      wallbox_kw: [get("Wallbox")],
+    } satisfies Record<Target, Object3D[]>;
+    // Each proposal gets its own copy of every material it uses, so lighting one up leaves the others alone.
+    // The grey copy marks equipment the home already has.
+    for (const t of TARGETS) {
+      const copies = new Map<Material, Material>();
+      for (const g of groups[t]) {
+        g.traverse((o) => {
+          const m = o as Mesh<BufferGeometry, MeshStandardMaterial>;
+          if (!m.isMesh) return;
+          if (!copies.has(m.material)) copies.set(m.material, m.material.clone());
+          const own = copies.get(m.material) as MeshStandardMaterial;
+          const grey = own.clone();
+          grey.color.lerp(GREY, 0.75);
+          m.userData.own = own;
+          m.userData.grey = grey;
+          m.material = own;
+        });
+      }
+    }
+    scene.traverse((o) => {
+      if ((o as Mesh).isMesh) o.castShadow = o.receiveShadow = true;
+    });
+    return { ...groups, fan: get("HeatPump_Fan"), car: get("Car") };
   }, [scene]);
 
   // ponytail: one roof face holds 24 panels (10.8 kWp); larger systems are shown full, the label keeps the real size.
-  const pvCount = Math.min(MAX_PANELS, Math.round(values.pv_kwp / PANEL_KWP));
-  const batteryCount = Math.min(5, Math.ceil(values.battery_kwh / BATTERY_KWH));
-  const items = useMemo(
+  const pvOld = Math.min(MAX_PANELS, Math.round(existing.pv_kwp / PANEL_KWP));
+  const pvNew = Math.min(MAX_PANELS - pvOld, Math.round(values.pv_kwp / PANEL_KWP));
+  const batOld = Math.min(5, Math.ceil(existing.battery_kwh / BATTERY_KWH));
+  const batNew = Math.min(5 - batOld, Math.ceil(values.battery_kwh / BATTERY_KWH));
+  const wbOld = existing.wallbox && values.wallbox_kw === 0;
+  const items = useMemo<Part[]>(
     () => [
-      ...nodes.pv.map((o, i) => ({ o, on: i < pvCount })),
-      ...nodes.battery.map((o, i) => ({ o, on: i < batteryCount })),
-      { o: nodes.heatPump, on: values.heat_pump_kw > 0 },
-      { o: nodes.wallbox, on: values.wallbox_kw > 0 },
-      { o: nodes.car, on: hasEv || values.wallbox_kw > 0 },
+      ...nodes.pv_kwp.map((o, i) => ({ o, on: i < pvOld + pvNew, old: i < pvOld })),
+      ...nodes.battery_kwh.map((o, i) => ({ o, on: i < batOld + batNew, old: i < batOld })),
+      { o: nodes.heat_pump_kw[0], on: values.heat_pump_kw > 0 },
+      { o: nodes.wallbox_kw[0], on: values.wallbox_kw > 0 || existing.wallbox, old: wbOld },
+      { o: nodes.car, on: hasEv || values.wallbox_kw > 0 || existing.wallbox },
     ],
-    [nodes, pvCount, batteryCount, values.heat_pump_kw, values.wallbox_kw, hasEv],
+    [nodes, pvOld, pvNew, batOld, batNew, values.heat_pump_kw, values.wallbox_kw, existing.wallbox, wbOld, hasEv],
   );
+
+  // Grey for what exists, a warm glow on the selected proposal.
+  useEffect(() => {
+    for (const { o, old } of items) {
+      const lit = selected !== null && !old && targetOf(o) === selected;
+      o.traverse((c) => {
+        const m = c as Mesh;
+        if (!m.isMesh || !m.userData.own) return;
+        const mat = (old ? m.userData.grey : m.userData.own) as MeshStandardMaterial;
+        mat.emissive.copy(lit ? HIGHLIGHT : BLACK);
+        mat.emissiveIntensity = lit ? 0.45 : 0;
+        m.material = mat;
+      });
+    }
+    invalidate();
+  }, [items, selected, invalidate]);
 
   // Whatever changes pops in (or out) one after another, 25 ms apart.
   // The scene graph is mutated through a ref: three.js objects are mutable by design, React state is not.
@@ -105,41 +160,72 @@ function House({ values, hasEv, labels, overlay }: HouseProps & { overlay: RefOb
       // eslint-disable-next-line react-hooks/immutability -- per-frame three.js mutation is how R3F animates
       o.visible = o.scale.x > 0;
     }
-    if (nodes.heatPump.visible && !still) {
+    if (nodes.heat_pump_kw[0].visible && !still) {
       nodes.fan.rotateY(dt * 6);
       moving = true;
     }
     if (moving) invalidate();
   });
 
-  // Where each label sits (three.js coords: x east, y up, z south) and which side of that point it hangs on.
-  const anchors: Record<Target, { at: [number, number, number]; side: keyof typeof SIDE }> = {
-    pv_kwp: { at: [4.85, 6.25, -1.1], side: "center" },
-    battery_kwh: { at: [5.75, 0.1 + 0.4 * batteryCount, 4.2], side: "above" },
-    heat_pump_kw: { at: [6.94, 0.85, -2.75], side: "above" },
-    wallbox_kw: { at: [-3.55, 1.35, 2.7], side: "above" },
+  // A label sits just above the parts it names, wherever the Blender script put them.
+  // Solar sits on the roof: its label goes on the panels rather than floating above the ridge.
+  const anchor = (t: Target, os: Object3D[]): [number, number, number] => {
+    const b = new Box3();
+    os.forEach((o) => b.union(o.userData.box as Box3));
+    const c = b.getCenter(new Vector3());
+    return [c.x, t === "pv_kwp" ? c.y : b.max.y + 0.25, c.z];
   };
+  const markers: { key: string; t: Target; at: [number, number, number]; text: string; old?: boolean }[] = [];
+  for (const t of TARGETS) {
+    const shown = items.filter((p) => p.on && !p.old && targetOf(p.o) === t).map((p) => p.o);
+    const was = items.filter((p) => p.on && p.old && targetOf(p.o) === t).map((p) => p.o);
+    if (values[t] > 0 && shown.length) {
+      markers.push({ key: t, t, at: anchor(t, shown), text: labels?.[t] ?? `${LABEL[t]} ${num(values[t])} ${UNIT[t]}` });
+    }
+    if (was.length) {
+      const text = t === "pv_kwp" ? `Existing PV ${num(existing.pv_kwp)} kWp` : t === "battery_kwh" ? `Existing battery ${num(existing.battery_kwh)} kWh` : `Existing ${LABEL[t].toLowerCase()}`;
+      markers.push({ key: `old-${t}`, t, at: anchor(t, was), text, old: true });
+    }
+  }
 
   return (
     <>
-      <primitive object={scene} />
-      {(Object.keys(anchors) as Target[])
-        .filter((t) => values[t] > 0)
-        .map((t) => (
-          // A fixed portal: without it Html re-targets once R3F connects events, and the remount can wipe the label.
-          <Html key={t} portal={overlay as RefObject<HTMLElement>} position={anchors[t].at} zIndexRange={[20, 0]}>
-            {/* aria-hidden: the canvas wrapper's aria-label already says all of this */}
-            <span
-              aria-hidden
-              className={`${SIDE[anchors[t].side]} pointer-events-none block whitespace-nowrap rounded-full bg-paper/95 px-2.5 py-1 text-xs font-medium text-ink shadow-sm ring-1 ring-zinc-200`}
+      <primitive
+        object={scene}
+        onClick={
+          onSelect &&
+          ((e: ThreeEvent<MouseEvent>) => {
+            const t = targetOf(e.object);
+            if (t && values[t] > 0) {
+              e.stopPropagation();
+              onSelect(t);
+            }
+          })
+        }
+      />
+      {markers.map((m) => (
+        // A fixed portal: without it Html re-targets once R3F connects events, and the remount can wipe the label.
+        <Html key={m.key} portal={overlay as RefObject<HTMLElement>} position={m.at} center zIndexRange={[20, 0]}>
+          {onSelect && !m.old ? (
+            <button
+              type="button"
+              aria-pressed={selected === m.t}
+              onClick={() => onSelect(m.t)}
+              className={`${CHIP} cursor-pointer hover:ring-zinc-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-pressed:bg-ink aria-pressed:text-paper aria-pressed:ring-ink`}
             >
-              {labels?.[t] ?? `${LABEL[t]} ${num(values[t])} ${UNIT[t]}`}
-            </span>
-          </Html>
-        ))}
+              {m.text}
+            </button>
+          ) : (
+            <span className={`${CHIP} pointer-events-none ${m.old ? "bg-sand text-quiet" : ""}`}>{m.text}</span>
+          )}
+        </Html>
+      ))}
     </>
   );
 }
+
+const CHIP = "block whitespace-nowrap rounded-full bg-paper/95 px-2.5 py-1 text-xs font-medium text-ink shadow-sm ring-1 ring-zinc-200";
+const BLACK = new Color(0, 0, 0);
 
 useGLTF.preload(URL, false, false);
 
@@ -147,8 +233,9 @@ export default function HouseScene(props: HouseProps & { description: string }) 
   const { description, ...house } = props;
   const overlay = useRef<HTMLDivElement>(null);
   return (
-    <div ref={overlay} role="img" aria-label={description} className="relative h-full w-full">
-      <Canvas shadows frameloop="demand" dpr={[1, 2]}>
+    <div ref={overlay} className="relative h-full w-full">
+      <p className="sr-only">{description}</p>
+      <Canvas aria-hidden shadows frameloop="demand" dpr={[1, 2]}>
         <Camera />
         <hemisphereLight args={["#ffffff", "#e9e4d6", 1.1]} />
         <directionalLight

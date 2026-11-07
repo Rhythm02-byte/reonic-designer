@@ -64,13 +64,16 @@ class _Const:
 
 
 class DesignModel:
-    def __init__(self, sizing: str = "mean"):
+    def __init__(self, sizing: str = "mean", params: dict | None = None):
         """sizing: "mean" = one regressor's point estimate; "coverage" = the size that fits the most plausible expert sizes."""
         assert sizing in ("mean", "coverage")
         self.sizing = sizing
+        self.params = params or {}  # extra HistGradientBoosting settings, for tuning experiments
 
-    def fit(self, X: pd.DataFrame, Y: pd.DataFrame) -> "DesignModel":
+    def fit(self, X: pd.DataFrame, Y: pd.DataFrame, sample_weight: np.ndarray | None = None) -> "DesignModel":
         self.steps = {}
+        w = None if sample_weight is None else np.asarray(sample_weight, dtype=float)
+        hp = lambda base: {**base, **self.params}
         self.cols = [c for c in X.columns if X[c].notna().any()]  # all-empty columns break the binning
         Xc = X[self.cols].copy()
         for t in ORDER:
@@ -82,17 +85,17 @@ class DesignModel:
                 continue
             present = ((y > 0) | np.isnan(y)).astype(int)  # NaN = offered, size unknown
             if 0 < present.sum() < len(present):
-                clf = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.08, random_state=0).fit(Xc, present)
+                clf = HistGradientBoostingClassifier(**hp(dict(max_iter=200, learning_rate=0.08, random_state=0))).fit(Xc, present, sample_weight=w)
             else:
                 clf = _Const(present.mean() if len(present) else 0.0)
             mask = (present == 1) & ~np.isnan(y)
             if mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
-                reg = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.06, random_state=0).fit(Xc[mask], y[mask])
+                reg = HistGradientBoostingRegressor(**hp(dict(max_iter=300, learning_rate=0.06, random_state=0))).fit(Xc[mask], y[mask], sample_weight=None if w is None else w[mask])
             else:
                 reg = _Const(np.median(y[mask]) if mask.any() else 0.0)
             quants = None
             if self.sizing == "coverage" and mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
-                quants = [HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=120, learning_rate=0.08, random_state=0).fit(Xc[mask], y[mask])
+                quants = [HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=120, learning_rate=0.08, random_state=0).fit(Xc[mask], y[mask], sample_weight=None if w is None else w[mask])
                           for q in QUANTILES]
             self.steps[t] = (clf, reg, list(Xc.columns), quants)
             Xc[t] = y  # teacher forcing: downstream steps learn from the expert's upstream choice

@@ -117,14 +117,14 @@ Workstreams (one owner each):
 
 ## 9. Team workflow
 
-- **Tickets:** Linear project "Reonic · Home Energy Designer (thinc! 2026)", team MAR, tickets MAR-54 to MAR-69:
+- **Tickets:** Linear project "Reonic · Home Energy Designer (thinc! 2026)", team **thinc! Hackathon (THI)**, tickets THI-1 to THI-16:
   https://linear.app/marketing-vibe-coding/project/reonic-home-energy-designer-thinc-2026-0e10cbdb4a2d
   - Milestones M0–M3 match §8.
   - Labels: Phase (MVP / Stretch / Wrap-up) and Workstream (Data & EDA / Model & Eval / Product & UI / Pitch & Business).
 - **Claiming a ticket:** assign yourself and move it to In Progress.
-- **Branches:** one per ticket, using Linear's "Copy git branch name" (e.g. `rhythmkashik02/mar-54-...`) so the PR links to the ticket automatically. Small PRs into `main`, and `main` always runs.
+- **Branches:** one per ticket, using Linear's "Copy git branch name" (e.g. `rhythmkashik02/thi-1-...`) so the PR links to the ticket automatically. Small PRs into `main`, and `main` always runs.
 - **Before pushing:** `pytest -q` and `python -m reonic eval`.
-- **Commits:** put the ticket ID in the message (e.g. `MAR-54: map Reonic columns`).
+- **Commits:** put the ticket ID in the message (e.g. `THI-1: map Reonic columns`).
 - Update **Status** below when you finish something that changes what others can rely on.
 
 ## 10. Decisions log

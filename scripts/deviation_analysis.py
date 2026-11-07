@@ -210,8 +210,10 @@ def make_chart(ev: dict, path: str = "reports/deviation_chart.png") -> None:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.6))
+    # Sized to sit full width on a 16:9 slide (about 12 inches) with text that stays legible at that size.
+    fig, axes = plt.subplots(1, 3, figsize=(12.5, 4.3))
     ink, accent, muted = "#1f2937", "#2563eb", "#9ca3af"
+    title_size, label_size, note_size = 11.5, 10.5, 10.5
 
     # 1. PV: the experts' own spread
     both = ev["pv_spread_near_identical_homes"]["both"]
@@ -219,11 +221,11 @@ def make_chart(ev: dict, path: str = "reports/deviation_chart.png") -> None:
     ax.hist(ev["_near_pv_values"], bins=14, color=muted, edgecolor="white")
     ax.axvspan(both["p50"] * 0.8, both["p50"] * 1.2, color=accent, alpha=0.18)
     ax.axvline(both["p50"], color=accent, lw=2)
-    ax.set_title(f"1. PV: experts vary for near-identical homes\n(demand 4,000-5,000 kWh, no EV, no PV, n={both['n']})", fontsize=10, color=ink)
-    ax.set_xlabel("expert PV size (kWp)")
-    ax.set_ylabel("homes")
-    ax.text(0.97, 0.95, f"a single typical size ({both['p50']:.1f} kWp)\nmatches within ±20% for\n{both['share_within_20pct_of_median']:.0%} (shaded)\nour model: {both['model_agrees']:.0%}",
-            transform=ax.transAxes, ha="right", va="top", fontsize=9, color=ink)
+    ax.set_title(f"1. PV: experts vary for near-identical homes\n(4,000-5,000 kWh, no EV, no PV; n={both['n']})", fontsize=title_size, color=ink)
+    ax.set_xlabel("expert PV size (kWp)", fontsize=label_size)
+    ax.set_ylabel("homes", fontsize=label_size)
+    ax.text(0.98, 0.97, f"one typical size\n({both['p50']:.1f} kWp, shaded)\nfits {both['share_within_20pct_of_median']:.0%} within ±20%\nour model: {both['model_agrees']:.0%}",
+            transform=ax.transAxes, ha="right", va="top", fontsize=note_size, color=ink)
 
     # 2. Wallbox: how much an EV flag explains
     wb = ev["wallbox"]
@@ -231,11 +233,12 @@ def make_chart(ev: dict, path: str = "reports/deviation_chart.png") -> None:
     vals = [wb["share_of_wallbox_homes_with_ev_flag"], 1 - wb["share_of_wallbox_homes_with_ev_flag"]]
     bars = ax.bar(["wallbox home\nhas an EV flag", "wallbox home\nno EV flag"], vals, color=[accent, muted])
     for b, v in zip(bars, vals):
-        ax.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.0%}", ha="center", fontsize=10, color=ink)
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.0%}", ha="center", fontsize=label_size + 1, color=ink)
     ax.set_ylim(0, 1.05)
-    ax.set_title(f"2. Wallbox: the EV rule cannot see most of them\n({wb['wallbox_homes']} homes with a wallbox; only {wb['share_of_homes_with_ev_flag']:.0%} of all homes have an EV flag)",
-                 fontsize=10, color=ink)
-    ax.set_ylabel("share of wallbox homes")
+    ax.set_title(f"2. Wallbox: the EV rule misses most\n({wb['wallbox_homes']} wallbox homes; {wb['share_of_homes_with_ev_flag']:.0%} of homes have an EV flag)",
+                 fontsize=title_size, color=ink)
+    ax.set_ylabel("share of wallbox homes", fontsize=label_size)
+    ax.tick_params(axis="x", labelsize=label_size)
 
     # 3. Battery: installer x placeholder demand
     rows = ev["battery_by_installer_and_placeholder"]
@@ -243,22 +246,23 @@ def make_chart(ev: dict, path: str = "reports/deviation_chart.png") -> None:
     labels, vals, colors = [], [], []
     for k, r in rows.items():
         inst, kind = k.split(" | ")
-        labels.append(f"{inst}\n{'demand = 4,500' if '4,500' in kind else 'other demand'}\nn={r['n']}")
+        labels.append(f"{inst}\n{'4,500 kWh' if '4,500' in kind else 'other'}\nn={r['n']}")
         vals.append(r["battery_agrees"])
         colors.append(muted if "4,500" in kind else accent)
     bars = ax.bar(labels, vals, color=colors)
     for b, v in zip(bars, vals):
-        ax.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.0%}", ha="center", fontsize=10, color=ink)
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.0%}", ha="center", fontsize=label_size + 1, color=ink)
     ax.set_ylim(0, 0.8)
-    ax.set_title("3. Battery: placeholder demand hurts at one installer\n(share of homes where we match the expert)", fontsize=10, color=ink)
-    ax.tick_params(axis="x", labelsize=8)
+    ax.set_title("3. Battery: placeholder demand (4,500 kWh)\nhurts at one installer; share matching expert", fontsize=title_size, color=ink)
+    ax.tick_params(axis="x", labelsize=9.5)
 
     for ax in axes:
         for side in ("top", "right"):
             ax.spines[side].set_visible(False)
-    fig.suptitle("Where we disagree with the experts, and why (out-of-fold predictions, 1,593 projects)", fontsize=12, color=ink, y=1.02)
-    fig.tight_layout()
-    fig.savefig(path, dpi=160, bbox_inches="tight")
+        ax.tick_params(axis="y", labelsize=label_size - 1)
+    fig.text(0.01, 0.005, "Out-of-fold predictions, 1,593 projects: every project scored by a model that never saw it", fontsize=9, color="#6b7280", ha="left", va="bottom")
+    fig.tight_layout(rect=(0, 0.03, 1, 1))
+    fig.savefig(path, dpi=200, bbox_inches="tight")
     print(f"\nchart: {path}")
 
 

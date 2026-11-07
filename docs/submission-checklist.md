@@ -15,6 +15,8 @@ Reonic asks for three things (brief, p. 8): a working demo (with a short recordi
 - [ ] Re-measure the example numbers if the code changed since the script was written
 
 ## Deck
+A 7-slide draft is in `docs/pitch/home-energy-designer.pptx` (problem, solution, results, where we disagree, value, limits and next steps), with speaker notes. Its numbers are typed in, not linked: if any result changes, update slides 4, 6 and 7 and the notes.
+- [ ] Team reviews the draft and adds names and any branding
 - [ ] Problem, solution, how we evaluated, value for installers and homeowners (the four parts the brief names)
 - [ ] Only real-data numbers; every business-case number labelled as an assumption
 - [ ] Include "where we disagree with the experts" and the limitations slide

@@ -1,17 +1,17 @@
 "use client";
-// The homeowner's view of an offer: plain words, only the options the planner allowed, every number from the API.
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import { api, TARGETS, type Economics, type Inputs, type Target, type Validation, type Values } from "@/lib/api";
-import { CHOICE_LABEL, decodeOffer, describe, eur, num, type Offer, panels } from "@/lib/copy";
+// The homeowner's view of an offer: plain words, only the whole options the planner approved, no prices.
+import { useMemo, useState, useSyncExternalStore } from "react";
+import { TARGETS, type Inputs, type Target, type Values } from "@/lib/api";
+import { CHOICE_LABEL, decodeOffer, describe, num, type Offer, panels } from "@/lib/copy";
 import { House } from "./House";
-import { Button, Card, CheckDot, ErrorNote, Footer, Header, Logo, MinusDot, PersonaChip, Segmented } from "./ui";
+import { Button, Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook } from "./ui";
 
 const WIDTH = "max-w-5xl";
 
 const NAME: Record<Target, string> = { pv_kwp: "Solar panels", battery_kwh: "Home battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };
 
 function optionLabel(t: Target, v: number) {
-  if (v === 0) return "None";
+  if (v === 0) return "Not included";
   return t === "pv_kwp" ? `${panels(v)} panels` : `${num(v)} ${t === "battery_kwh" ? "kWh" : "kW"}`;
 }
 
@@ -31,22 +31,6 @@ function explain(t: Target, v: number, inputs: Inputs) {
     heat_pump_kw: `Heats your home and water with electricity instead of ${heating === "current" ? "your current" : heating} heating. ${num(v)} kW is its heating power.`,
     wallbox_kw: `Charges your electric car at home. At ${num(v)} kW (kilowatts) ${v > 11 ? "it charges about twice as fast, if your car supports it" : "a typical car is full overnight"}.`,
   }[t];
-}
-
-function useValidation(inputs: Inputs, values: Values) {
-  const key = JSON.stringify(values);
-  const [state, setState] = useState<{ key?: string; data?: Validation; error?: string }>({});
-  useEffect(() => {
-    let live = true;
-    api.validate(inputs, values).then(
-      (data) => live && setState({ key, data }),
-      (e: Error) => live && setState((s) => ({ ...s, key, error: e.message })),
-    );
-    return () => {
-      live = false;
-    };
-  }, [inputs, values, key]);
-  return { ...state, busy: state.key !== key };
 }
 
 const subscribe = (cb: () => void) => {
@@ -79,112 +63,130 @@ export default function OfferPage() {
 }
 
 function OfferView({ offer }: { offer: Offer }) {
-  const { inputs, recommended, options } = offer;
-  const [choice, setChoice] = useState<Values>(recommended);
-  const rec = useValidation(inputs, recommended);
-  const mine = useValidation(inputs, choice);
-  const changed = TARGETS.some((t) => choice[t] !== recommended[t]);
-  const adjustable = TARGETS.some((t) => options[t].length > 1);
+  const { inputs, options, customer, planner } = offer;
+  const [i, setI] = useState(0);
+  const choice = options[i].values;
+  const rec = options[0].values;
+  const included = TARGETS.filter((t) => choice[t] > 0);
+  const changes = TARGETS.filter((t) => choice[t] !== rec[t]);
+  const subject = `Question about my home energy proposal (${options[i].label})`;
+  const body = `Hello ${planner},\n\nI looked at the proposal for ${customer} and I am interested in the option "${options[i].label}". Could we talk about it?\n\nThis is a request, not an order.`;
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-        Your home energy offer, <span className="text-reonic">your way</span>
-      </h1>
+      <div className="space-y-1">
+        <p className="text-sm text-quiet">
+          Prepared by {planner} for {customer}
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+          Your home energy <span className="text-reonic">proposal</span>
+        </h1>
+      </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-6">
           <Card className="overflow-hidden">
             <div className="h-[280px] bg-gradient-to-b from-sand-2 to-sand sm:h-[400px]">
               <House
                 values={choice}
                 hasEv={inputs.has_ev === true}
+                existing={{
+                  pv_kwp: typeof inputs.existing_pv_kwp === "number" ? inputs.existing_pv_kwp : 0,
+                  battery_kwh: typeof inputs.existing_battery_kwh === "number" ? inputs.existing_battery_kwh : 0,
+                  wallbox: inputs.has_existing_wallbox === true,
+                }}
                 description={describe(choice)}
                 labels={{ pv_kwp: `${panels(choice.pv_kwp)} solar panels`, battery_kwh: `Battery ${num(choice.battery_kwh)} kWh`, heat_pump_kw: NAME.heat_pump_kw, wallbox_kw: NAME.wallbox_kw }}
               />
             </div>
           </Card>
 
-          <section aria-labelledby="choose" className="space-y-3">
-            <h2 id="choose" className="text-lg font-semibold text-ink">
-              Try a different setup
+          <section aria-labelledby="parts" className="space-y-3">
+            <h2 id="parts" className="text-lg font-semibold text-ink">
+              {i === 0 ? "What your installer recommends" : `What is in "${options[i].label}"`}
             </h2>
-            {!adjustable && <p className="text-sm">Your installer has fixed this offer. Ask them if you&apos;d like options.</p>}
-            {TARGETS.map((t) => (
-              <Card key={t} className="space-y-2 p-4">
-                <div className="flex items-baseline justify-between gap-3">
+            <div aria-live="polite" className="space-y-3">
+              {TARGETS.map((t) => (
+                <Card key={t} className="space-y-1 p-4">
                   <h3 className="flex items-center gap-2 font-medium text-ink">
                     {choice[t] > 0 ? <CheckDot className="size-5" /> : <MinusDot className="size-5" />}
                     {NAME[t]}
-                    <span className="sr-only">{choice[t] > 0 ? "(included)" : "(not included)"}</span>
+                    <span className="text-sm font-normal text-quiet">{choice[t] > 0 ? "Included" : "Not included"}</span>
                   </h3>
-                  {options[t].length === 1 && <span className="text-xs text-muted">As offered</span>}
-                </div>
-                <p className="text-base">{explain(t, choice[t], inputs)}</p>
-                {options[t].length > 1 && (
-                  <Segmented
-                    name={`opt-${t}`}
-                    label={NAME[t]}
-                    value={choice[t]}
-                    options={options[t].map((v) => ({
-                      value: v,
-                      label: optionLabel(t, v) + (v === recommended[t] ? " ★" : ""),
-                    }))}
-                    onChange={(v) => setChoice((c) => ({ ...c, [t]: v }))}
-                  />
-                )}
-              </Card>
-            ))}
-            {adjustable && <p className="text-xs text-muted">★ = what your installer recommends</p>}
+                  <p className="text-base">{explain(t, choice[t], inputs)}</p>
+                </Card>
+              ))}
+            </div>
           </section>
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start" aria-label="Cost and savings">
-          <ErrorNote error={rec.error ?? mine.error ?? null} />
-          <div aria-live="polite" className="grid grid-cols-2 gap-3">
-            <Variant title="Recommended" econ={rec.data?.economics} active={!changed} />
-            <Variant title="Your choice" econ={mine.data?.economics} active={changed} busy={mine.busy} />
-          </div>
-          {changed && (
-            <Button variant="secondary" onClick={() => setChoice(recommended)}>
-              Back to the recommendation
-            </Button>
+        <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start" aria-label="Options">
+          {options.length > 1 ? (
+            <fieldset className="space-y-2">
+              <legend className="mb-2 text-lg font-semibold text-ink">Options from your installer</legend>
+              {options.map((o, k) => (
+                <label
+                  key={k}
+                  className="flex cursor-pointer gap-3 rounded-2xl border border-zinc-200 bg-white p-4 has-checked:outline-2 has-checked:outline-blue-600 has-focus-visible:outline-2 has-focus-visible:outline-blue-600"
+                >
+                  <input type="radio" name="option" className="mt-1 size-4 accent-blue-600" checked={i === k} onChange={() => setI(k)} />
+                  <span className="space-y-0.5">
+                    <span className="block font-medium text-ink">
+                      {o.label}
+                      {k === 0 && <span className="ml-2 rounded-full whitespace-nowrap bg-sand px-2 py-0.5 text-xs font-medium text-quiet">Installer&apos;s recommendation</span>}
+                    </span>
+                    <span className="block text-sm">{summary(o.values)}</span>
+                  </span>
+                </label>
+              ))}
+            </fieldset>
+          ) : (
+            <p className="text-sm">Your installer offers one setup. Ask them if you&apos;d like to compare options.</p>
           )}
-          <p className="text-xs text-muted">
-            Rough assumptions: today&apos;s electricity price, list prices and a simple solar model. Savings cover electricity only;
-            a heat pump&apos;s fuel savings are not included.
+          {i > 0 && (
+            <div className="space-y-3 rounded-2xl bg-sand-2 p-4 text-sm">
+              <p className="font-medium text-ink">Compared with the recommendation</p>
+              <ul className="space-y-1">
+                {changes.map((t) => (
+                  <li key={t}>
+                    {NAME[t]}: {optionLabel(t, rec[t])} → {optionLabel(t, choice[t])}
+                  </li>
+                ))}
+              </ul>
+              <Button variant="secondary" onClick={() => setI(0)}>
+                Back to recommended option
+              </Button>
+            </div>
+          )}
+          <p className="text-sm">
+            Selected option: <span className="font-medium text-ink">{options[i].label}</span>. Choosing it here is not an
+            order and signs nothing.
           </p>
+          <a
+            href={`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}
+            className={`${pill} ${pillLook.primary} w-full justify-center`}
+          >
+            Ask {planner} about this option <Icon name="arrow" className="size-4" />
+          </a>
         </aside>
       </div>
 
-      <section aria-labelledby="quote" className="relative overflow-hidden rounded-2xl bg-linear-to-br from-aubergine to-aubergine-2 px-6 py-10 text-paper sm:px-10">
-        <div aria-hidden className="grain pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay" />
-        <h2 id="quote" className="relative max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
-          Your installer&apos;s final quote is what counts.
+      <section aria-labelledby="notes" className="space-y-2 rounded-2xl border border-zinc-200 p-5 text-sm">
+        <h2 id="notes" className="text-lg font-semibold text-ink">
+          Good to know
         </h2>
-        <p className="relative mt-3 max-w-[60ch] text-base text-zinc-300">
-          Tell them which setup you picked: this page forgets your choice when you close it.
-        </p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>This is a first proposal based on what you told your installer. They check your roof and wiring on site.</li>
+          <li>Prices and savings follow in your installer&apos;s written quote; this page shows none on purpose.</li>
+          {included.length === 0 && <li>This option adds no new equipment.</li>}
+          <li>kWp is the most solar power the panels make in full sun, kWh is how much energy a battery stores, kW is power.</li>
+        </ul>
       </section>
     </div>
   );
 }
 
-function Variant({ title, econ, active, busy }: { title: string; econ?: Economics; active: boolean; busy?: boolean }) {
-  return (
-    // An outline, not a ring: Card already sets ring-1 ring-zinc-200 and the two ring colours would fight.
-    <Card className={`p-4 ${active ? "outline-2 outline-blue-600" : ""} ${busy ? "opacity-60" : ""}`}>
-      <div className="text-xs font-medium text-muted">{title}</div>
-      {econ ? (
-        <>
-          <div className="mt-1 text-xl font-semibold tracking-tight text-ink tabular-nums">{eur(econ.cost_eur)}</div>
-          <p className="mt-2 text-xs">
-            {econ.savings_eur === null ? "Savings unknown" : `Saves about ${eur(econ.savings_eur)} a year`}
-          </p>
-        </>
-      ) : (
-        <div className="mt-2 h-16 animate-pulse rounded-lg bg-sand" />
-      )}
-    </Card>
-  );
-}
+const summary = (v: Values) => {
+  const parts = TARGETS.filter((t) => v[t] > 0).map((t) => `${NAME[t]} ${optionLabel(t, v[t])}`);
+  return parts.length ? parts.join(" · ") : "No new equipment";
+};

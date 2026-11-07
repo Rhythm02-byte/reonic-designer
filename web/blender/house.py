@@ -337,6 +337,44 @@ def garden():
         obj(f"Shrub{i}", me, (x, y, LAWN + r * 0.7))
 
 
+def roof_tiles(course=0.3, lip=0.03):
+    """Tile courses on every upward roof face: wedges rising from the surface to a lip at each course's lower edge.
+
+    Courses sit on a world grid along the slope, so neighbouring faces of one roof plane line up."""
+    bm = bmesh.new()
+    for name in ("roof", "roof.001"):
+        o = bpy.data.objects[name]
+        rot = o.matrix_world.to_3x3()
+        tile = [i for i, slot in enumerate(o.material_slots) if slot.material and slot.material.name == "roof"]
+        for poly in o.data.polygons:
+            n = (rot @ poly.normal).normalized()
+            if poly.material_index not in tile or n.z < 0.3 or poly.area < 0.05:
+                continue
+            down = (Vector((0, 0, -1)) - n * -n.z).normalized()
+            pts = [o.matrix_world @ o.data.vertices[i].co for i in poly.vertices]
+            ts = [p.dot(down) for p in pts]
+            tmin, tmax = min(ts), max(ts)
+            for k in range(math.ceil(tmin / course + 1e-6), math.floor(tmax / course - 1e-6) + 1):
+                t = k * course
+                cut = [a.lerp(b, (t - ta) / (tb - ta)) for (a, ta), (b, tb) in zip(zip(pts, ts), zip(pts[1:] + pts[:1], ts[1:] + ts[:1]))
+                       if (ta - t) * (tb - t) < 0]
+                if len(cut) < 2:
+                    continue
+                along = n.cross(down)
+                p0, p1 = min(cut, key=along.dot), max(cut, key=along.dot)  # ponytail: assumes convex faces
+                back = -down * (t - max(t - course, tmin))
+                v = [bm.verts.new(x) for x in (p0 + back + n * 0.004, p1 + back + n * 0.004, p1 + n * lip, p0 + n * lip,
+                                              p0 + n * 0.004, p1 + n * 0.004)]
+                bm.faces.new((v[0], v[1], v[2], v[3]))
+                bm.faces.new((v[3], v[2], v[5], v[4]))
+    me = bpy.data.meshes.new("Roof_Tiles")
+    bm.normal_update()
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(material("roof"))
+    obj("Roof_Tiles", me)
+
+
 def build() -> int:
     strip()
     ground()
@@ -346,6 +384,7 @@ def build() -> int:
     car()
     trees()
     garden()
+    roof_tiles()  # last, so the facade ray casts never hit a tile
     return panels
 
 

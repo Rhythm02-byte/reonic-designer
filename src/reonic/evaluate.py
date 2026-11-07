@@ -4,10 +4,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, fbeta_score, precision_score, recall_score
 from sklearn.model_selection import GroupShuffleSplit, train_test_split
 
-from .baseline import rule_of_thumb
+from .baseline import rule_of_thumb, typical_design
 from .engine import Designer
 from .schema import INPUT_FIELDS, TARGETS
 
@@ -28,7 +28,11 @@ def metrics(pred: pd.DataFrame, truth: pd.DataFrame) -> dict:
         all_ok &= ok
         out[t] = {
             "include_accuracy": float((has_y == has_p).mean()),
+            "include_precision": float(precision_score(has_y, has_p, zero_division=0)),
+            "include_recall": float(recall_score(has_y, has_p, zero_division=0)),
             "include_f1": float(f1_score(has_y, has_p, zero_division=0)),
+            # F2 weights recall twice as much as precision: a missed component costs more than an extra one.
+            "include_f2": float(fbeta_score(has_y, has_p, beta=2.0, zero_division=0)),
             "size_mae": float(np.abs(p - y)[both].mean()) if both.any() else None,
             "expert_include_rate": float(has_y.mean()),
             "size_median_rel_error": float(np.median(rel[both])) if both.any() else None,
@@ -50,9 +54,9 @@ def run(df: pd.DataFrame, out_dir: str | Path = "reports", test_size: float = 0.
         group_col: str | None = None) -> dict:
     train, test = split(df, test_size, seed, group_col)
     designer = Designer.train(train)
-    ours, base = designer.design_batch(test), rule_of_thumb(test)
+    ours, base, typical = designer.design_batch(test), rule_of_thumb(test), typical_design(train, test)
     report = {"n_train": len(train), "n_test": len(test), "split": group_col or "random",
-              "model": metrics(ours, test), "baseline": metrics(base, test)}
+              "model": metrics(ours, test), "baseline": metrics(base, test), "typical": metrics(typical, test)}
     if "installer_id" in test.columns and test["installer_id"].nunique() > 1:
         report["by_installer"] = {str(k): metrics(ours.loc[g.index], g)["whole_design_within_tolerance"]
                                   for k, g in test.groupby("installer_id")}
@@ -70,13 +74,20 @@ def run(df: pd.DataFrame, out_dir: str | Path = "reports", test_size: float = 0.
 
 def print_report(r: dict) -> None:
     print(f"train={r['n_train']}  test={r['n_test']}  split={r['split']}")
-    print(f"{'':14}{'metric':26}{'model':>10}{'baseline':>10}")
+    print("baseline = naive sizing rule; typical = ignores the home, proposes what most homes got")
+    print(f"{'':14}{'metric':26}{'model':>10}{'baseline':>10}{'typical':>10}")
     for t in TARGETS:
         for k in ("expert_include_rate", "include_accuracy", "include_f1", "size_median_rel_error", "within_tolerance"):
-            m, b = r["model"][t][k], r["baseline"][t][k]
+            m, b, y = r["model"][t][k], r["baseline"][t][k], r["typical"][t][k]
             fmt = lambda x: "  -" if x is None else f"{x:.3f}"
-            print(f"{t:14}{k:26}{fmt(m):>10}{fmt(b):>10}")
+            print(f"{t:14}{k:26}{fmt(m):>10}{fmt(b):>10}{fmt(y):>10}")
+    print()
+    print("wallbox include decision (precision, recall, F1, F2 with beta=2):")
+    print(f"{'':14}{'metric':26}{'model':>10}{'baseline':>10}")
+    for k in ("include_precision", "include_recall", "include_f1", "include_f2"):
+        print(f"{'wallbox_kw':14}{k:26}{r['model']['wallbox_kw'][k]:>10.3f}{r['baseline']['wallbox_kw'][k]:>10.3f}")
+    print()
     print(f"{'whole design within tolerance':40}{r['model']['whole_design_within_tolerance']:>10.3f}"
-          f"{r['baseline']['whole_design_within_tolerance']:>10.3f}")
+          f"{r['baseline']['whole_design_within_tolerance']:>10.3f}{r['typical']['whole_design_within_tolerance']:>10.3f}")
     for k, v in r.get("by_installer", {}).items():
         print(f"  installer {k}: whole design within tolerance {v:.3f}")

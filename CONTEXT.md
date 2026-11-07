@@ -41,7 +41,7 @@ Planners at solar installers spend hours designing each home's system before an 
 ```
 HomeInputs ─► features (raw + physics-informed: EV kWh, future demand, kWp for full demand)
            ─► learned chain, physical order:
-                heat pump? & size ─► PV? & size ─► battery? & size ─► wallbox? & size
+                heat pump? & size ─► PV? & size ─► battery? & size      then wallbox = rule (has an EV)
                 (each step sees the upstream decision, so overrides propagate)
            ─► deterministic rules R01–R04 + snapping to sizes installers actually use
            ─► explanation: model confidence + similar past projects + rough physics/economics
@@ -87,16 +87,22 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [ ] Every teammate has read the challenge PDF (§0)
 - [ ] Reonic answers to the open questions (`reonic-data` skill, "Open questions")
 - [ ] Physics constants checked with Reonic experts
-- [ ] Include thresholds tuned; wallbox is currently worse than the baseline
+- [x] Wallbox decided: deterministic "has an EV → wallbox" rule (CV showed no gain from a model). Whole-design score is 13.5% with it. Precision, recall and F2 reported (see `reonic-evaluate`)
+- [x] Unseen-installer evaluation run in both directions: 18.5% / 9.8% whole design vs baseline 4.2% / 5.6% (see `reonic-evaluate`)
+- [x] Demo flow works on real data: example held-out homes in the sidebar, live design next to the expert's, refine (EV) and override steps, app trained on the training split only. Covered by `tests/test_app.py`
+- [x] Battery cut-off tuned by CV: no effect between 0.30 and 0.75, kept at 0.5. Heat pump not tuned (13 examples). See `reonic-evaluate`
+- [x] Deviation analysis done: three patterns with counts and rates, chart in `docs/figures/` (see `docs/specs/deviation-analysis.md`)
+- [ ] Include thresholds tuned
 - [x] Web frontend: planner with 3D house, alternatives/confidence, homeowner view via share link (`web/`)
-- [ ] Deviation analysis (spec in `docs/specs/`)
 - [ ] Pitch deck · demo recording · final README
 
 **Decisions**
 - 2026-11-07: Python + scikit-learn gradient boosting + Streamlit, for speed. No infrastructure.
 - 2026-11-07: Model order heat pump → PV → battery → wallbox, following the physics (load → generation → storage).
+- 2026-11-07: Wallbox is a deterministic rule (has an EV → wallbox), not a model. CV showed no gain from learning it; the cost is a lower whole-design score (13.2% vs 15.7%).
 - 2026-11-07: LLM optional and last-mile only. It must never change numbers.
 - 2026-11-07: No ticket tool. Tasks live in PLAN.md. Everyone reads the PDF before starting.
+- 2026-11-07: A typical design (ignores the home, median sizes) is now a permanent baseline next to the rule of thumb. Leakage checks showed a no-information model scores 11.7%, so beating the rule of thumb alone overstated the model. The honest claim: a measurable edge on PV size only (+8 points), none on battery or whole design, and none across installers.
 - 2026-11-07: Build on the real data and report the honest result, rather than tuning on the test set or hiding weak areas (wallbox, heat pump).
 - 2026-11-07: Demo UI in Next.js (`web/`) over a local JSON API bound to 127.0.0.1. Not deployed: the API reads the Reonic data and model. Streamlit stays as the fallback.
 - 2026-11-07: The homeowner offer travels in the URL hash, so it never reaches a server log; the page is `noindex`.

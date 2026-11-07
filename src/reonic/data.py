@@ -88,7 +88,8 @@ def status_quo_inputs(sq: pd.DataFrame) -> pd.DataFrame:
     heating = sq["heating_existing_type"].astype("string").str.strip().str.lower().map(HEATING_MAP)
     return pd.DataFrame({
         "project_id": sq["project_id"],
-        "annual_consumption_kwh": _num(sq["energy_demand_wh"]) / 1000,
+        # A home cannot use 0 kWh a year. 13 projects (0.8%) carry 0, so treat it as unknown, not as a measurement.
+        "annual_consumption_kwh": (_num(sq["energy_demand_wh"]) / 1000).where(lambda s: s > 0),
         "electricity_price_eur_kwh": _num(sq["energy_price_per_wh"]) * 1000,
         "energy_price_increase": _num(sq["energy_price_increase"]),
         "has_ev": b("has_ev"),

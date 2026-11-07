@@ -14,6 +14,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+analysis = ["matplotlib>=3.9"]  # charts for scripts/deviation_analysis.py
 
 [build-system]
 requires = ["setuptools>=68"]

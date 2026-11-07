@@ -22,7 +22,7 @@ from sklearn.model_selection import KFold
 
 from reonic import data, evaluate
 from reonic.baseline import typical_design
-from reonic.engine import Designer
+from reonic.engine import ALL_SIZES, LEGACY, Designer
 from reonic.schema import INPUT_FIELDS, TARGETS
 
 _spec = importlib.util.spec_from_file_location("deviation_analysis", Path(__file__).resolve().parent / "deviation_analysis.py")
@@ -35,7 +35,7 @@ for c in INPUT_FIELDS:
         full[c] = np.nan
 full[list(TARGETS)] = full[list(TARGETS)].apply(pd.to_numeric, errors="coerce").clip(lower=0)
 full = full.reset_index(drop=True)
-BEST = dict(sizing="coverage", battery_catalog_top=40)
+BEST = dict(sizing="coverage", battery_catalog_top=40, coverage_for=ALL_SIZES)  # all three sizes; "current" = LEGACY (old default)
 rng = np.random.default_rng(0)
 IDX = rng.integers(0, len(full), size=(2000, len(full)))
 
@@ -71,7 +71,7 @@ def confirm() -> dict:
         pb, pt, pf = [], [], []
         for tr, va in KFold(5, shuffle=True, random_state=seed).split(full):
             train, val = full.iloc[tr], full.iloc[va]
-            pb.append((va, score(Designer.train(train).design_batch(val), val)))
+            pb.append((va, score(Designer.train(train, **LEGACY).design_batch(val), val)))
             pf.append((va, score(Designer.train(train, **BEST).design_batch(val), val)))
             pt.append((va, score(typical_design(train, val), val)))
         base_all.append(collect(pb)); best_all.append(collect(pf)); typ_all.append(collect(pt))
@@ -98,7 +98,7 @@ def curve() -> dict:
         for tr, va in KFold(5, shuffle=True, random_state=1).split(full):
             sub = np.random.default_rng(7).choice(tr, size=int(len(tr) * frac), replace=False)
             train, val = full.iloc[sub], full.iloc[va]
-            pb.append((va, score(Designer.train(train).design_batch(val), val)))
+            pb.append((va, score(Designer.train(train, **LEGACY).design_batch(val), val)))
             pf.append((va, score(Designer.train(train, **BEST).design_batch(val), val)))
             pt.append((va, score(typical_design(train, val), val)))
         b, f, t = collect(pb), collect(pf), collect(pt)
@@ -123,12 +123,12 @@ def nested() -> dict:
             sc = []
             for itr, iva in KFold(3, shuffle=True, random_state=2).split(train):
                 a, b = train.iloc[itr], train.iloc[iva]
-                sc.append(score(Designer.train(a, params=p).design_batch(b), b)["whole"].mean())
+                sc.append(score(Designer.train(a, params=p, **LEGACY).design_batch(b), b)["whole"].mean())
             inner.append(np.mean(sc))
         k = int(np.argmax(inner))
         chosen.append(k)
-        parts_b.append((va, score(Designer.train(train).design_batch(val), val)))
-        parts_n.append((va, score(Designer.train(train, params=GRID[k]).design_batch(val), val)))
+        parts_b.append((va, score(Designer.train(train, **LEGACY).design_batch(val), val)))
+        parts_n.append((va, score(Designer.train(train, params=GRID[k], **LEGACY).design_batch(val), val)))
         print(f"  outer fold: inner CV picked setting {k} (inner scores {[round(x, 3) for x in inner]})", flush=True)
     b, n = collect(parts_b), collect(parts_n)
     res = {"chosen_settings": chosen, **{k: gain(n[k], b[k]) for k in ("whole", "pv", "battery")}}
@@ -143,11 +143,11 @@ def installer() -> dict:
     pooled, per = [], []
     for tr, va in KFold(5, shuffle=True, random_state=1).split(full):
         train, val = full.iloc[tr], full.iloc[va]
-        pooled.append((va, score(Designer.train(train).design_batch(val), val)))
+        pooled.append((va, score(Designer.train(train, **LEGACY).design_batch(val), val)))
         out = []
         for inst in sorted(full.installer_id.unique()):
             t_i, v_i = train[train.installer_id == inst], val[val.installer_id == inst]
-            out.append((np.where(full.index.isin(v_i.index))[0], score(Designer.train(t_i).design_batch(v_i), v_i)))
+            out.append((np.where(full.index.isin(v_i.index))[0], score(Designer.train(t_i, **LEGACY).design_batch(v_i), v_i)))
         per.append(out)
     P = collect(pooled)
     S = {k: np.full(len(full), np.nan) for k in ("whole", "pv", "battery")}
@@ -171,7 +171,7 @@ BATTERY_ONLY = dict(sizing="coverage", coverage_for=("battery_kwh",), battery_ca
 
 def battery_only() -> dict:
     """Coverage sizing + 40 battery sizes for the BATTERY only (PV and heat pump keep the plain mean prediction)."""
-    names = {"current": {}, "best": BEST, "battery_only": BATTERY_ONLY}
+    names = {"current": LEGACY, "best": BEST, "battery_only": BATTERY_ONLY}
     res = {"fresh_folds": {}, "time_windows": {}}
     acc = {n: [] for n in names}
     for seed in (1, 2, 3):

@@ -16,7 +16,7 @@ import pandas as pd
 from sklearn.model_selection import KFold
 
 from reonic import data
-from reonic.engine import Designer
+from reonic.engine import ALL_SIZES, Designer
 from reonic.schema import INPUT_FIELDS, TARGETS
 
 _spec = importlib.util.spec_from_file_location("deviation_analysis", Path(__file__).resolve().parent / "deviation_analysis.py")
@@ -36,7 +36,7 @@ for tr, va in KFold(5, shuffle=True, random_state=0).split(full):
     train, val = full.iloc[tr], full.iloc[va]
     for m in ok:
         t0 = time.time()
-        d = Designer.train(train, sizing=m)
+        d = Designer.train(train, sizing=m, battery_catalog_top=15, coverage_for=ALL_SIZES)
         pred = d.design_batch(val)
         secs[m] += time.time() - t0
         for t in TARGETS:

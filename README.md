@@ -18,18 +18,18 @@ Out-of-fold predictions over all 1,593 projects, with bootstrap 95% intervals:
 | | Our model | Typical design | Rule of thumb | Model minus typical |
 |---|---|---|---|---|
 | **PV size** | **49.6%** | 41.4% | 18.3% | **+8.2 points** (+5.0 to +11.4) |
-| Battery size | 40.1% | 38.7% | 27.8% | +1.3 points (-1.5 to +4.2), no clear difference |
-| Whole design | 15.3% | 16.1% | 5.3% | -0.8 points (-2.8 to +1.1), no clear difference |
+| **Battery size** | **47.1%** | 38.7% | 27.8% | **+8.4 points** (+6.0 to +11.0) |
+| Whole design | 18.0% | 16.1% | 5.3% | +1.8 points (-0.1 to +3.8), leans positive but not clearly different |
 | Wallbox | fixed rule: a wallbox if the home has an EV; precision 0.50, recall 0.07 | same | same | none |
 | Heat pump | not meaningful: 13 of 1,593 designs include one | | | |
 
 **What this says, plainly:**
-- The model's measurable edge is **PV size**, about 8 points better than proposing a typical size, within the installers it trained on.
-- On battery and on the whole design, it is not distinguishable from proposing the typical design.
-- On an installer it never saw, it does not beat the typical design (whole design 18.5% vs 31.5% in one direction, 9.8% vs 9.9% in the other). It mostly learns each installer's habits.
+- The model's measurable edge is **PV size** and **battery size**, each about 8 points better than proposing a typical size, within the installers it trained on.
+- On the whole design the gain over a typical design is small (+1.8 points) and its interval touches zero, so we do not claim it. The model beats the typical design in 20 of 30 random splits.
+- On an installer it never saw, it does not reliably beat the typical design (whole design 20.8% vs 31.5% in one direction, 10.5% vs 9.9% in the other). It mostly learns each installer's habits.
 - A design is a first draft for a planner to review, not a finished offer. The value of the tool is the draft, the reasons it shows, and the validation view, more than model precision.
 
-Checks that the score is not inflated: grouping the split by customer changes nothing (15.4% vs 14.1%), and a time split shows no decay. Details: `.claude/skills/reonic-evaluate/SKILL.md`. Where we disagree with the installers, and why: [docs/specs/deviation-analysis.md](docs/specs/deviation-analysis.md). What a faster first draft is worth, with every assumption labelled: [docs/business-case.md](docs/business-case.md).
+Checks that the score is not inflated: grouping the split by customer changes nothing (16.7% vs 16.6%), a time split shows no decay (18.1% vs 17.0% for random splits of the same rows), and a model trained on shuffled answers scores clearly lower (14.0% vs 16.8%). Details: `.claude/skills/reonic-evaluate/SKILL.md`. Where we disagree with the installers, and why: [docs/specs/deviation-analysis.md](docs/specs/deviation-analysis.md). What a faster first draft is worth, with every assumption labelled: [docs/business-case.md](docs/business-case.md).
 
 ## Setup
 
@@ -59,7 +59,7 @@ The expert design for each project is rebuilt from the offer's line items. A cha
 models then decides, per component, whether it is included and how large it is, in physical order
 (heat pump → PV → battery). The wallbox is a fixed rule: a wallbox if the home has an EV. Each step sees the upstream decisions, so the design is coherent
 and planner overrides propagate. Deterministic rules then enforce hard constraints and snap sizes to the sizes
-installers actually use. Explanations combine model confidence, what the most similar past projects received,
+installers actually use (every battery size seen in the data). For the battery, the size is the one that fits the most plausible expert sizes, not the average. Explanations combine model confidence, what the most similar past projects received,
 and simple physics and economics.
 
 ## Data and attribution
@@ -70,12 +70,12 @@ and simple physics and economics.
 ## Known limitations
 
 - **Questions to Reonic are unanswered.** We do not know which offer was signed (we use the lowest option number), the module wattage at one installer (we assume 450 Wp; the export's module names suggest 455-475 W), or whether the 4,500 kWh demand is a default. Sensitivity to the first two is small (whole design 12.5-15.7% across six variants, measured before the wallbox rule).
-- **Placeholder demand.** 29% of projects show exactly 4,500 kWh, which looks like a default. At one installer the battery matches far less often on those homes (26% vs 41%). 13 projects with 0 kWh are treated as unknown.
+- **Placeholder demand.** 29% of projects show exactly 4,500 kWh, which looks like a default. At one installer the battery matches far less often on those homes (26% vs 51%). 13 projects with 0 kWh are treated as unknown.
 - **PV size is rebuilt.** The export rarely states it; we reconstruct it from module rows, package names or module counts.
 - **Experts vary.** For near-identical homes the installers' PV size spans 5.4-12.6 kWp, so PV agreement is limited by inputs we do not have (roof area and budget are not in the export).
 - **Wallbox.** A wallbox follows a fixed rule (home has an EV). Only 9% of homes with a wallbox have an EV on record, so the rule finds 7% of them.
 - **Heat pump.** Too few examples to learn sizing; the model effectively never proposes one.
 - **Homes that already have PV.** Only 18 of 1,593 homes do. Installers add no new PV for 12 of 17 of them (and a battery for 13 of 18), but the model still proposes new PV. A hard rule would be wrong for 5 of 17, and 18 examples are too few to learn it.
-- **The model adds little beyond a typical design** except for PV size, and does not carry over to an unseen installer better than a typical design. More data per installer, and inputs the export lacks (roof area, orientation, budget, location), are what would change that.
+- **The model adds little beyond a typical design** except for PV and battery size, and does not carry over to an unseen installer better than a typical design. More data per installer, and inputs the export lacks (roof area, orientation, budget, location), are what would change that.
 - **Physics and cost constants** (yield, self-consumption, heat pump efficiency, prices) are rough German defaults, not calibrated; savings and payback are labelled as rough assumptions. Heat pump fuel savings are not modelled.
 - **The business case is assumptions only**, not Reonic data.

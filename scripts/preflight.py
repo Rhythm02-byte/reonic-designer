@@ -146,6 +146,7 @@ def check_demo_script() -> None:
         f"added only a {pvx['expert']['Battery (kWh)']} kWh battery",
         f"{g(pvx['ours']['PV'])} kWp of new PV",
         pct(ev["model"]["pv_kwp"]["within_tolerance"]), pct(ev["typical"]["pv_kwp"]["within_tolerance"]),
+        pct(ev["model"]["battery_kwh"]["within_tolerance"]), pct(ev["typical"]["battery_kwh"]["within_tolerance"]),
         pct(ev["model"]["whole_design_within_tolerance"]), pct(ev["typical"]["whole_design_within_tolerance"]),
     ]
     # refine step: add an EV with 12,000 km to the typical home

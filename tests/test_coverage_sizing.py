@@ -1,7 +1,7 @@
 import numpy as np
 
 from reonic import evaluate
-from reonic.engine import Designer
+from reonic.engine import LEGACY, Designer
 from reonic.model import SIZE_TOLERANCE, coverage_size
 from reonic import synth
 
@@ -35,7 +35,7 @@ def test_coverage_designer_trains_and_keeps_rules():
 def test_blend_and_wider_battery_catalogue_keep_the_rules():
     from reonic.schema import HomeInputs
     df = synth.generate(500, seed=3)
-    narrow = Designer.train(df)
+    narrow = Designer.train(df, **LEGACY)
     wide = Designer.train(df, sizing="coverage", blend=0.5, battery_catalog_top=40)
     assert len(wide.catalog["battery_kwh"]) >= len(narrow.catalog["battery_kwh"])
     out = wide.design_batch(df.head(40))

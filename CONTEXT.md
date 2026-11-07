@@ -88,7 +88,7 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [ ] Reonic answers to the open questions (`reonic-data` skill, "Open questions")
 - [ ] Physics constants checked with Reonic experts
 - [x] Wallbox decided: deterministic "has an EV → wallbox" rule (CV showed no gain from a model). Whole-design score is 13.5% with it. Precision, recall and F2 reported (see `reonic-evaluate`)
-- [x] Unseen-installer evaluation run in both directions: 18.5% / 9.8% whole design vs baseline 4.2% / 5.6% (see `reonic-evaluate`)
+- [x] Unseen-installer evaluation run in both directions: 20.8% / 10.5% whole design vs typical design 31.5% / 9.9% (was 18.5% / 9.8% before the 8 Nov default change; see `reonic-evaluate`)
 - [x] Demo flow works on real data: example held-out homes in the sidebar, live design next to the expert's, refine (EV) and override steps, app trained on the training split only. Covered by `tests/test_app.py`
 - [x] Battery cut-off tuned by CV: no effect between 0.30 and 0.75, kept at 0.5. Heat pump not tuned (13 examples). See `reonic-evaluate`
 - [x] Deviation analysis done: three patterns with counts and rates, chart in `docs/figures/` (see `docs/specs/deviation-analysis.md`)
@@ -100,6 +100,7 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - 2026-11-07: Python + scikit-learn gradient boosting + Streamlit, for speed. No infrastructure.
 - 2026-11-07: Model order heat pump → PV → battery → wallbox, following the physics (load → generation → storage).
 - 2026-11-07: Wallbox is a deterministic rule (has an EV → wallbox), not a model. CV showed no gain from learning it; the cost is a lower whole-design score (13.2% vs 15.7%).
+- 2026-11-08: Default sizing changed: the battery uses coverage sizing (the size that fits the most plausible expert sizes) and snaps to all 40 battery sizes; PV and heat pump keep the plain prediction. Out-of-fold battery 40.1% → 47.1%, whole design 15.3% → 18.0%; battery gain held on fresh folds and on time-ordered splits, the PV gain did not. Tried and dropped: placeholder-row weighting, installer feature, neighbour blend, tuning, per-installer models. See `docs/rhythm-work-log.md`.
 - 2026-11-07: LLM optional and last-mile only. It must never change numbers.
 - 2026-11-07: No ticket tool. Tasks live in PLAN.md. Everyone reads the PDF before starting.
 - 2026-11-07: A typical design (ignores the home, median sizes) is now a permanent baseline next to the rule of thumb. Leakage checks showed a no-information model scores 11.7%, so beating the rule of thumb alone overstated the model. The honest claim: a measurable edge on PV size only (+8 points), none on battery or whole design, and none across installers.

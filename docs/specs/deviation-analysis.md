@@ -31,7 +31,7 @@ Retraining the model on the deviations. This feature explains results; it does n
 
 ## Findings (2026-11-07, out-of-fold, 1,593 projects)
 
-Overall agreement with the expert: PV 49.6%, battery 40.1%, wallbox 76.0%, heat pump 99.2%, whole design 15.3%.
+Overall agreement with the expert: PV 49.6%, battery 47.1%, wallbox 76.0%, heat pump 99.2%, whole design 18.0%.
 Agreement uses the evaluation rule: same include/exclude and, for PV, battery and heat pump, a size within tolerance (±20% PV, ±25% battery and heat pump; wallbox include only).
 
 Headline caution: the PV figure is lifted by easy rows (no PV: 83% agree; size unknown, scored on include only: 74%). Where the expert PV size is a real number, agreement is about 40% (size from module counts 40.3%, n=1,084; from module rows 39.7%, n=63; from package names 52.6%, n=116).
@@ -51,17 +51,17 @@ Headline caution: the PV figure is lifted by easy rows (no PV: 83% agree; size u
 - **Open:** why wallboxes are sold without a recorded EV (a customer preparing for a future EV, or the EV flag rarely being filled, or the wallbox sitting in a different offer than the first). Cannot be settled from the export.
 
 ### Pattern 3: battery agreement is low at one installer, and placeholder demand hurts there
-- **What:** battery agrees for 36% at `2a8ba8e2` (n=1,257) against 56% at `23c108b7` (n=336). Inside `2a8ba8e2`, homes with demand exactly 4,500 kWh (likely a placeholder) agree 26% (n=391) against 41% for other homes (n=866). At `23c108b7` there is no such difference (58%, n=66 vs 55%, n=270).
+- **What:** battery agrees for 43% at `2a8ba8e2` (n=1,257) against 62% at `23c108b7` (n=336). Inside `2a8ba8e2`, homes with demand exactly 4,500 kWh (likely a placeholder) agree 26% (n=391) against 51% for other homes (n=866). At `23c108b7` there is no such difference (71%, n=66 vs 60%, n=270).
 - **Reason (consistent with, not proven):** at `2a8ba8e2` the battery follows PV and PV follows demand, so a placeholder demand removes the signal. At `23c108b7` designs look package-driven, so demand matters less.
 - **Rejected hypothesis:** more varied battery sizes at the weaker installer. The opposite holds: `2a8ba8e2` has 82% of batteries in three sizes (10, 5, 7 kWh) against 70% at `23c108b7`. Choosing the wrong one of 5, 7 or 10 kWh exceeds the ±25% tolerance, which makes the metric strict there.
-- **Open:** the remaining gap on non-placeholder homes (41% vs 55%).
+- **Open:** the remaining gap on non-placeholder homes (51% vs 60%).
 - **Correction to an earlier result:** `reonic-evaluate` said the model scores placeholder homes "no worse" (82 test rows). With 457 projects the battery result is clearly worse at one installer. The earlier sample was too small.
 
 ### Weaker signal: projects with several offers
-Whole design agrees for 12.3% of projects with 2+ offers (n=300) against 16.0% with one offer (n=1,293). This points the way an option-choice problem would, but the difference is within noise. It supports asking Reonic which option was signed; it is not a finding.
+Whole design agrees for 16.0% of projects with 2+ offers (n=300) against 18.4% with one offer (n=1,293). This points the way an option-choice problem would, but the difference is within noise. It supports asking Reonic which option was signed; it is not a finding.
 
 ## Slide: "Where we disagree with experts, and why"
 - The experts disagree with each other: for near-identical homes their PV size spans 5.4-12.6 kWp, and one fixed typical size would match only 55% of them (our model: 47%).
 - 9 in 10 wallbox homes have no EV on record: the data cannot tell us who will get a wallbox.
-- A placeholder demand (4,500 kWh) cuts battery agreement from 41% to 26% at one installer.
+- A placeholder demand (4,500 kWh) cuts battery agreement from 51% to 26% at one installer.
 - Open: roof area and budget (not in the export), why wallboxes appear without an EV, which offer was signed.

@@ -34,17 +34,19 @@ The typical design was added after the leakage checks showed a model with no inf
 
 | | Model | Typical design | Model minus typical |
 |---|---|---|---|
-| Whole design | 15.3% | 16.1% | -0.8 points [-2.8, +1.1] (not different) |
+| Whole design | 18.0% | 16.1% | +1.8 points [-0.1, +3.8] (leans positive, interval touches zero) |
 | **PV size ±20%** | **49.6%** | 41.4% | **+8.2 points [+5.0, +11.4]** |
-| Battery size ±25% | 40.1% | 38.7% | +1.3 points [-1.5, +4.2] (not different) |
+| **Battery size ±25%** | **47.1%** | 38.7% | **+8.4 points [+6.0, +11.0]** |
 
-- The model's measurable edge is **PV size, within the installers it trained on**.
-- On whole design and battery, it is not distinguishable from proposing the typical design.
-- On an installer it has not seen, it does not beat the typical design (see the unseen-installer table).
+- The model's measurable edge is **PV size and battery size, within the installers it trained on**.
+- On the whole design the gain is small and its interval touches zero. Do not claim it. The model beats the typical design in 20 of 30 random splits.
+- On an installer it has not seen, it does not reliably beat the typical design (see the unseen-installer table).
+
+**Defaults changed on 8 Nov 2026.** Until then the battery used the plain mean prediction and snapped to the 15 most common sizes (whole design 15.3%, battery 40.1% [+1.3, interval -1.5 to +4.2 vs typical]). Now the battery size is the one that fits the most plausible expert sizes (quantile models, `coverage_size` in `model.py`) and snaps to all 40 sizes installers used (`Designer.train` defaults; `LEGACY` keeps the old setting). Evidence: out-of-fold on fresh folds, battery +5.4 points [+4.1, +6.7] and whole design +2.3 [+1.5, +3.1] over the old default; battery gain in 4 of 4 time-ordered windows; PV unchanged by construction. Applying coverage sizing to PV as well gave +1.9 on random folds but did not hold on time windows, so PV keeps the plain prediction. Details: `docs/rhythm-work-log.md`, `scripts/remaining_tests.py`, `scripts/improvement_ideas.py`.
 
 ## Engine fuzzing (`scripts/fuzz_engine.py`)
 
-2,000 random homes on the real data (unknowns, zero, negative, huge, NaN, nonsense categories, random planner overrides): **0 broken invariants** and no crash. Checked on every design: finite and non-negative sizes, probabilities in [0, 1], locked values returned exactly, rules R01-R04 hold, the wallbox appears if and only if the home has an EV, deterministic output, explanation present. The full run takes about 9 minutes (about 0.27 s per home); `tests/test_fuzz.py` runs 40 homes plus corner cases in the normal suite. The checker itself is tested: 8 tests feed it deliberately broken designs and confirm it flags each one.
+2,000 random homes on the real data (unknowns, zero, negative, huge, NaN, nonsense categories, tiny PV, negative existing PV, random planner overrides): **0 broken invariants** and no crash. The first version of the fuzzer missed a battery-cap overshoot and negative batteries from negative existing PV (found by a teammate and then by a wider fuzzer; fixed in `rules.py`). Checked on every design: finite and non-negative sizes, probabilities in [0, 1], locked values returned exactly, rules R01-R04 hold, the wallbox appears if and only if the home has an EV, deterministic output, explanation present. The full run takes about 9 minutes (about 0.27 s per home); `tests/test_fuzz.py` runs 40 homes plus corner cases in the normal suite. The checker itself is tested: 8 tests feed it deliberately broken designs and confirm it flags each one.
 
 ## Preflight (`scripts/preflight.py`)
 
@@ -54,15 +56,15 @@ One command before submitting: unit tests, no data in git or its history, and th
 
 | Check | Result | Reading |
 |---|---|---|
-| 1a. Group the split by customer (35 customers with 2+ projects, 71 projects) | Whole design 15.4% grouped vs 14.1% random (10 seeds); 3.6% of test projects share a customer with train | No inflation from repeat customers |
-| 1b. Shuffled labels (5 seeds) | Whole design 11.7% shuffled vs 14.1% real; PV 35.3% vs 48.3%; battery 32.6% vs 41.9% | Most of the whole-design score needs no information about the home. The model's real signal is mainly PV. |
-| 1c. Time split: earliest 80% of each installer's offers train, latest 20% test | 13.7% vs 16.1% for random splits of the same rows | No sign of decay over time; the difference is within noise |
+| 1a. Group the split by customer (35 customers with 2+ projects, 71 projects) | Whole design 16.7% grouped vs 16.6% random (10 seeds); 3.6% of test projects share a customer with train | No inflation from repeat customers |
+| 1b. Shuffled labels (5 seeds) | Whole design 14.0% shuffled vs 16.8% real; PV 35.3% vs 48.3%; battery 37.1% vs 47.1% | Most of the whole-design score needs no information about the home. The model's real signal is mainly PV. |
+| 1c. Time split: earliest 80% of each installer's offers train, latest 20% test | 18.1% vs 17.0% for random splits of the same rows | No sign of decay over time; the difference is within noise |
 
 Same-customer project pairs have an identical battery size 38% of the time (37 pairs) against 23% for random pairs at the same installer, so repeat customers are somewhat alike, but there are too few of them to matter.
 
 ## Repeated splits and intervals (`scripts/repeated_splits.py`)
 
-30 random 80/20 splits: whole design 14.6% (sd 1.9, range across splits 11.3-18.5%) for the model, 16.4% for the typical design, 5.4% for the rule of thumb. The model beat the typical design on whole design in 6 of 30 splits. PV: 49.5% vs 40.9% (+8.6 points, [+3.8, +14.0]). Battery: 41.9% vs 38.6% (+3.2, [-1.5, +7.8]). The bootstrap on out-of-fold predictions (table above) is the better interval, because the splits share training data.
+30 random 80/20 splits: whole design 17.1% (sd 1.9, 2.5-97.5% across splits 13.7-20.1%) for the model, 16.4% for the typical design, 5.4% for the rule of thumb. The model beat the typical design on whole design in 20 of 30 splits. PV: 49.5% vs 40.9% (+8.6 points, [+3.8, +14.0]). Battery: 47.1% vs 38.6% (+8.4, [+4.0, +13.0]). The bootstrap on out-of-fold predictions (table above) is the better interval, because the splits share training data.
 
 ## Unseen-installer evaluation (`scripts/unseen_installer.py`)
 
@@ -70,12 +72,12 @@ Trains on one installer and tests on the other, then swaps. Wallbox is the deter
 
 | Split | Train | Test | Whole design: model / rule of thumb / **typical design** | PV ±20%: model / rule / **typical** | Battery ±25%: model / rule / **typical** | Wallbox P / R / F2 |
 |---|---|---|---|---|---|---|
-| Random 80/20 | 1,274 | 319 | 13.5% / 3.8% / **15.0%** | 45.8% / 16.0% / **36.1%** | 38.9% / 23.8% / **34.8%** | 0.50 / 0.07 / 0.09 |
-| Train `2a8ba8e2`, test `23c108b7` | 1,257 | 336 | 18.5% / 4.2% / **31.5%** | 39.9% / 13.1% / **45.2%** | 47.3% / 18.2% / **61.9%** | 0.67 / 0.19 / 0.22 |
-| Train `23c108b7`, test `2a8ba8e2` | 336 | 1,257 | 9.8% / 5.6% / **9.9%** | 33.8% / 19.6% / **31.7%** | 32.0% / 30.4% / **32.5%** | 0.54 / 0.07 / 0.08 |
+| Random 80/20 | 1,274 | 319 | 15.4% / 3.8% / **15.0%** | 45.8% / 16.0% / **36.1%** | 47.3% / 23.8% / **34.8%** | 0.50 / 0.07 / 0.09 |
+| Train `2a8ba8e2`, test `23c108b7` | 1,257 | 336 | 20.8% / 4.2% / **31.5%** | 39.9% / 13.1% / **45.2%** | 62.2% / 18.2% / **61.9%** | 0.67 / 0.19 / 0.22 |
+| Train `23c108b7`, test `2a8ba8e2` | 336 | 1,257 | 10.5% / 5.6% / **9.9%** | 33.8% / 19.6% / **31.7%** | 32.8% / 30.4% / **32.5%** | 0.54 / 0.07 / 0.08 |
 
 Reading:
-- **Against the rule of thumb the model wins in both directions. Against the typical design it does not.** Training on the large installer and testing on the small one, the typical design scores 31.5% against the model's 18.5%. In the reverse direction they tie (9.9% vs 9.8%).
+- **Against the rule of thumb the model wins in both directions. Against the typical design it does not.** Training on the large installer and testing on the small one, the typical design scores 31.5% against the model's 20.8%. In the reverse direction they are level (9.9% vs 10.5%).
 - The earlier reading, "it carries over to an installer it has not seen", only held against the weak rule of thumb. Across installers the model mostly learns each installer's habits.
 - The small installer's designs are package-driven (batteries cluster at a few sizes), so a typical design lands inside the tolerance more often than a model trained on a different installer.
 - The PV score for `2a8ba8e2` as the test installer depends on the assumed 450 W module wattage (see the sensitivity table), because that installer's PV sizes are rebuilt from module counts.
@@ -123,6 +125,8 @@ Test split, scored once: isolated model 74.9% vs EV baseline 74.0%. The 0.9-poin
 | 2026-11-07 | real export, wallbox cut-off 0.78 (chosen by 5-fold CV on train) | random | 15.7% | 3.8% | wallbox 67% vs 74% (still worse). Isolated wallbox classifier: 74.9% vs 74.0% on test, within noise |
 | 2026-11-07 | real export, wallbox = deterministic EV rule | random | 13.2% | 3.8% | wallbox 74% = baseline; precision 0.50, recall 0.07, F2 0.09. PV and battery unchanged |
 | 2026-11-07 | real export, wallbox = EV rule | unseen installer | 18.5% (train 2a8ba8e2) / 9.8% (train 23c108b7) | 4.2% / 5.6% | see the unseen-installer table. Battery gain vanishes when training on the small installer |
+
+| 2026-11-08 | real export, default now battery coverage sizing + 40 battery sizes | random (seed 0) | 15.4% | 3.8% | battery 47.3% vs 38.9% before; out-of-fold whole design 18.0% (was 15.3%), battery 47.1% (was 40.1%), PV unchanged. Unseen installer: 20.8% / 10.5% |
 
 Add a row every time the model, thresholds, option choice or data changes. Never overwrite an old row.
 

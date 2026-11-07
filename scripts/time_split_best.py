@@ -15,10 +15,11 @@ import pandas as pd
 
 from reonic import data, evaluate
 from reonic.baseline import typical_design
-from reonic.engine import Designer
+from reonic.engine import ALL_SIZES, LEGACY, Designer
 from reonic.schema import INPUT_FIELDS, TARGETS
 
-BEST = dict(sizing="coverage", battery_catalog_top=40)
+BEST = dict(sizing="coverage", battery_catalog_top=40, coverage_for=ALL_SIZES)  # all three sizes
+BATTERY_ONLY = dict(sizing="coverage", battery_catalog_top=40, coverage_for=("battery_kwh",))
 full = data.load_raw("data/raw")
 for c in INPUT_FIELDS:
     if c not in full.columns:
@@ -31,7 +32,7 @@ order = dated["offer_created_at"].rank(method="first")
 def row(train: pd.DataFrame, test: pd.DataFrame) -> dict:
     t = test.reset_index(drop=True)
     out = {}
-    for name, pred in (("current", Designer.train(train).design_batch(t)), ("best", Designer.train(train, **BEST).design_batch(t)), ("typical", typical_design(train, t))):
+    for name, pred in (("current", Designer.train(train, **LEGACY).design_batch(t)), ("best", Designer.train(train, **BEST).design_batch(t)), ("typical", typical_design(train, t))):
         m = evaluate.metrics(pred, t)
         out[name] = {"whole": m["whole_design_within_tolerance"], "pv": m["pv_kwp"]["within_tolerance"], "battery": m["battery_kwh"]["within_tolerance"]}
     out["n_test"] = int(len(t))

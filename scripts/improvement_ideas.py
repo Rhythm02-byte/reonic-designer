@@ -27,7 +27,7 @@ import pandas as pd
 from sklearn.model_selection import KFold
 
 from reonic import data, engine, rules
-from reonic.engine import Designer
+from reonic.engine import ALL_SIZES, LEGACY, Designer
 from reonic.schema import INPUT_FIELDS, TARGETS
 
 _spec = importlib.util.spec_from_file_location("deviation_analysis", Path(__file__).resolve().parent / "deviation_analysis.py")
@@ -57,10 +57,10 @@ def with_installer(df):
 def run_variant(name, train, val):
     """`name` may combine ideas with "+", e.g. "coverage+nb_blend". nb_blend_hi gives the neighbours 75% of the weight."""
     engine.features = base_features
-    kw, blend, nosnap, snap_top = {}, 0.0, False, None
+    kw, blend, nosnap, snap_top = dict(LEGACY, coverage_for=ALL_SIZES), 0.0, False, None  # base = the old default
     for part in name.split("+"):
         if part == "coverage":
-            kw["sizing"] = "coverage"
+            kw["sizing"] = "coverage"  # all three sizes
         elif part == "ph_weight":
             kw["sample_weight"] = np.where(is_ph(train), 0.3, 1.0)
         elif part == "ph_drop":

@@ -20,6 +20,12 @@ def _got(col: pd.Series) -> pd.Series:
     return col.gt(0) | col.isna()
 
 
+# Defaults: coverage sizing for the battery only, snapping to every battery size installers used. Chosen by out-of-fold
+# and time-ordered tests (docs/rhythm-work-log.md). LEGACY is the previous default, kept so old comparisons can be re-run.
+LEGACY = dict(sizing="mean", battery_catalog_top=15)
+ALL_SIZES = ("heat_pump_kw", "pv_kwp", "battery_kwh")
+
+
 @dataclass
 class Designer:
     model: DesignModel
@@ -28,11 +34,12 @@ class Designer:
     blend: float = 0.0  # weight given to the median size of the most similar past homes (0 = model only)
 
     @classmethod
-    def train(cls, df: pd.DataFrame, sizing: str = "mean", sample_weight=None, params: dict | None = None,
-              blend: float = 0.0, battery_catalog_top: int = 15,
-              coverage_for: tuple = ("heat_pump_kw", "pv_kwp", "battery_kwh")) -> "Designer":
-        """battery_catalog_top: how many of the most common battery sizes the design snaps to (15 = as before; 40 = all
-        sizes installers used). Snapping to only 15 cost battery accuracy: see scripts/improvement_ideas.py."""
+    def train(cls, df: pd.DataFrame, sizing: str = "coverage", sample_weight=None, params: dict | None = None,
+              blend: float = 0.0, battery_catalog_top: int = 40,
+              coverage_for: tuple = ("battery_kwh",)) -> "Designer":
+        """battery_catalog_top: how many of the most common battery sizes the design snaps to (40 = every size installers
+        used; the old default was 15). sizing="coverage" with coverage_for picks, for those sizes, the size that fits the most
+        plausible expert sizes; the others keep the plain mean prediction. Snapping to only 15 cost battery accuracy: see scripts/improvement_ideas.py."""
         X, Y = features(df), df[list(TARGETS)].astype(float)
         catalog = {t: rules.common_sizes(Y[t].to_numpy(), top=battery_catalog_top if t == "battery_kwh" else 15) for t in TARGETS}
         return cls(DesignModel(sizing, params, coverage_for).fit(X, Y, sample_weight), Neighbours().fit(X, Y), catalog, blend)

@@ -2,7 +2,7 @@
 
 A running record so teammates can see what was done, what was tried, what worked, and what is left. Numbers come from
 the saved reports (`reports/*.json`, git-ignored: re-run the scripts to regenerate) and use the real export, which is
-confidential and not in git. Last updated Sat 7 Nov 2026, evening.
+confidential and not in git. Last updated Sun 8 Nov 2026, just after midnight (defaults switched, see section 0).
 
 How to read a result: every comparison is 5-fold out-of-fold on all 1,593 projects with a bootstrap 95% interval on the
 gain. **Believe a gain only if the whole interval is above zero.** "Whole design" = PV, battery, heat pump and wallbox all
@@ -23,11 +23,16 @@ within tolerance (PV ±20%, battery and heat pump ±25%).
 | Unit tests | 57 | 78 | `pytest` | On main |
 | Stale numbers in README, deck, demo script | Found by eye | Caught by `scripts/preflight.py` | 17 + 20 + 11 numbers | On main |
 
+**Update, 8 Nov: the defaults are switched.** `Designer.train` now uses battery-only coverage sizing and all 40 battery
+sizes (the old setting is `engine.LEGACY`). Reports, README, deck and demo script were regenerated; preflight passes.
+New headline (out-of-fold, 1,593 projects): PV 49.6% vs 41.4% typical (+8.2 [+5.0, +11.4]); **battery 47.1% vs 38.7%
+(+8.4 [+6.0, +11.0])**; whole design 18.0% vs 16.1% (+1.8 [-0.1, +3.8], leans positive, not claimed). Unseen installer:
+20.8% vs 31.5% and 10.5% vs 9.9% (whole design). Rows below that quote 14.7%, 15.3% and so on describe the old default.
+
 What did **not** improve, and is not worth more time: placeholder-row handling, installer as a feature, neighbour blend,
 hand-tuned or nested-CV boosting settings, one model per installer, and more training data (the learning curve is flat).
-The shipped default is unchanged, so the app, README and deck still show whole design 15.3% out-of-fold.
-Safe claim for the pitch: battery sizing improves by roughly 3 to 9 points, PV is unchanged, and the whole-design gain is
-real but smaller and noisier than the random-fold headline.
+Safe claim for the pitch: PV and battery size each beat a typical design by about 8 points; the whole-design gain is small
+and not proven.
 
 ## 1. What I built (on `main`)
 
@@ -42,12 +47,13 @@ real but smaller and noisier than the random-fold headline.
 | Deviation analysis | Where and why we differ from the experts | `scripts/deviation_analysis.py`, `docs/specs/deviation-analysis.md` |
 | Business case, deck, demo script | Transparent assumptions; 7-slide deck; scripted demo | `docs/` |
 
-## 2. Where the model stands (current defaults)
+## 2. Where the model stands (current defaults, 8 Nov)
 
-- Out-of-fold whole design **15.3%**; typical design (same median size for everyone) 16.1%; rule of thumb 5.3%.
-- Real edge: **PV size**, +8.2 points over the typical design (95% interval +5.0 to +11.4).
-- No clear edge on the whole design, and a new installer is not beaten by a typical design (train 2a8ba8e2 → test
-  23c108b7: 18.5% vs 31.5%).
+- Out-of-fold whole design **18.0%**; typical design (same median size for everyone) 16.1%; rule of thumb 5.3%.
+- Real edge: **PV size**, +8.2 points over the typical design (95% interval +5.0 to +11.4), and **battery size**, +8.4
+  (+6.0 to +11.0).
+- Whole design +1.8 (-0.1 to +3.8): not claimed. A new installer is still not reliably beaten (train 2a8ba8e2 → test
+  23c108b7: 20.8% vs 31.5%).
 - Wallbox: a learned model did no better than the rule "has an EV → wallbox", so it is a rule.
 
 ## 3. Improvement ideas tested
@@ -123,12 +129,12 @@ their 2,000-home fuzz found 194 rule-breaking designs. I cannot see their code, 
   regression tests. Earlier "0 of 2,000" referred to the narrower fuzzer.
 - What they flagged that we do not have: PV rounding past the roof cap (ours caps before rounding, checked).
 
-## 4. Code that exists but is opt-in
+## 4. Options on `Designer.train`
 
-`Designer.train(df, sizing="coverage", battery_catalog_top=40, blend=0.5, sample_weight=..., params=...)`. The defaults
-are unchanged, so the app, README, deck and demo script still show the old numbers. Switching the default means
-regenerating the reports, README, deck and demo script, then running `scripts/preflight.py` (~40 min; training gets
-~2.5× slower, so also save the trained model to disk).
+`Designer.train(df, sizing="coverage", coverage_for=("battery_kwh",), battery_catalog_top=40, blend=0.0, sample_weight=None, params=None)`.
+The values shown for the first three are the **defaults since 8 Nov**. `engine.LEGACY` (`sizing="mean"`, 15 battery sizes)
+reproduces the old behaviour; the experiment scripts use it as "current". `blend`, `sample_weight` and `params` are
+off by default (tested, not useful). Anyone with an old `models/designer.joblib` must retrain: `python -m reonic train`.
 
 ## 5. How to check or add an idea
 

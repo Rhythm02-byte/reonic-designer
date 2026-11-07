@@ -35,6 +35,8 @@ PALETTE = {  # Reonic-ish: warm off-whites, anthracite, emerald accent
     "led": ("#34D399", 0.4), "car": ("#55657A", 0.3), "tyre": ("#1E1F22", 0.9), "trunk": ("#8A6C4D", 0.9),
     "leaf": ("#9DB69A", 0.9), "wood": ("#8F6E52", 0.8), "metal": ("#9AA0A6", 0.45), "base": ("#BDB8AE", 0.9),
     "curb": ("#C8C4BB", 0.9), "soil": ("#6B5A48", 1.0), "terrace": ("#CFCBC2", 0.85),
+    "hedge": ("#7F9C78", 0.95), "conifer": ("#6E8A6A", 0.95), "stone": ("#E2DED5", 0.9), "tail": ("#B4483F", 0.4),
+    "bloom": ("#E8C9A0", 0.9), "rail": ("#AEB4BA", 0.4),
 }
 MODEL_MATS = {  # the model's material names -> PALETTE
     "plaster_white": "wall", "roof_01": "roof", "metal_blue": "ridge", "wood_brown": "wood", "wood_balls_brown": "wood",
@@ -245,6 +247,11 @@ def heat_pump():
         box(f"HeatPump_Blade{k}", (0.08, 0.33, 0.012), (0, 0, 0), "pv_frame", rot=(0, 0, k * 2 * math.pi / 3),
             parent=fan).data.transform(Matrix.Translation((0, 0.17, 0)))
     box("HeatPump_Panel", (0.3, 0.02, 0.7), (0.42, -0.28, 0.02), "pv_frame", parent=hp)
+    box("HeatPump_Cover", (1.36, 0.6, 0.04), (0, 0, 0.52), "metal", parent=hp)
+    for k in range(5):  # side louvres on the service panel
+        box(f"HeatPump_Louvre{k}", (0.24, 0.015, 0.025), (0.42, -0.295, -0.22 + k * 0.1), "dark", parent=hp)
+    for k, dx in enumerate((0.3, 0.42)):  # refrigerant lines into the wall, in white trunking
+        box(f"HeatPump_Pipe{k}", (0.06, 0.5, 0.06), (dx, 0.5, -0.2 + k * 0.08), "frame", parent=hp)
 
 
 def batteries_and_wallbox():
@@ -254,12 +261,21 @@ def batteries_and_wallbox():
     for i in range(BATTERIES):
         b = bevel(box(f"Battery_{i + 1}", (0.62, 0.2, 0.36), (bx, by, PAVING + 0.45 + i * 0.4), "device"), 0.02, 2)
         box(f"Battery_{i + 1}_LED", (0.36, 0.01, 0.025), (0, -0.105, 0.1), "led", parent=b)
+        box(f"Battery_{i + 1}_Seam", (0.64, 0.205, 0.02), (0, 0, -0.19), "metal", parent=b)
+        if i == 0:  # the base unit carries the plinth
+            box("Battery_1_Plinth", (0.66, 0.24, 0.24), (0, 0, -0.3), "dark", parent=b)
     # the wallbox on a charging post beside the car's nose, out of the garage's shadow
     wb = bevel(box("Wallbox", (0.4, 0.16, 0.56), (-3.6, -4.9, PAVING + 1.3), "device"), 0.03, 2)
     box("Wallbox_Post", (0.14, 0.14, 1.3), (0, 0.12, -0.65), "dark", parent=wb)
     box("Wallbox_Face", (0.3, 0.01, 0.4), (0, -0.085, 0), "dark", parent=wb)
     box("Wallbox_LED", (0.18, 0.01, 0.03), (0, -0.092, 0.13), "led", parent=wb)
     cylinder("Wallbox_Plug", 0.06, 0.07, (0, -0.1, -0.08), "pv_frame", rot=(math.pi / 2, 0, 0), segs=12, parent=wb)
+    box("Wallbox_Base", (0.34, 0.34, 0.04), (0, 0.12, -1.29), "metal", parent=wb)
+    box("Wallbox_Cap", (0.46, 0.22, 0.03), (0, 0.02, 0.295), "dark", parent=wb)
+    for k in range(9):  # the charging cable hanging in a loop beside the box, as short segments
+        a = math.radians(200 + k * 20)
+        box(f"Wallbox_Cable{k}", (0.07, 0.03, 0.03), (0.26 + 0.12 * math.cos(a), -0.02, -0.3 + 0.2 * math.sin(a)), "dark",
+            rot=(0, -(a + math.pi / 2), 0), parent=wb)
 
 
 def extrude(name: str, profile, half_width: float, mat: str) -> bpy.types.Mesh:
@@ -288,7 +304,12 @@ def car():
     obj("Car_Roof", roof, parent=c)
     for i, (x, y) in enumerate(((-0.86, -1.35), (0.86, -1.35), (-0.86, 1.35), (0.86, 1.35))):
         cylinder(f"Car_Wheel{i}", 0.33, 0.24, (x, y, -0.33), "tyre", rot=(0, math.pi / 2, 0), parent=c)
+        cylinder(f"Car_Rim{i}", 0.2, 0.02, (x * 1.15, y, -0.33), "rail", rot=(0, math.pi / 2, 0), segs=16, parent=c)
     box("Car_Lights", (1.4, 0.02, 0.07), (0, -2.19, 0.14), "frame", parent=c)
+    box("Car_Tail", (1.5, 0.02, 0.08), (0, 2.19, 0.16), "tail", parent=c)
+    for side in (-1, 1):
+        box(f"Car_Mirror{side}", (0.14, 0.08, 0.07), (side * 0.98, -0.95, 0.42), "car", parent=c)
+        box(f"Car_Pillar{side}", (0.02, 0.1, 0.52), (side * 0.785, 0.45, 0.55), "car", parent=c)
 
 
 def trees():
@@ -299,6 +320,23 @@ def trees():
         obj(f"Tree{i}_Crown", me, (x, y, LAWN + 2.2 * s))
 
 
+def garden():
+    """Hedges round the back and sides, two conifers and a few shrubs, so the house sits in a garden, not on a tray."""
+    for name, size, loc in (("Hedge_Back", (19.0, 0.7, 0.9), (0.6, 9.75, LAWN + 0.45)),
+                            ("Hedge_West", (0.7, 11.0, 0.9), (-9.9, 4.0, LAWN + 0.45)),
+                            ("Hedge_East", (0.7, 11.0, 0.9), (11.1, 4.0, LAWN + 0.45))):
+        bevel(box(name, size, loc, "hedge"), 0.2, 2)
+    for i, (x, y, s) in enumerate(((-8.6, 2.0, 1.0), (9.8, 2.6, 1.15))):
+        cylinder(f"Conifer{i}_Trunk", 0.1 * s, 0.6 * s, (x, y, LAWN + 0.3 * s), "trunk", segs=8)
+        me = bm_mesh(f"Conifer{i}", lambda bm: bmesh.ops.create_cone(bm, cap_ends=True, segments=10, radius1=0.9 * s,
+                                                                     radius2=0, depth=3.2 * s), "conifer")
+        obj(f"Conifer{i}", me, (x, y, LAWN + 0.6 * s + 1.6 * s))
+    for i, (x, y, r, mat) in enumerate(((-8.8, -6.8, 0.55, "hedge"), (-8.0, -7.6, 0.4, "bloom"), (9.6, -6.0, 0.6, "hedge"),
+                                        (10.4, -7.0, 0.42, "leaf"), (8.6, 8.2, 0.5, "bloom"))):
+        me = bm_mesh(f"Shrub{i}", lambda bm: bmesh.ops.create_icosphere(bm, subdivisions=1, radius=r), mat)
+        obj(f"Shrub{i}", me, (x, y, LAWN + r * 0.7))
+
+
 def build() -> int:
     strip()
     ground()
@@ -307,6 +345,7 @@ def build() -> int:
     batteries_and_wallbox()
     car()
     trees()
+    garden()
     return panels
 
 

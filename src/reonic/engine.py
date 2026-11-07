@@ -101,7 +101,12 @@ class Designer:
             v, col = values[t], nb[t]
             share = _got(col).mean()
             med = col[col > 0].median() if (col > 0).any() else 0.0
-            who = "set by planner" if t in locked else f"model {p[t]:.0%} sure to include"
+            if t in locked:
+                who = "set by planner"
+            elif t == "wallbox_kw":
+                who = "rule: home has an EV" if p[t] >= 1.0 else "rule: no EV in the home"
+            else:
+                who = f"model {p[t]:.0%} sure to include"
             if v > 0:
                 lines.append(f"{LABEL[t]} {v:g} {UNIT[t]} ({who}); {share:.0%} of {len(col)} similar homes got one, median {med:g} {UNIT[t]}.")
             else:

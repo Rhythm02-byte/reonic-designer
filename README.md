@@ -29,7 +29,7 @@ Real data: copy the Reonic export folders (`<installer_id>/projects_status_quo.c
 
 The expert design for each project is rebuilt from the offer's line items. A chain of gradient-boosting
 models then decides, per component, whether it is included and how large it is, in physical order
-(heat pump → PV → battery → wallbox). Each step sees the upstream decisions, so the design is coherent
+(heat pump → PV → battery). The wallbox is a fixed rule: a wallbox if the home has an EV. Each step sees the upstream decisions, so the design is coherent
 and planner overrides propagate. Deterministic rules then enforce hard constraints and snap sizes to the sizes
 installers actually use. Explanations combine model confidence, what the most similar past projects received,
 and simple physics and economics.

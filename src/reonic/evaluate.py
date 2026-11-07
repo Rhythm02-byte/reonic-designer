@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, fbeta_score, precision_score, recall_score
 from sklearn.model_selection import GroupShuffleSplit, train_test_split
 
 from .baseline import rule_of_thumb
@@ -28,7 +28,11 @@ def metrics(pred: pd.DataFrame, truth: pd.DataFrame) -> dict:
         all_ok &= ok
         out[t] = {
             "include_accuracy": float((has_y == has_p).mean()),
+            "include_precision": float(precision_score(has_y, has_p, zero_division=0)),
+            "include_recall": float(recall_score(has_y, has_p, zero_division=0)),
             "include_f1": float(f1_score(has_y, has_p, zero_division=0)),
+            # F2 weights recall twice as much as precision: a missed component costs more than an extra one.
+            "include_f2": float(fbeta_score(has_y, has_p, beta=2.0, zero_division=0)),
             "size_mae": float(np.abs(p - y)[both].mean()) if both.any() else None,
             "expert_include_rate": float(has_y.mean()),
             "size_median_rel_error": float(np.median(rel[both])) if both.any() else None,
@@ -76,6 +80,12 @@ def print_report(r: dict) -> None:
             m, b = r["model"][t][k], r["baseline"][t][k]
             fmt = lambda x: "  -" if x is None else f"{x:.3f}"
             print(f"{t:14}{k:26}{fmt(m):>10}{fmt(b):>10}")
+    print()
+    print("wallbox include decision (precision, recall, F1, F2 with beta=2):")
+    print(f"{'':14}{'metric':26}{'model':>10}{'baseline':>10}")
+    for k in ("include_precision", "include_recall", "include_f1", "include_f2"):
+        print(f"{'wallbox_kw':14}{k:26}{r['model']['wallbox_kw'][k]:>10.3f}{r['baseline']['wallbox_kw'][k]:>10.3f}")
+    print()
     print(f"{'whole design within tolerance':40}{r['model']['whole_design_within_tolerance']:>10.3f}"
           f"{r['baseline']['whole_design_within_tolerance']:>10.3f}")
     for k, v in r.get("by_installer", {}).items():

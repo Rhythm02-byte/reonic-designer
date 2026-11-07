@@ -41,7 +41,7 @@ Planners at solar installers spend hours designing each home's system before an 
 ```
 HomeInputs ─► features (raw + physics-informed: EV kWh, future demand, kWp for full demand)
            ─► learned chain, physical order:
-                heat pump? & size ─► PV? & size ─► battery? & size ─► wallbox? & size
+                heat pump? & size ─► PV? & size ─► battery? & size      then wallbox = rule (has an EV)
                 (each step sees the upstream decision, so overrides propagate)
            ─► deterministic rules R01–R04 + snapping to sizes installers actually use
            ─► explanation: model confidence + similar past projects + rough physics/economics
@@ -85,13 +85,15 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [ ] Every teammate has read the challenge PDF (§0)
 - [ ] Reonic answers to the open questions (`reonic-data` skill, "Open questions")
 - [ ] Physics constants checked with Reonic experts
-- [ ] Include thresholds: wallbox cut-off set to 0.78 by CV. Still worse than the EV baseline (67% vs 74% in the pipeline). Likely cause: train/predict mismatch in the wallbox step (see `reonic-evaluate`)
+- [x] Wallbox decided: deterministic "has an EV → wallbox" rule (CV showed no gain from a model). Whole-design score is 13.2% with it. Precision, recall and F2 reported (see `reonic-evaluate`)
+- [ ] Tune battery and heat pump include thresholds on a validation split
 - [ ] Deviation analysis · alternatives/confidence · homeowner view (specs in `docs/specs/`)
 - [ ] Pitch deck · demo recording · final README
 
 **Decisions**
 - 2026-11-07: Python + scikit-learn gradient boosting + Streamlit, for speed. No infrastructure.
 - 2026-11-07: Model order heat pump → PV → battery → wallbox, following the physics (load → generation → storage).
+- 2026-11-07: Wallbox is a deterministic rule (has an EV → wallbox), not a model. CV showed no gain from learning it; the cost is a lower whole-design score (13.2% vs 15.7%).
 - 2026-11-07: LLM optional and last-mile only. It must never change numbers.
 - 2026-11-07: No ticket tool. Tasks live in PLAN.md. Everyone reads the PDF before starting.
 - 2026-11-07: Build on the real data and report the honest result, rather than tuning on the test set or hiding weak areas (wallbox, heat pump).

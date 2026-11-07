@@ -8,6 +8,27 @@ How to read a result: every comparison is 5-fold out-of-fold on all 1,593 projec
 gain. **Believe a gain only if the whole interval is above zero.** "Whole design" = PV, battery, heat pump and wallbox all
 within tolerance (PV ±20%, battery and heat pump ±25%).
 
+## 0. What improved (summary)
+
+| Area | Before | After | Evidence | Status |
+|---|---|---|---|---|
+| Whole design, fresh folds (seeds 1-3) | 14.7% | **18.7%** (+4.0, interval +2.8 to +5.1) | `scripts/remaining_tests.py confirm` | Opt-in, not the default |
+| Battery within tolerance, fresh folds | 40.8% | **46.0%** (+5.2, +3.7 to +6.7) | same | Opt-in |
+| PV within tolerance, fresh folds | 49.4% | 51.4% (+1.9, +0.6 to +3.4) | same | Opt-in |
+| Gain over the typical design | – | +2.3 (+0.5 to +4.1) | same | Opt-in |
+| Battery on time-ordered splits | 40.6 / 41.0 / 49.2 / 47.9% | 45.7 / 49.8 / 52.1 / 52.4% | `scripts/time_split_best.py` | Gain in 4 of 4 windows |
+| Whole design on time-ordered splits | 13.7 / 12.7 / 19.7 / 19.0% | 18.4 / 16.2 / 19.0 / 22.9% | same | Gain in 3 of 4; noisy |
+| Rule bugs (battery over its cap, negative battery, a crash) | 19 broken in 600 fuzzed homes | 0 in 600, and 0 in a fresh 2,000 | `scripts/fuzz_engine.py` | **Fixed on main** |
+| Crash on a small training subset with no heat pump | Crashed | Trains | `tests/test_coverage_sizing.py` | **Fixed on main** |
+| Unit tests | 57 | 78 | `pytest` | On main |
+| Stale numbers in README, deck, demo script | Found by eye | Caught by `scripts/preflight.py` | 17 + 20 + 11 numbers | On main |
+
+What did **not** improve, and is not worth more time: placeholder-row handling, installer as a feature, neighbour blend,
+hand-tuned or nested-CV boosting settings, one model per installer, and more training data (the learning curve is flat).
+The shipped default is unchanged, so the app, README and deck still show whole design 15.3% out-of-fold.
+Safe claim for the pitch: battery sizing improves by roughly 3 to 9 points, PV is unchanged, and the whole-design gain is
+real but smaller and noisier than the random-fold headline.
+
 ## 1. What I built (on `main`)
 
 | Area | What | Where |

@@ -97,7 +97,7 @@ Question: are the 457 projects with exactly 4,500 kWh (29%) distorting the resul
 | C. default rows only, same model | 18.3% | 56.1% | 34.1% | 82 | — |
 | C. other rows only, same model | 14.8% | 41.4% | 40.9% | 237 | — |
 
-Reading: removing the default rows does not change the conclusion, and the model scores them no worse than other homes. Test sets are small (82 and 228 rows), so differences of a few points are within noise. The check does not prove the 4,500 kWh values are wrong, only that they don't break the result.
+Reading: removing the default rows does not change the overall conclusion. **Correction:** the "no worse than other homes" reading came from only 82 test rows. On all 1,593 projects (out-of-fold, `scripts/deviation_analysis.py`), placeholder homes at `2a8ba8e2` get the battery right 26% of the time (n=391) against 41% for other homes (n=866), with no such gap at `23c108b7`. See `docs/specs/deviation-analysis.md`. Test sets are small (82 and 228 rows), so differences of a few points are within noise. The check does not prove the 4,500 kWh values are wrong, only that they don't break the result.
 
 ## Simulation study (`scripts/simulation_study.py`)
 

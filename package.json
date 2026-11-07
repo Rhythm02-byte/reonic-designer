@@ -1,0 +1,21 @@
+{
+  "name": "thinc",
+  "private": true,
+  "description": "thinc! x Reonic monorepo scripts (Windows; uses services/engine/.venv)",
+  "scripts": {
+    "setup:engine": "python -m venv services/engine/.venv && services\\engine\\.venv\\Scripts\\python -m pip install -e services/engine",
+    "engine:dev": "services\\engine\\.venv\\Scripts\\python -m uvicorn engine.api.main:app --reload --port 8000",
+    "train": "services\\engine\\.venv\\Scripts\\python -m engine.policy.train",
+    "etl": "services\\engine\\.venv\\Scripts\\python -m engine.etl.normalize --raw dataset --out data/processed",
+    "eval": "services\\engine\\.venv\\Scripts\\python eval/run.py --data dataset --offline",
+    "report:correlations": "services\\engine\\.venv\\Scripts\\python research/data_correlations.py",
+    "test": "cd services/engine && .venv\\Scripts\\python -m pytest -q",
+    "contracts": "npm --prefix packages/contracts run build",
+    "web:install": "pnpm --dir apps/web install",
+    "web:dev": "pnpm --dir apps/web dev",
+    "web:build": "pnpm --dir apps/web build",
+    "web:lint": "pnpm --dir apps/web lint",
+    "eval:record": "services\\engine\\.venv\\Scripts\\python eval/record.py",
+    "lab:seed": "services\\engine\\.venv\\Scripts\\python eval/record.py"
+  }
+}

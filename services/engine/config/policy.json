@@ -1,0 +1,39 @@
+{
+  "mode": "composite",
+  "pvGate": 0.5,
+  "sources": {
+    "pv": "M1",
+    "battery": "M1",
+    "heatPump": "M1",
+    "wallbox": "B0c"
+  },
+  "features": {
+    "physics": true,
+    "installerPrior": true
+  },
+  "model": {
+    "maxDepth": 3,
+    "minLeaf": 40
+  },
+  "conformal": {
+    "pv_kwp": 0.636,
+    "battery_kwh": 0.0
+  },
+  "sizing": {
+    "coverage": [
+      "battery"
+    ]
+  },
+  "chosen": "composite",
+  "selectedOn": "validation 2025-10-01..2025-12-31 (train <= 2025-09-30)",
+  "criterion": "per component: validation within-tolerance, tie-break validation EMS",
+  "validationScores": {
+    "ems": 59.764896603050445,
+    "wholeDesign": 0.2413793103448276,
+    "pv": 0.521551724137931,
+    "battery": 0.5818965517241379,
+    "heatPump": 0.9655172413793104,
+    "wallbox": 0.7672413793103449
+  },
+  "generatedAt": "2026-11-07T21:16:14+00:00"
+}

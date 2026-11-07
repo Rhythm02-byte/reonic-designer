@@ -1,0 +1,61 @@
+{
+  "status": "Snapshot only; no evaluation rerun or model selection by Codex",
+  "source": "eval/results/latest.json",
+  "sourceSha256": "41a377ed18480e1ac1ec20592bafaf2c370eb04b145f64641f331ae4e6db6821",
+  "generatedAt": "2026-11-07T18:59:49+00:00",
+  "nProjects": 1593,
+  "nTestProjects": 325,
+  "offline": true,
+  "trainWindow": "offers <= 2025-09-30",
+  "validationWindow": "2025-10-01..2025-12-31",
+  "testWindow": "2026",
+  "nValidation": 232,
+  "criterion": "validation EMS (primary option), tie-break whole-design",
+  "chosen": {
+    "model": "M1",
+    "pvGate": 0.6
+  },
+  "test": {
+    "B0": {
+      "ems": 61.13551749908371,
+      "wholeDesign": 0.20615384615384616,
+      "pv": 0.4246153846153846,
+      "battery": 0.47384615384615386,
+      "heatPump": 0.9907692307692307,
+      "wallbox": 0.76
+    },
+    "B0c": {
+      "ems": 58.965555760317436,
+      "wholeDesign": 0.19076923076923077,
+      "pv": 0.4307692307692308,
+      "battery": 0.39384615384615385,
+      "heatPump": 0.9938461538461538,
+      "wallbox": 0.7815384615384615
+    },
+    "B1": {
+      "ems": 54.995188646344914,
+      "wholeDesign": 0.1476923076923077,
+      "pv": 0.3292307692307692,
+      "battery": 0.4,
+      "heatPump": 0.9938461538461538,
+      "wallbox": 0.7815384615384615
+    },
+    "M1": {
+      "ems": 58.77290140581325,
+      "wholeDesign": 0.16923076923076924,
+      "pv": 0.563076923076923,
+      "battery": 0.48615384615384616,
+      "heatPump": 0.9907692307692307,
+      "wallbox": 0.7815384615384615
+    },
+    "H1": {
+      "ems": 62.50482939068242,
+      "wholeDesign": 0.2,
+      "pv": 0.563076923076923,
+      "battery": 0.5107692307692308,
+      "heatPump": 0.9938461538461538,
+      "wallbox": 0.7815384615384615
+    }
+  },
+  "testNote": "refit on train+validation (offers <= 2025-12-31), 2026 scored once with the validation-chosen config"
+}

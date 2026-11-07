@@ -1,0 +1,94 @@
+{
+  "kind": "presentation QA, not engine evaluation",
+  "sourceSnapshotCurrent": true,
+  "sourceSha256": "41a377ed18480e1ac1ec20592bafaf2c370eb04b145f64641f331ae4e6db6821",
+  "slides": 11,
+  "mainPitchSeconds": 300,
+  "pageErrors": [],
+  "unexpectedNetworkRequests": [],
+  "layout": [
+    {
+      "title": "The starting point",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "The information problem",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "The approach",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "What the evidence says",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "The demo sequence",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "Trust and missing information",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "Compatibility, without overclaiming",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "The pilot",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "Appendix: full scorecard",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "Appendix: delivery boundary",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    },
+    {
+      "title": "Appendix: evidence and handoff",
+      "overflow": [],
+      "activeCount": 1,
+      "contentHeight": 521,
+      "contentScroll": 521
+    }
+  ],
+  "navigationNotesOverviewPrintAndMobileControls": "checked",
+  "limitations": [
+    "System font fallback; Geist not bundled",
+    "No live application or model test run",
+    "Visual QA is not full accessibility certification"
+  ]
+}

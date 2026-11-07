@@ -1,0 +1,495 @@
+{
+  "m1": {
+    "features": {
+      "physics": true,
+      "installerPrior": true
+    },
+    "model": {
+      "maxDepth": 3,
+      "minLeaf": 40
+    },
+    "pvGate": 0.5,
+    "name": "+regularisation {'maxDepth': 3, 'minLeaf': 40}"
+  },
+  "sources": {
+    "pv": "M1",
+    "battery": "M1",
+    "heatPump": "M1",
+    "wallbox": "B0c"
+  },
+  "pvGate": 0.5,
+  "conformal": {
+    "pv_kwp": 0.636,
+    "battery_kwh": 0.0
+  },
+  "sizing": {
+    "coverage": [
+      "battery"
+    ]
+  },
+  "sizingCandidates": [
+    {
+      "name": "none (current)",
+      "sizing": {},
+      "ems": 58.55072726673354,
+      "wholeDesign": 0.23706896551724138,
+      "pv": 0.521551724137931,
+      "battery": 0.5560344827586207,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "battery catalog = all installed sizes",
+      "sizing": {
+        "batteryCatalogTop": 0
+      },
+      "ems": 57.75987524584856,
+      "wholeDesign": 0.21551724137931033,
+      "pv": 0.521551724137931,
+      "battery": 0.5301724137931034,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "coverage sizing PV",
+      "sizing": {
+        "coverage": [
+          "pv"
+        ]
+      },
+      "ems": 57.6850155707341,
+      "wholeDesign": 0.20689655172413793,
+      "pv": 0.5043103448275862,
+      "battery": 0.5775862068965517,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "coverage sizing battery",
+      "sizing": {
+        "coverage": [
+          "battery"
+        ]
+      },
+      "ems": 59.764896603050445,
+      "wholeDesign": 0.2413793103448276,
+      "pv": 0.521551724137931,
+      "battery": 0.5818965517241379,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "coverage sizing PV + battery",
+      "sizing": {
+        "coverage": [
+          "pv",
+          "battery"
+        ]
+      },
+      "ems": 57.35641214660582,
+      "wholeDesign": 0.2025862068965517,
+      "pv": 0.5043103448275862,
+      "battery": 0.5474137931034483,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "coverage PV + battery (catalog candidates)",
+      "sizing": {
+        "coverage": [
+          "pv",
+          "battery"
+        ],
+        "coverageCandidates": "catalog"
+      },
+      "ems": 57.0999865399647,
+      "wholeDesign": 0.21551724137931033,
+      "pv": 0.5043103448275862,
+      "battery": 0.5818965517241379,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "neighbour blend 0.5",
+      "sizing": {
+        "blend": 0.5
+      },
+      "ems": 59.520911844841024,
+      "wholeDesign": 0.22844827586206898,
+      "pv": 0.5258620689655172,
+      "battery": 0.5301724137931034,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "catalog + coverage",
+      "sizing": {
+        "batteryCatalogTop": 0,
+        "coverage": [
+          "pv",
+          "battery"
+        ]
+      },
+      "ems": 56.97486680816393,
+      "wholeDesign": 0.2025862068965517,
+      "pv": 0.5043103448275862,
+      "battery": 0.5344827586206896,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "catalog + coverage (catalog candidates)",
+      "sizing": {
+        "batteryCatalogTop": 0,
+        "coverage": [
+          "pv",
+          "battery"
+        ],
+        "coverageCandidates": "catalog"
+      },
+      "ems": 56.399156399479395,
+      "wholeDesign": 0.21982758620689655,
+      "pv": 0.5043103448275862,
+      "battery": 0.5732758620689655,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "catalog + blend",
+      "sizing": {
+        "batteryCatalogTop": 0,
+        "blend": 0.5
+      },
+      "ems": 59.042782853781006,
+      "wholeDesign": 0.22413793103448276,
+      "pv": 0.5258620689655172,
+      "battery": 0.521551724137931,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "coverage + blend",
+      "sizing": {
+        "coverage": [
+          "pv",
+          "battery"
+        ],
+        "blend": 0.5
+      },
+      "ems": 59.2994984852152,
+      "wholeDesign": 0.22844827586206898,
+      "pv": 0.5086206896551724,
+      "battery": 0.5517241379310345,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    },
+    {
+      "name": "catalog + coverage + blend",
+      "sizing": {
+        "batteryCatalogTop": 0,
+        "coverage": [
+          "pv",
+          "battery"
+        ],
+        "blend": 0.5
+      },
+      "ems": 59.22606298074522,
+      "wholeDesign": 0.22844827586206898,
+      "pv": 0.5086206896551724,
+      "battery": 0.5517241379310345,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449
+    }
+  ],
+  "validationCoverage": {
+    "pv_kwp": {
+      "n": 199,
+      "before": 0.7487437185929648,
+      "afterInSample": 0.8090452261306532
+    },
+    "battery_kwh": {
+      "n": 212,
+      "before": 0.8584905660377359,
+      "afterInSample": 0.8584905660377359
+    }
+  },
+  "m1Candidates": [
+    {
+      "stage": "M1",
+      "name": "base (installer-one-hot features)",
+      "features": {},
+      "model": {},
+      "ems": 56.799150219366595,
+      "wholeDesign": 0.16379310344827586,
+      "pv": 0.4698275862068966,
+      "battery": 0.5086206896551724,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449,
+      "pvGate": 0.6
+    },
+    {
+      "stage": "M1",
+      "name": "+physics features",
+      "features": {
+        "physics": true
+      },
+      "model": {},
+      "ems": 57.37449646019192,
+      "wholeDesign": 0.1853448275862069,
+      "pv": 0.4827586206896552,
+      "battery": 0.5301724137931034,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449,
+      "pvGate": 0.6
+    },
+    {
+      "stage": "M1",
+      "name": "+installer PV prior",
+      "features": {
+        "physics": true,
+        "installerPrior": true
+      },
+      "model": {},
+      "ems": 58.04419470006741,
+      "wholeDesign": 0.19827586206896552,
+      "pv": 0.5172413793103449,
+      "battery": 0.5431034482758621,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449,
+      "pvGate": 0.6
+    },
+    {
+      "stage": "M1",
+      "name": "+regularisation {'maxDepth': 3, 'minLeaf': 20}",
+      "features": {
+        "physics": true,
+        "installerPrior": true
+      },
+      "model": {
+        "maxDepth": 3,
+        "minLeaf": 20
+      },
+      "ems": 58.44923441954663,
+      "wholeDesign": 0.22844827586206898,
+      "pv": 0.5043103448275862,
+      "battery": 0.5689655172413793,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449,
+      "pvGate": 0.6
+    },
+    {
+      "stage": "M1",
+      "name": "+regularisation {'maxDepth': 3, 'minLeaf': 40}",
+      "features": {
+        "physics": true,
+        "installerPrior": true
+      },
+      "model": {
+        "maxDepth": 3,
+        "minLeaf": 40
+      },
+      "ems": 58.55072726673354,
+      "wholeDesign": 0.23706896551724138,
+      "pv": 0.521551724137931,
+      "battery": 0.5560344827586207,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449,
+      "pvGate": 0.5
+    },
+    {
+      "stage": "M1",
+      "name": "+regularisation {'maxDepth': 2, 'minLeaf': 40}",
+      "features": {
+        "physics": true,
+        "installerPrior": true
+      },
+      "model": {
+        "maxDepth": 2,
+        "minLeaf": 40
+      },
+      "ems": 57.734320343211316,
+      "wholeDesign": 0.24568965517241378,
+      "pv": 0.521551724137931,
+      "battery": 0.5603448275862069,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449,
+      "pvGate": 0.6
+    },
+    {
+      "stage": "M1",
+      "name": "+regularisation {'maxDepth': 4, 'minLeaf': 30, 'l2': 1.0}",
+      "features": {
+        "physics": true,
+        "installerPrior": true
+      },
+      "model": {
+        "maxDepth": 4,
+        "minLeaf": 30,
+        "l2": 1.0
+      },
+      "ems": 57.94910390929136,
+      "wholeDesign": 0.23275862068965517,
+      "pv": 0.521551724137931,
+      "battery": 0.5387931034482759,
+      "heatPump": 0.9655172413793104,
+      "wallbox": 0.7672413793103449,
+      "pvGate": 0.5
+    }
+  ],
+  "componentCandidates": {
+    "heatPump": [
+      {
+        "source": "B0",
+        "componentWithinTolerance": 0.9655172413793104,
+        "ems": 58.44296864604388,
+        "wholeDesign": 0.23706896551724138
+      },
+      {
+        "source": "B0c",
+        "componentWithinTolerance": 0.9568965517241379,
+        "ems": 57.59885945064159,
+        "wholeDesign": 0.2413793103448276
+      },
+      {
+        "source": "H1",
+        "componentWithinTolerance": 0.9568965517241379,
+        "ems": 57.59885945064159,
+        "wholeDesign": 0.2413793103448276
+      },
+      {
+        "source": "M1",
+        "componentWithinTolerance": 0.9655172413793104,
+        "ems": 58.55072726673354,
+        "wholeDesign": 0.23706896551724138
+      }
+    ],
+    "pv": [
+      {
+        "source": "B0",
+        "pvGate": 0.5,
+        "componentWithinTolerance": 0.4482758620689655,
+        "ems": 56.78826765782298,
+        "wholeDesign": 0.23275862068965517
+      },
+      {
+        "source": "B0c",
+        "pvGate": 0.5,
+        "componentWithinTolerance": 0.44396551724137934,
+        "ems": 56.83583233238627,
+        "wholeDesign": 0.2413793103448276
+      },
+      {
+        "source": "M1",
+        "pvGate": 0.3,
+        "componentWithinTolerance": 0.4827586206896552,
+        "ems": 56.97013791674764,
+        "wholeDesign": 0.2543103448275862
+      },
+      {
+        "source": "M1",
+        "pvGate": 0.4,
+        "componentWithinTolerance": 0.4827586206896552,
+        "ems": 56.97013791674764,
+        "wholeDesign": 0.2543103448275862
+      },
+      {
+        "source": "M1",
+        "pvGate": 0.5,
+        "componentWithinTolerance": 0.521551724137931,
+        "ems": 58.55072726673354,
+        "wholeDesign": 0.23706896551724138
+      },
+      {
+        "source": "M1",
+        "pvGate": 0.6,
+        "componentWithinTolerance": 0.521551724137931,
+        "ems": 58.45095076609497,
+        "wholeDesign": 0.23706896551724138
+      }
+    ],
+    "battery": [
+      {
+        "source": "B0",
+        "componentWithinTolerance": 0.3922413793103448,
+        "ems": 57.85089824508656,
+        "wholeDesign": 0.15517241379310345
+      },
+      {
+        "source": "B0c",
+        "componentWithinTolerance": 0.46551724137931033,
+        "ems": 59.682794796810704,
+        "wholeDesign": 0.1939655172413793
+      },
+      {
+        "source": "H1",
+        "componentWithinTolerance": 0.3922413793103448,
+        "ems": 57.85089824508656,
+        "wholeDesign": 0.15517241379310345
+      },
+      {
+        "source": "M1",
+        "componentWithinTolerance": 0.5560344827586207,
+        "ems": 58.55072726673354,
+        "wholeDesign": 0.23706896551724138
+      },
+      {
+        "source": "SIM",
+        "componentWithinTolerance": 0.23275862068965517,
+        "ems": 48.77582808292208,
+        "wholeDesign": 0.06896551724137931
+      }
+    ],
+    "wallbox": [
+      {
+        "source": "B0",
+        "componentWithinTolerance": 0.75,
+        "ems": 58.11969278397492,
+        "wholeDesign": 0.23706896551724138
+      },
+      {
+        "source": "B0c",
+        "componentWithinTolerance": 0.7672413793103449,
+        "ems": 58.55072726673354,
+        "wholeDesign": 0.23706896551724138
+      },
+      {
+        "source": "H1",
+        "componentWithinTolerance": 0.7672413793103449,
+        "ems": 58.55072726673354,
+        "wholeDesign": 0.23706896551724138
+      },
+      {
+        "source": "M1",
+        "componentWithinTolerance": 0.7672413793103449,
+        "ems": 58.55072726673354,
+        "wholeDesign": 0.23706896551724138
+      }
+    ]
+  },
+  "compositeValidation": {
+    "ems": 59.764896603050445,
+    "wholeDesign": 0.2413793103448276,
+    "pv": 0.521551724137931,
+    "battery": 0.5818965517241379,
+    "heatPump": 0.9655172413793104,
+    "wallbox": 0.7672413793103449
+  },
+  "nTrain": {
+    "23c108b7": 21,
+    "2a8ba8e2": 1015
+  },
+  "nValidation": 232,
+  "baseM1": {
+    "stage": "M1",
+    "name": "base (installer-one-hot features)",
+    "features": {},
+    "model": {},
+    "ems": 56.799150219366595,
+    "wholeDesign": 0.16379310344827586,
+    "pv": 0.4698275862068966,
+    "battery": 0.5086206896551724,
+    "heatPump": 0.9655172413793104,
+    "wallbox": 0.7672413793103449,
+    "pvGate": 0.6
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "inputs": {
+    "installerId": "2a8ba8e2",
+    "demandKwh": 5200,
+    "priceEurKwh": 0.34,
+    "priceEscalation": 0.03,
+    "ev": {
+      "has": true,
+      "kmPerYear": 14000
+    },
+    "heating": {
+      "type": "Gas",
+      "heatDemandKwh": 18000
+    },
+    "building": {
+      "roofType": "concrete_tile"
+    }
+  }
+}

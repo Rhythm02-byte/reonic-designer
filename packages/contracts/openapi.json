@@ -1,0 +1,2317 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "thinc! engine",
+    "version": "baseline-0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meta": {
+      "get": {
+        "summary": "Get Meta",
+        "operationId": "get_meta_meta_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/design": {
+      "post": {
+        "summary": "Post Design",
+        "operationId": "post_design_design_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DesignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DesignResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulate": {
+      "post": {
+        "summary": "Post Simulate",
+        "operationId": "post_simulate_simulate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Metrics"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "summary": "Post Validate",
+        "operationId": "post_validate_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/eval/summary": {
+      "get": {
+        "summary": "Get Eval Summary",
+        "operationId": "get_eval_summary_eval_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvalSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/holdout": {
+      "get": {
+        "summary": "Get Holdout Rows",
+        "operationId": "get_holdout_rows_holdout_get",
+        "parameters": [
+          {
+            "name": "n",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 12,
+              "title": "N"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoldoutResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AskAnswer": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "description": "Button text, e.g. '12 modules' or 'Yes'."
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value",
+            "description": "What to write into `field`: number, boolean (ev.has) or 0 for 'none' (existingPv.kwp, existingStorage.kwh)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "title": "AskAnswer"
+      },
+      "AskImpact": {
+        "properties": {
+          "components": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "pv",
+                "battery",
+                "heatPump",
+                "wallbox"
+              ]
+            },
+            "type": "array",
+            "title": "Components",
+            "description": "Components whose presence or catalog size changes with the answer."
+          },
+          "priceSwingEur": {
+            "type": "number",
+            "title": "Priceswingeur",
+            "description": "Largest difference in installed price between the possible answers (EUR, market.json mid prices)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "priceSwingEur"
+        ],
+        "title": "AskImpact"
+      },
+      "AskNext": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field",
+            "description": "Dotted camelCase path into HomeInputs: demandKwh, building.roofMaxModules, ev.has, heating.heatDemandKwh, existingPv.kwp, existingStorage.kwh."
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why"
+          },
+          "impact": {
+            "$ref": "#/components/schemas/AskImpact"
+          },
+          "answers": {
+            "items": {
+              "$ref": "#/components/schemas/AskAnswer"
+            },
+            "type": "array",
+            "title": "Answers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "question",
+          "why",
+          "impact"
+        ],
+        "title": "AskNext",
+        "description": "One missing input worth asking for (value of information): re-running the policy over plausible answers changes the design."
+      },
+      "BatteryDesign": {
+        "properties": {
+          "kwh": {
+            "type": "number",
+            "title": "Kwh"
+          },
+          "productId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kwh"
+        ],
+        "title": "BatteryDesign"
+      },
+      "BatteryPoint": {
+        "properties": {
+          "kwh": {
+            "type": "number",
+            "title": "Kwh"
+          },
+          "autarky": {
+            "type": "number",
+            "title": "Autarky"
+          },
+          "selfConsumption": {
+            "type": "number",
+            "title": "Selfconsumption"
+          },
+          "savingsEurYear": {
+            "type": "number",
+            "title": "Savingseuryear"
+          },
+          "paybackYears": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paybackyears"
+          },
+          "npv20": {
+            "type": "number",
+            "title": "Npv20"
+          },
+          "fullCyclesPerYear": {
+            "type": "number",
+            "title": "Fullcyclesperyear"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kwh",
+          "autarky",
+          "selfConsumption",
+          "savingsEurYear",
+          "npv20",
+          "fullCyclesPerYear"
+        ],
+        "title": "BatteryPoint",
+        "description": "One point of the \"why this size\" curve (new battery size, PV fixed)."
+      },
+      "BomLine": {
+        "properties": {
+          "technology": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technology"
+          },
+          "lineItemFunction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineitemfunction"
+          },
+          "componentType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Componenttype"
+          },
+          "componentName": {
+            "type": "string",
+            "title": "Componentname"
+          },
+          "componentBrand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Componentbrand"
+          },
+          "quantity": {
+            "type": "number",
+            "title": "Quantity",
+            "default": 1
+          },
+          "quantityUnits": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantityunits"
+          }
+        },
+        "type": "object",
+        "required": [
+          "componentName"
+        ],
+        "title": "BomLine",
+        "description": "Mirrors Reonic's project_options_parts columns (camelCase)."
+      },
+      "Building": {
+        "properties": {
+          "sqm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sqm"
+          },
+          "builtYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Builtyear"
+          },
+          "roofType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "concrete_tile",
+                  "clay_tile",
+                  "flat",
+                  "flat_ew",
+                  "metal",
+                  "bitumen",
+                  "slate",
+                  "beaver_tail",
+                  "trapezoid",
+                  "standing_seam",
+                  "other",
+                  "unknown"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rooftype"
+          },
+          "roofMaxModules": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Roofmaxmodules"
+          },
+          "orientation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orientation"
+          }
+        },
+        "type": "object",
+        "title": "Building"
+      },
+      "Curves": {
+        "properties": {
+          "battery": {
+            "items": {
+              "$ref": "#/components/schemas/BatteryPoint"
+            },
+            "type": "array",
+            "title": "Battery",
+            "description": "Installer battery sizes plus 0."
+          },
+          "pv": {
+            "items": {
+              "$ref": "#/components/schemas/PvPoint"
+            },
+            "type": "array",
+            "title": "Pv",
+            "description": "Proposed kWp +-40% in module steps."
+          }
+        },
+        "type": "object",
+        "title": "Curves"
+      },
+      "DesignRequest": {
+        "properties": {
+          "inputs": {
+            "$ref": "#/components/schemas/HomeInputs"
+          },
+          "locks": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "pv",
+                "battery",
+                "heatPump",
+                "wallbox"
+              ]
+            },
+            "type": "array",
+            "title": "Locks"
+          },
+          "current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SystemDesign"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Existing design whose locked components are kept."
+          }
+        },
+        "type": "object",
+        "required": [
+          "inputs"
+        ],
+        "title": "DesignRequest"
+      },
+      "DesignResponse": {
+        "properties": {
+          "proposal": {
+            "$ref": "#/components/schemas/SystemDesign"
+          },
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/SystemDesign"
+            },
+            "type": "array",
+            "title": "Alternatives"
+          },
+          "metrics": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Metrics"
+            },
+            "type": "object",
+            "title": "Metrics"
+          },
+          "confidence": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Interval"
+            },
+            "type": "object",
+            "title": "Confidence"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/ReasonCode"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "flags": {
+            "items": {
+              "$ref": "#/components/schemas/Flag"
+            },
+            "type": "array",
+            "title": "Flags"
+          },
+          "similar": {
+            "items": {
+              "$ref": "#/components/schemas/SimilarHome"
+            },
+            "type": "array",
+            "title": "Similar"
+          },
+          "bom": {
+            "items": {
+              "$ref": "#/components/schemas/BomLine"
+            },
+            "type": "array",
+            "title": "Bom"
+          },
+          "provenance": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Provenance"
+            },
+            "type": "object",
+            "title": "Provenance"
+          },
+          "curves": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Curves"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "physics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Physics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "askNext": {
+            "items": {
+              "$ref": "#/components/schemas/AskNext"
+            },
+            "type": "array",
+            "title": "Asknext",
+            "description": "At most 3 missing inputs ranked by P(design changes) x price swing; empty when nothing is worth asking."
+          },
+          "engineVersion": {
+            "type": "string",
+            "title": "Engineversion"
+          },
+          "latencyMs": {
+            "type": "number",
+            "title": "Latencyms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "proposal",
+          "engineVersion",
+          "latencyMs"
+        ],
+        "title": "DesignResponse"
+      },
+      "Ev": {
+        "properties": {
+          "has": {
+            "type": "boolean",
+            "title": "Has",
+            "default": false
+          },
+          "kmPerYear": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kmperyear"
+          },
+          "plannedYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plannedyear"
+          },
+          "smartCharging": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smartcharging"
+          }
+        },
+        "type": "object",
+        "title": "Ev"
+      },
+      "EvalModelScores": {
+        "properties": {
+          "ems": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ems",
+            "description": "Expert-match score 0-100 (primary option); every other score is a 0-1 fraction."
+          },
+          "wholeDesign": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wholedesign",
+            "description": "Share of homes where every component is within tolerance (0-1)."
+          },
+          "pv": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pv"
+          },
+          "battery": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Battery"
+          },
+          "heatPump": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heatpump"
+          },
+          "wallbox": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wallbox"
+          }
+        },
+        "type": "object",
+        "title": "EvalModelScores"
+      },
+      "EvalSummary": {
+        "properties": {
+          "split": {
+            "type": "string",
+            "title": "Split"
+          },
+          "nTest": {
+            "type": "integer",
+            "title": "Ntest"
+          },
+          "chosen": {
+            "type": "string",
+            "title": "Chosen"
+          },
+          "models": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/EvalModelScores"
+            },
+            "type": "object",
+            "title": "Models"
+          },
+          "selection": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selection"
+          },
+          "generatedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generatedat"
+          },
+          "tolerances": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "pv",
+                "battery",
+                "heatPump"
+              ]
+            },
+            "type": "object",
+            "title": "Tolerances",
+            "description": "Relative size error that still counts as matching the expert, per component."
+          }
+        },
+        "type": "object",
+        "required": [
+          "split",
+          "nTest",
+          "chosen",
+          "models"
+        ],
+        "title": "EvalSummary"
+      },
+      "ExistingPv": {
+        "properties": {
+          "kwp": {
+            "type": "number",
+            "title": "Kwp"
+          },
+          "tiltDeg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tiltdeg"
+          },
+          "azimuthDeg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Azimuthdeg"
+          },
+          "builtYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Builtyear"
+          },
+          "feedInEurKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedineurkwh"
+          },
+          "trusted": {
+            "type": "boolean",
+            "title": "Trusted",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "kwp"
+        ],
+        "title": "ExistingPv"
+      },
+      "ExistingStorage": {
+        "properties": {
+          "kwh": {
+            "type": "number",
+            "title": "Kwh"
+          },
+          "builtYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Builtyear"
+          },
+          "trusted": {
+            "type": "boolean",
+            "title": "Trusted",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "kwh"
+        ],
+        "title": "ExistingStorage"
+      },
+      "ExistingWallbox": {
+        "properties": {
+          "kw": {
+            "type": "number",
+            "title": "Kw"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kw"
+        ],
+        "title": "ExistingWallbox"
+      },
+      "Flag": {
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warn",
+              "error"
+            ],
+            "title": "Severity"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pv",
+                  "battery",
+                  "heatPump",
+                  "wallbox"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Component"
+          },
+          "percentile": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percentile"
+          },
+          "similarIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Similarids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "severity",
+          "code",
+          "message"
+        ],
+        "title": "Flag"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HeatPumpDesign": {
+        "properties": {
+          "kw": {
+            "type": "number",
+            "title": "Kw"
+          },
+          "productId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productid"
+          },
+          "bufferL": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bufferl"
+          },
+          "dhwL": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dhwl"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kw"
+        ],
+        "title": "HeatPumpDesign"
+      },
+      "Heating": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Gas",
+              "Oil",
+              "Heatpump",
+              "OtherRenewable",
+              "OtherNonRenewable",
+              "Unknown"
+            ],
+            "title": "Type",
+            "default": "Unknown"
+          },
+          "fuelKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fuelkwh"
+          },
+          "costEurYear": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Costeuryear"
+          },
+          "hpElecKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hpeleckwh"
+          },
+          "heatDemandKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heatdemandkwh"
+          },
+          "plannedSwitch": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plannedswitch"
+          }
+        },
+        "type": "object",
+        "title": "Heating"
+      },
+      "HoldoutResponse": {
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/HoldoutRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rows"
+        ],
+        "title": "HoldoutResponse"
+      },
+      "HoldoutRow": {
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "title": "Projectid"
+          },
+          "installerId": {
+            "type": "string",
+            "title": "Installerid"
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/HomeInputs"
+          },
+          "expert": {
+            "$ref": "#/components/schemas/HoldoutSystem"
+          },
+          "ours": {
+            "$ref": "#/components/schemas/HoldoutSystem"
+          }
+        },
+        "type": "object",
+        "required": [
+          "projectId",
+          "installerId",
+          "inputs",
+          "expert",
+          "ours"
+        ],
+        "title": "HoldoutRow"
+      },
+      "HoldoutSystem": {
+        "properties": {
+          "pvKwp": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pvkwp"
+          },
+          "batteryKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Batterykwh"
+          },
+          "heatPumpKw": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heatpumpkw"
+          },
+          "wallboxKw": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wallboxkw"
+          }
+        },
+        "type": "object",
+        "title": "HoldoutSystem"
+      },
+      "HomeInputs": {
+        "properties": {
+          "installerId": {
+            "type": "string",
+            "title": "Installerid"
+          },
+          "demandKwh": {
+            "type": "number",
+            "title": "Demandkwh",
+            "default": 4500.0
+          },
+          "loadProfile": {
+            "type": "string",
+            "title": "Loadprofile",
+            "default": "H0"
+          },
+          "persons": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persons"
+          },
+          "homeOffice": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Homeoffice"
+          },
+          "priceEurKwh": {
+            "type": "number",
+            "title": "Priceeurkwh",
+            "default": 0.32
+          },
+          "priceEscalation": {
+            "type": "number",
+            "title": "Priceescalation",
+            "default": 0.03
+          },
+          "flexTariff": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flextariff"
+          },
+          "basePriceMonth": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basepricemonth"
+          },
+          "ev": {
+            "$ref": "#/components/schemas/Ev"
+          },
+          "existingPv": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExistingPv"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "existingStorage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExistingStorage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "existingWallbox": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExistingWallbox"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "heating": {
+            "$ref": "#/components/schemas/Heating"
+          },
+          "building": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Building"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Location"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Provenance"
+            },
+            "type": "object",
+            "title": "Provenance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "installerId"
+        ],
+        "title": "HomeInputs"
+      },
+      "Interval": {
+        "properties": {
+          "p10": {
+            "type": "number",
+            "title": "P10"
+          },
+          "p50": {
+            "type": "number",
+            "title": "P50"
+          },
+          "p90": {
+            "type": "number",
+            "title": "P90"
+          },
+          "probIncluded": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Probincluded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "p10",
+          "p50",
+          "p90"
+        ],
+        "title": "Interval"
+      },
+      "InverterDesign": {
+        "properties": {
+          "kw": {
+            "type": "number",
+            "title": "Kw"
+          },
+          "productId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kw"
+        ],
+        "title": "InverterDesign"
+      },
+      "Location": {
+        "properties": {
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "postcode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postcode"
+          }
+        },
+        "type": "object",
+        "title": "Location"
+      },
+      "MetaField": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Dotted camelCase path into HomeInputs, e.g. 'ev.has'."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "number",
+              "bool",
+              "choice"
+            ],
+            "title": "Kind"
+          },
+          "choices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Choices"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "kind",
+          "label"
+        ],
+        "title": "MetaField"
+      },
+      "MetaResponse": {
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/MetaField"
+            },
+            "type": "array",
+            "title": "Fields"
+          },
+          "targets": {
+            "items": {
+              "$ref": "#/components/schemas/MetaTarget"
+            },
+            "type": "array",
+            "title": "Targets"
+          },
+          "installers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Installers"
+          },
+          "synthetic": {
+            "type": "boolean",
+            "title": "Synthetic",
+            "description": "True when the engine runs on synthetic/fallback data, not the real dataset."
+          },
+          "engineVersion": {
+            "type": "string",
+            "title": "Engineversion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fields",
+          "targets",
+          "installers",
+          "synthetic",
+          "engineVersion"
+        ],
+        "title": "MetaResponse"
+      },
+      "MetaTarget": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "pvKwp",
+              "batteryKwh",
+              "heatPumpKw",
+              "wallboxKw"
+            ],
+            "title": "Name"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "catalog": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Catalog",
+            "description": "Sizes installers actually use, ascending."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "label",
+          "unit"
+        ],
+        "title": "MetaTarget"
+      },
+      "Metrics": {
+        "properties": {
+          "pvYieldKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pvyieldkwh"
+          },
+          "selfConsumption": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selfconsumption"
+          },
+          "autarky": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autarky"
+          },
+          "gridImportKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gridimportkwh"
+          },
+          "feedInKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedinkwh"
+          },
+          "savingsEurYear": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Savingseuryear"
+          },
+          "paybackYears": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paybackyears"
+          },
+          "npv20": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Npv20"
+          },
+          "priceEur": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priceeur"
+          },
+          "co2T": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Co2T"
+          },
+          "fullCyclesPerYear": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fullcyclesperyear"
+          },
+          "nightLoadKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nightloadkwh"
+          },
+          "hourlyTypicalDays": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "additionalProperties": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  },
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hourlytypicaldays",
+            "description": "{summer|winter: {pvKwh, loadKwh, batteryKwh, gridKwh, socKwh: 24 hourly means}}; proposal and /simulate only."
+          }
+        },
+        "type": "object",
+        "title": "Metrics"
+      },
+      "Physics": {
+        "properties": {
+          "economicKwh": {
+            "type": "number",
+            "title": "Economickwh",
+            "description": "Economic battery optimum (max NPV, capped by night load and the 150-350 cycles/yr band); 0 = none pays."
+          },
+          "maxAutarkyKwh": {
+            "type": "number",
+            "title": "Maxautarkykwh",
+            "description": "Smallest battery reaching 99% of the best autarky (uneconomic variant)."
+          },
+          "nightLoadKwh": {
+            "type": "number",
+            "title": "Nightloadkwh",
+            "description": "Average sunset-to-sunrise load per night."
+          }
+        },
+        "type": "object",
+        "required": [
+          "economicKwh",
+          "maxAutarkyKwh",
+          "nightLoadKwh"
+        ],
+        "title": "Physics"
+      },
+      "Provenance": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "entered",
+              "extracted",
+              "derived",
+              "installer_default",
+              "national_default"
+            ],
+            "title": "Source"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "default": 1.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "title": "Provenance"
+      },
+      "PvDesign": {
+        "properties": {
+          "modules": {
+            "type": "integer",
+            "title": "Modules"
+          },
+          "moduleWp": {
+            "type": "number",
+            "title": "Modulewp"
+          },
+          "kwp": {
+            "type": "number",
+            "title": "Kwp"
+          },
+          "productId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "modules",
+          "moduleWp",
+          "kwp"
+        ],
+        "title": "PvDesign"
+      },
+      "PvPoint": {
+        "properties": {
+          "kwp": {
+            "type": "number",
+            "title": "Kwp"
+          },
+          "autarky": {
+            "type": "number",
+            "title": "Autarky"
+          },
+          "selfConsumption": {
+            "type": "number",
+            "title": "Selfconsumption"
+          },
+          "savingsEurYear": {
+            "type": "number",
+            "title": "Savingseuryear"
+          },
+          "paybackYears": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paybackyears"
+          },
+          "npv20": {
+            "type": "number",
+            "title": "Npv20"
+          },
+          "pvYieldKwh": {
+            "type": "number",
+            "title": "Pvyieldkwh"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kwp",
+          "autarky",
+          "selfConsumption",
+          "savingsEurYear",
+          "npv20",
+          "pvYieldKwh"
+        ],
+        "title": "PvPoint",
+        "description": "One point of the PV size curve (battery fixed)."
+      },
+      "ReasonCode": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "component": {
+            "type": "string",
+            "enum": [
+              "pv",
+              "battery",
+              "heatPump",
+              "wallbox"
+            ],
+            "title": "Component"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text",
+            "description": "Template sentence for the planner; the LLM may rephrase but never change numbers."
+          },
+          "evidence": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "component"
+        ],
+        "title": "ReasonCode"
+      },
+      "SimilarHome": {
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "title": "Projectid"
+          },
+          "distance": {
+            "type": "number",
+            "title": "Distance"
+          },
+          "kwp": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kwp"
+          },
+          "batteryKwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Batterykwh"
+          }
+        },
+        "type": "object",
+        "required": [
+          "projectId",
+          "distance"
+        ],
+        "title": "SimilarHome"
+      },
+      "SimulateRequest": {
+        "properties": {
+          "inputs": {
+            "$ref": "#/components/schemas/HomeInputs"
+          },
+          "system": {
+            "$ref": "#/components/schemas/SystemDesign",
+            "description": "System to simulate; missing components count as 'none'."
+          }
+        },
+        "type": "object",
+        "required": [
+          "inputs",
+          "system"
+        ],
+        "title": "SimulateRequest"
+      },
+      "SystemDesign": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "default": "proposal"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "pv": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PvDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inverter": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InverterDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "battery": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BatteryDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wallbox": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WallboxDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "heatPump": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeatPumpDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "locks": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "pv",
+                "battery",
+                "heatPump",
+                "wallbox"
+              ]
+            },
+            "type": "array",
+            "title": "Locks"
+          }
+        },
+        "type": "object",
+        "title": "SystemDesign"
+      },
+      "ValidateRequest": {
+        "properties": {
+          "inputs": {
+            "$ref": "#/components/schemas/HomeInputs"
+          },
+          "system": {
+            "$ref": "#/components/schemas/SystemDesign",
+            "description": "The planner's system; missing components count as 'none'."
+          }
+        },
+        "type": "object",
+        "required": [
+          "inputs",
+          "system"
+        ],
+        "title": "ValidateRequest"
+      },
+      "ValidateResponse": {
+        "properties": {
+          "flags": {
+            "items": {
+              "$ref": "#/components/schemas/Flag"
+            },
+            "type": "array",
+            "title": "Flags",
+            "description": "Hard-rule violations (R01-R05) and unusual-for-similar-homes checks."
+          },
+          "percentiles": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "propertyNames": {
+              "enum": [
+                "pv",
+                "battery",
+                "heatPump",
+                "wallbox"
+              ]
+            },
+            "type": "object",
+            "title": "Percentiles",
+            "description": "0-100 percentile of the planner's size among similar homes that got the component."
+          },
+          "similarShare": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "pv",
+                "battery",
+                "heatPump",
+                "wallbox"
+              ]
+            },
+            "type": "object",
+            "title": "Similarshare",
+            "description": "Share of similar homes that got the component."
+          },
+          "nSimilar": {
+            "type": "integer",
+            "title": "Nsimilar",
+            "default": 0
+          },
+          "metrics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Metrics"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Simulated metrics of the planner's system."
+          },
+          "engineVersion": {
+            "type": "string",
+            "title": "Engineversion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "engineVersion"
+        ],
+        "title": "ValidateResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WallboxDesign": {
+        "properties": {
+          "kw": {
+            "type": "number",
+            "title": "Kw"
+          },
+          "productId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kw"
+        ],
+        "title": "WallboxDesign"
+      }
+    }
+  }
+}

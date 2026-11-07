@@ -1,0 +1,75 @@
+{
+  "files": {
+    "sim_profiles.npz": "pv_<orient> kWh per kWp per hour (8760, local clock), temp degC, h0 kWh/h for 1000 kWh/yr"
+  },
+  "hours": 8760,
+  "calendar_reference_year_for_weekdays": 2023,
+  "pv": {
+    "source": "PVGIS v5_3 seriescalc",
+    "url": "https://re.jrc.ec.europa.eu/api/v5_3/seriescalc",
+    "radiation_db": "PVGIS-SARAH3",
+    "meteo_db": "ERA5",
+    "site": {
+      "lat": 51.32,
+      "lon": 9.5,
+      "name": "Kassel"
+    },
+    "years_available": [
+      2005,
+      2023
+    ],
+    "representative_year": 2005,
+    "selection": "year closest to 2005-2023 mean in S35 annual yield (double weight) and heating degree hours (15C)",
+    "params": {
+      "peakpower_kwp": 1,
+      "loss_pct": 14,
+      "mountingplace": "building",
+      "usehorizon": 1
+    },
+    "orientations": {
+      "s35": {
+        "tilt_deg": 35,
+        "azimuth_pvgis_deg": 0
+      },
+      "e35": {
+        "tilt_deg": 35,
+        "azimuth_pvgis_deg": -90
+      },
+      "w35": {
+        "tilt_deg": 35,
+        "azimuth_pvgis_deg": 90
+      },
+      "s10": {
+        "tilt_deg": 10,
+        "azimuth_pvgis_deg": 0
+      },
+      "e10": {
+        "tilt_deg": 10,
+        "azimuth_pvgis_deg": -90
+      },
+      "w10": {
+        "tilt_deg": 10,
+        "azimuth_pvgis_deg": 90
+      }
+    },
+    "annual_kwh_per_kwp": {
+      "s35": 945.2,
+      "e35": 711.6,
+      "w35": 789.4,
+      "s10": 865.4,
+      "e10": 776.9,
+      "w10": 811.1
+    },
+    "time_note": "PVGIS UTC converted to Europe/Berlin clock, Feb 29 dropped",
+    "licence": "PVGIS data: free for use incl. commercial, attribution to European Commission JRC; see https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/pvgis-data-download-and-licence_en (EC reuse policy, CC BY 4.0-equivalent)"
+  },
+  "load": {
+    "source": "BDEW standard load profile H0, dynamised (h0_dyn) via demandlib",
+    "demandlib_version": "0.2.2",
+    "url": "https://github.com/oemof/demandlib",
+    "base_year": 2023,
+    "holidays": "German national holidays 2023",
+    "licence": "demandlib MIT; BDEW SLP coefficients published by BDEW (VDEW 1999 method)"
+  },
+  "date_fetched": "2026-11-07"
+}

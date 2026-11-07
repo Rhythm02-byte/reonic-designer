@@ -1,0 +1,59 @@
+{
+  "as_of": "2026-08",
+  "note": "All values are ranges/defaults for the offline engine. The project's own price always wins (PLAN 3.3). Tags: VERIFIED = read in research/source-check.md or cited page; UNVERIFIED = engineering placeholder, replace when sourced.",
+  "currency": "EUR",
+  "pv_eur_per_kwp_installed": {
+    "tag": "VERIFIED for 5-10 kWp (1,100-1,400 EUR/kWp, 42watt.de 14.07.2026, vendor-published); other anchors UNVERIFIED interpolation/extrapolation",
+    "sources": ["https://www.42watt.de/magazin/photovoltaik-kosten", "research/source-check.md section B"],
+    "anchors_kwp": [3, 5, 10, 20, 30],
+    "low": [1320, 1190, 1100, 970, 880],
+    "mid": [1500, 1350, 1250, 1100, 1000],
+    "high": [1680, 1510, 1400, 1230, 1120]
+  },
+  "battery_eur_per_kwh_installed": {
+    "tag": "VERIFIED (range)",
+    "sources": ["Verbraucherzentrale, Stand 02.07.2026: 300-700 EUR/kWh from 5 kWh", "ADAC 08/2026 (battery alone 250-450 EUR/kWh + 1,000-3,000 installation)"],
+    "low": 300, "mid": 500, "high": 700
+  },
+  "heatpump_air_water_installed_eur": {
+    "tag": "VERIFIED (range, before KfW 458, single-family house, excl. 5-20k old-building extras)",
+    "sources": ["cleanthinking.de 2026-10-02 citing ADAC summer 2026", "research/source-check.md section B"],
+    "low": 15000, "mid": 23000, "high": 31000
+  },
+  "wallbox_11kw_installed_eur": {
+    "tag": "PARTLY VERIFIED: ADAC wallbox cost page / portals, secondary (web search 2026-11-07); not read in full",
+    "sources": ["https://www.adac.de/rund-ums-fahrzeug/elektromobilitaet/laden/wallbox-kosten/", "https://reduco.ai/blog/solar/wallbox-kosten-installation-2026"],
+    "low": 1200, "mid": 2000, "high": 3500
+  },
+  "inverter_replacement_eur_per_kwp": {
+    "tag": "UNVERIFIED engineering placeholder",
+    "low": 80, "mid": 120, "high": 180
+  },
+  "kfw_458": {
+    "tag": "VERIFIED (research/source-check.md; Merkblatt 458 Stand 09/2026)",
+    "sources": ["https://www.kfw.de/PDF/Download-Center/Förderprogramme-(Inlandsförderung)/PDF-Dokumente/6000005131_M_458.pdf"],
+    "base_rate": 0.30,
+    "eligible_cost_cap_eur_first_unit": 28000,
+    "note": "Only the 30% base is applied; speed/income bonuses (up to 70-80% total) depend on the household and are not assumed."
+  },
+  "tariffs": {
+    "retail_eur_kwh": 0.37, "retail_tag": "BDEW 2025 39.6 ct, 2026 YTD 37.0 ct [S] (research/battery-and-simulations.md)",
+    "price_escalation_per_year": 0.02, "escalation_range": [0.0, 0.04],
+    "feed_in_eur_kwh_le10kwp_partial": 0.0770,
+    "feed_in_as_of": "2026-08",
+    "feed_in_tag": "7.70-7.71 ct/kWh from Aug 2026 (reduco summary [S])",
+    "feed_in_cap_share_of_kwp_without_smart_meter": 0.6,
+    "post_eeg_market_value_eur_kwh": 0.04, "post_eeg_tag": "UNVERIFIED",
+    "gas_eur_kwh": 0.115, "oil_eur_kwh": 0.11, "fuel_escalation_per_year": 0.03, "fuel_tag": "UNVERIFIED placeholders (incl. CO2 price); override with the customer's heating bill via heating.costEurYear"
+  },
+  "technical": {
+    "pv_degradation_per_year": 0.005,
+    "battery_fade_per_year": 0.02,
+    "inverter_replacement_year": 13,
+    "om_pct_of_pv_battery_capex_per_year": 0.01,
+    "om_tag": "research table: 1.5% (range 1-2%, HTW 2014); low-mid 1% used as insurance/monitoring only - UNVERIFIED",
+    "discount_rate": 0.03,
+    "horizon_years": 20
+  },
+  "para14a": "Controllable HP / wallbox (>4.2 kW) get reduced grid fees (Modul 1 flat discount, Modul 2 -60% work price with separate meter, Modul 3 time-variable) in exchange for 4.2 kW curtailment on grid stress. Not priced in the engine (tariff-specific); shown as a note."
+}

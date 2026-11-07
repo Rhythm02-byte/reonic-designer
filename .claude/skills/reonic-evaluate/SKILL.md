@@ -16,7 +16,7 @@ Outputs: `reports/eval.json` (all metrics, per installer) and `reports/test_pred
 
 ## Metrics (definitions in CONTEXT.md §5)
 
-Headline: `whole_design_within_tolerance`. Always read component accuracy against `expert_include_rate`. Heat pump accuracy of 99% is trivial because experts include one in 0.3% of designs.
+Headline: `whole_design_within_tolerance`. Always read component accuracy against `expert_include_rate`. Heat pump accuracy of 99% is trivial because experts include one in 0.8% of chosen designs (13 of 1,593).
 
 ## Recorded results
 
@@ -25,6 +25,47 @@ Headline: `whole_design_within_tolerance`. Always read component accuracy agains
 | 2026-11-07 | real export, `OPTION_CHOICE=first`, untuned | random | 15.7% | 3.8% | PV 45% vs 16%; battery 39% vs 24%; wallbox 61% vs 74% (model worse) |
 
 Add a row every time the model, thresholds, option choice or data changes. Never overwrite an old row.
+
+## Sensitivity to unanswered questions (`scripts/sensitivity.py`)
+
+Same random split and seed for every run. Output: `reports/sensitivity.json`.
+
+| Signed option | Module wattage | Whole design | PV within ±20% | Battery within ±25% | Baseline whole design |
+|---|---|---|---|---|---|
+| first | 400 W | 14.4% | 46.1% | 39.8% | 3.8% |
+| first | 450 W (default) | 15.7% | 45.1% | 39.2% | 3.8% |
+| first | 500 W | 14.7% | 46.7% | 39.5% | 3.4% |
+| last | 400 W | 13.5% | 46.7% | 37.0% | 3.1% |
+| last | 450 W | 12.5% | 45.8% | 34.8% | 3.4% |
+| last | 500 W | 13.8% | 46.7% | 36.4% | 3.4% |
+
+Reading: the model stays ahead of the baseline in all six runs. The range is 12.5–15.7%. The conclusion does not depend on either open assumption. Report the range, not the best run.
+
+## Default demand check (`scripts/default_demand_check.py`)
+
+Question: are the 457 projects with exactly 4,500 kWh (29%) distorting the result?
+
+| Comparison | Whole design | PV | Battery | Test rows | Baseline |
+|---|---|---|---|---|---|
+| A. all rows | 15.7% | 45.1% | 39.2% | 319 | 3.8% |
+| B. without the 4,500 kWh rows | 14.9% | 46.1% | 43.9% | 228 | 5.3% |
+| C. default rows only, same model | 18.3% | 56.1% | 34.1% | 82 | — |
+| C. other rows only, same model | 14.8% | 41.4% | 40.9% | 237 | — |
+
+Reading: removing the default rows does not change the conclusion, and the model scores them no worse than other homes. Test sets are small (82 and 228 rows), so differences of a few points are within noise. The check does not prove the 4,500 kWh values are wrong, only that they don't break the result.
+
+## Simulation study (`scripts/simulation_study.py`)
+
+Writes `reports/simulation_study.json`. These numbers are **not** comparable with the real table above: the simulated designs follow a policy we wrote (`src/reonic/simulate.py`), not installer behaviour.
+
+| Experiment | Result | What it tells us |
+|---|---|---|
+| A. Recovery of our own policy (30% heat pump homes) | whole design 34.7%; PV 65%, battery 47%, heat pump 81%, wallbox 98% | Even a known rule is only partly recovered. Part of that is the noise we added on purpose, so it is not a ceiling. |
+| B. Inputs blanked at 0 / 25 / 50 / 75% | 34.7 → 29.5 → 24.8 → 18.7% | Accuracy falls about 5 points per 25% of missing inputs. Gaps hurt, but gradually. |
+| C. Heat pump sizing, trained with 0% vs 30% heat pump homes | 77.4% → 81.0% | Small gain over "never a heat pump" (77%). Sizing is barely learned even with examples. |
+| D. Train on simulation, test on real export | whole design 4.2% | The policy does not resemble installers. Simulation cannot replace expert labels. |
+
+Use these to say: the pipeline works, missing inputs cost accuracy, and simulation cannot stand in for Reonic's data. Do not use them as evidence of expert accuracy.
 
 ## Rules for reporting
 

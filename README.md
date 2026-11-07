@@ -40,4 +40,4 @@ and simple physics and economics.
 - Heat pump fuel savings are not modelled; payback covers PV and battery only.
 - The export doesn't mark which option was signed; we use the lowest option number (configurable).
 - PV size at one installer is rebuilt from module counts × an assumed 450 Wp.
-- Heat pumps are almost never offered in the data (0.3%), so heat pump sizing can't really be learned.
+- Heat pumps are almost never chosen in the data (13 of 1,593 designs, 0.8%), so heat pump sizing can't really be learned.

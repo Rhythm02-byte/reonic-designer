@@ -12,3 +12,6 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 .env
+
+# CodeGraph local index
+.codegraph/

@@ -85,7 +85,7 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [ ] Every teammate has read the challenge PDF (§0)
 - [ ] Reonic answers to the open questions (`reonic-data` skill, "Open questions")
 - [ ] Physics constants checked with Reonic experts
-- [ ] Include thresholds tuned; wallbox is currently worse than the baseline
+- [ ] Include thresholds: wallbox cut-off set to 0.78 by CV. Still worse than the EV baseline (67% vs 74% in the pipeline). Likely cause: train/predict mismatch in the wallbox step (see `reonic-evaluate`)
 - [ ] Deviation analysis · alternatives/confidence · homeowner view (specs in `docs/specs/`)
 - [ ] Pitch deck · demo recording · final README
 

@@ -18,11 +18,18 @@ Outputs: `reports/eval.json` (all metrics, per installer) and `reports/test_pred
 
 Headline: `whole_design_within_tolerance`. Always read component accuracy against `expert_include_rate`. Heat pump accuracy of 99% is trivial because experts include one in 0.8% of chosen designs (13 of 1,593).
 
+## Wallbox threshold (`scripts/wallbox_threshold.py`)
+
+Cut-off chosen on out-of-fold training predictions only: 0.78. Out-of-fold accuracy: model 76.2%, EV rule 76.5%. The EV rule is as good as the model, so the wallbox model adds no information beyond the EV flag.
+
+Test split, scored once: isolated model 74.9% vs EV baseline 74.0%. The 0.9-point gain is 3 homes out of 319, which is noise. The full pipeline gets 67%, not 75%, because the wallbox step is trained with true PV and battery sizes as inputs but predicts with its own predicted sizes. That train/predict mismatch is the likely cause, and it is not fixed by threshold tuning.
+
 ## Recorded results
 
 | Date | Data | Split | Model whole-design | Baseline | Notes |
 |---|---|---|---|---|---|
 | 2026-11-07 | real export, `OPTION_CHOICE=first`, untuned | random | 15.7% | 3.8% | PV 45% vs 16%; battery 39% vs 24%; wallbox 61% vs 74% (model worse) |
+| 2026-11-07 | real export, wallbox cut-off 0.78 (chosen by 5-fold CV on train) | random | 15.7% | 3.8% | wallbox 67% vs 74% (still worse). Isolated wallbox classifier: 74.9% vs 74.0% on test, within noise |
 
 Add a row every time the model, thresholds, option choice or data changes. Never overwrite an old row.
 

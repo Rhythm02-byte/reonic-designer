@@ -11,6 +11,9 @@ from sklearn.neighbors import NearestNeighbors
 
 ORDER = ("heat_pump_kw", "pv_kwp", "battery_kwh", "wallbox_kw")
 MIN_ROWS_FOR_REGRESSOR = 20
+# Include cut-off per component. Default 0.5. The wallbox value was chosen by 5-fold CV on the
+# training split only (scripts/wallbox_threshold.py -> reports/wallbox_threshold.json).
+THRESHOLD = {"heat_pump_kw": 0.5, "pv_kwp": 0.5, "battery_kwh": 0.5, "wallbox_kw": 0.78}
 
 
 class _Const:
@@ -55,7 +58,7 @@ class DesignModel:
             clf, reg, cols = self.steps[t]
             p = clf.predict_proba(Xc[cols])[:, 1]
             size = np.clip(reg.predict(Xc[cols]), 0, None)
-            val = np.where(p >= 0.5, size, 0.0)
+            val = np.where(p >= THRESHOLD[t], size, 0.0)
             if t in fixed:
                 val = np.broadcast_to(np.asarray(fixed[t], dtype=float), (len(X),)).copy()
             out[t], out[f"p_{t}"] = val, p

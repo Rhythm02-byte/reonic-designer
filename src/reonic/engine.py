@@ -29,12 +29,13 @@ class Designer:
 
     @classmethod
     def train(cls, df: pd.DataFrame, sizing: str = "mean", sample_weight=None, params: dict | None = None,
-              blend: float = 0.0, battery_catalog_top: int = 15) -> "Designer":
+              blend: float = 0.0, battery_catalog_top: int = 15,
+              coverage_for: tuple = ("heat_pump_kw", "pv_kwp", "battery_kwh")) -> "Designer":
         """battery_catalog_top: how many of the most common battery sizes the design snaps to (15 = as before; 40 = all
         sizes installers used). Snapping to only 15 cost battery accuracy: see scripts/improvement_ideas.py."""
         X, Y = features(df), df[list(TARGETS)].astype(float)
         catalog = {t: rules.common_sizes(Y[t].to_numpy(), top=battery_catalog_top if t == "battery_kwh" else 15) for t in TARGETS}
-        return cls(DesignModel(sizing, params).fit(X, Y, sample_weight), Neighbours().fit(X, Y), catalog, blend)
+        return cls(DesignModel(sizing, params, coverage_for).fit(X, Y, sample_weight), Neighbours().fit(X, Y), catalog, blend)
 
     def save(self, path: str | Path) -> None:
         joblib.dump(self, path)

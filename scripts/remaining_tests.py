@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import KFold
 
-from reonic import data
+from reonic import data, evaluate
 from reonic.baseline import typical_design
 from reonic.engine import Designer
 from reonic.schema import INPUT_FIELDS, TARGETS
@@ -166,12 +166,51 @@ def installer() -> dict:
     return res
 
 
+BATTERY_ONLY = dict(sizing="coverage", coverage_for=("battery_kwh",), battery_catalog_top=40)
+
+
+def battery_only() -> dict:
+    """Coverage sizing + 40 battery sizes for the BATTERY only (PV and heat pump keep the plain mean prediction)."""
+    names = {"current": {}, "best": BEST, "battery_only": BATTERY_ONLY}
+    res = {"fresh_folds": {}, "time_windows": {}}
+    acc = {n: [] for n in names}
+    for seed in (1, 2, 3):
+        parts = {n: [] for n in names}
+        for tr, va in KFold(5, shuffle=True, random_state=seed).split(full):
+            train, val = full.iloc[tr], full.iloc[va]
+            for n, kw in names.items():
+                parts[n].append((va, score(Designer.train(train, **kw).design_batch(val), val)))
+        for n in names:
+            acc[n].append(collect(parts[n]))
+        print(f"  fold seed {seed} done", flush=True)
+    avg = lambda L, k: np.mean([x[k] for x in L], axis=0)
+    print("BATTERY-ONLY on fresh folds (seeds 1-3): gain over the current model, points [95% interval]")
+    for n in ("best", "battery_only"):
+        res["fresh_folds"][n] = {k: gain(avg(acc[n], k), avg(acc["current"], k)) for k in ("whole", "pv", "battery")}
+        print(f"  {n:13} " + "   ".join(f"{k} {res['fresh_folds'][n][k]['gain']*100:+.1f} [{res['fresh_folds'][n][k]['ci_low']*100:+.1f},{res['fresh_folds'][n][k]['ci_high']*100:+.1f}]" for k in ("whole", "pv", "battery")))
+    print(f"  scores: current {avg(acc['current'],'whole').mean():.1%}, best {avg(acc['best'],'whole').mean():.1%}, battery_only {avg(acc['battery_only'],'whole').mean():.1%}")
+    # time-ordered windows
+    dated = full[full["offer_created_at"].notna()].reset_index(drop=True)
+    order = dated["offer_created_at"].rank(method="first")
+    n_all = len(dated)
+    print("TIME WINDOWS (train earlier, test later): whole design / PV / battery")
+    for i, (a, b) in enumerate(((0.6, 0.8), (0.7, 0.9), (0.8, 1.0))):
+        train, test = dated[order <= a * n_all], dated[(order > a * n_all) & (order <= b * n_all)].reset_index(drop=True)
+        row = {}
+        for n, kw in names.items():
+            r = evaluate.metrics(Designer.train(train, **kw).design_batch(test), test)
+            row[n] = {"whole": r["whole_design_within_tolerance"], "pv": r["pv_kwp"]["within_tolerance"], "battery": r["battery_kwh"]["within_tolerance"]}
+        res["time_windows"][f"window_{i+1}"] = row
+        print(f"  window {i+1}: " + "  |  ".join(f"{n} {row[n]['whole']:.1%}/{row[n]['pv']:.1%}/{row[n]['battery']:.1%}" for n in names))
+    return res
+
+
 if __name__ == "__main__":
-    todo = sys.argv[1:] or ["confirm", "curve", "nested", "installer"]
+    todo = sys.argv[1:] or ["confirm", "curve", "nested", "installer"]  # "battery_only" is run on its own
     path = Path("reports/remaining_tests.json")
     report = json.loads(path.read_text()) if path.exists() else {}
     for name in todo:
-        report[name] = {"confirm": confirm, "curve": curve, "nested": nested, "installer": installer}[name]()
+        report[name] = {"confirm": confirm, "curve": curve, "nested": nested, "installer": installer, "battery_only": battery_only}[name]()
         Path("reports").mkdir(exist_ok=True)
         path.write_text(json.dumps(report, indent=2, default=float))
         print()

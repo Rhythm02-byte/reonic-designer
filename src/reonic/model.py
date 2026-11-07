@@ -87,10 +87,11 @@ def _fit_usable(est, X: pd.DataFrame, y, sample_weight=None, fallback: float = 0
 
 
 class DesignModel:
-    def __init__(self, sizing: str = "mean", params: dict | None = None):
+    def __init__(self, sizing: str = "mean", params: dict | None = None, coverage_for: tuple = ("heat_pump_kw", "pv_kwp", "battery_kwh")):
         """sizing: "mean" = one regressor's point estimate; "coverage" = the size that fits the most plausible expert sizes."""
         assert sizing in ("mean", "coverage")
         self.sizing = sizing
+        self.coverage_for = tuple(coverage_for)  # which sizes use coverage sizing when sizing == "coverage"
         self.params = params or {}  # extra HistGradientBoosting settings, for tuning experiments
 
     def fit(self, X: pd.DataFrame, Y: pd.DataFrame, sample_weight: np.ndarray | None = None) -> "DesignModel":
@@ -117,7 +118,7 @@ class DesignModel:
             else:
                 reg = _Const(np.median(y[mask]) if mask.any() else 0.0)
             quants = None
-            if self.sizing == "coverage" and mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
+            if self.sizing == "coverage" and t in self.coverage_for and mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
                 quants = [_fit_usable(HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=120, learning_rate=0.08, random_state=0), Xc[mask], y[mask],
                                       None if w is None else w[mask], float(np.median(y[mask]))) for q in QUANTILES]
             self.steps[t] = (clf, reg, list(Xc.columns), quants)

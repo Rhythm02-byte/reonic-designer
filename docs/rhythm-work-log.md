@@ -79,6 +79,23 @@ Unseen installer for the best setting (whole design): 9.8% â†’ 11.1% and 18.5% â
 
 The best setting beats both the current model and the typical design on folds it was not chosen on.
 
+### Battery-only version (`scripts/remaining_tests.py battery_only`)
+
+Coverage sizing and the 40-size catalogue for the battery only; PV and heat pump keep the plain mean prediction.
+
+| | Whole design (gain, 95% interval) | PV | Battery |
+|---|---|---|---|
+| Best setting (all sizes), fresh folds 1-3 | +4.0 (+2.8 to +5.1) | +1.9 (+0.6 to +3.4) | +5.2 (+3.7 to +6.7) |
+| **Battery-only**, fresh folds 1-3 | **+2.3 (+1.5 to +3.1)** | +0.0 (unchanged) | **+5.4 (+4.1 to +6.7)** |
+
+Time windows (whole / PV / battery): current 12.7/47.6/41.0, 19.7/47.3/49.2, 19.0/57.5/47.9; best 16.2/47.3/49.8,
+19.0/46.3/52.1, 22.9/56.8/52.4; battery-only 13.3/47.6/42.2, 20.6/47.3/55.6, 20.6/57.5/50.5.
+
+Battery-only matches the best setting on the battery (+5.4 vs +5.2), leaves PV exactly as it is, and gains on whole design
+in all three time windows (+0.6, +0.9, +1.6). The full "best" setting adds +1.7 more whole-design points on random folds
+through PV, but its PV gain does not hold on time windows (PV is lower in all three). Battery-only is the safer default and
+agrees with a teammate's independent finding that only a battery-only variant passed on their validation window.
+
 ### Cross-check by a teammate's port (reported 7 Nov, evening)
 
 A teammate ported these ideas into their own pipeline (time-ordered validation window, `policy.json`). Their report says

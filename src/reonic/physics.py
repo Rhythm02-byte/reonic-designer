@@ -15,7 +15,7 @@ HP_SCOP = 3.2  # seasonal coefficient of performance
 HP_FULL_LOAD_HOURS = 2_000
 DEFAULT_PRICE_EUR_KWH = 0.35
 DEFAULT_FEED_IN_EUR_KWH = 0.08
-CAPEX = {"pv_per_kwp": 1_300, "battery_per_kwh": 650, "hp_fixed": 12_000, "hp_per_kw": 800}
+CAPEX = {"pv_per_kwp": 1_300, "battery_per_kwh": 650, "hp_fixed": 12_000, "hp_per_kw": 800, "wallbox": 1_500}
 
 
 def num(x) -> float | None:

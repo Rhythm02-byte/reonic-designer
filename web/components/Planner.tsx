@@ -1,17 +1,63 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target } from "@/lib/api";
-import { CHOICE_LABEL, DEMO_INPUTS, defaultOptions, describe, encodeOffer, eur, FIELD_COPY, LABEL, pct, size, UNIT, years } from "@/lib/copy";
+import { CHOICE_LABEL, DEMO_INPUTS, defaultOptions, describe, encodeOffer, eur, FIELD_COPY, LABEL, num, pct, size, UNIT, years } from "@/lib/copy";
 import { House } from "./House";
-import { Badge, Button, Card, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, PersonaChip, pill, pillLook, Segmented, Stat } from "./ui";
+import { Badge, Button, Card, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, pill, pillLook, Segmented, Stat } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
 
+// -- workspace: customers per planner, kept in this browser --------------------------------------------------
+// ponytail: localStorage only, so the team list is per browser; move it to the API once planners share a backend.
+type Customer = { id: string; name: string; owner: string; inputs: Inputs };
+type Workspace = { me: string; active: string; customers: Customer[] };
+const TEAM = ["Anna Weber", "Jonas Keller", "Lea Brandt"];
+const SEED: Workspace = {
+  me: TEAM[0],
+  active: "c1",
+  customers: [
+    { id: "c1", name: "Familie Berger", owner: TEAM[0], inputs: DEMO_INPUTS },
+    { id: "c2", name: "Haus Yilmaz", owner: TEAM[0], inputs: { ...DEMO_INPUTS, annual_consumption_kwh: 3200, household_size: 2, has_ev: false, heating_type: "oil" } },
+    { id: "c3", name: "Schneider, Garching", owner: TEAM[1], inputs: { ...DEMO_INPUTS, annual_consumption_kwh: 6200, household_size: 5, ev_km_per_year: 18000 } },
+    { id: "c4", name: "Müller Bungalow", owner: TEAM[2], inputs: { ...DEMO_INPUTS, annual_consumption_kwh: 2800, household_size: 2, has_ev: false, heating_type: "heat_pump" } },
+  ],
+};
+const KEY = "rhythm.workspace.v1";
+const subs = new Set<() => void>();
+let cache: Workspace | null = null;
+function read(): Workspace {
+  if (!cache) {
+    try {
+      const w = JSON.parse(localStorage.getItem(KEY) ?? "null");
+      cache = w && typeof w.me === "string" && Array.isArray(w.customers) && w.customers.length ? w : SEED;
+    } catch {
+      cache = SEED;
+    }
+  }
+  return cache!;
+}
+function update(fn: (w: Workspace) => Workspace) {
+  cache = fn(read());
+  try {
+    localStorage.setItem(KEY, JSON.stringify(cache));
+  } catch {
+    // Private mode or full storage: the change lives until the tab closes.
+  }
+  subs.forEach((f) => f());
+}
+const subscribe = (f: () => void) => {
+  subs.add(f);
+  return () => subs.delete(f);
+};
+
 export default function Planner() {
+  const ws = useSyncExternalStore(subscribe, read, () => SEED);
+  const [scope, setScope] = useState<"mine" | "team">("mine");
+  // A held-out project opens as an unsaved preview so it never overwrites a customer.
+  const [preview, setPreview] = useState<{ id: string; inputs: Inputs } | null>(null);
+  const [query, setQuery] = useState("");
   const [meta, setMeta] = useState<Meta | null>(null);
   const [metaError, setMetaError] = useState<string | null>(null);
-  const [inputs, setInputs] = useState<Inputs>(DEMO_INPUTS);
-  const [source, setSource] = useState<string | null>(null);
   // The last good design stays on screen while the next one is computed.
   const [state, setState] = useState<{ key: string | null; design: Design | null; error: string | null }>({
     key: null, design: null, error: null,
@@ -20,6 +66,11 @@ export default function Planner() {
   useEffect(() => {
     api.meta().then(setMeta, (e: Error) => setMetaError(e.message));
   }, []);
+
+  const customer = ws.customers.find((c) => c.id === ws.active) ?? ws.customers[0];
+  const inputs = preview?.inputs ?? customer.inputs;
+  const q = query.trim().toLowerCase();
+  const list = ws.customers.filter((c) => (scope === "team" || c.owner === ws.me) && c.name.toLowerCase().includes(q));
 
   // Without an electric car the distance means nothing; sent anyway, the model reads it as one and adds a wallbox.
   // The value stays in state so switching back to "Yes" restores it.
@@ -41,85 +92,199 @@ export default function Planner() {
 
   const { design } = state;
   const busy = state.key !== key;
-  const setInput = (name: string, v: InputValue) => setInputs((p) => ({ ...p, [name]: v }));
-  const load = (row: HoldoutRow) => {
-    setInputs(row.inputs);
-    setSource(row.project_id);
+  const editCustomer = (patch: Partial<Customer>) =>
+    update((w) => ({ ...w, customers: w.customers.map((c) => (c.id === customer.id ? { ...c, ...patch } : c)) }));
+  const setInput = (name: string, v: InputValue) =>
+    preview
+      ? setPreview({ ...preview, inputs: { ...preview.inputs, [name]: v } })
+      : editCustomer({ inputs: { ...customer.inputs, [name]: v } });
+  const open = (id: string) => {
+    setPreview(null);
+    update((w) => ({ ...w, active: id }));
   };
+  const load = (row: HoldoutRow) => setPreview({ id: row.project_id, inputs: row.inputs });
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <Header width={WIDTH}>
-        <Logo />
-        <PersonaChip who="planner" />
-        <div className="ml-auto flex items-center gap-3">
-          <span aria-live="polite" className="text-xs text-muted">
-            {busy ? "Updating…" : ""}
+    <div className="xl:grid xl:grid-cols-[248px_minmax(0,1fr)]">
+      <Sidebar ws={ws} list={list} scope={scope} setScope={setScope} activeId={preview ? null : customer.id} onOpen={open} query={query} setQuery={setQuery} />
+      <div className="flex min-h-dvh min-w-0 flex-col">
+        <Header width={WIDTH}>
+          <span className="xl:hidden">
+            <Logo product={false} />
           </span>
-          <ShareLink meta={meta} design={busy ? null : design} inputs={sent} />
-        </div>
-      </Header>
-
-      <main className={`mx-auto w-full flex-1 space-y-6 px-4 py-8 sm:px-6 ${WIDTH}`}>
-        <div className="max-w-3xl space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Plan the system <span className="text-reonic">an expert would</span>
-          </h1>
-          <p className="max-w-[65ch] text-base">
-            Describe the home. The model proposes solar, battery, heat pump and wallbox sizes the way experienced Reonic
-            planners did on real projects.
-          </p>
-        </div>
-        <ErrorNote error={metaError ?? state.error} />
-        {meta?.synthetic && (
-          <p className="text-sm text-amber-800">Running on synthetic data: numbers are for the demo only.</p>
-        )}
-
-        {/* Mobile order: inputs, house, proof. From lg the house spans both rows of the right column. */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
-          <section className="space-y-2 lg:col-start-1" aria-labelledby="home">
-            <h2 id="home" className="text-sm font-semibold text-ink">
-              The home
-            </h2>
-            {meta ? (
-              <Card className="space-y-3 p-4">
-                {Object.keys(FIELD_COPY)
-                  .flatMap((name) => meta.fields.filter((f) => f.name === name))
-                  .filter((f) => f.name !== "ev_km_per_year" || inputs.has_ev !== false)
-                  .map((f) => (
-                    <FieldInput key={f.name} field={f} value={inputs[f.name] ?? null} set={(v) => setInput(f.name, v)} />
-                  ))}
-              </Card>
-            ) : (
-              <Skeleton className="h-80" />
-            )}
-            <p className="text-xs text-muted">
-              {source ? `Other inputs come from project ${source.slice(0, 8)}.` : "Other inputs use typical values."}
-            </p>
-          </section>
-          <section className="min-w-0 space-y-4 lg:col-start-2 lg:row-span-2 lg:row-start-1" aria-label="Design">
-            <Card className="overflow-hidden">
-              <div className="relative h-[320px] bg-gradient-to-b from-sand-2 to-sand sm:h-[520px]">
-                {design && <House values={design.values} hasEv={inputs.has_ev === true} description={describe(design.values)} />}
-                <p className="pointer-events-none absolute top-3 left-4 text-xs text-quiet">Drag to turn</p>
-              </div>
-              {design ? <Economics design={design} /> : <Skeleton className="m-4 h-20" />}
-            </Card>
-            {design && (
-              <Card className="p-4 text-sm">
-                <h2 className="mb-3 text-sm font-semibold text-ink">Why this design</h2>
-                <CheckList items={design.explanation.slice(0, 2)} />
-              </Card>
-            )}
-          </section>
-          <div className="lg:col-start-1 lg:self-start">
-            <Reality onLoad={load} />
+          {/* Below xl the sidebar is gone; a native select switches customers. */}
+          <div className="flex items-center gap-2 xl:hidden">
+            <select
+              aria-label="Customer"
+              className={`${inputClass} max-w-44`}
+              value={preview ? "" : customer.id}
+              onChange={(e) => e.target.value && open(e.target.value)}
+            >
+              {preview && <option value="">Real project</option>}
+              {ws.customers.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
-      </main>
-      <Footer width={WIDTH}>
-        Built for the Reonic challenge at thinc! München 2026. Every size is a proposal for a planner to check, not a quote.
-      </Footer>
+          <div className="ml-auto flex items-center gap-3">
+            <span aria-live="polite" className="text-xs text-muted">
+              {busy ? "Updating…" : ""}
+            </span>
+            <ShareLink meta={meta} design={busy ? null : design} inputs={sent} />
+          </div>
+        </Header>
+
+        <main className={`mx-auto w-full flex-1 space-y-6 px-4 py-6 sm:px-6 ${WIDTH}`}>
+          <div className="space-y-1">
+            <h1 className="sr-only">Design for {preview ? "a real project" : customer.name}</h1>
+            <p className="text-xs text-quiet">
+              {preview ? `Real project ${preview.id.slice(0, 8)} · preview, not saved` : `Customer of ${customer.owner}`}
+            </p>
+            {preview ? (
+              <p className="text-3xl font-semibold tracking-tight text-ink">Real project</p>
+            ) : (
+              <input
+                aria-label="Customer name"
+                value={customer.name}
+                onChange={(e) => editCustomer({ name: e.target.value })}
+                className="-mx-1.5 w-full max-w-xl rounded-lg bg-transparent px-1.5 text-3xl font-semibold tracking-tight text-ink hover:bg-sand focus-visible:outline-2 focus-visible:outline-blue-600"
+              />
+            )}
+            <p className="max-w-[65ch] text-sm">
+              The model proposes solar, battery, heat pump and wallbox sizes the way experienced Reonic planners did on
+              real projects.
+            </p>
+          </div>
+          <ErrorNote error={metaError ?? state.error} />
+          {meta?.synthetic && (
+            <p className="text-sm text-amber-800">Running on synthetic data: numbers are for the demo only.</p>
+          )}
+
+          {/* Mobile order: inputs, house, proof. From lg the house spans both rows of the right column. */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
+            <section className="space-y-2 lg:col-start-1" aria-labelledby="home">
+              <h2 id="home" className="text-sm font-semibold text-ink">
+                The home
+              </h2>
+              {meta ? (
+                <Card className="space-y-3 p-4">
+                  {Object.keys(FIELD_COPY)
+                    .flatMap((name) => meta.fields.filter((f) => f.name === name))
+                    .filter((f) => f.name !== "ev_km_per_year" || inputs.has_ev !== false)
+                    .map((f) => (
+                      <FieldInput key={f.name} field={f} value={inputs[f.name] ?? null} set={(v) => setInput(f.name, v)} />
+                    ))}
+                </Card>
+              ) : (
+                <Skeleton className="h-80" />
+              )}
+              <p className="text-xs text-muted">
+                {preview ? `Other inputs come from project ${preview.id.slice(0, 8)}.` : "Other inputs use typical values."}
+              </p>
+            </section>
+            <section className="min-w-0 space-y-4 lg:col-start-2 lg:row-span-2 lg:row-start-1" aria-label="Design">
+              <Card className="overflow-hidden">
+                <div className="relative h-[320px] bg-gradient-to-b from-sand-2 to-sand sm:h-[520px]">
+                  {design && <House values={design.values} hasEv={inputs.has_ev === true} description={describe(design.values)} />}
+                  <p className="pointer-events-none absolute top-3 left-4 text-xs text-quiet">Drag to turn</p>
+                </div>
+                {design ? <Economics design={design} /> : <Skeleton className="m-4 h-20" />}
+              </Card>
+              {design && (
+                <Card className="p-4 text-sm">
+                  <h2 className="mb-3 text-sm font-semibold text-ink">Why this design</h2>
+                  <CheckList items={design.explanation.slice(0, 2)} />
+                </Card>
+              )}
+            </section>
+            <div className="lg:col-start-1 lg:self-start">
+              <Reality onLoad={load} />
+            </div>
+          </div>
+        </main>
+        <Footer width={WIDTH}>
+          Built for the Reonic challenge at thinc! München 2026. Every size is a proposal for a planner to check, not a
+          quote.
+        </Footer>
+      </div>
+    </div>
+  );
+}
+
+function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery }: {
+  ws: Workspace;
+  list: Customer[];
+  scope: "mine" | "team";
+  setScope: (s: "mine" | "team") => void;
+  activeId: string | null;
+  onOpen: (id: string) => void;
+  query: string;
+  setQuery: (q: string) => void;
+}) {
+  return (
+    // The outer cell carries the sand down the whole page; the aside itself stays in view.
+    <div className="hidden border-r border-zinc-200 bg-sand xl:block">
+    <aside aria-label="Workspace" className="sticky top-0 flex h-dvh flex-col gap-4 p-4">
+      <div className="px-1 py-1.5">
+        <Logo product={false} />
+      </div>
+      <div className="relative">
+        <Icon name="search" className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-quiet" />
+        <input
+          type="search"
+          aria-label="Search customers"
+          placeholder="Search customers"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className={`${inputClass} pl-8`}
+        />
+      </div>
+      <Segmented
+        name="scope"
+        label="Show customers"
+        value={scope}
+        options={[
+          { value: "mine", label: "Mine" },
+          { value: "team", label: "Team" },
+        ]}
+        onChange={setScope}
+      />
+      <nav aria-label="Customers" className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
+        <ul className="space-y-0.5">
+          {list.map((c) => (
+            <li key={c.id}>
+              <button
+                type="button"
+                aria-current={c.id === activeId ? "page" : undefined}
+                onClick={() => onOpen(c.id)}
+                className="w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:bg-white aria-[current=page]:ring-1 aria-[current=page]:ring-zinc-200"
+              >
+                <span className="block truncate text-sm font-medium text-ink">{c.name || "Unnamed customer"}</span>
+                <span className="block truncate text-xs text-quiet">
+                  {scope === "team" && `${c.owner.split(" ")[0]} · `}
+                  {typeof c.inputs.annual_consumption_kwh === "number" ? `${num(c.inputs.annual_consumption_kwh, 0)} kWh/yr` : "Use unknown"}
+                  {" · "}
+                  {CHOICE_LABEL[String(c.inputs.heating_type)] ?? "Heating unknown"}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        {list.length === 0 && (
+          <p className="px-2.5 text-xs text-quiet">{query ? `No customer matches “${query}”.` : "No customers yet."}</p>
+        )}
+      </nav>
+      <label className="block space-y-1 text-xs text-quiet">
+        <span>Signed in as</span>
+        <select className={inputClass} value={ws.me} onChange={(e) => update((w) => ({ ...w, me: e.target.value }))}>
+          {TEAM.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+      </label>
+    </aside>
     </div>
   );
 }

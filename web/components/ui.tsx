@@ -2,7 +2,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
 // Rhythm: an ink rounded square with three rising bars (output over a day), plus the wordmark in Geist.
-export function Logo() {
+export function Logo({ product = true }: { product?: boolean }) {
   return (
     <span className="flex items-center gap-3 text-ink">
       <span className="flex items-center gap-2" role="img" aria-label="Rhythm">
@@ -18,8 +18,12 @@ export function Logo() {
           Rhythm
         </span>
       </span>
-      <span aria-hidden className="h-4 w-px bg-zinc-300" />
-      <span className="text-sm font-medium tracking-tight">Home Energy Designer</span>
+      {product && (
+        <>
+          <span aria-hidden className="h-4 w-px bg-zinc-300" />
+          <span className="text-sm font-medium tracking-tight">Home Energy Designer</span>
+        </>
+      )}
     </span>
   );
 }
@@ -91,6 +95,12 @@ const ICONS = {
     <>
       <circle cx="12" cy="12" r="10" />
       <path d="M12 6v6l4 2" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
     </>
   ),
   arrow: (

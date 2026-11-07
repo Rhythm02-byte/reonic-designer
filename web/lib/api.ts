@@ -28,7 +28,8 @@ export type Validation = { economics: Economics };
 
 // reports/eval.json; {} until `python -m reonic eval` has run.
 type Whole = { whole_design_within_tolerance: number } & Record<Target, { within_tolerance: number }>;
-export type Evaluation = { n_test: number; model: Whole; baseline: Whole };
+// baseline = rule of thumb (easy to beat); typical = ignores the home, proposes what most homes got (the fair reference).
+export type Evaluation = { n_test: number; model: Whole; baseline: Whole; typical?: Whole };
 
 export type HoldoutRow = {
   project_id: string;

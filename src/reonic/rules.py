@@ -52,7 +52,8 @@ def apply_one(target: str, value: float, current: dict[str, float], inputs: Home
             v = snap(v, catalog.get(target, []), upper=cap)
             if v > cap + 1e-9:  # no catalogue size fits under the cap (tiny PV): stay under it rather than break R04
                 v = float(np.floor(cap * 10) / 10)
-                notes.append(f"R04: battery limited to {v:g} kWh, below the smallest catalogue size.")
+                if not any(n.startswith("R04") for n in notes):  # the cap note above already says it
+                    notes.append(f"R04: battery limited to {v:g} kWh, below the smallest catalogue size.")
 
     elif target == "wallbox_kw" and v > 0:
         v = snap(v, catalog.get(target, []) or [11.0, 22.0])

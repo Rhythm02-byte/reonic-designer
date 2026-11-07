@@ -775,11 +775,17 @@ function Bars({ report }: { report: Evaluation }) {
         <span className="flex items-center gap-1.5">
           <span className="size-2 rounded-full bg-zinc-500" /> Rule of thumb
         </span>
+        {report.typical && (
+          <span className="flex items-center gap-1.5">
+            <span className="size-2 rounded-full bg-zinc-300" /> Typical design
+          </span>
+        )}
       </div>
       <ul className="space-y-2.5">
         {BARS.map(({ label, get }) => {
           const m = get(report.model);
           const b = get(report.baseline);
+          const t = report.typical ? get(report.typical) : null;
           return (
             <li key={label}>
               <div className="flex justify-between text-xs">
@@ -788,11 +794,18 @@ function Bars({ report }: { report: Evaluation }) {
                   {pct(m)} <span className="sr-only">for our model,</span>
                   <span aria-hidden> · </span>
                   {pct(b)} <span className="sr-only">for the rule of thumb</span>
+                  {t !== null && (
+                    <>
+                      <span aria-hidden> · </span>
+                      {pct(t)} <span className="sr-only">for a typical design</span>
+                    </>
+                  )}
                 </span>
               </div>
               <div className="mt-1 space-y-0.5" aria-hidden>
                 <div className="h-1.5 rounded-full bg-paper" style={{ width: `${Math.max(m * 100, 1)}%` }} />
                 <div className="h-1.5 rounded-full bg-zinc-500" style={{ width: `${Math.max(b * 100, 1)}%` }} />
+                {t !== null && <div className="h-1.5 rounded-full bg-zinc-300" style={{ width: `${Math.max(t * 100, 1)}%` }} />}
               </div>
             </li>
           );
@@ -830,12 +843,20 @@ function Reality({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
         !error && <div className="h-14 animate-pulse rounded-xl bg-ink/10" />
       ) : ready ? (
         <>
-          <p className="text-lg leading-snug font-semibold tracking-tight">
-            Across {report.n_test} projects the model did{" "}
-            {report.model.whole_design_within_tolerance >= report.baseline.whole_design_within_tolerance ? "better" : "worse"}{" "}
-            than the rule of thumb at reproducing the installer&apos;s recorded design:{" "}
-            {pct(report.model.whole_design_within_tolerance)} against {pct(report.baseline.whole_design_within_tolerance)}.
-          </p>
+          {report.typical ? (
+            <p className="text-lg leading-snug font-semibold tracking-tight">
+              Across {report.n_test} projects the model reproduced the installer&apos;s whole design for{" "}
+              {pct(report.model.whole_design_within_tolerance)}. A typical design that ignores the home matches{" "}
+              {pct(report.typical.whole_design_within_tolerance)}; a rule of thumb {pct(report.baseline.whole_design_within_tolerance)}.
+            </p>
+          ) : (
+            <p className="text-lg leading-snug font-semibold tracking-tight">
+              Across {report.n_test} projects the model did{" "}
+              {report.model.whole_design_within_tolerance >= report.baseline.whole_design_within_tolerance ? "better" : "worse"}{" "}
+              than the rule of thumb at reproducing the installer&apos;s recorded design:{" "}
+              {pct(report.model.whole_design_within_tolerance)} against {pct(report.baseline.whole_design_within_tolerance)}.
+            </p>
+          )}
           <p className="text-xs">
             A whole-design match means every part agrees with what the installer recorded for a project the model never saw.
             It is not the chance that this home&apos;s design is right.

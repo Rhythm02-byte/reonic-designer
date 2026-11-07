@@ -6,18 +6,67 @@ export const PANEL_KWP = 0.45; // Reonic's modules are 450 Wp (src/reonic/data.p
 export const LABEL: Record<Target, string> = { pv_kwp: "PV", battery_kwh: "Battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };
 export const UNIT: Record<Target, string> = { pv_kwp: "kWp", battery_kwh: "kWh", heat_pump_kw: "kW", wallbox_kw: "kW" };
 
-// The planner shows only these inputs; the rest keep DEMO_INPUTS (or a loaded project's values).
-export const FIELD_COPY: Record<string, { label: string; unit?: string; step?: number }> = {
-  annual_consumption_kwh: { label: "Annual electricity use", unit: "kWh/yr", step: 100 },
-  household_size: { label: "People in household", step: 1 },
-  heating_type: { label: "Current heating" },
-  has_ev: { label: "Electric car" },
-  ev_km_per_year: { label: "Car distance", unit: "km/yr", step: 500 },
-};
+// Every input the designer API takes (src/reonic/schema.py), grouped as the planner sees them.
+// `scale` shows a stored fraction as a percentage (0.03 -> 3).
+export type FieldCopy = { label: string; unit?: string; step?: number; scale?: number };
+export const FIELD_GROUPS: { title: string; existing?: boolean; fields: Record<string, FieldCopy> }[] = [
+  {
+    title: "Home & household",
+    fields: {
+      household_size: { label: "People in household", step: 1 },
+      heated_area_m2: { label: "Heated area", unit: "m²", step: 5 },
+      annual_consumption_kwh: { label: "Annual electricity use", unit: "kWh/yr", step: 100 },
+      load_profile: { label: "Load profile" },
+    },
+  },
+  {
+    title: "Electricity & tariff",
+    fields: {
+      electricity_price_eur_kwh: { label: "Electricity price", unit: "€/kWh", step: 0.01 },
+      energy_price_increase: { label: "Price increase", unit: "% per yr", step: 0.5, scale: 100 },
+      has_flexible_tariff: { label: "Flexible tariff" },
+    },
+  },
+  {
+    title: "Electric vehicle",
+    fields: {
+      has_ev: { label: "Electric car" },
+      ev_km_per_year: { label: "Car distance", unit: "km/yr", step: 500 },
+    },
+  },
+  {
+    title: "Existing system",
+    existing: true,
+    fields: {
+      existing_pv_kwp: { label: "Solar already on the roof", unit: "kWp", step: 0.5 },
+      existing_battery_kwh: { label: "Battery already installed", unit: "kWh", step: 0.5 },
+      has_existing_wallbox: { label: "Wallbox already installed" },
+      heating_type: { label: "Current heating" },
+      heating_demand_kwh: { label: "Heating demand", unit: "kWh/yr", step: 500 },
+    },
+  },
+];
+export const FIELD_COPY: Record<string, FieldCopy> = Object.assign({}, ...FIELD_GROUPS.map((g) => g.fields));
 
 export const CHOICE_LABEL: Record<string, string> = {
   gas: "Gas", oil: "Oil", heat_pump: "Heat pump", electric: "Electric", district: "District heating", other: "Other",
+  H0: "Standard household (H0)", FamilyOfFour: "Family of four", SeniorOnePerson: "One senior",
+  PartTimeOnePerson: "One person, part-time", HomeOfficeOnePerson: "One person, home office", CustomFromEditor: "Custom",
 };
+
+// What the API never supplies per component; said once on each card instead of guessed.
+export const NOT_SUPPLIED: Record<Target, string> = {
+  pv_kwp: "Module, brand and inverter power",
+  battery_kwh: "Product and brand",
+  heat_pump_kw: "Product and brand",
+  wallbox_kw: "Product and brand",
+};
+
+/** Name of a whole alternative setup, from the one part it changes. */
+export function altLabel(t: Target, v: number) {
+  const name = LABEL[t] === "PV" ? "solar" : LABEL[t].toLowerCase();
+  return v === 0 ? `Without ${name}` : `With a ${num(v)} ${UNIT[t]} ${name}`;
+}
 
 export const DEMO_INPUTS: Inputs = {
   annual_consumption_kwh: 4500, household_size: 4, load_profile: "FamilyOfFour", electricity_price_eur_kwh: 0.35,
@@ -46,18 +95,15 @@ export function describe(values: Values) {
 }
 
 // -- offer link (planner -> homeowner) ---------------------------------------------------------------
-export type Offer = { v: 1; inputs: Inputs; recommended: Values; options: Record<Target, number[]> };
-
-const uniqSorted = (xs: number[]) => [...new Set(xs.map((x) => Math.round(x * 100) / 100))].sort((a, b) => a - b);
-
-/** Sizes a homeowner may pick: the recommendation, its catalog neighbours and (except PV) "none". */
-export function defaultOptions(t: Target, rec: number, catalog: number[]): number[] {
-  const cat = uniqSorted(catalog.filter((c) => c > 0));
-  const below = cat.filter((c) => c < rec).at(-1);
-  const above = cat.find((c) => c > rec) ?? (rec === 0 ? cat[Math.floor(cat.length / 2)] : undefined);
-  const near = t === "heat_pump_kw" ? [] : [below, above].filter((x): x is number => x !== undefined);
-  return uniqSorted([...(t === "pv_kwp" && rec > 0 ? [] : [0]), rec, ...near]);
-}
+// The homeowner picks one of these whole setups; parts are never combined on their own.
+export type OfferOption = { label: string; values: Values };
+export type Offer = {
+  v: 2;
+  customer: string;
+  planner: string;
+  inputs: Inputs;
+  options: OfferOption[]; // options[0] is the installer's recommendation
+};
 
 const toB64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
 const fromB64 = (s: string) => new TextDecoder().decode(Uint8Array.from(atob(s), (c) => c.charCodeAt(0)));
@@ -68,17 +114,17 @@ export const encodeOffer = (o: Offer) =>
 const isSize = (x: unknown): x is number => typeof x === "number" && Number.isFinite(x) && x >= 0 && x <= 1000;
 const isInput = (x: unknown): x is InputValue =>
   x === null || typeof x === "boolean" || typeof x === "string" || (typeof x === "number" && Number.isFinite(x));
+const isText = (x: unknown): x is string => typeof x === "string" && x.length <= 120;
 
-/** The link is user-controlled: anything malformed yields null. The API validates inputs again. */
+/** The link is user-controlled: anything malformed yields null. */
 export function decodeOffer(code: string): Offer | null {
   try {
     const o = JSON.parse(fromB64(code.replace(/-/g, "+").replace(/_/g, "/")));
-    if (o?.v !== 1 || typeof o.inputs !== "object" || o.inputs === null) return null;
-    if (!Object.values(o.inputs).every(isInput)) return null;
-    for (const t of TARGETS) {
-      const opts = o.options?.[t];
-      if (!isSize(o.recommended?.[t]) || !Array.isArray(opts) || !opts.length || !opts.every(isSize)) return null;
-      if (!opts.includes(o.recommended[t])) return null;
+    if (o?.v !== 2 || !isText(o.customer) || !isText(o.planner)) return null;
+    if (typeof o.inputs !== "object" || o.inputs === null || !Object.values(o.inputs).every(isInput)) return null;
+    if (!Array.isArray(o.options) || o.options.length < 1 || o.options.length > 6) return null;
+    for (const opt of o.options) {
+      if (!isText(opt?.label) || !TARGETS.every((t) => isSize(opt.values?.[t]))) return null;
     }
     return o as Offer;
   } catch {

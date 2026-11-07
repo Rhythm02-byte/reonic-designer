@@ -1,15 +1,15 @@
 "use client";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target } from "@/lib/api";
-import { CHOICE_LABEL, DEMO_INPUTS, defaultOptions, describe, encodeOffer, eur, FIELD_COPY, LABEL, num, pct, size, UNIT, years } from "@/lib/copy";
+import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
+import { altLabel, CHOICE_LABEL, DEMO_INPUTS, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
 import { House } from "./House";
-import { Badge, Button, Card, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, pill, pillLook, Segmented, Stat } from "./ui";
+import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
 
 // -- workspace: customers per planner, kept in this browser --------------------------------------------------
 // ponytail: localStorage only, so the team list is per browser; move it to the API once planners share a backend.
-type Customer = { id: string; name: string; owner: string; inputs: Inputs };
+type Customer = { id: string; name: string; owner: string; inputs: Inputs; locked?: Partial<Values> };
 type Workspace = { me: string; active: string; customers: Customer[] };
 const TEAM = ["Anna Weber", "Jonas Keller", "Lea Brandt"];
 const SEED: Workspace = {
@@ -50,6 +50,10 @@ const subscribe = (f: () => void) => {
   return () => subs.delete(f);
 };
 
+// What the planner is editing. It stays a draft, marked unsaved, until "Save" writes it to the customer.
+type Draft = { inputs: Inputs; locked: Partial<Values> };
+type Step = { id: string; draft: Draft; label: string; before: Values | null };
+
 export default function Planner() {
   const ws = useSyncExternalStore(subscribe, read, () => SEED);
   const [scope, setScope] = useState<"mine" | "team">("mine");
@@ -58,6 +62,11 @@ export default function Planner() {
   const [query, setQuery] = useState("");
   const [meta, setMeta] = useState<Meta | null>(null);
   const [metaError, setMetaError] = useState<string | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, Draft>>({});
+  const [history, setHistory] = useState<Step[]>([]);
+  const [selected, setSelected] = useState<Target | null>(null);
+  // Alternatives the planner has ticked on or off for the homeowner; unticked default: the ones without warnings.
+  const [offered, setOffered] = useState<Partial<Record<Target, boolean>>>({});
   // The last good design stays on screen while the next one is computed.
   const [state, setState] = useState<{ key: string | null; design: Design | null; error: string | null }>({
     key: null, design: null, error: null,
@@ -68,41 +77,92 @@ export default function Planner() {
   }, []);
 
   const customer = ws.customers.find((c) => c.id === ws.active) ?? ws.customers[0];
-  const inputs = preview?.inputs ?? customer.inputs;
+  const id = preview?.id ?? customer.id;
+  const saved: Draft = preview ? { inputs: preview.inputs, locked: {} } : { inputs: customer.inputs, locked: customer.locked ?? {} };
+  const draft = drafts[id] ?? saved;
+  const dirty = !preview && JSON.stringify(draft) !== JSON.stringify(saved);
+  const { inputs, locked } = draft;
   const q = query.trim().toLowerCase();
   const list = ws.customers.filter((c) => (scope === "team" || c.owner === ws.me) && c.name.toLowerCase().includes(q));
 
   // Without an electric car the distance means nothing; sent anyway, the model reads it as one and adds a wallbox.
   // The value stays in state so switching back to "Yes" restores it.
   const sent = useMemo(() => (inputs.has_ev === false ? { ...inputs, ev_km_per_year: null } : inputs), [inputs]);
-  const key = JSON.stringify(sent);
+  const key = JSON.stringify([sent, locked]);
   useEffect(() => {
     let live = true;
-    const id = setTimeout(() => {
-      api.design(sent).then(
+    const t = setTimeout(() => {
+      api.design(sent, locked).then(
         (design) => live && setState({ key, design, error: null }),
         (e: Error) => live && setState((s) => ({ ...s, key, error: e.message })),
       );
     }, 250);
     return () => {
       live = false;
-      clearTimeout(id);
+      clearTimeout(t);
     };
-  }, [sent, key]);
+  }, [sent, locked, key]);
 
   const { design } = state;
   const busy = state.key !== key;
   const editCustomer = (patch: Partial<Customer>) =>
     update((w) => ({ ...w, customers: w.customers.map((c) => (c.id === customer.id ? { ...c, ...patch } : c)) }));
-  const setInput = (name: string, v: InputValue) =>
-    preview
-      ? setPreview({ ...preview, inputs: { ...preview.inputs, [name]: v } })
-      : editCustomer({ inputs: { ...customer.inputs, [name]: v } });
-  const open = (id: string) => {
-    setPreview(null);
-    update((w) => ({ ...w, active: id }));
+  const edit = (label: string, next: Draft) => {
+    setHistory((h) => [...h, { id, draft, label, before: design?.values ?? null }]);
+    setDrafts((d) => ({ ...d, [id]: next }));
   };
-  const load = (row: HoldoutRow) => setPreview({ id: row.project_id, inputs: row.inputs });
+  const steps = history.filter((h) => h.id === id);
+  const last = steps.at(-1);
+  const undo = () => {
+    if (!last) return;
+    setHistory((h) => h.filter((x) => x !== last));
+    setDrafts((d) => ({ ...d, [id]: last.draft }));
+  };
+  const save = () => {
+    editCustomer({ inputs, locked });
+    setDrafts((d) => Object.fromEntries(Object.entries(d).filter(([k]) => k !== id)));
+    setHistory((h) => h.filter((x) => x.id !== id));
+  };
+  const setInput = (name: string, v: InputValue) => {
+    const was = inputs[name] ?? null;
+    edit(`${FIELD_COPY[name]?.label ?? name}: ${show(name, was)} → ${show(name, v)}`, { inputs: { ...inputs, [name]: v }, locked });
+  };
+  const setSize = (t: Target, v: number | null) => {
+    const rest = Object.fromEntries(Object.entries(locked).filter(([k]) => k !== t));
+    edit(v === null ? `${LABEL[t]} back to the recommendation` : `${LABEL[t]} set to ${size(v, UNIT[t])}`, {
+      inputs,
+      locked: v === null ? rest : { ...rest, [t]: v },
+    });
+  };
+  const open = (cid: string) => {
+    setPreview(null);
+    setSelected(null);
+    setOffered({});
+    update((w) => ({ ...w, active: cid }));
+  };
+  const load = (row: HoldoutRow) => {
+    setSelected(null);
+    setOffered({});
+    setPreview({ id: row.project_id, inputs: row.inputs });
+  };
+
+  const name = preview ? "Real project" : customer.name || "Unnamed customer";
+  const offer: Offer | null =
+    design && !busy
+      ? {
+          v: 2,
+          customer: name,
+          planner: preview ? ws.me : customer.owner,
+          inputs: sent,
+          options: [
+            { label: "Recommended", values: design.values },
+            ...TARGETS.flatMap((t) => {
+              const a = design.alternatives[t];
+              return a && (offered[t] ?? a.flags.length === 0) ? [{ label: altLabel(t, a.value), values: a.values }] : [];
+            }),
+          ],
+        }
+      : null;
 
   return (
     <div className="xl:grid xl:grid-cols-[248px_minmax(0,1fr)]">
@@ -113,32 +173,35 @@ export default function Planner() {
             <Logo product={false} />
           </span>
           {/* Below xl the sidebar is gone; a native select switches customers. */}
-          <div className="flex items-center gap-2 xl:hidden">
-            <select
-              aria-label="Customer"
-              className={`${inputClass} max-w-44`}
-              value={preview ? "" : customer.id}
-              onChange={(e) => e.target.value && open(e.target.value)}
-            >
-              {preview && <option value="">Real project</option>}
-              {ws.customers.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="ml-auto flex items-center gap-3">
-            <span aria-live="polite" className="text-xs text-muted">
-              {busy ? "Updating…" : ""}
-            </span>
-            <ShareLink meta={meta} design={busy ? null : design} inputs={sent} />
+          <select
+            aria-label="Customer"
+            className={`${inputClass} max-w-44 xl:hidden`}
+            value={preview ? "" : customer.id}
+            onChange={(e) => e.target.value && open(e.target.value)}
+          >
+            {preview && <option value="">Real project</option>}
+            {ws.customers.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <nav aria-label="Project" className="hidden gap-1 text-sm md:flex">
+            {[["design", "Design"], ["inputs", "Inputs"], ["evidence", "Evidence"]].map(([href, label]) => (
+              <a key={href} href={`#${href}`} className={`${pill} ${pillLook.ghost}`}>
+                {label}
+              </a>
+            ))}
+          </nav>
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <SaveState preview={!!preview} dirty={dirty} busy={busy} onSave={save} />
+            <OfferLinks offer={offer} />
           </div>
         </Header>
 
         <main className={`mx-auto w-full flex-1 space-y-6 px-4 py-6 sm:px-6 ${WIDTH}`}>
           <div className="space-y-1">
-            <h1 className="sr-only">Design for {preview ? "a real project" : customer.name}</h1>
+            <h1 className="sr-only">Design for {name}</h1>
             <p className="text-xs text-quiet">
               {preview ? `Real project ${preview.id.slice(0, 8)} · preview, not saved` : `Customer of ${customer.owner}`}
             </p>
@@ -153,8 +216,8 @@ export default function Planner() {
               />
             )}
             <p className="max-w-[65ch] text-sm">
-              The model proposes solar, battery, heat pump and wallbox sizes the way experienced Reonic planners did on
-              real projects.
+              A first system design from the home&apos;s data, sized the way installers planned similar real projects.
+              Check it, adjust it, then share the options with the homeowner.
             </p>
           </div>
           <ErrorNote error={metaError ?? state.error} />
@@ -162,46 +225,91 @@ export default function Planner() {
             <p className="text-sm text-amber-800">Running on synthetic data: numbers are for the demo only.</p>
           )}
 
-          {/* Mobile order: inputs, house, proof. From lg the house spans both rows of the right column. */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
-            <section className="space-y-2 lg:col-start-1" aria-labelledby="home">
-              <h2 id="home" className="text-sm font-semibold text-ink">
-                The home
-              </h2>
-              {meta ? (
-                <Card className="space-y-3 p-4">
-                  {Object.keys(FIELD_COPY)
-                    .flatMap((name) => meta.fields.filter((f) => f.name === name))
-                    .filter((f) => f.name !== "ev_km_per_year" || inputs.has_ev !== false)
-                    .map((f) => (
-                      <FieldInput key={f.name} field={f} value={inputs[f.name] ?? null} set={(v) => setInput(f.name, v)} />
-                    ))}
-                </Card>
-              ) : (
-                <Skeleton className="h-80" />
-              )}
-              <p className="text-xs text-muted">
-                {preview ? `Other inputs come from project ${preview.id.slice(0, 8)}.` : "Other inputs use typical values."}
-              </p>
-            </section>
-            <section className="min-w-0 space-y-4 lg:col-start-2 lg:row-span-2 lg:row-start-1" aria-label="Design">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
+            <div className="space-y-6">
+              <section id="inputs" className="scroll-mt-20 space-y-2" aria-labelledby="inputs-h">
+                <h2 id="inputs-h" className="text-sm font-semibold text-ink">
+                  Project inputs
+                </h2>
+                {meta ? (
+                  <InputsPanel meta={meta} inputs={inputs} saved={saved.inputs} set={setInput} />
+                ) : (
+                  !metaError && <Skeleton className="h-80" />
+                )}
+                <p className="text-xs text-muted">Empty fields are unknown; the model does not guess them.</p>
+              </section>
+              <div id="evidence" className="scroll-mt-20">
+                <Reality onLoad={load} />
+              </div>
+            </div>
+
+            <section id="design" className="min-w-0 scroll-mt-20 space-y-4" aria-labelledby="design-h">
+              <h2 id="design-h" className="sr-only">Design</h2>
               <Card className="overflow-hidden">
-                <div className="relative h-[320px] bg-gradient-to-b from-sand-2 to-sand sm:h-[520px]">
-                  {design && <House values={design.values} hasEv={inputs.has_ev === true} description={describe(design.values)} />}
-                  <p className="pointer-events-none absolute top-3 left-4 text-xs text-quiet">Drag to turn</p>
+                <div className="relative h-[320px] bg-gradient-to-b from-sand-2 to-sand sm:h-[480px]">
+                  {design ? (
+                    <House
+                      values={design.values}
+                      hasEv={inputs.has_ev === true}
+                      existing={existingOf(inputs)}
+                      description={describe(design.values)}
+                      selected={selected}
+                      onSelect={setSelected}
+                    />
+                  ) : (
+                    !state.error && <Skeleton className="h-full rounded-none" />
+                  )}
+                  <p className="pointer-events-none absolute top-3 left-4 text-xs text-quiet">Drag to turn · click a part for details</p>
                 </div>
-                {design ? <Economics design={design} /> : <Skeleton className="m-4 h-20" />}
+                {design && <Economics design={design} />}
               </Card>
+
+              {last && design && (
+                <Changed step={last} now={busy ? null : design.values} onUndo={undo} />
+              )}
+
+              <section aria-labelledby="proposed" className="space-y-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 id="proposed" className="text-sm font-semibold text-ink">Proposed system</h2>
+                  <p className="text-xs text-muted">kWp = solar peak power · kWh = storage · kW = power</p>
+                </div>
+                {design ? (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {TARGETS.map((t) => (
+                      <SystemCard
+                        key={t}
+                        t={t}
+                        design={design}
+                        locked={locked[t]}
+                        selected={selected === t}
+                        onSelect={() => setSelected(selected === t ? null : t)}
+                        onSet={(v) => setSize(t, v)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  !state.error && <Skeleton className="h-48" />
+                )}
+                {design && general(design.flags).length > 0 && (
+                  <ul className="space-y-1 text-sm text-amber-800">
+                    {general(design.flags).map((f) => (
+                      <li key={f}>Needs review: {f}</li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+
               {design && (
                 <Card className="p-4 text-sm">
-                  <h2 className="mb-3 text-sm font-semibold text-ink">Why this design</h2>
-                  <CheckList items={design.explanation.slice(0, 2)} />
+                  <h2 className="mb-3 text-sm font-semibold text-ink">How similar projects were planned</h2>
+                  <CheckList items={design.explanation.map(plain).slice(0, 4)} />
                 </Card>
               )}
+
+              {design && (
+                <OfferOptions design={design} offered={offered} setOffered={setOffered} />
+              )}
             </section>
-            <div className="lg:col-start-1 lg:self-start">
-              <Reality onLoad={load} />
-            </div>
           </div>
         </main>
         <Footer width={WIDTH}>
@@ -210,6 +318,213 @@ export default function Planner() {
         </Footer>
       </div>
     </div>
+  );
+}
+
+const existingOf = (i: Inputs) => ({
+  pv_kwp: typeof i.existing_pv_kwp === "number" ? i.existing_pv_kwp : 0,
+  battery_kwh: typeof i.existing_battery_kwh === "number" ? i.existing_battery_kwh : 0,
+  wallbox: i.has_existing_wallbox === true,
+});
+
+function show(name: string, v: InputValue) {
+  if (v === null || v === "") return "unknown";
+  if (typeof v === "boolean") return v ? "yes" : "no";
+  if (typeof v === "string") return CHOICE_LABEL[v] ?? v;
+  const c = FIELD_COPY[name];
+  return `${num(v * (c?.scale ?? 1), 2)}${c?.unit ? ` ${c.unit}` : ""}`;
+}
+
+// The API words its explanation for engineers; the planner screen drops the model's certainty, which reads as a promise.
+const plain = (line: string) => line.replace(/ \(model \d+% sure to include\)/, "").replace(/ \(set by planner\)/, " (your setting)");
+
+// A warning names the part it is about; those land on the part's card, the rest are listed under the cards.
+const PART_WORDS: Record<Target, RegExp> = { pv_kwp: /\b(pv|solar)\b/i, battery_kwh: /battery/i, heat_pump_kw: /heat pump/i, wallbox_kw: /wallbox/i };
+const flagsFor = (t: Target, flags: string[]) => flags.filter((f) => PART_WORDS[t].test(f));
+const general = (flags: string[]) => flags.filter((f) => !TARGETS.some((t) => PART_WORDS[t].test(f)));
+
+function SaveState({ preview, dirty, busy, onSave }: { preview: boolean; dirty: boolean; busy: boolean; onSave: () => void }) {
+  return (
+    <>
+      <span aria-live="polite" className="text-xs text-quiet">
+        {busy ? "Updating design…" : preview ? "Preview, not saved" : dirty ? "Unsaved changes" : "All changes saved"}
+      </span>
+      {dirty && (
+        <Button variant="secondary" onClick={onSave}>
+          Save
+        </Button>
+      )}
+    </>
+  );
+}
+
+function OfferLinks({ offer }: { offer: Offer | null }) {
+  const [copied, setCopied] = useState<"yes" | "failed" | null>(null);
+  if (!offer) {
+    return (
+      <>
+        <Button variant="secondary" disabled>Preview homeowner view</Button>
+        <Button disabled>Share offer</Button>
+      </>
+    );
+  }
+  // The link carries this home's data in its hash: send it only to this customer.
+  const href = `/offer#${encodeOffer(offer)}`;
+  const share = () =>
+    navigator.clipboard.writeText(new URL(href, location.href).href).then(
+      () => setCopied("yes"),
+      () => setCopied("failed"),
+    );
+  return (
+    <>
+      <a href={href} target="_blank" rel="noopener" className={`${pill} ${pillLook.secondary}`}>
+        Preview homeowner view
+        <span className="sr-only">(opens in a new tab)</span>
+      </a>
+      <Button onClick={share}>
+        Share offer <Icon name="arrow" className="size-4" />
+      </Button>
+      <span aria-live="polite" className="text-xs text-quiet">
+        {copied === "yes" ? "Link copied" : copied === "failed" ? "Copy failed: open the preview and copy its address" : ""}
+      </span>
+    </>
+  );
+}
+
+function Changed({ step, now, onUndo }: { step: Step; now: Values | null; onUndo: () => void }) {
+  const diff = now && step.before ? TARGETS.filter((t) => now[t] !== step.before![t]) : [];
+  return (
+    <div role="status" className="flex flex-wrap items-start gap-x-4 gap-y-2 rounded-2xl border border-zinc-200 bg-sand-2 p-4 text-sm">
+      <div className="min-w-0 flex-1 space-y-1">
+        <p className="font-medium text-ink">What changed? {step.label}</p>
+        <p>
+          {now === null
+            ? "Updating the design…"
+            : diff.length === 0
+              ? "The proposed system stays the same."
+              : diff.map((t) => `${LABEL[t]} ${sized(t, step.before![t])} → ${sized(t, now[t])}`).join(" · ")}
+        </p>
+      </div>
+      <Button variant="secondary" onClick={onUndo}>
+        Undo
+      </Button>
+    </div>
+  );
+}
+
+const sized = (t: Target, v: number) => (v > 0 ? size(v, UNIT[t]) : "not included");
+
+const STEP: Record<Target, number> = { pv_kwp: 0.45, battery_kwh: 0.5, heat_pump_kw: 1, wallbox_kw: 0.1 };
+
+function SystemCard({ t, design, locked, selected, onSelect, onSet }: {
+  t: Target;
+  design: Design;
+  locked: number | undefined;
+  selected: boolean;
+  onSelect: () => void;
+  onSet: (v: number | null) => void;
+}) {
+  const v = design.values[t];
+  const p = design.probability[t];
+  const edited = locked !== undefined;
+  const warnings = flagsFor(t, design.flags);
+  // Similar homes split on this part: worth a planner's second look. Not shown as a number on purpose.
+  const unsure = !edited && p > 0.3 && p < 0.7;
+  const review = warnings.length > 0 || unsure;
+  const id = `size-${t}`;
+  return (
+    <Card className={`space-y-3 p-4 ${selected ? "outline-2 outline-blue-600" : ""}`}>
+      <div className="flex items-start justify-between gap-2">
+        <button
+          type="button"
+          aria-pressed={selected}
+          onClick={onSelect}
+          className="flex items-center gap-2 rounded-md text-left font-medium text-ink focus-visible:outline-2 focus-visible:outline-blue-600"
+        >
+          {v > 0 ? <CheckDot /> : <MinusDot />}
+          {LABEL[t]}
+          <span className="sr-only">(show on the house)</span>
+        </button>
+        <div className="flex flex-wrap justify-end gap-1">
+          <Status>{edited ? "Edited" : v > 0 ? "Recommended" : "Not included"}</Status>
+          {edited && v === 0 && <Status>Not included</Status>}
+          {review && <Status warn>Needs review</Status>}
+        </div>
+      </div>
+      <p className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{v > 0 ? `${num(v)} ${UNIT[t]}` : "Not included"}</p>
+      <div className="flex items-center gap-2">
+        <label htmlFor={id} className="text-xs whitespace-nowrap text-quiet">
+          Your size
+        </label>
+        <input
+          id={id}
+          type="number"
+          inputMode="decimal"
+          min={0}
+          step={STEP[t]}
+          value={v}
+          onChange={(e) => Number.isFinite(e.target.valueAsNumber) && e.target.valueAsNumber >= 0 && onSet(e.target.valueAsNumber)}
+          className={`${inputClass} w-24`}
+        />
+        <span className="text-xs text-muted">{UNIT[t]} · 0 = not included</span>
+      </div>
+      {edited && (
+        <Button variant="ghost" className="-ml-2" onClick={() => onSet(null)}>
+          Reset to recommendation
+        </Button>
+      )}
+      {(selected || review) && (
+        <div className="space-y-1 border-t border-zinc-200 pt-3 text-xs">
+          {warnings.map((w) => (
+            <p key={w} className="text-amber-800">{w}</p>
+          ))}
+          {unsure && <p className="text-amber-800">Similar homes were split on this part; check it with the customer.</p>}
+          {selected && <p className="text-muted">{NOT_SUPPLIED[t]}: not supplied by the model.</p>}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function Status({ warn, children }: { warn?: boolean; children: string }) {
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${warn ? "bg-amber-50 text-amber-900 ring-amber-300" : "bg-sand text-quiet ring-zinc-200"}`}>
+      {children}
+    </span>
+  );
+}
+
+function OfferOptions({ design, offered, setOffered }: {
+  design: Design;
+  offered: Partial<Record<Target, boolean>>;
+  setOffered: (o: Partial<Record<Target, boolean>>) => void;
+}) {
+  const alts = TARGETS.flatMap((t) => (design.alternatives[t] ? [[t, design.alternatives[t]!] as const] : []));
+  return (
+    <Card className="space-y-3 p-4 text-sm">
+      <h2 className="text-sm font-semibold text-ink">Options for the homeowner</h2>
+      <p className="text-xs text-muted">
+        The homeowner sees your design as the recommendation and can compare only the setups ticked here.
+      </p>
+      <fieldset className="space-y-2">
+        <legend className="sr-only">Alternatives to offer</legend>
+        {alts.map(([t, a]) => (
+          <label key={t} className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              className="mt-0.5 size-4 accent-blue-600"
+              checked={offered[t] ?? a.flags.length === 0}
+              onChange={(e) => setOffered({ ...offered, [t]: e.target.checked })}
+            />
+            <span>
+              <span className="text-ink">{altLabel(t, a.value)}</span>
+              {a.flags.length > 0 && <span className="block text-xs text-amber-800">Needs review: {a.flags[0]}</span>}
+            </span>
+          </label>
+        ))}
+        {alts.length === 0 && <p className="text-xs text-quiet">No alternatives: every part is set by you.</p>}
+      </fieldset>
+    </Card>
   );
 }
 
@@ -300,23 +615,67 @@ const FIELD_ICON: Record<string, IconName> = {
   annual_consumption_kwh: "zap", household_size: "users", heating_type: "flame", has_ev: "car", ev_km_per_year: "route",
 };
 
-function FieldLabel({ name, htmlFor, children }: { name: string; htmlFor?: string; children: string }) {
+function FieldLabel({ name, htmlFor, edited, children }: { name: string; htmlFor?: string; edited?: boolean; children: string }) {
   const Tag = htmlFor ? "label" : "div";
   return (
     <Tag htmlFor={htmlFor} aria-hidden={htmlFor ? undefined : true} className="flex items-center gap-2 text-sm text-ink">
       {FIELD_ICON[name] && <Icon name={FIELD_ICON[name]} />}
       {children}
+      {edited && <span className="text-xs text-quiet">(edited)</span>}
     </Tag>
   );
 }
 
-function FieldInput({ field, value, set }: { field: Field; value: InputValue; set: (v: InputValue) => void }) {
+// Grouped like the spec: one native <details> per topic, existing equipment kept apart from what is proposed.
+function InputsPanel({ meta, inputs, saved, set }: {
+  meta: Meta;
+  inputs: Inputs;
+  saved: Inputs;
+  set: (name: string, v: InputValue) => void;
+}) {
+  const byName = new Map(meta.fields.map((f) => [f.name, f]));
+  return (
+    <Card className="divide-y divide-zinc-200">
+      {FIELD_GROUPS.map((g, i) => {
+        const fields = Object.keys(g.fields).flatMap((n) => (byName.has(n) ? [byName.get(n)!] : []));
+        if (fields.length === 0) return null;
+        const edited = fields.filter((f) => (inputs[f.name] ?? null) !== (saved[f.name] ?? null)).length;
+        return (
+          <details key={g.title} open={i < 2} className="group p-4">
+            <summary className="flex cursor-pointer items-center justify-between gap-2 text-sm font-medium text-ink">
+              <span>
+                {g.title}
+                {g.existing && <span className="ml-2 text-xs font-normal text-quiet">already in the home</span>}
+              </span>
+              {edited > 0 && <span className="text-xs font-normal text-quiet">{edited} edited</span>}
+            </summary>
+            <div className="mt-3 space-y-3">
+              {fields.map((f) => (
+                <FieldInput
+                  key={f.name}
+                  field={f}
+                  value={inputs[f.name] ?? null}
+                  edited={(inputs[f.name] ?? null) !== (saved[f.name] ?? null)}
+                  set={(v) => set(f.name, v)}
+                />
+              ))}
+            </div>
+          </details>
+        );
+      })}
+    </Card>
+  );
+}
+
+function FieldInput({ field, value, edited, set }: { field: Field; value: InputValue; edited: boolean; set: (v: InputValue) => void }) {
   const copy = FIELD_COPY[field.name];
+  // Some fields read better scaled (a 0.03 price increase shows as 3 % per yr); the API keeps the raw value.
+  const scale = copy.scale ?? 1;
   const id = `field-${field.name}`;
   if (field.kind === "bool") {
     return (
       <div className="space-y-1">
-        <FieldLabel name={field.name}>{copy.label}</FieldLabel>
+        <FieldLabel name={field.name} edited={edited}>{copy.label}</FieldLabel>
         <Segmented
           name={id}
           label={copy.label}
@@ -333,7 +692,7 @@ function FieldInput({ field, value, set }: { field: Field; value: InputValue; se
   if (field.kind === "choice") {
     return (
       <div className="space-y-1">
-        <FieldLabel name={field.name} htmlFor={id}>{copy.label}</FieldLabel>
+        <FieldLabel name={field.name} htmlFor={id} edited={edited}>{copy.label}</FieldLabel>
         {/* "Unknown" stays: a real project can leave this empty. */}
         <select id={id} className={inputClass} value={typeof value === "string" ? value : ""} onChange={(e) => set(e.target.value || null)}>
           <option value="">Unknown</option>
@@ -348,7 +707,7 @@ function FieldInput({ field, value, set }: { field: Field; value: InputValue; se
   }
   return (
     <div className="space-y-1">
-      <FieldLabel name={field.name} htmlFor={id}>{copy.label}</FieldLabel>
+      <FieldLabel name={field.name} htmlFor={id} edited={edited}>{copy.label}</FieldLabel>
       <div className="flex items-center gap-2">
         <input
           id={id}
@@ -358,10 +717,10 @@ function FieldInput({ field, value, set }: { field: Field; value: InputValue; se
           step={copy.step ?? "any"}
           placeholder="Unknown"
           className={inputClass}
-          value={typeof value === "number" ? value : ""}
+          value={typeof value === "number" ? +(value * scale).toFixed(6) : ""}
           onChange={(e) => {
             if (e.target.value === "") set(null);
-            else if (Number.isFinite(e.target.valueAsNumber)) set(e.target.valueAsNumber);
+            else if (Number.isFinite(e.target.valueAsNumber)) set(e.target.valueAsNumber / scale);
           }}
         />
         {copy.unit && <span className="w-14 shrink-0 text-xs text-muted">{copy.unit}</span>}
@@ -375,12 +734,12 @@ function Economics({ design }: { design: Design }) {
   return (
     <div className="border-t border-zinc-200 p-4">
       <div className="grid grid-cols-3 gap-4">
-        <Stat icon="wallet" label="Investment" value={eur(e.cost_eur)} />
-        <Stat icon="trend" label="Savings per year" value={e.savings_eur === null ? "n/a" : eur(e.savings_eur)} />
-        <Stat icon="clock" label="Payback" value={years(e.payback_years)} sub="PV + battery" />
+        <Stat icon="wallet" label="Investment (estimate)" value={eur(e.cost_eur)} />
+        <Stat icon="trend" label="Savings per year (estimate)" value={e.savings_eur === null ? "n/a" : eur(e.savings_eur)} />
+        <Stat icon="clock" label="Payback (estimate)" value={years(e.payback_years)} sub="PV + battery" />
       </div>
       <p className="mt-3 text-xs text-muted">
-        Rough assumptions: list prices, today&apos;s electricity price, a simple yield model. Heat pump fuel savings are not
+        Estimates for the planner only, never shown to the homeowner. Rough assumptions: list prices, today&apos;s electricity price, a simple yield model. Heat pump fuel savings are not
         included. {e.savings_eur === null && "Savings need the annual electricity use."}
       </p>
     </div>
@@ -470,10 +829,18 @@ function Reality({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
       {report === null ? (
         !error && <div className="h-14 animate-pulse rounded-xl bg-ink/10" />
       ) : ready ? (
-        <p className="text-lg leading-snug font-semibold tracking-tight">
-          {pct(report.model.whole_design_within_tolerance)} of {report.n_test} projects the model never saw get the whole
-          design right. A rule of thumb gets {pct(report.baseline.whole_design_within_tolerance)}.
-        </p>
+        <>
+          <p className="text-lg leading-snug font-semibold tracking-tight">
+            Across {report.n_test} projects the model did{" "}
+            {report.model.whole_design_within_tolerance >= report.baseline.whole_design_within_tolerance ? "better" : "worse"}{" "}
+            than the rule of thumb at reproducing the installer&apos;s recorded design:{" "}
+            {pct(report.model.whole_design_within_tolerance)} against {pct(report.baseline.whole_design_within_tolerance)}.
+          </p>
+          <p className="text-xs">
+            A whole-design match means every part agrees with what the installer recorded for a project the model never saw.
+            It is not the chance that this home&apos;s design is right.
+          </p>
+        </>
       ) : (
         <p className="text-sm font-semibold">
           No evaluation yet. Run <code>python -m reonic eval</code>.
@@ -532,26 +899,3 @@ function Reality({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
   );
 }
 
-// -- share with the homeowner ------------------------------------------------------------------------------
-// The homeowner may resize the battery and the wallbox (docs/specs/homeowner-view.md); the rest stays as recommended.
-const SHARE: Target[] = ["battery_kwh", "wallbox_kw"];
-
-function ShareLink({ meta, design, inputs }: { meta: Meta | null; design: Design | null; inputs: Inputs }) {
-  if (!meta || !design) return <Button disabled>Share with customer</Button>;
-  const rec = design.values;
-  const options = Object.fromEntries(
-    meta.targets.map(({ name, catalog }) => [name, SHARE.includes(name) ? defaultOptions(name, rec[name], catalog) : [rec[name]]]),
-  ) as Record<Target, number[]>;
-  return (
-    // The link carries this home's data in its hash: send it only to this customer.
-    <a
-      href={`/offer#${encodeOffer({ v: 1, inputs, recommended: rec, options })}`}
-      target="_blank"
-      rel="noopener"
-      className={`${pill} ${pillLook.primary}`}
-    >
-      Share with customer <Icon name="arrow" className="size-4" />
-      <span className="sr-only">(opens the homeowner view in a new tab)</span>
-    </a>
-  );
-}

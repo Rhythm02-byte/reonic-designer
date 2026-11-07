@@ -15,7 +15,15 @@ export type Meta = {
 };
 
 export type Economics = { cost_eur: number; savings_eur: number | null; payback_years: number | null };
-export type Design = { values: Values; explanation: string[]; economics: Economics };
+export type Alternative = { value: number; values: Values; flags: string[] };
+export type Design = {
+  values: Values;
+  probability: Values; // the model's chance of including each part; only used to ask for a second look
+  explanation: string[];
+  flags: string[];
+  economics: Economics;
+  alternatives: Partial<Record<Target, Alternative>>; // one flip per part the planner hasn't set
+};
 export type Validation = { economics: Economics };
 
 // reports/eval.json; {} until `python -m reonic eval` has run.

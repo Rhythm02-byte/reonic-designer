@@ -42,6 +42,14 @@ The typical design was added after the leakage checks showed a model with no inf
 - On whole design and battery, it is not distinguishable from proposing the typical design.
 - On an installer it has not seen, it does not beat the typical design (see the unseen-installer table).
 
+## Engine fuzzing (`scripts/fuzz_engine.py`)
+
+2,000 random homes on the real data (unknowns, zero, negative, huge, NaN, nonsense categories, random planner overrides): **0 broken invariants** and no crash. Checked on every design: finite and non-negative sizes, probabilities in [0, 1], locked values returned exactly, rules R01-R04 hold, the wallbox appears if and only if the home has an EV, deterministic output, explanation present. The full run takes about 9 minutes (about 0.27 s per home); `tests/test_fuzz.py` runs 40 homes plus corner cases in the normal suite. The checker itself is tested: 8 tests feed it deliberately broken designs and confirm it flags each one.
+
+## Preflight (`scripts/preflight.py`)
+
+One command before submitting: unit tests, no data in git or its history, and that the numbers in the README, the deck (slides and charts) and `docs/demo-script.md` still match the saved reports and what the app shows on the real data. Exits 1 on any failure. Proven to detect a changed number: corrupting one number in the README and one in the demo script made it fail on both. Re-run it after any change to results.
+
 ## Leakage checks (`scripts/leakage_checks.py`)
 
 | Check | Result | Reading |

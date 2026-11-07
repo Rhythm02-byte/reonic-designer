@@ -4,6 +4,7 @@ Reonic asks for three things (brief, p. 8): a working demo (with a short recordi
 
 ## Code and README
 - [ ] PRs merged into `main`, and `main` passes `pytest -q` from a fresh clone
+- [ ] `python scripts/preflight.py` passes (tests, no data in git, README, deck and demo-script numbers match the reports and the app). Re-run the reports first if results changed: `python -m reonic eval`, `python scripts/repeated_splits.py`, `python scripts/unseen_installer.py`
 - [ ] README has setup, approach, results and known limitations (done, re-read it once)
 - [ ] No Reonic data in the repo or its history: `git log --all --name-only | grep -E "\.csv|\.joblib|data/raw"` prints nothing
 - [ ] Decide how Reonic gets the code: a link they can open (make the repo public, or add them as collaborators). **Owner: repo owner.** The repo is private today.

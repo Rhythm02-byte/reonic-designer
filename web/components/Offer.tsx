@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { api, TARGETS, type Economics, type Inputs, type Target, type Validation, type Values } from "@/lib/api";
 import { CHOICE_LABEL, decodeOffer, describe, eur, num, type Offer, panels } from "@/lib/copy";
 import { House } from "./House";
-import { Button, Card, ErrorNote, Logo, PersonaChip, Segmented } from "./ui";
+import { Button, Card, CheckDot, ErrorNote, Footer, Header, Logo, MinusDot, PersonaChip, Segmented } from "./ui";
+
+const WIDTH = "max-w-5xl";
 
 const NAME: Record<Target, string> = { pv_kwp: "Solar panels", battery_kwh: "Home battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };
 
@@ -57,20 +59,21 @@ export default function OfferPage() {
   const hash = useSyncExternalStore(subscribe, () => window.location.hash.slice(1), () => null);
   const offer = useMemo(() => (hash === null ? undefined : decodeOffer(hash)), [hash]);
   return (
-    <div className="min-h-dvh">
-      <header className="border-b border-zinc-200/70 bg-paper">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3 sm:px-6">
-          <Logo />
-          <PersonaChip who="homeowner" />
-        </div>
-      </header>
-      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+    <div className="flex min-h-dvh flex-col">
+      <Header width={WIDTH}>
+        <Logo />
+        <PersonaChip who="homeowner" />
+      </Header>
+      <main className={`mx-auto w-full flex-1 px-4 py-8 sm:px-6 ${WIDTH}`}>
         {offer === undefined && <div className="h-96 animate-pulse rounded-2xl bg-sand" />}
         {offer === null && (
           <ErrorNote error="This offer link is incomplete or damaged. Please ask your installer to send it again." />
         )}
         {offer && <OfferView key={hash} offer={offer} />}
       </main>
+      <Footer width={WIDTH}>
+        This link carries your home&apos;s details in the address itself. Share it only with people you trust.
+      </Footer>
     </div>
   );
 }
@@ -86,7 +89,7 @@ function OfferView({ offer }: { offer: Offer }) {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-        Your home energy offer, <span className="font-serif font-normal italic">your way</span>
+        Your home energy offer, <span className="text-reonic">your way</span>
       </h1>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
@@ -110,10 +113,14 @@ function OfferView({ offer }: { offer: Offer }) {
             {TARGETS.map((t) => (
               <Card key={t} className="space-y-2 p-4">
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-medium text-ink">{NAME[t]}</h3>
+                  <h3 className="flex items-center gap-2 font-medium text-ink">
+                    {choice[t] > 0 ? <CheckDot className="size-5" /> : <MinusDot className="size-5" />}
+                    {NAME[t]}
+                    <span className="sr-only">{choice[t] > 0 ? "(included)" : "(not included)"}</span>
+                  </h3>
                   {options[t].length === 1 && <span className="text-xs text-muted">As offered</span>}
                 </div>
-                <p className="text-sm">{explain(t, choice[t], inputs)}</p>
+                <p className="text-base">{explain(t, choice[t], inputs)}</p>
                 {options[t].length > 1 && (
                   <Segmented
                     name={`opt-${t}`}
@@ -145,10 +152,20 @@ function OfferView({ offer }: { offer: Offer }) {
           )}
           <p className="text-xs text-muted">
             Rough assumptions: today&apos;s electricity price, list prices and a simple solar model. Savings cover electricity only;
-            a heat pump&apos;s fuel savings are not included. Your installer&apos;s final quote is what counts.
+            a heat pump&apos;s fuel savings are not included.
           </p>
         </aside>
       </div>
+
+      <section aria-labelledby="quote" className="relative overflow-hidden rounded-2xl bg-linear-to-br from-aubergine to-aubergine-2 px-6 py-10 text-paper sm:px-10">
+        <div aria-hidden className="grain pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay" />
+        <h2 id="quote" className="relative max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
+          Your installer&apos;s final quote is what counts.
+        </h2>
+        <p className="relative mt-3 max-w-[60ch] text-base text-zinc-300">
+          Tell them which setup you picked: this page forgets your choice when you close it.
+        </p>
+      </section>
     </div>
   );
 }
@@ -156,7 +173,7 @@ function OfferView({ offer }: { offer: Offer }) {
 function Variant({ title, econ, active, busy }: { title: string; econ?: Economics; active: boolean; busy?: boolean }) {
   return (
     // An outline, not a ring: Card already sets ring-1 ring-zinc-200 and the two ring colours would fight.
-    <Card className={`p-4 ${active ? "outline-2 outline-emerald-500" : ""} ${busy ? "opacity-60" : ""}`}>
+    <Card className={`p-4 ${active ? "outline-2 outline-blue-600" : ""} ${busy ? "opacity-60" : ""}`}>
       <div className="text-xs font-medium text-muted">{title}</div>
       {econ ? (
         <>

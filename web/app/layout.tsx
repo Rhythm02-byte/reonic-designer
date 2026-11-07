@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Noto_Serif } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const notoSerif = Noto_Serif({ variable: "--font-noto-serif", subsets: ["latin"], style: "italic", weight: "400" });
 
 export const metadata: Metadata = {
   title: "Home Energy Designer",
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geist.variable} ${notoSerif.variable} h-full antialiased`}>
+    <html lang="en" className={`${geist.variable} h-full antialiased`}>
       <body className="min-h-full font-sans">{children}</body>
     </html>
   );

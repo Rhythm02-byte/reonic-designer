@@ -19,7 +19,7 @@ export type Design = { values: Values; explanation: string[]; economics: Economi
 export type Validation = { economics: Economics };
 
 // reports/eval.json; {} until `python -m reonic eval` has run.
-type Whole = { whole_design_within_tolerance: number };
+type Whole = { whole_design_within_tolerance: number } & Record<Target, { within_tolerance: number }>;
 export type Evaluation = { n_test: number; model: Whole; baseline: Whole };
 
 export type HoldoutRow = {

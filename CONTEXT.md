@@ -85,8 +85,9 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [ ] Every teammate has read the challenge PDF (§0)
 - [ ] Reonic answers to the open questions (`reonic-data` skill, "Open questions")
 - [ ] Physics constants checked with Reonic experts
-- [x] Wallbox decided: deterministic "has an EV → wallbox" rule (CV showed no gain from a model). Whole-design score is 13.2% with it. Precision, recall and F2 reported (see `reonic-evaluate`)
-- [x] Unseen-installer evaluation run in both directions: 16.7% / 9.8% whole design vs baseline 4.2% / 5.6% (see `reonic-evaluate`)
+- [x] Wallbox decided: deterministic "has an EV → wallbox" rule (CV showed no gain from a model). Whole-design score is 13.5% with it. Precision, recall and F2 reported (see `reonic-evaluate`)
+- [x] Unseen-installer evaluation run in both directions: 18.5% / 9.8% whole design vs baseline 4.2% / 5.6% (see `reonic-evaluate`)
+- [x] Demo flow works on real data: example held-out homes in the sidebar, live design next to the expert's, refine (EV) and override steps, app trained on the training split only. Covered by `tests/test_app.py`
 - [ ] Tune battery and heat pump include thresholds on a validation split
 - [ ] Deviation analysis · alternatives/confidence · homeowner view (specs in `docs/specs/`)
 - [ ] Pitch deck · demo recording · final README

@@ -23,6 +23,7 @@ Commands: `python -m reonic build` writes `data/projects.csv` for inspection. `p
   3. module count from per-module lines (`DC Install…`, `Substructure…`, `Roof Mounting…`) × `MODULE_WP` = 450 W (**assumed**)
   4. otherwise NaN (offered, size unknown)
 - **Battery:** itemised `BatteryStorage` rows. A package's kWh counts only when the battery isn't itemised, to avoid double counting.
+- **Zero consumption:** `energy_demand_wh` = 0 (13 projects, all at `2a8ba8e2`) is loaded as unknown, not as 0 kWh.
 - **Options:** projects can have several. `OPTION_CHOICE = "first"` (lowest option_number) until Reonic says which one was signed.
 
 ## What the data contains

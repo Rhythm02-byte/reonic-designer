@@ -18,7 +18,7 @@ pip install -e ".[dev]"
 python -m reonic build                          # data/raw/ (Reonic export) -> data/projects.csv, one row per project
 python -m reonic eval                           # held-out metrics vs baseline -> reports/  (add --group-col installer_id)
 python -m reonic train                          # -> models/designer.joblib (used by the app if present)
-streamlit run app.py                            # planner UI
+streamlit run app.py                            # planner UI; pick an example home in the sidebar (held-out, never trained on)
 python -m reonic synth                          # fake data -> data/synthetic.csv, used automatically if data/raw/ is absent
 pytest -q
 ```

@@ -12,22 +12,25 @@ from .engine import Designer
 from .schema import INPUT_FIELDS, TARGETS
 
 # A size counts as "matches the expert" if within this relative tolerance (and both agree on include/exclude).
-TOLERANCE = {"pv_kwp": 0.20, "battery_kwh": 0.25, "heat_pump_kw": 0.25}
+# Wallbox: only include/exclude counts (11 vs 22 kW is a customer choice, not design skill).
+TOLERANCE = {"pv_kwp": 0.20, "battery_kwh": 0.25, "heat_pump_kw": 0.25, "wallbox_kw": float("inf")}
 
 
 def metrics(pred: pd.DataFrame, truth: pd.DataFrame) -> dict:
     out, all_ok = {}, np.ones(len(truth), dtype=bool)
     for t in TARGETS:
         y, p = truth[t].to_numpy(float), pred[t].to_numpy(float)
-        has_y, has_p = y > 0, p > 0
-        both = has_y & has_p
-        rel = np.abs(p - y) / np.where(y > 0, y, 1)
-        ok = np.where(has_y, has_p & (rel <= TOLERANCE[t]), ~has_p)
+        known = ~np.isnan(y)  # NaN truth = offered but size unknown: only include/exclude is scored
+        has_y, has_p = (y > 0) | ~known, p > 0
+        both = has_y & has_p & known
+        rel = np.abs(p - np.nan_to_num(y)) / np.where(y > 0, y, 1)
+        ok = np.where(has_y, has_p & (~known | (rel <= TOLERANCE[t])), ~has_p)
         all_ok &= ok
         out[t] = {
             "include_accuracy": float((has_y == has_p).mean()),
             "include_f1": float(f1_score(has_y, has_p, zero_division=0)),
             "size_mae": float(np.abs(p - y)[both].mean()) if both.any() else None,
+            "expert_include_rate": float(has_y.mean()),
             "size_median_rel_error": float(np.median(rel[both])) if both.any() else None,
             "within_tolerance": float(ok.mean()),
         }
@@ -48,13 +51,17 @@ def run(df: pd.DataFrame, out_dir: str | Path = "reports", test_size: float = 0.
     train, test = split(df, test_size, seed, group_col)
     designer = Designer.train(train)
     ours, base = designer.design_batch(test), rule_of_thumb(test)
-    report = {"n_train": len(train), "n_test": len(test),
+    report = {"n_train": len(train), "n_test": len(test), "split": group_col or "random",
               "model": metrics(ours, test), "baseline": metrics(base, test)}
+    if "installer_id" in test.columns and test["installer_id"].nunique() > 1:
+        report["by_installer"] = {str(k): metrics(ours.loc[g.index], g)["whole_design_within_tolerance"]
+                                  for k, g in test.groupby("installer_id")}
 
     out = Path(out_dir)
     out.mkdir(exist_ok=True)
     (out / "eval.json").write_text(json.dumps(report, indent=2))
-    detail = test[[c for c in INPUT_FIELDS if c in test.columns]].copy()
+    keep = [c for c in ("installer_id", "project_id", "n_options", "pv_source") if c in test.columns]
+    detail = test[keep + [c for c in INPUT_FIELDS if c in test.columns]].copy()
     for t in TARGETS:
         detail[f"{t}_expert"], detail[f"{t}_ours"], detail[f"{t}_baseline"] = test[t], ours[t], base[t]
     detail.to_csv(out / "test_predictions.csv")  # input to the "where do we deviate" analysis
@@ -62,12 +69,14 @@ def run(df: pd.DataFrame, out_dir: str | Path = "reports", test_size: float = 0.
 
 
 def print_report(r: dict) -> None:
-    print(f"train={r['n_train']}  test={r['n_test']}")
+    print(f"train={r['n_train']}  test={r['n_test']}  split={r['split']}")
     print(f"{'':14}{'metric':26}{'model':>10}{'baseline':>10}")
     for t in TARGETS:
-        for k in ("include_accuracy", "include_f1", "size_median_rel_error", "within_tolerance"):
+        for k in ("expert_include_rate", "include_accuracy", "include_f1", "size_median_rel_error", "within_tolerance"):
             m, b = r["model"][t][k], r["baseline"][t][k]
             fmt = lambda x: "  -" if x is None else f"{x:.3f}"
             print(f"{t:14}{k:26}{fmt(m):>10}{fmt(b):>10}")
     print(f"{'whole design within tolerance':40}{r['model']['whole_design_within_tolerance']:>10.3f}"
           f"{r['baseline']['whole_design_within_tolerance']:>10.3f}")
+    for k, v in r.get("by_installer", {}).items():
+        print(f"  installer {k}: whole design within tolerance {v:.3f}")

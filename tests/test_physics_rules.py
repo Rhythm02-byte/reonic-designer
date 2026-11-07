@@ -1,7 +1,7 @@
 from reonic import physics, rules
 from reonic.schema import HomeInputs
 
-CAT = {"battery_kwh": [5.0, 10.0, 15.0], "heat_pump_kw": [8.0, 12.0], "pv_kwp": []}
+CAT = {"battery_kwh": [5.0, 10.0, 15.0], "heat_pump_kw": [8.0, 12.0], "pv_kwp": [], "wallbox_kw": [11.0, 22.0]}
 
 
 def test_battery_raises_self_consumption_and_stays_bounded():
@@ -25,9 +25,18 @@ def test_r02_no_battery_without_pv():
     assert v == 0 and notes[0].startswith("R02")
 
 
-def test_r03_roof_caps_pv():
-    v, notes, _ = rules.apply_one("pv_kwp", 20, {}, HomeInputs(roof_area_m2=55), CAT)
-    assert v == 10.0 and notes[0].startswith("R03")
+def test_r02_battery_allowed_for_existing_pv():
+    v, notes, _ = rules.apply_one("battery_kwh", 10, {"pv_kwp": 0}, HomeInputs(existing_pv_kwp=8), CAT)
+    assert v == 10.0 and notes == []
+
+
+def test_r03_residential_pv_cap():
+    v, notes, _ = rules.apply_one("pv_kwp", 45, {}, HomeInputs(), CAT)
+    assert v == rules.PV_MAX_KWP and notes[0].startswith("R03")
+
+
+def test_wallbox_snaps_to_catalog():
+    assert rules.apply_one("wallbox_kw", 14, {}, HomeInputs(), CAT)[0] == 11.0
 
 
 def test_r04_battery_ratio_and_snap():

@@ -4,7 +4,7 @@ Rules never change a value the planner locked; they only flag it.
 """
 import numpy as np
 
-from . import physics
+from .physics import num as _num
 from .schema import HomeInputs
 
 PV_MAX_KWP = 30.0  # residential ceiling
@@ -33,40 +33,29 @@ def apply_one(target: str, value: float, current: dict[str, float], inputs: Home
             v = snap(v, catalog.get(target, []))
 
     elif target == "pv_kwp":
-        if v > 0:
-            cap = PV_MAX_KWP
-            roof = physics.num(inputs.roof_area_m2)
-            if roof is not None:
-                cap = min(cap, roof / physics.M2_PER_KWP)
-            if v > cap:
-                v = cap
-                notes.append(f"R03: PV capped at {cap:.1f} kWp (roof area / residential limit).")
-            v = round(v, 1)
+        if v > PV_MAX_KWP:
+            v = PV_MAX_KWP
+            notes.append(f"R03: PV capped at the residential limit of {PV_MAX_KWP:g} kWp.")
+        v = round(v, 1)
 
     elif target == "battery_kwh":
-        pv = current.get("pv_kwp", 0.0)
+        # Storage-only retrofits are common for homes that already have PV, so count existing PV too.
+        pv = current.get("pv_kwp", 0.0) + (_num(inputs.existing_pv_kwp) or 0.0)
         if v > 0 and pv <= 0:
             v = 0.0
-            notes.append("R02: no PV, so no battery.")
+            notes.append("R02: no new or existing PV, so no battery.")
         elif v > BATTERY_MAX_KWH_PER_KWP * pv:
             v = BATTERY_MAX_KWH_PER_KWP * pv
             notes.append(f"R04: battery capped at {BATTERY_MAX_KWH_PER_KWP:g} kWh per kWp of PV.")
         if v > 0:
             v = snap(v, catalog.get(target, []), upper=BATTERY_MAX_KWH_PER_KWP * pv)
 
+    elif target == "wallbox_kw" and v > 0:
+        v = snap(v, catalog.get(target, []) or [11.0, 22.0])
+
     if locked:
         return float(value), [], [f"Planner override conflicts with {n}" for n in notes]
     return v, notes, []
-
-
-def budget_flags(values: dict[str, float], inputs: HomeInputs) -> list[str]:
-    budget = physics.num(inputs.budget_eur)
-    if budget is None:
-        return []
-    cost = physics.capex_eur(values["pv_kwp"], values["battery_kwh"], values["heat_pump_kw"])
-    if cost > budget * 1.1:
-        return [f"R06: estimated cost €{cost:,.0f} is above the budget of €{budget:,.0f}."]
-    return []
 
 
 def common_sizes(sizes: np.ndarray, top: int = 15) -> list[float]:

@@ -1,6 +1,6 @@
-"""FAKE data in the canonical schema so the pipeline runs before the Reonic dataset arrives.
+"""FAKE data in the canonical schema, shaped like the real export (same fields, similar rates).
 
-Never report numbers from this data in the pitch.
+Lets tests and teammates without the confidential data run everything. Never report numbers from it.
 """
 import numpy as np
 import pandas as pd
@@ -11,37 +11,36 @@ def _snap(x: np.ndarray, sizes: list[float]) -> np.ndarray:
     return s[np.abs(x[:, None] - s[None, :]).argmin(axis=1)]
 
 
-def generate(n: int = 3000, seed: int = 0) -> pd.DataFrame:
+def generate(n: int = 1600, seed: int = 0) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
-    household = rng.integers(1, 6, n)
-    consumption = np.clip(1500 + 900 * household + rng.normal(0, 500, n), 1200, None).round()
-    heating = rng.choice(["gas", "oil", "heat_pump", "electric", "district"], n, p=[0.45, 0.2, 0.15, 0.05, 0.15])
-    has_ev = rng.random(n) < 0.3
-    ev_km = np.where(has_ev, np.clip(rng.normal(12000, 4000, n), 3000, None).round(-2), np.nan)
-    price = np.clip(rng.normal(0.34, 0.04, n), 0.2, None).round(3)
-    feed_in = rng.choice([0.07, 0.08, 0.082], n)
-    area = np.clip(rng.normal(140, 40, n), 60, None).round()
-    roof = np.clip(rng.normal(60, 20, n), 15, None).round()
-    budget = np.clip(rng.normal(32000, 10000, n), 8000, None).round(-2)
+    consumption = np.clip(rng.lognormal(np.log(4500), 0.35, n), 1500, 15000).round(-2)
+    price = rng.choice([0.28, 0.32, 0.35, 0.39, 0.45], n)
+    has_ev = rng.random(n) < 0.15
+    ev_km = np.where(has_ev & (rng.random(n) < 0.4), rng.choice([10000, 12000, 15000, 25000], n), np.nan)
+    profile = rng.choice(["H0", "FamilyOfFour", "SeniorOnePerson", "HomeOfficeOnePerson"], n, p=[0.85, 0.08, 0.04, 0.03])
+    known_heating = rng.random(n) < 0.12  # the real export rarely says how the home is heated
+    heating = np.where(known_heating, rng.choice(["heat_pump", "gas", "oil"], n, p=[0.8, 0.12, 0.08]), None)
+    heat_demand = np.where(known_heating, rng.normal(15000, 4000, n).clip(3000), np.nan)
+    existing_pv = np.where(rng.random(n) < 0.03, rng.choice([4.0, 10.0, 18.9], n), 0.0)
 
     # "Expert" behaviour with noise
-    heat_demand = area * 120
-    hp_p = np.select([heating == "oil", heating == "gas"], [0.6, 0.35], 0.0)
-    gets_hp = rng.random(n) < hp_p
-    hp_kw = np.where(gets_hp, _snap(heat_demand / 2000 + rng.normal(0, 0.8, n), [6, 8, 10, 12, 14, 16]), 0.0)
-    demand = consumption + np.where(has_ev, np.nan_to_num(ev_km) * 0.18, 0) + np.where(gets_hp, heat_demand / 3.2, 0)
-    pv = np.clip(demand / 950 * 0.9 * (1 + rng.normal(0, 0.15, n)), 3, roof / 5.5).round(1)
-    battery_p = 1 / (1 + np.exp(-((demand - 4500) / 1500 + (price - 0.3) * 10)))
+    gets_hp = np.isin(heating, ["gas", "oil"]) & (rng.random(n) < 0.6)
+    hp_kw = np.where(gets_hp, _snap(np.nan_to_num(heat_demand) / 2000 + rng.normal(0, 1, n), [5.5, 7.5, 10.5, 12.5]), 0.0)
+    demand = consumption + np.where(has_ev, np.nan_to_num(ev_km, nan=12000) * 0.18, 0) + np.where(gets_hp, np.nan_to_num(heat_demand) / 3.2, 0)
+    gets_pv = (existing_pv == 0) & (rng.random(n) < 0.85)
+    pv = np.where(gets_pv, np.clip(demand / 950 * 1.6 * (1 + rng.normal(0, 0.2, n)), 3, 25).round(1), 0.0)
+    pv = np.where(gets_pv & (rng.random(n) < 0.05), np.nan, pv)  # offered, size not recoverable
+    battery_p = np.where(existing_pv > 0, 0.95, 1 / (1 + np.exp(-((demand - 3000) / 1500))))
     gets_bat = rng.random(n) < battery_p
-    battery = np.where(gets_bat, _snap(pv * (1 + rng.normal(0, 0.2, n)), [5, 7.5, 10, 12.5, 15, 20]), 0.0)
+    battery = np.where(gets_bat, _snap(np.nan_to_num(pv, nan=10) + existing_pv + rng.normal(0, 2, n), [5, 7, 10, 14, 15]), 0.0)
+    wallbox = np.where(rng.random(n) < np.where(has_ev, 0.6, 0.2), rng.choice([11.0, 22.0], n, p=[0.7, 0.3]), 0.0)
 
-    df = pd.DataFrame({
-        "project_id": np.arange(n), "annual_consumption_kwh": consumption, "household_size": household,
-        "heating_type": heating, "has_ev": has_ev, "ev_km_per_year": ev_km,
-        "electricity_price_eur_kwh": price, "feed_in_tariff_eur_kwh": feed_in, "budget_eur": budget,
-        "roof_area_m2": roof, "heated_area_m2": area,
-        "pv_kwp": pv, "battery_kwh": battery, "heat_pump_kw": hp_kw,
+    return pd.DataFrame({
+        "installer_id": rng.choice(["synthA", "synthB"], n, p=[0.25, 0.75]), "project_id": np.arange(n),
+        "annual_consumption_kwh": consumption, "electricity_price_eur_kwh": price,
+        "energy_price_increase": rng.choice([0.02, 0.03, 0.04, 0.05], n), "has_ev": has_ev, "ev_km_per_year": ev_km,
+        "has_flexible_tariff": (rng.random(n) < 0.15).astype(float), "load_profile": profile, "heating_type": heating,
+        "heating_demand_kwh": heat_demand, "existing_pv_kwp": existing_pv, "existing_battery_kwh": 0.0,
+        "has_existing_wallbox": False, "household_size": np.nan, "heated_area_m2": np.nan,
+        "pv_kwp": pv, "battery_kwh": battery, "heat_pump_kw": hp_kw, "wallbox_kw": wallbox,
     })
-    for col in ("roof_area_m2", "heated_area_m2", "budget_eur", "household_size"):  # real data has gaps
-        df.loc[rng.random(n) < 0.15, col] = np.nan
-    return df

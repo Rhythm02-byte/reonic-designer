@@ -1,7 +1,7 @@
 """Learned part: a chain of (include? classifier, size regressor) per component.
 
 Order follows the physics: the heat pump changes demand, demand drives PV size, PV size drives
-battery value. Each step sees the decisions made before it, so the design is coherent, not
+battery value; the wallbox comes last (EV-driven). Each step sees the decisions made before it, so the design is coherent, not
 three independent guesses, and a planner override flows downstream.
 """
 import numpy as np
@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 from sklearn.neighbors import NearestNeighbors
 
-ORDER = ("heat_pump_kw", "pv_kwp", "battery_kwh")
+ORDER = ("heat_pump_kw", "pv_kwp", "battery_kwh", "wallbox_kw")
 MIN_ROWS_FOR_REGRESSOR = 20
 
 
@@ -28,15 +28,16 @@ class _Const:
 class DesignModel:
     def fit(self, X: pd.DataFrame, Y: pd.DataFrame) -> "DesignModel":
         self.steps = {}
-        Xc = X.copy()
+        self.cols = [c for c in X.columns if X[c].notna().any()]  # all-empty columns break the binning
+        Xc = X[self.cols].copy()
         for t in ORDER:
             y = Y[t].to_numpy(float)
-            present = (y > 0).astype(int)
+            present = ((y > 0) | np.isnan(y)).astype(int)  # NaN = offered, size unknown
             if 0 < present.sum() < len(present):
                 clf = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.08, random_state=0).fit(Xc, present)
             else:
                 clf = _Const(present.mean() if len(present) else 0.0)
-            mask = present == 1
+            mask = (present == 1) & ~np.isnan(y)
             if mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
                 reg = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.06, random_state=0).fit(Xc[mask], y[mask])
             else:
@@ -48,7 +49,7 @@ class DesignModel:
     def predict(self, X: pd.DataFrame, fixed: dict | None = None) -> pd.DataFrame:
         """`fixed` maps component -> scalar or per-row array; those values are used as-is downstream."""
         fixed = fixed or {}
-        Xc = X.copy()
+        Xc = X[self.cols].copy()
         out = pd.DataFrame(index=X.index)
         for t in ORDER:
             clf, reg, cols = self.steps[t]

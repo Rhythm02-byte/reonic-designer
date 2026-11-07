@@ -7,7 +7,7 @@ Keep the **Status** and **Decisions** sections current; they are the source of t
 
 Planners at solar installers spend hours designing each home's system before an offer can go out.
 Build an AI system that turns a few facts about a home into a complete design: **PV (kWp), battery (kWh)
-and heat pump (kW), each only if appropriate**, with a short explanation. The design must decide the way an
+and heat pump (kW), each only if appropriate** (we also predict the wallbox, which the data shows is common), with a short explanation. The design must decide the way an
 experienced planner would, measured against the designs installers actually delivered (Reonic's dataset).
 Source: `../Reonic_Hackathon_Challenge_final.pdf`.
 
@@ -39,11 +39,11 @@ Source: `../Reonic_Hackathon_Challenge_final.pdf`.
 ## 4. Architecture
 
 ```
-HomeInputs ─► features (raw + physics-informed: EV kWh, heat demand, kWp needed, roof limit)
+HomeInputs ─► features (raw + physics-informed: EV kWh, future demand, kWp needed for full demand)
            ─► learned chain, in physical order:
-                heat pump? & size ─► PV? & size ─► battery? & size
+                heat pump? & size ─► PV? & size ─► battery? & size ─► wallbox? & size
                 (each step sees the upstream decision, so the design is coherent and overrides propagate)
-           ─► deterministic rules (IDs R01–R06): hard constraints + snap to sizes installers actually use
+           ─► deterministic rules (IDs R01–R04): hard constraints + snap to sizes installers actually use
            ─► explanation: model confidence + what the k most similar past projects got + physics/economics
            ─► validation: is this design unusual for homes like this one?
 ```
@@ -59,45 +59,91 @@ Principles:
 | Path | What |
 |---|---|
 | `src/reonic/schema.py` | Canonical field names, `HomeInputs`, `Design` |
-| `src/reonic/data.py` | Load the dataset, **`COLUMN_MAP` / `HEATING_MAP` (fill these when the real data arrives)**, feature building |
+| `src/reonic/data.py` | Raw Reonic export → one canonical row per project (inputs + rebuilt expert design), `OPTION_CHOICE`, `MODULE_WP`, feature building |
 | `src/reonic/physics.py` | Yield, self-consumption, EV and heat pump demand, capex, savings. Rough constants, all marked TODO-calibrate |
 | `src/reonic/model.py` | `DesignModel` (classifier + regressor chain), `Neighbours` (similar projects) |
 | `src/reonic/rules.py` | Rules R01–R06 and catalog snapping |
 | `src/reonic/engine.py` | `Designer`: train / design / design_batch / validate / explain. The one engine behind every view |
 | `src/reonic/evaluate.py` | Held-out metrics + `reports/eval.json` + per-project `reports/test_predictions.csv` |
 | `src/reonic/baseline.py` | Naive rule-of-thumb designer |
-| `src/reonic/synth.py` | **Fake** data in the canonical schema so everything runs before the real data arrives |
+| `src/reonic/synth.py` | **Fake** data shaped like the real export, for tests and teammates without the data |
 | `app.py` | Streamlit planner UI (Design / Validate & compare / Evaluation) |
-| `tests/` | Rules, physics and engine behaviour (13 tests) |
+| `tests/` | Loader (on a hand-made mini export), rules, physics, engine (19 tests) |
 
-Rules: R01 existing heat pump → no new one · R02 no PV → no battery · R03 PV ≤ roof area / 5.5 m² and ≤ 30 kWp · R04 battery ≤ 2 kWh per kWp · R05 (implicit) snap battery and heat pump to the most common installed sizes · R06 flag if cost > budget +10%.
+Rules: R01 existing heat pump → no new one · R02 no new or existing PV → no battery · R03 PV ≤ 30 kWp · R04 battery ≤ 2 kWh per kWp (new + existing PV) · snapping of battery, heat pump and wallbox to the most common sizes in the data. (Roof and budget rules were dropped: the export has no roof area or budget.)
 
 ## 6. Metrics (definitions)
 
 Per component, on held-out projects:
 - `include_accuracy` / `include_f1`: did we include the component when the expert did?
 - `size_median_rel_error`: size error where both included it.
-- `within_tolerance`: agrees on include/exclude **and** size within ±20% (PV) or ±25% (battery, heat pump).
-- `whole_design_within_tolerance`: all three at once. **This is the headline number for the pitch.**
+- `within_tolerance`: agrees on include/exclude **and** size within ±20% (PV) or ±25% (battery, heat pump). Wallbox: include/exclude only. Where the expert PV size is unknown (NaN), only include/exclude is scored.
+- `whole_design_within_tolerance`: all four at once. **This is the headline number for the pitch.**
+- `expert_include_rate`: how often experts included it. Read accuracy against this, because heat pump accuracy of 99% is trivial when experts include one in 0.3% of designs.
 
-Split: random 80/20 by default. If the data has an installer or company ID, run `--group-col <col>` so we test on unseen installers. That is the more honest number.
+Split: random 80/20 by default. `--group-col installer_id` trains on one installer and tests on the other, the honest "unseen installer" number. The report also breaks the score down per installer.
 
 ## 7. Data: status and open questions
 
-**Status:** not received yet. Everything currently runs on `synth.py` fake data. **Never quote synthetic numbers in the pitch.**
+**Status (2026-11-07):** real export received and loaded. It lives in `data/raw/<installer_id>/` (gitignored; copy it there from the shared download). `python -m reonic build` writes the flattened table to `data/projects.csv` for inspection. Synthetic numbers must never go in the pitch.
 
-When it arrives:
-1. Put the file in `data/` (gitignored).
-2. Fill `COLUMN_MAP` and `HEATING_MAP` in `data.py`.
-3. Run `python -m reonic eval --data data/<file>`.
+**What the export contains:** two folders, which we assume are two installers.
 
-Questions for the Reonic experts on site:
-- Does annual consumption already include an existing EV or heat pump? This changes the demand features.
-- Does a blank component size mean "not installed"? (Currently assumed yes.)
-- Is there an installer ID? (Needed for the group split.) A date? (Needed for a time split.)
-- Which inputs does a planner really have at first contact? That is our minimum input set.
-- Typical module power and battery product sizes; heat pump sizing rule of thumb (W/m² or heat load).
-- Realistic time per design today (hours) and offer → signed conversion rate, for the business case.
+| | `23c108b7` | `2a8ba8e2` |
+|---|---|---|
+| Projects | 336 usable (342 in status quo) | 1,257 usable (1,277) |
+| Projects with >1 option | 6% | 22% |
+| PV size recoverable | 99% | 93% |
+| Period | 2025 | mid-2024 → 2025 |
+
+- `projects_status_quo.csv` holds the home before the offer, which gives us the **inputs**.
+- `project_options_parts.csv` holds every line item of every offered option. The **expert design is rebuilt from these** in `data.option_designs`.
+
+**Quirks handled in `data.py`:**
+- **Units:** `_kw`/`_kwh`/`_wh` columns hold W/Wh, so values are divided by 1000. `energy_price_per_wh` × 1000 gives €/kWh.
+- **Swapped columns:** battery capacity is in `inverter_power_kw` on `BatteryStorage` rows, and inverter power is in `battery_capacity_kwh` on `Inverter` rows.
+- **PV kWp is rebuilt** in this order of priority:
+  1. `Module` rows (W × qty)
+  2. "Complete Package … 10.8kWp + 9kWh" names
+  3. module count from per-module lines (`DC Install…`, `Substructure…`, `Roof Mounting…`) × `MODULE_WP` = 450 W (**assumed**)
+  4. otherwise NaN (offered but size unknown, 90 projects)
+- **Battery** = itemised `BatteryStorage` rows. A package's kWh only counts when the battery isn't itemised, to avoid double counting.
+- **Several options per project, signed one not marked.** `OPTION_CHOICE = "first"` (lowest option_number) **until Reonic answers**.
+
+**What the data says about the problem:**
+- **Heat pumps are almost never offered:** 0.3% of chosen designs (31 rows in the whole export). The heat pump decision is effectively "no", so we can't learn sizing from this data. In the pitch, say so honestly. Note that many heat pump offers are separate options, which `OPTION_CHOICE="first"` may drop.
+- **The real components are PV, battery and wallbox.**
+  - Batteries appear in about 89% of designs (median 9–10 kWh).
+  - PV in about 86% (median about 8 kWp).
+  - A wallbox in 26%, and an EV makes one much more likely.
+- **Storage-only retrofits exist** for homes that already have PV (R02 allows them).
+- **Inputs are thin:**
+  - Reliable: demand, price, price increase, EV, load profile, existing PV/battery/wallbox, flexible tariff.
+  - Sparse: heating type and heating demand, about 12%.
+  - Essentially empty: house size and inhabitants, under 1%.
+  - Absent: roof area and budget.
+- **The installers behave differently.** At `2a8ba8e2`, PV tracks demand and battery tracks PV. At `23c108b7`, designs look package-driven.
+- **Outliers to look at (THI-4):** consumption 0 or 50,000 kWh, PV up to 99.9 kWp, battery up to 108 kWh. These may be commercial projects or data errors.
+
+**First real evaluation** (random split, `OPTION_CHOICE=first`, untuned):
+
+| Metric | Model | Baseline |
+|---|---|---|
+| Whole design within tolerance | **15.7%** | 3.8% |
+| PV within ±20% | 45% | 16% |
+| Battery within ±25% | 39% | 24% |
+| Wallbox include accuracy | 61% | 74% |
+
+The model **loses on wallbox**, so threshold tuning is needed (THI-6). The numbers will move once the signed-option and module-wattage answers arrive.
+
+**Open questions for Reonic** (posted on THI-2):
+1. **Which option was signed?** Lowest or highest option_number, or can't it be told from the data?
+2. **What module wattage does installer `2a8ba8e2` use?** And is the quantity on DC Install / Substructure lines always the module count?
+3. Are `inverter_power_kw` and `battery_capacity_kwh` really swapped in the export?
+4. Do package lines include the battery, or can a separate battery come on top?
+5. Does `energy_demand_wh` include an existing EV or heat pump?
+6. What do the folder IDs represent: installers?
+7. Realistic time per design today, and offer → signed rate, for the business case (THI-9).
 
 ## 8. Plan and milestones
 
@@ -135,9 +181,10 @@ Workstreams (one owner each):
 
 ## 11. Status
 
-- [x] Repo skeleton, end-to-end pipeline on synthetic data, UI, 13 tests passing
-- [ ] Real data loaded (M0)
+- [x] Repo skeleton, end-to-end pipeline on synthetic data, UI
+- [x] Real data loaded: loader rebuilt around the Reonic export, 19 tests passing, first real eval beats baseline 15.7% vs 3.8% (THI-1)
+- [ ] Answers to the signed-option and module-wattage questions (THI-2)
 - [ ] Physics constants calibrated with Reonic experts
-- [ ] Include-probability thresholds tuned (on synthetic data the heat pump is under-predicted at 0.5)
+- [ ] Include-probability thresholds tuned; wallbox is currently worse than the baseline (THI-6)
 - [ ] Deviation analysis · alternatives/confidence · homeowner view
 - [ ] Pitch deck · demo recording · final README

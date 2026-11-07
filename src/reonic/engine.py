@@ -11,8 +11,13 @@ from .data import features, inputs_frame, row_inputs
 from .model import ORDER, DesignModel, Neighbours
 from .schema import LABEL, TARGETS, UNIT, Design, HomeInputs
 
-NOUN = {"pv_kwp": "PV", "battery_kwh": "a battery", "heat_pump_kw": "a heat pump"}
-NAME = {"pv_kwp": "PV system", "battery_kwh": "battery", "heat_pump_kw": "heat pump"}
+NOUN = {"pv_kwp": "PV", "battery_kwh": "a battery", "heat_pump_kw": "a heat pump", "wallbox_kw": "a wallbox"}
+NAME = {"pv_kwp": "PV system", "battery_kwh": "battery", "heat_pump_kw": "heat pump", "wallbox_kw": "wallbox"}
+
+
+def _got(col: pd.Series) -> pd.Series:
+    """Neighbour received the component (NaN = offered, size unknown)."""
+    return col.gt(0) | col.isna()
 
 
 @dataclass
@@ -64,7 +69,7 @@ class Designer:
         fixed, probs, notes, flags = self._run(X, [inputs], locked)
         values = {t: float(fixed[t][0]) for t in TARGETS}
         p = {t: float(probs[f"p_{t}"].iat[0]) for t in TARGETS}
-        flags = flags[0] + rules.budget_flags(values, inputs) + self.validate(inputs, values, X)
+        flags = flags[0] + self.validate(inputs, values, X)
         return Design(**values, probability=p, explanation=self._explain(inputs, values, p, X, locked),
                       rules_applied=notes[0], flags=flags)
 
@@ -76,7 +81,7 @@ class Designer:
         out = []
         for t in TARGETS:
             v, col = values[t], nb[t]
-            share = (col > 0).mean()
+            share = _got(col).mean()
             if v > 0 and share < 0.2:
                 out.append(f"Unusual: only {share:.0%} of similar homes got {NOUN[t]}.")
             elif v == 0 and share > 0.8:
@@ -94,7 +99,7 @@ class Designer:
         lines = []
         for t in ORDER:
             v, col = values[t], nb[t]
-            share = (col > 0).mean()
+            share = _got(col).mean()
             med = col[col > 0].median() if (col > 0).any() else 0.0
             who = "set by planner" if t in locked else f"model {p[t]:.0%} sure to include"
             if v > 0:
@@ -105,15 +110,18 @@ class Designer:
         base = physics.num(inputs.annual_consumption_kwh)
         if base:
             ev = physics.ev_demand_kwh(inputs.has_ev, inputs.ev_km_per_year)
-            hd = physics.heat_demand_kwh(inputs.heated_area_m2)
+            hd = physics.num(inputs.heating_demand_kwh) or physics.heat_demand_kwh(inputs.heated_area_m2)
             hp = physics.heat_pump_electricity_kwh(hd) if values["heat_pump_kw"] > 0 and hd else 0.0
             total = base + ev + hp
             lines.append(f"Expected demand ≈ {total:,.0f} kWh/yr (household {base:,.0f} + EV {ev:,.0f} + heat pump {hp:,.0f}).")
+            existing = physics.num(inputs.existing_pv_kwp) or 0.0
+            if existing:
+                lines.append(f"The home already has {existing:g} kWp of PV.")
             if values["pv_kwp"] > 0:
                 gen = physics.pv_yield_kwh(values["pv_kwp"])
                 sc = physics.self_consumption_ratio(total, gen, values["battery_kwh"])
                 save = physics.annual_pv_savings_eur(total, values["pv_kwp"], values["battery_kwh"],
-                                                     inputs.electricity_price_eur_kwh, inputs.feed_in_tariff_eur_kwh)
+                                                     inputs.electricity_price_eur_kwh)
                 cost = physics.capex_eur(values["pv_kwp"], values["battery_kwh"], 0)
                 lines.append(f"PV yields ≈ {gen:,.0f} kWh/yr, ≈{sc:.0%} used at home, saving ≈ €{save:,.0f}/yr; "
                              f"PV+battery payback ≈ {cost / save:.1f} years (rough assumptions).")

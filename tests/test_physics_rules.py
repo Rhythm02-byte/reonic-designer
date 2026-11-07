@@ -51,3 +51,17 @@ def test_locked_value_is_kept_but_flagged():
 
 def test_common_sizes_picks_frequent_values():
     assert rules.common_sizes([10, 10, 10, 7.5, 7.5, 5, 0], top=2) == [7.5, 10.0]
+
+
+def test_r04_holds_when_the_smallest_catalogue_size_is_above_the_cap():
+    cat = {**CAT, "battery_kwh": [2.5, 5.0, 10.0]}
+    for pv in (0.5, 1.0, 1.2):
+        v, notes, _ = rules.apply_one("battery_kwh", 8, {"pv_kwp": pv}, HomeInputs(), cat)
+        assert v <= rules.BATTERY_MAX_KWH_PER_KWP * pv + 1e-9 and notes[0].startswith("R04")
+
+
+def test_negative_existing_pv_counts_as_none():
+    v, notes, _ = rules.apply_one("battery_kwh", 8, {"pv_kwp": 0}, HomeInputs(existing_pv_kwp=-5), CAT)
+    assert v == 0 and notes[0].startswith("R02")
+    v, _, _ = rules.apply_one("battery_kwh", 8, {"pv_kwp": 4}, HomeInputs(existing_pv_kwp=-100), CAT)
+    assert 0 < v <= 8.0  # judged on the 4 kWp of new PV only (cap 8 kWh)

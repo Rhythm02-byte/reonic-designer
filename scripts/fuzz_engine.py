@@ -38,13 +38,13 @@ CHOICES = {
     "load_profile": [None, *LOAD_PROFILES, "not_a_profile"],
     "heating_type": [None, *HEATING_TYPES, "garbage", "HEAT_PUMP"],
     "heating_demand_kwh": [None, 0, 15000, 1e7],
-    "existing_pv_kwp": [None, 0, 5, 50, 1e4],
-    "existing_battery_kwh": [None, 0, 10],
+    "existing_pv_kwp": [None, 0, 0.3, 5, 50, 1e4, -5],
+    "existing_battery_kwh": [None, 0, 10, -3],
     "has_existing_wallbox": [None, True, False],
     "household_size": [None, 3],
     "heated_area_m2": [None, 150],
 }
-LOCK_VALUES = [0.0, 3.3, 10.0, 100.0]
+LOCK_VALUES = [0.0, 0.4, 1.0, 3.3, 10.0, 100.0]  # small PV locks make the battery cap bite
 
 
 def random_home(rng: random.Random) -> HomeInputs:

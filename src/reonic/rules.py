@@ -40,7 +40,7 @@ def apply_one(target: str, value: float, current: dict[str, float], inputs: Home
 
     elif target == "battery_kwh":
         # Storage-only retrofits are common for homes that already have PV, so count existing PV too.
-        pv = current.get("pv_kwp", 0.0) + (_num(inputs.existing_pv_kwp) or 0.0)
+        pv = max(current.get("pv_kwp", 0.0), 0.0) + max(_num(inputs.existing_pv_kwp) or 0.0, 0.0)  # a negative entry counts as none
         if v > 0 and pv <= 0:
             v = 0.0
             notes.append("R02: no new or existing PV, so no battery.")
@@ -48,7 +48,11 @@ def apply_one(target: str, value: float, current: dict[str, float], inputs: Home
             v = BATTERY_MAX_KWH_PER_KWP * pv
             notes.append(f"R04: battery capped at {BATTERY_MAX_KWH_PER_KWP:g} kWh per kWp of PV.")
         if v > 0:
-            v = snap(v, catalog.get(target, []), upper=BATTERY_MAX_KWH_PER_KWP * pv)
+            cap = BATTERY_MAX_KWH_PER_KWP * pv
+            v = snap(v, catalog.get(target, []), upper=cap)
+            if v > cap + 1e-9:  # no catalogue size fits under the cap (tiny PV): stay under it rather than break R04
+                v = float(np.floor(cap * 10) / 10)
+                notes.append(f"R04: battery limited to {v:g} kWh, below the smallest catalogue size.")
 
     elif target == "wallbox_kw" and v > 0:
         v = snap(v, catalog.get(target, []) or [11.0, 22.0])

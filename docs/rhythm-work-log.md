@@ -58,6 +58,33 @@ Unseen installer for the best setting (whole design): 9.8% → 11.1% and 18.5% �
 
 The best setting beats both the current model and the typical design on folds it was not chosen on.
 
+### Cross-check by a teammate's port (reported 7 Nov, evening)
+
+A teammate ported these ideas into their own pipeline (time-ordered validation window, `policy.json`). Their report says
+coverage sizing + the 40-size catalogue did **not** reproduce there (scored worse on their validation window; only a
+battery-only coverage variant passed, +0.4 points, which they call noise), their 2026 test showed no real gain, and
+their 2,000-home fuzz found 194 rule-breaking designs. I cannot see their code, so I checked what I can here.
+
+- **Time-ordered splits here** (`scripts/time_split_best.py`, n=315 each, so about ±2.5 points of noise per row):
+
+  | Split | Whole design: current / best / typical | Battery: current / best |
+  |---|---|---|
+  | Last 20% per installer | 13.7 / 18.4 / 18.7 | 40.6 / 45.7 |
+  | Train first 60%, test next 20% | 12.7 / 16.2 / 11.4 | 41.0 / 49.8 |
+  | Train first 70%, test next 20% | 19.7 / 19.0 / 13.0 | 49.2 / 52.1 |
+  | Train first 80%, test next 20% | 19.0 / 22.9 / 24.1 | 47.9 / 52.4 |
+
+  Battery gains in all four windows (+2.9 to +8.8). Whole design gains in three of four. PV is flat. Against the typical
+  design it is mixed (wins two windows, ties one, loses one). So the battery gain reproduces on time splits here, and
+  the whole-design gain is smaller and noisier than the random-fold number. Their pipeline differs, so the two results
+  are not in conflict, but **do not claim more than "battery sizing improves, PV is unchanged".**
+- **Their fuzz found real bugs; ours had a blind spot.** My fuzzer never combined tiny PV with a battery and never fed
+  negative existing PV. With those added it found 19 problems in 600 homes: battery above the 2 kWh/kWp cap when the
+  smallest catalogue size exceeded the cap (snapping fell back to the whole catalogue), negative battery sizes from a
+  negative existing-PV entry, and one crash. Fixed in `rules.py` (negative PV counts as none; stay under the cap), with
+  regression tests. Earlier "0 of 2,000" referred to the narrower fuzzer.
+- What they flagged that we do not have: PV rounding past the roof cap (ours caps before rounding, checked).
+
 ## 4. Code that exists but is opt-in
 
 `Designer.train(df, sizing="coverage", battery_catalog_top=40, blend=0.5, sample_weight=..., params=...)`. The defaults

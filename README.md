@@ -18,7 +18,9 @@ pip install -e ".[dev]"
 python -m reonic build                          # data/raw/ (Reonic export) -> data/projects.csv, one row per project
 python -m reonic eval                           # held-out metrics vs baseline -> reports/  (add --group-col installer_id)
 python -m reonic train                          # -> models/designer.joblib (used by the app if present)
-streamlit run app.py                            # planner UI
+streamlit run app.py                            # planner UI (fallback)
+PYTHONPATH=src uvicorn reonic.api:app --host 127.0.0.1 --port 8000   # JSON API for web/
+cd web && pnpm install && pnpm dev              # web planner + homeowner view, see web/README.md
 python -m reonic synth                          # fake data -> data/synthetic.csv, used automatically if data/raw/ is absent
 pytest -q
 ```

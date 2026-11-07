@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Reonic brand tokens (reonic.com): warm off-whites, near-black ink, zinc text, emerald/amber/rose accents */
+@theme {
+  --color-paper: rgb(253 253 251);
+  --color-sand: rgb(247 245 239);
+  --color-sand-2: rgb(251 250 247);
+  --color-ink: rgb(27 29 32);
+  --color-body: oklch(0.37 0.013 285.805);
+  --color-muted: oklch(0.552 0.016 285.938);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-noto-serif), ui-serif, Georgia, serif;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

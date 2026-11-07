@@ -131,7 +131,13 @@ def holdout(_body) -> dict:
     if not path.exists():
         return {"rows": []}
     df = pd.read_csv(path, index_col=0)
-    return {"rows": df.astype(object).where(df.notna(), None).to_dict("records")}
+    recs = df.astype(object).where(df.notna(), None).to_dict("records")
+    typed = {f: bool if f in BOOL_FIELDS else float if f in NUMERIC_FIELDS else str for f in INPUT_FIELDS}
+    return {"rows": [{
+        "project_id": r["project_id"], "installer_id": r["installer_id"],
+        "inputs": {f: None if r[f] is None else typed[f](r[f]) for f in INPUT_FIELDS},
+        **{who: {t: r[f"{t}_{who}"] for t in TARGETS} for who in ("expert", "ours", "baseline")},
+    } for r in recs]}
 
 
 def _endpoint(fn):

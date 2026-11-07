@@ -61,7 +61,9 @@ HomeInputs ─► features (raw + physics-informed: EV kWh, future demand, kWp f
 | `src/reonic/evaluate.py` | Held-out metrics → `reports/eval.json`, `reports/test_predictions.csv` |
 | `src/reonic/baseline.py` | Naive rule-of-thumb designer |
 | `src/reonic/synth.py` | Fake data shaped like the export, for tests and teammates without the data |
-| `app.py` | Streamlit planner UI |
+| `src/reonic/api.py` | JSON API for the web frontend (`/api/meta`, `design`, `validate`, `eval`, `holdout`) |
+| `web/` | Next.js planner (`/`) and homeowner view (`/offer`), 3D house from Blender. See `web/README.md` |
+| `app.py` | Streamlit planner UI (fallback) |
 | `tests/` | Loader, rules, physics, engine (19 tests) |
 
 Rules: R01 home already has a heat pump → none new · R02 no new or existing PV → no battery · R03 PV ≤ 30 kWp · R04 battery ≤ 2 kWh per kWp (new + existing PV) · snapping of battery, heat pump, wallbox to common sizes in the data.
@@ -86,7 +88,8 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - [ ] Reonic answers to the open questions (`reonic-data` skill, "Open questions")
 - [ ] Physics constants checked with Reonic experts
 - [ ] Include thresholds tuned; wallbox is currently worse than the baseline
-- [ ] Deviation analysis · alternatives/confidence · homeowner view (specs in `docs/specs/`)
+- [x] Web frontend: planner with 3D house, alternatives/confidence, homeowner view via share link (`web/`)
+- [ ] Deviation analysis (spec in `docs/specs/`)
 - [ ] Pitch deck · demo recording · final README
 
 **Decisions**
@@ -95,6 +98,8 @@ Default split is random 80/20. `--group-col installer_id` holds out one installe
 - 2026-11-07: LLM optional and last-mile only. It must never change numbers.
 - 2026-11-07: No ticket tool. Tasks live in PLAN.md. Everyone reads the PDF before starting.
 - 2026-11-07: Build on the real data and report the honest result, rather than tuning on the test set or hiding weak areas (wallbox, heat pump).
+- 2026-11-07: Demo UI in Next.js (`web/`) over a local JSON API bound to 127.0.0.1. Not deployed: the API reads the Reonic data and model. Streamlit stays as the fallback.
+- 2026-11-07: The homeowner offer travels in the URL hash, so it never reaches a server log; the page is `noindex`.
 
 ## 7. Team workflow
 

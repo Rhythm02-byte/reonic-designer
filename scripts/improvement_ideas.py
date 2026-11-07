@@ -9,7 +9,9 @@ Ideas can be combined with "+" (e.g. coverage+nb_blend). All compared with the c
   ph_drop       placeholder rows dropped from training (weight 0)
   ph_flag       an "is placeholder" feature added
   installer     installer added as a feature (only helps installers seen in training)
-  nb_blend(_hi) size = half (75%) neighbours, rest the model, half the median size of the 25 most similar past homes
+  nosnap        battery sizes not snapped to the catalogue of common sizes
+  nb_engine     the same blend done inside the engine (before rules R03/R04 and catalogue snapping): the version to ship
+  nb_blend(_hi) size (after the rules, experiment only) = half (75%) neighbours, rest the model, half the median size of the 25 most similar past homes
   tune_a/tune_b regularised / shorter gradient-boosting settings
 Also reports each idea on placeholder rows and on the other rows. Tuning variants were chosen after looking at these
 same folds, so treat their gains as optimistic. Real export only. Writes reports/improvement_ideas.json.
@@ -24,7 +26,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import KFold
 
-from reonic import data, engine
+from reonic import data, engine, rules
 from reonic.engine import Designer
 from reonic.schema import INPUT_FIELDS, TARGETS
 
@@ -55,7 +57,7 @@ def with_installer(df):
 def run_variant(name, train, val):
     """`name` may combine ideas with "+", e.g. "coverage+nb_blend". nb_blend_hi gives the neighbours 75% of the weight."""
     engine.features = base_features
-    kw, blend = {}, 0.0
+    kw, blend, nosnap, snap_top = {}, 0.0, False, None
     for part in name.split("+"):
         if part == "coverage":
             kw["sizing"] = "coverage"
@@ -71,11 +73,21 @@ def run_variant(name, train, val):
             kw["params"] = dict(max_leaf_nodes=15, min_samples_leaf=40, l2_regularization=1.0)
         elif part == "tune_b":
             kw["params"] = dict(max_iter=100, learning_rate=0.05, max_depth=4, min_samples_leaf=30)
+        elif part == "snap40":  # snap batteries to the 40 most common sizes instead of 15
+            snap_top = 40
+        elif part == "nosnap":  # keep battery sizes as predicted (0.1 kWh) instead of snapping to the 15 most common sizes
+            nosnap = True
+        elif part == "nb_engine":  # the proper version: blend inside the engine, before rules and snapping
+            kw["blend"] = 0.5
         elif part == "nb_blend":
             blend = 0.5
         elif part == "nb_blend_hi":
             blend = 0.75
     d = Designer.train(train, **kw)
+    if snap_top:
+        d.catalog["battery_kwh"] = rules.common_sizes(train["battery_kwh"].to_numpy(float), top=snap_top)
+    if nosnap:
+        d.catalog["battery_kwh"] = []
     pred = d.design_batch(val)
     if blend:
         nbs = d.neighbours.query(base_features(val))

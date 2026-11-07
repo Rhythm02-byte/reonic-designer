@@ -15,6 +15,7 @@ from sklearn.neighbors import NearestNeighbors
 
 ORDER = ("heat_pump_kw", "pv_kwp", "battery_kwh", "wallbox_kw")
 MIN_ROWS_FOR_REGRESSOR = 20
+BLEND_TARGETS = ("pv_kwp", "battery_kwh")  # sizes that can be blended with what similar homes got
 RULE_BASED = {"wallbox_kw"}  # components decided by a fixed rule, not a model
 DEFAULT_WALLBOX_KW = 11.0
 # Include cut-off for the learned components.
@@ -101,8 +102,12 @@ class DesignModel:
             Xc[t] = y  # teacher forcing: downstream steps learn from the expert's upstream choice
         return self
 
-    def predict(self, X: pd.DataFrame, fixed: dict | None = None) -> pd.DataFrame:
-        """`fixed` maps component -> scalar or per-row array; those values are used as-is downstream."""
+    def predict(self, X: pd.DataFrame, fixed: dict | None = None, similar: dict | None = None, blend: float = 0.0) -> pd.DataFrame:
+        """`fixed` maps component -> scalar or per-row array; those values are used as-is downstream.
+
+        `similar` maps component -> per-row median size among the most similar past homes (NaN if none had it). With
+        `blend` > 0 the size becomes (1 - blend) * model + blend * similar. Include/exclude is still the model's call.
+        """
         fixed = fixed or {}
         Xc = X[self.cols].copy()
         out = pd.DataFrame(index=X.index)
@@ -120,6 +125,9 @@ class DesignModel:
             size = np.clip(reg.predict(Xc[cols]), 0, None)
             if quants is not None:
                 size = coverage_size(np.column_stack([m.predict(Xc[cols]) for m in quants]), SIZE_TOLERANCE[t])
+            if blend and similar and t in similar:
+                med = np.asarray(similar[t], dtype=float)
+                size = np.where(np.isnan(med), size, (1 - blend) * size + blend * med)
             val = np.where(p >= THRESHOLD[t], size, 0.0)
             if t in fixed:
                 val = np.broadcast_to(np.asarray(fixed[t], dtype=float), (len(X),)).copy()
@@ -140,6 +148,14 @@ class Neighbours:
 
     def _z(self, X: pd.DataFrame) -> np.ndarray:
         return ((X.fillna(self.center) - self.center) / self.scale).fillna(0).to_numpy()
+
+    def median_sizes(self, X: pd.DataFrame, targets) -> dict[str, np.ndarray]:
+        """Per row, the median size among neighbours that got the component (NaN if none did or all sizes unknown)."""
+        nbs = self.query(X)
+        out = {}
+        for t in targets:
+            out[t] = np.array([n[t][n[t] > 0].median() if (n[t] > 0).any() else np.nan for n in nbs], dtype=float)
+        return out
 
     def query(self, X: pd.DataFrame) -> list[pd.DataFrame]:
         idx = self.nn.kneighbors(self._z(X), return_distance=False)

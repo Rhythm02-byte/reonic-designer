@@ -8,7 +8,7 @@ import pandas as pd
 
 from . import physics, rules
 from .data import features, inputs_frame, row_inputs
-from .model import ORDER, DesignModel, Neighbours
+from .model import BLEND_TARGETS, ORDER, DesignModel, Neighbours
 from .schema import LABEL, TARGETS, UNIT, Design, HomeInputs
 
 NOUN = {"pv_kwp": "PV", "battery_kwh": "a battery", "heat_pump_kw": "a heat pump", "wallbox_kw": "a wallbox"}
@@ -25,12 +25,16 @@ class Designer:
     model: DesignModel
     neighbours: Neighbours
     catalog: dict[str, list[float]]
+    blend: float = 0.0  # weight given to the median size of the most similar past homes (0 = model only)
 
     @classmethod
-    def train(cls, df: pd.DataFrame, sizing: str = "mean", sample_weight=None, params: dict | None = None) -> "Designer":
+    def train(cls, df: pd.DataFrame, sizing: str = "mean", sample_weight=None, params: dict | None = None,
+              blend: float = 0.0, battery_catalog_top: int = 15) -> "Designer":
+        """battery_catalog_top: how many of the most common battery sizes the design snaps to (15 = as before; 40 = all
+        sizes installers used). Snapping to only 15 cost battery accuracy: see scripts/improvement_ideas.py."""
         X, Y = features(df), df[list(TARGETS)].astype(float)
-        catalog = {t: rules.common_sizes(Y[t].to_numpy()) for t in TARGETS}
-        return cls(DesignModel(sizing, params).fit(X, Y, sample_weight), Neighbours().fit(X, Y), catalog)
+        catalog = {t: rules.common_sizes(Y[t].to_numpy(), top=battery_catalog_top if t == "battery_kwh" else 15) for t in TARGETS}
+        return cls(DesignModel(sizing, params).fit(X, Y, sample_weight), Neighbours().fit(X, Y), catalog, blend)
 
     def save(self, path: str | Path) -> None:
         joblib.dump(self, path)
@@ -46,8 +50,9 @@ class Designer:
         notes = [[] for _ in inputs]
         flags = [[] for _ in inputs]
         probs = None
+        similar = self.neighbours.median_sizes(X, BLEND_TARGETS) if self.blend else None
         for t in ORDER:
-            pred = self.model.predict(X, {**fixed, **({t: locked[t]} if t in locked else {})})
+            pred = self.model.predict(X, {**fixed, **({t: locked[t]} if t in locked else {})}, similar, self.blend)
             probs = pred if probs is None else probs.assign(**{f"p_{t}": pred[f"p_{t}"]})
             vals = []
             for i, inp in enumerate(inputs):

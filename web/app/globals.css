@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* Reonic brand tokens (reonic.com, see ../DESIGN.md): warm off-whites, near-black ink, zinc text, blue accent,
+   one orange to pink gradient for the proof. */
+@theme {
+  --color-paper: rgb(253 253 251);
+  --color-sand: rgb(247 245 239);
+  --color-sand-2: rgb(251 250 247);
+  --color-ink: rgb(27 29 32);
+  --color-body: oklch(0.37 0.013 285.805);
+  --color-muted: oklch(0.552 0.016 285.938);
+  /* muted fails AA on sand (4.4:1); text on sand uses quiet */
+  --color-quiet: oklch(0.442 0.017 285.786);
+  --color-aubergine: #292025;
+  --color-aubergine-2: #4b4247;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Calm sage to mint; ink text only (white fails AA on light greens). */
+@utility bg-reonic {
+  background-image: linear-gradient(120deg, #d3e6c4 0%, #a9dcc0 55%, #8fd2c8 100%);
+}
+
+/* Darker stops than bg-reonic so it reaches 3:1 on paper; large text (24px+) only. */
+@utility text-reonic {
+  background-image: linear-gradient(90deg, #2e7d4f, #17766f);
+  background-clip: text;
+  color: transparent;
+  @media (forced-colors: active) {
+    background-image: none;
+    color: CanvasText;
+  }
+}
+
+@utility grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-body);
+}
+
+h1, h2 {
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

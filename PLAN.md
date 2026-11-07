@@ -28,7 +28,7 @@ Each workstream has one owner. Claim one by writing your name here.
 |---|---|---|
 | 1. Data & EDA | _open_ | Findings on outliers, bundles and thresholds; fill the open questions; feed back into features and rules |
 | 2. Model & eval | _open_ | Per-component thresholds tuned on validation data; group split result; deviation analysis |
-| 3. Product & UI | _open_ | Demo flow on real data; validation view; homeowner view (spec) |
+| 3. Product & UI | Faris | Demo flow on real data; validation view; homeowner view (spec) |
 | 4. Pitch & business case | _open_ | Deck; time-per-offer model with labelled assumptions; demo script; recording |
 
 ## Other approaches we could take

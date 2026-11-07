@@ -141,7 +141,8 @@ segmented control.
 ## Shapes
 
 Cards 16px, inner panels 12px (16px card minus a 4px visual gap), inputs 8px, buttons, chips and segmented controls
-full pills. Icons are 16px line icons at 1.75 stroke; check circles are filled 16px or 20px discs.
+full pills, except the planner's share action pair (Preview/Share), a pointed chevron pair that pulls apart on
+hover (see Decisions Log). Icons are 16px line icons at 1.75 stroke; check circles are filled 16px or 20px discs.
 
 ## Components
 
@@ -195,3 +196,4 @@ full pills. Icons are 16px line icons at 1.75 stroke; check circles are filled 1
 | 2026-11-07 | Planner becomes a workspace with a customer sidebar | Operating software for several planners and customers; the planner h1 is the customer name, so its gradient word is gone |
 | 2026-11-07 | Noto Serif removed | Only reonic.com's testimonials use it; the gradient sans word replaces the italic serif |
 | 2026-11-07 | Orange to pink gradient replaced by sage to mint | User request; calmer, energy without the cliché, ink text keeps AA |
+| 2026-11-08 | Planner share pair (Preview/Share) gets a chevron shape instead of a full pill, pulling apart on hover | User request, inspired by greptile.com; ink/paper colors and the 200ms hover budget are unchanged, scoped to this one pair |

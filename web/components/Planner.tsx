@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
 import { altLabel, CHOICE_LABEL, DEMO_INPUTS, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
 import { House } from "./House";
-import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
+import { Badge, Button, Card, CheckDot, CheckList, chevron, chevronLook, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
 
@@ -362,10 +362,10 @@ function OfferLinks({ offer }: { offer: Offer | null }) {
   const [copied, setCopied] = useState<"yes" | "failed" | null>(null);
   if (!offer) {
     return (
-      <>
-        <Button variant="secondary" disabled>Preview homeowner view</Button>
-        <Button disabled>Share offer</Button>
-      </>
+      <div className="inline-flex items-center gap-2">
+        <Button variant="secondary" shape="chevron" disabled>Preview homeowner view</Button>
+        <Button shape="chevron" disabled>Share offer</Button>
+      </div>
     );
   }
   // The link carries this home's data in its hash: send it only to this customer.
@@ -377,13 +377,23 @@ function OfferLinks({ offer }: { offer: Offer | null }) {
     );
   return (
     <>
-      <a href={href} target="_blank" rel="noopener" className={`${pill} ${pillLook.secondary}`}>
-        Preview homeowner view
-        <span className="sr-only">(opens in a new tab)</span>
-      </a>
-      <Button onClick={share}>
-        Share offer <Icon name="arrow" className="size-4" />
-      </Button>
+      {/* Chevron pair: a deliberate DESIGN.md exception (see Decisions Log), paired buttons that pull apart on hover.
+          The transform lives on a wrapper, not the button itself, so it doesn't fight the button's own transition-colors. */}
+      <div className="group inline-flex items-center gap-2">
+        {/* clip-path crops any outline drawn on the chevron itself, so the focus ring lives on this
+            unclipped wrapper instead (same has-focus-visible trick Segmented uses for its hidden radio). */}
+        <div className="transition-transform duration-200 group-hover:-translate-x-1 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600">
+          <a href={href} target="_blank" rel="noopener" className={`${chevron} ${chevronLook.secondary}`}>
+            Preview homeowner view
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+        </div>
+        <div className="transition-transform duration-200 group-hover:translate-x-1 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600">
+          <Button shape="chevron" onClick={share}>
+            Share offer <Icon name="arrow" className="size-4" />
+          </Button>
+        </div>
+      </div>
       <span aria-live="polite" className="text-xs text-quiet">
         {copied === "yes" ? "Link copied" : copied === "failed" ? "Copy failed: open the preview and copy its address" : ""}
       </span>

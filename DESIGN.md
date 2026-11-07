@@ -185,7 +185,7 @@ full pills. Icons are 16px line icons at 1.75 stroke; check circles are filled 1
 ## Decisions Log
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-11-07 | Initial design system created | Created by /design-consultation from tokens measured on reonic.com/de-de and the approved plan (2 views, real logo, calm product + 1 wow) |
+| 2026-11-07 | Initial design system created | Created by /design-consultation from tokens measured on reonic.com/de-de and the approved plan (2 views, calm product + 1 wow; logo later replaced by Rhythm) |
 | 2026-11-07 | Gradient text allowed once per view | User-approved exception to impeccable's ban; darkened stops, large text only, forced-colors fallback |
 | 2026-11-07 | Ink text on the gradient card | reonic.com uses white text there, which fails AA (2.2:1 on orange) |
 | 2026-11-07 | Own logo "Rhythm" instead of the Reonic logo | User request: a similar mark (rounded ink square) with its own name and glyph; no Reonic artwork in the product |

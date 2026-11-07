@@ -1,7 +1,24 @@
 # CONTEXT: Reonic challenge, thinc! München 2026
 
-Read this first. It is the shared brief for everyone on the team and for any coding agent working in this repo.
+Shared brief for everyone on the team and for any coding agent working in this repo.
 Keep the **Status** and **Decisions** sections current; they are the source of truth.
+
+## 0. Start here: read the challenge PDF first
+
+**Before touching any code, every teammate reads `Reonic_Hackathon_Challenge_final.pdf` completely** (8 pages, about 15 minutes).
+This file summarises the PDF but does not replace it. The PDF is how the judges will score us.
+
+You understand it when you can answer these without looking:
+1. Who are the two personas, and which one does the **minimum result** serve? (p. 4)
+2. What does "as appropriate" mean, and why is "no battery" or "no heat pump" a valid expert answer? (p. 4)
+3. What are the three core building blocks, and what are the three parts of the minimum result? (pp. 6–7)
+4. What are the four steps of the demo moment? (p. 7)
+5. What are the four evaluation criteria? (p. 8)
+6. What exactly must be submitted, and by when? (p. 8)
+7. What counts as "AI being a real part of the solution", and what does not? (p. 6)
+8. What are we not allowed to do with the data? (p. 8)
+
+Then read this file, then the README.
 
 ## 1. The challenge in one paragraph
 
@@ -9,7 +26,7 @@ Planners at solar installers spend hours designing each home's system before an 
 Build an AI system that turns a few facts about a home into a complete design: **PV (kWp), battery (kWh)
 and heat pump (kW), each only if appropriate** (we also predict the wallbox, which the data shows is common), with a short explanation. The design must decide the way an
 experienced planner would, measured against the designs installers actually delivered (Reonic's dataset).
-Source: `../Reonic_Hackathon_Challenge_final.pdf`.
+Source: `Reonic_Hackathon_Challenge_final.pdf` (see §0).
 
 ## 2. Deadlines and deliverables
 
@@ -123,7 +140,7 @@ Split: random 80/20 by default. `--group-col installer_id` trains on one install
   - Essentially empty: house size and inhabitants, under 1%.
   - Absent: roof area and budget.
 - **The installers behave differently.** At `2a8ba8e2`, PV tracks demand and battery tracks PV. At `23c108b7`, designs look package-driven.
-- **Outliers to look at (THI-4):** consumption 0 or 50,000 kWh, PV up to 99.9 kWp, battery up to 108 kWh. These may be commercial projects or data errors.
+- **Outliers to look at (data & EDA workstream):** consumption 0 or 50,000 kWh, PV up to 99.9 kWp, battery up to 108 kWh. These may be commercial projects or data errors.
 
 **First real evaluation** (random split, `OPTION_CHOICE=first`, untuned):
 
@@ -134,16 +151,16 @@ Split: random 80/20 by default. `--group-col installer_id` trains on one install
 | Battery within ±25% | 39% | 24% |
 | Wallbox include accuracy | 61% | 74% |
 
-The model **loses on wallbox**, so threshold tuning is needed (THI-6). The numbers will move once the signed-option and module-wattage answers arrive.
+The model **loses on wallbox**, so threshold tuning is needed. The numbers will move once the signed-option and module-wattage answers arrive.
 
-**Open questions for Reonic** (posted on THI-2):
+**Open questions for Reonic** (to ask the experts on site):
 1. **Which option was signed?** Lowest or highest option_number, or can't it be told from the data?
 2. **What module wattage does installer `2a8ba8e2` use?** And is the quantity on DC Install / Substructure lines always the module count?
 3. Are `inverter_power_kw` and `battery_capacity_kwh` really swapped in the export?
 4. Do package lines include the battery, or can a separate battery come on top?
 5. Does `energy_demand_wh` include an existing EV or heat pump?
 6. What do the folder IDs represent: installers?
-7. Realistic time per design today, and offer → signed rate, for the business case (THI-9).
+7. Realistic time per design today, and offer → signed rate, for the business case.
 
 ## 8. Plan and milestones
 
@@ -163,28 +180,27 @@ Workstreams (one owner each):
 
 ## 9. Team workflow
 
-- **Tickets:** Linear project "Reonic · Home Energy Designer (thinc! 2026)", team **thinc! Hackathon (THI)**, tickets THI-1 to THI-16:
-  https://linear.app/marketing-vibe-coding/project/reonic-home-energy-designer-thinc-2026-0e10cbdb4a2d
-  - Milestones M0–M3 match §8.
-  - Labels: Phase (MVP / Stretch / Wrap-up) and Workstream (Data & EDA / Model & Eval / Product & UI / Pitch & Business).
-- **Claiming a ticket:** assign yourself and move it to In Progress.
-- **Branches:** one per ticket, using Linear's "Copy git branch name" (e.g. `rhythmkashik02/thi-1-...`) so the PR links to the ticket automatically. Small PRs into `main`, and `main` always runs.
+- **First:** read the challenge PDF (§0). Then pick a workstream from §8 and tell the team which one you've taken.
+- **Tasks** are tracked in this file: the §11 Status checklist plus the workstreams in §8. We don't use a ticket tool.
+- **Branches:** one per task, named `<your-name>/<short-topic>` (e.g. `nikita/eda-outliers`). Small PRs into `main`, and `main` always runs.
 - **Before pushing:** `pytest -q` and `python -m reonic eval`.
-- **Commits:** put the ticket ID in the message (e.g. `THI-1: map Reonic columns`).
-- Update **Status** below when you finish something that changes what others can rely on.
+- **Commits:** one-line summary of what changed and why.
+- Update **Status** (§11) when you finish something that changes what others can rely on. Record choices in **Decisions** (§10).
 
 ## 10. Decisions log
 
 - 2026-11-07: Python + scikit-learn gradient boosting + Streamlit, chosen for speed. No infrastructure.
 - 2026-11-07: Model order heat pump → PV → battery, following the physics (load → generation → storage).
 - 2026-11-07: LLM is optional and last-mile only (plain-language explanation for homeowners). It must never change numbers.
+- 2026-11-07: No ticket tool. Tasks live in this file (§8 workstreams, §11 Status). Everyone reads the challenge PDF before starting.
 
 ## 11. Status
 
 - [x] Repo skeleton, end-to-end pipeline on synthetic data, UI
-- [x] Real data loaded: loader rebuilt around the Reonic export, 19 tests passing, first real eval beats baseline 15.7% vs 3.8% (THI-1)
-- [ ] Answers to the signed-option and module-wattage questions (THI-2)
+- [x] Real data loaded: loader rebuilt around the Reonic export, 19 tests passing, first real eval beats baseline 15.7% vs 3.8%
+- [ ] Every teammate has read the challenge PDF (§0)
+- [ ] Answers from the Reonic experts to the signed-option and module-wattage questions (§7)
 - [ ] Physics constants calibrated with Reonic experts
-- [ ] Include-probability thresholds tuned; wallbox is currently worse than the baseline (THI-6)
+- [ ] Include-probability thresholds tuned; wallbox is currently worse than the baseline
 - [ ] Deviation analysis · alternatives/confidence · homeowner view
 - [ ] Pitch deck · demo recording · final README

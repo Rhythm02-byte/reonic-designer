@@ -3,7 +3,7 @@
 Proposes PV, battery and heat pump designs for a home the way an expert planner would, explains why,
 lets the planner override any part, and measures how close it gets to real expert designs.
 
-Team context, plan and decisions are in [CONTEXT.md](CONTEXT.md).
+**New to the team?** Read the challenge PDF (`Reonic_Hackathon_Challenge_final.pdf`) completely first, then [CONTEXT.md](CONTEXT.md), which holds the plan, data findings and decisions.
 
 ## Setup
 

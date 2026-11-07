@@ -48,8 +48,24 @@ These are alternatives to the current design. We pick the one that scores best o
 
 - Claude credits: $200 (about €200). Planned use: Claude Code work, and the optional LLM explanation in approach 6. Log spend here as it happens.
 
+## Data sources (research, 2026-11-07)
+
+**Simulation (approach 1):** built in `src/reonic/simulate.py`, study in `scripts/simulation_study.py`. Results and limits are in the `reonic-evaluate` skill. Summary: the pipeline works, missing inputs cost accuracy, and a simulated policy cannot stand in for installer labels.
+
+**Public datasets (approach 2):** Kaggle has no public set of installer designs. Candidates, not yet downloaded:
+
+| Source | Useful for | Not useful for |
+|---|---|---|
+| ~~`mexwell/household-load-and-solar-generation` (Kaggle)~~ | Removed: only 6 homes, too small to use | — |
+| Pecan Street free sample, 10 homes, 1-minute (Kaggle, needs free registration) | Real load with solar, HVAC and EV circuits | Design decisions; only 10 homes |
+| Open heat pump datasets, about 400 homes, 2-minute (openmod forum) | Heat pump operation | Sizing decisions; licence and source to check |
+| When2Heat (Kaggle) | Simulated country-level heat demand | Per-home data |
+| Connecticut incentive enrolments for solar and batteries (data.ct.gov, via the search tools) | Possibly real installed sizes by installer | Heat pumps; US market; fields not yet inspected |
+
+Our conclusion: Kaggle can make the load profiles and physics more realistic. It cannot supply the label we need, which is what installers sold. Check the licence on every download before use. Put downloads in `data/external/` (gitignored). Never upload Reonic data to Kaggle or any other service.
+
 ## Open risks
 
-- The heat pump can't be learned from this data (0.3% of designs). Say so in the pitch.
+- The heat pump can't be learned from this data (13 of 1,593 chosen designs, 0.8%). Say so in the pitch.
 - Wallbox is worse than the baseline. Thresholds need tuning on validation data, not the test set.
 - Signed option and module wattage are unknown until Reonic answers. Show sensitivity to both.

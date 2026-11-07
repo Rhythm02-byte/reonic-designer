@@ -74,3 +74,12 @@ def test_module_count_fallback_and_unknown_pv():
     o = data.option_designs(parts).set_index("project_id")
     assert o.loc["a", "pv_kwp"] == pytest.approx(20 * data.MODULE_WP / 1000) and o.loc["a", "pv_source"] == "module_count"
     assert np.isnan(o.loc["b", "pv_kwp"]) and o.loc["b", "pv_source"] == "unknown"
+
+
+def test_zero_consumption_is_unknown_not_zero(raw):
+    sq = pd.read_csv(raw / "inst1" / "projects_status_quo.csv")
+    sq.loc[sq.project_id == "p3", "energy_demand_wh"] = 0
+    sq.to_csv(raw / "inst1" / "projects_status_quo.csv", index=False)
+    df = data.load(raw).set_index("project_id")
+    assert np.isnan(df.loc["p3", "annual_consumption_kwh"])
+    assert df.loc["p1", "annual_consumption_kwh"] == 5500

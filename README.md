@@ -18,7 +18,7 @@ pip install -e ".[dev]"
 python -m reonic build                          # data/raw/ (Reonic export) -> data/projects.csv, one row per project
 python -m reonic eval                           # held-out metrics vs baseline -> reports/  (add --group-col installer_id)
 python -m reonic train                          # -> models/designer.joblib (used by the app if present)
-streamlit run app.py                            # planner UI
+streamlit run app.py                            # planner UI; pick an example home in the sidebar (held-out, never trained on)
 python -m reonic synth                          # fake data -> data/synthetic.csv, used automatically if data/raw/ is absent
 pytest -q
 ```
@@ -29,7 +29,7 @@ Real data: copy the Reonic export folders (`<installer_id>/projects_status_quo.c
 
 The expert design for each project is rebuilt from the offer's line items. A chain of gradient-boosting
 models then decides, per component, whether it is included and how large it is, in physical order
-(heat pump → PV → battery → wallbox). Each step sees the upstream decisions, so the design is coherent
+(heat pump → PV → battery). The wallbox is a fixed rule: a wallbox if the home has an EV. Each step sees the upstream decisions, so the design is coherent
 and planner overrides propagate. Deterministic rules then enforce hard constraints and snap sizes to the sizes
 installers actually use. Explanations combine model confidence, what the most similar past projects received,
 and simple physics and economics.
@@ -40,4 +40,4 @@ and simple physics and economics.
 - Heat pump fuel savings are not modelled; payback covers PV and battery only.
 - The export doesn't mark which option was signed; we use the lowest option number (configurable).
 - PV size at one installer is rebuilt from module counts × an assumed 450 Wp.
-- Heat pumps are almost never offered in the data (0.3%), so heat pump sizing can't really be learned.
+- Heat pumps are almost never chosen in the data (13 of 1,593 designs, 0.8%), so heat pump sizing can't really be learned.

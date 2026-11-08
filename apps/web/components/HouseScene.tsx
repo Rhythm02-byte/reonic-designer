@@ -26,6 +26,7 @@ export type Existing = { pv_kwp: number; battery_kwh: number; wallbox: boolean }
 
 export type HouseProps = {
   values: Values;
+  autoRotate?: boolean;
   modules?: number | null; // ours: the engine's PV module count; wins over kWp / PANEL_KWP
   hasEv: boolean;
   existing?: Existing; // already on the house: drawn in grey, before the proposed parts
@@ -231,7 +232,8 @@ const BLACK = new Color(0, 0, 0);
 useGLTF.preload(URL, false, false);
 
 export default function HouseScene(props: HouseProps & { description: string }) {
-  const { description, ...house } = props;
+  const { description, autoRotate = false, ...house } = props;
+  const still = useReducedMotion() ?? false;
   const overlay = useRef<HTMLDivElement>(null);
   return (
     <div ref={overlay} className="relative h-full w-full">
@@ -259,6 +261,8 @@ export default function HouseScene(props: HouseProps & { description: string }) 
         </Suspense>
         <OrbitControls
           target={TARGET}
+          autoRotate={autoRotate && !still}
+          autoRotateSpeed={0.45}
           enablePan={false}
           minDistance={20}
           maxDistance={55}

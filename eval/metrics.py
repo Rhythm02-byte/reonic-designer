@@ -95,6 +95,23 @@ def pred_frame(preds: dict, ids: list) -> pd.DataFrame:
                         index=ids)
 
 
+def within(t: str, y: np.ndarray, p: np.ndarray) -> np.ndarray:
+    """Per row: does prediction p match expert y for target t (include/exclude agree and size within TOLERANCE)?
+    NaN y = offered but size unknown: include only."""
+    known = ~np.isnan(y)
+    has_y, has_p = (y > 0) | ~known, p > 0
+    rel = np.abs(p - np.nan_to_num(y)) / np.where(y > 0, y, 1)
+    return np.where(has_y, has_p & (~known | (rel <= TOLERANCE[t])), ~has_p)
+
+
+def whole_hits(pred: pd.DataFrame, truth: pd.DataFrame) -> np.ndarray:
+    """Per row: all four parts match (the whole-design metric before averaging)."""
+    ok = np.ones(len(truth), dtype=bool)
+    for t in TARGETS:
+        ok &= within(t, truth[t].to_numpy(float), pred[t].to_numpy(float))
+    return ok
+
+
 def policy_metrics(pred: pd.DataFrame, truth: pd.DataFrame, lo: pd.DataFrame | None = None, hi: pd.DataFrame | None = None) -> dict:
     """whole_design_within_tolerance (PV +-20%, battery +-25%, HP +-25%, wallbox include only), per-component
     within_tolerance, include F1/F2, size MAE, and (when lo/hi given) p10-p90 coverage of the expert size.
@@ -105,8 +122,7 @@ def policy_metrics(pred: pd.DataFrame, truth: pd.DataFrame, lo: pd.DataFrame | N
         known = ~np.isnan(y)
         has_y, has_p = (y > 0) | ~known, p > 0
         both = has_y & has_p & known
-        rel = np.abs(p - np.nan_to_num(y)) / np.where(y > 0, y, 1)
-        ok = np.where(has_y, has_p & (~known | (rel <= TOLERANCE[t])), ~has_p)
+        ok = within(t, y, p)
         all_ok &= ok
         m = {
             "includeAccuracy": float((has_y == has_p).mean()),

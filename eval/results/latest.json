@@ -5164,5 +5164,35 @@
       }
     }
   },
-  "durationSec": 645.4
+  "durationSec": 645.4,
+  "selective": {
+    "setting": "served config; 4 expanding 2025 quarter folds; confidence fixed in advance (see eval/selective.py)",
+    "nHomes": 921,
+    "curve": [
+      {
+        "coverage": 0.25,
+        "n": 230,
+        "ours": 0.25217391304347825,
+        "b0": 0.1391304347826087
+      },
+      {
+        "coverage": 0.5,
+        "n": 460,
+        "ours": 0.20434782608695654,
+        "b0": 0.1108695652173913
+      },
+      {
+        "coverage": 0.75,
+        "n": 691,
+        "ours": 0.19247467438494936,
+        "b0": 0.11287988422575977
+      },
+      {
+        "coverage": 1.0,
+        "n": 921,
+        "ours": 0.15960912052117263,
+        "b0": 0.09120521172638436
+      }
+    ]
+  }
 }

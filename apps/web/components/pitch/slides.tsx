@@ -74,7 +74,7 @@ export const SLIDES: Slide[] = [
     kind: "content",
     id: "cover",
     title: "Designs like your best planner",
-    notes: "Ein Satz: eine KI, die wie eure beste Planerin auslegt und sagt, was sie nicht weiß. Teamnamen nennen. ~15 s.",
+    notes: "Ein Satz: eine KI, die wie eure beste Planerin auslegt und sagt, was sie nicht weiß. Teamnamen nennen. ~10 s.",
     body: () => (
       <Canvas>
         <div className="flex flex-1 flex-col justify-center gap-12">
@@ -97,7 +97,7 @@ export const SLIDES: Slide[] = [
     id: "problem",
     title: "The planner’s problem",
     notes:
-      "Bei Installateur 1 dauerte es im Median 8,2 Tage von der Anfrage bis zum Angebot. Das ist Durchlaufzeit, keine Arbeitszeit. Jede Anlage wird von Hand ausgelegt, das erste glaubwürdige Angebot gewinnt oft, und Hausbesitzer haben Angst, überverkauft zu werden. ~25 s.",
+      "Bei Installateur 1 dauerte es im Median 8,2 Tage von der Anfrage bis zum Angebot. Das ist Durchlaufzeit, keine Arbeitszeit. Jede Anlage wird von Hand ausgelegt, das erste glaubwürdige Angebot gewinnt oft, und Hausbesitzer haben Angst, überverkauft zu werden. ~20 s.",
     body: () => (
       <Canvas n={2}>
         <H2>The planner’s problem</H2>
@@ -127,7 +127,7 @@ export const SLIDES: Slide[] = [
     id: "data",
     title: "What the data really holds",
     notes:
-      "Die „Wir haben wirklich reingeschaut“-Folie. Das Expertendesign gibt es nur als Stückliste, wir rekonstruieren alle Größen. Fast gleiche Häuser bekommen 5,4 bis 12,6 kWp, weil Dach und Budget fehlen: eine Grenze für jedes Modell. Speicher folgen dem Paket (0,93 kWh pro kWp), nicht dem Haushalt. ~30 s.",
+      "Die „Wir haben wirklich reingeschaut“-Folie. Das Expertendesign gibt es nur als Stückliste, wir rekonstruieren alle Größen. Fast gleiche Häuser bekommen 5,4 bis 12,6 kWp, weil Dach und Budget fehlen: eine Grenze für jedes Modell. Speicher folgen dem Paket (0,93 kWh pro kWp), nicht dem Haushalt. ~20 s.",
     body: () => (
       <Canvas tone="sand" n={3}>
         <H2>What the data really holds</H2>
@@ -153,7 +153,7 @@ export const SLIDES: Slide[] = [
     id: "how",
     title: "How it designs a home",
     notes:
-      "Ein Durchlauf von links nach rechts: gelernte Installateurs-Policy plus ähnliche Häuser, stündliche Simulation, Regeln und Katalog, dann das Design mit Bandbreiten, Gründen, Warnungen und der nächsten Frage. Reihenfolge nach Physik: Wärmepumpe, PV, Speicher. Kein LLM legt etwas aus. Danach direkt in die Live-Demo. ~30 s.",
+      "Ein Durchlauf von links nach rechts: gelernte Installateurs-Policy plus ähnliche Häuser, stündliche Simulation, Regeln und Katalog, dann das Design mit Bandbreiten, Gründen, Warnungen und der nächsten Frage. Reihenfolge nach Physik: Wärmepumpe, PV, Speicher. Kein LLM legt etwas aus. Danach direkt in die Live-Demo. ~20 s.",
     body: () => (
       <Canvas n={4}>
         <H2>How it designs a home</H2>
@@ -197,7 +197,7 @@ export const SLIDES: Slide[] = [
     frame: "planner",
     title: "Live: the planner",
     notes:
-      "Ihr bedient die echte Seite. Mit → (oder dem Presenter) springt die Demo zum nächsten Schritt, ihr könnt aber jederzeit selbst klicken und tippen. 1) Neue Anfrage: 4.500 kWh sehen nach Platzhalter aus, das Dach ist unbekannt, siehe „Ask next“. 2) Echten Verbrauch beantworten, der Diff-Balken erklärt, was sich bewegt. 3) E-Auto kommt: Wallbox erscheint. 4) Planer setzt den Speicher auf 20 kWh: Warnung. 5) Reality check: links ein zurückgehaltenes Projekt laden und mit dem Experten vergleichen. ~2 min.",
+      "Ihr bedient die echte Seite. Mit → (oder dem Presenter) springt die Demo zum nächsten Schritt, ihr könnt aber jederzeit selbst klicken und tippen. 1) Neue Anfrage: 4.500 kWh sehen nach Platzhalter aus, das Dach ist unbekannt, siehe „Ask next“. 2) Echten Verbrauch beantworten, der Diff-Balken erklärt, was sich bewegt. 3) E-Auto kommt: Wallbox erscheint. 4) Planer setzt den Speicher auf 20 kWh: Warnung. 5) Reality check: unter Evidence ein zurückgehaltenes Projekt laden und mit dem Experten vergleichen (Modell kennt es nicht). ~90 s.",
     steps: [
       {
         label: "New request",
@@ -236,7 +236,7 @@ export const SLIDES: Slide[] = [
     frame: "offer",
     title: "Live: the homeowner’s link",
     notes:
-      "Das ist der Link, den der Planer teilt. Der Hausbesitzer sieht das Angebot in einfachen Worten, Bandbreiten statt Scheingenauigkeit, und kann nur zwischen den Optionen wechseln, die der Planer freigegeben hat, z. B. Speicher ja/nein. Einmal umschalten, dann zurück zu den Folien. ~30 s.",
+      "Das ist der Link, den der Planer teilt. Der Hausbesitzer sieht das Angebot in einfachen Worten, Bandbreiten statt Scheingenauigkeit, und kann nur zwischen den Optionen wechseln, die der Planer freigegeben hat, z. B. Speicher ja/nein. Einmal umschalten, dann zurück zu den Folien. ~20 s.",
     steps: [
       { label: "The offer", hint: "Plain words, the house, and only the options the planner allowed. Try switching the battery." },
     ],
@@ -246,7 +246,7 @@ export const SLIDES: Slide[] = [
     id: "proof",
     title: "Measured against experts",
     notes:
-      "Trainiert auf Angeboten bis September 2025, Modell auf Q4 2025 gewählt, dann 325 Projekte aus 2026 genau einmal bewertet. Die harte Baseline ist der Median des Installateurs selbst. Bei PV-Größe 17 Punkte besser, bei Speicher und Gesamtdesign gleichauf; 1 Punkt ist bei dieser Stichprobe Rauschen. Größenbandbreiten decken 85,5 % der PV-Entscheidungen der Experten ab (Ziel 80 %). ~30 s.",
+      "Trainiert auf Angeboten bis September 2025, Modell auf Q4 2025 gewählt, dann auf 325 Projekten aus 2026 bewertet (nie zur Modellwahl genutzt; jede Auswertung zählt das Lab mit). Die harte Baseline ist der Median des Installateurs selbst. Bei PV-Größe 17 Punkte besser, bei Speicher und Gesamtdesign gleichauf; 1 Punkt ist bei dieser Stichprobe Rauschen. Größenbandbreiten decken 85,5 % der PV-Entscheidungen der Experten ab (Ziel 80 %). ~25 s.",
     body: () => (
       <Canvas n={7}>
         <H2>Measured against experts on unseen projects</H2>
@@ -263,7 +263,7 @@ export const SLIDES: Slide[] = [
           <p className="text-[44px] leading-[1.2] font-semibold">+17 points on PV size against the installer’s own median.</p>
           <p className="text-[32px] leading-[1.4]">Level with it on battery and on the whole design.</p>
         </div>
-        <Source>Test: 325 projects from 2026, held out from training and model choice, scored once</Source>
+        <Source>Test: 325 projects from 2026, held out from training and model choice; every look is counted in /lab</Source>
       </Canvas>
     ),
   },
@@ -272,7 +272,7 @@ export const SLIDES: Slide[] = [
     id: "reading",
     title: "Where we win, and where we tie",
     notes:
-      "PV hängt vom Haus ab, also lernt das Modell es und gewinnt klar. Der Speicher nicht: Experten verkaufen ~0,93 kWh pro kWp, egal welcher Haushalt. Das wirtschaftliche Optimum unseres Simulators trifft den Experten nur in 23 % der Fälle. Also übernehmen wir die Gewohnheit und zeigen die Wirtschaftlichkeit daneben als zweite Meinung. ~25 s.",
+      "PV hängt vom Haus ab, also lernt das Modell es und gewinnt klar. Der Speicher nicht: Experten verkaufen ~0,93 kWh pro kWp, egal welcher Haushalt. Das wirtschaftliche Optimum unseres Simulators trifft den Experten nur in 23 % der Fälle. Also übernehmen wir die Gewohnheit und zeigen die Wirtschaftlichkeit daneben als zweite Meinung. ~15 s.",
     body: () => (
       <Canvas tone="sand" n={8}>
         <H2>Where we win, and where we tie</H2>
@@ -300,7 +300,7 @@ export const SLIDES: Slide[] = [
     id: "asknext",
     title: "It knows which question to ask next",
     notes:
-      "Unser Alleinstellungsmerkmal. Die größte Schwäche der Daten wird zum Arbeitsschritt: Die Engine sagt, welche ein, zwei Fragen für dieses Haus am meisten ändern. Gemessen: Die Dachfrage hebt das Gesamtdesign von 20,9 % auf 32,9 % (Obergrenze, gedeckelt auf die Modulzahl des Experten). Echter Verbrauch statt Platzhalter: 11,1 % auf 20,9 %. ~30 s.",
+      "Unser Alleinstellungsmerkmal. Die größte Schwäche der Daten wird zum Arbeitsschritt: Die Engine sagt, welche ein, zwei Fragen für dieses Haus am meisten ändern. Gemessen: Die Dachfrage hebt das Gesamtdesign von 20,9 % auf 32,9 % (Obergrenze, gedeckelt auf die Modulzahl des Experten). Echter Verbrauch statt Platzhalter: 11,1 % auf 20,9 %. ~25 s.",
     body: () => (
       <Canvas n={9}>
         <H2>It knows which question to ask next</H2>
@@ -326,7 +326,7 @@ export const SLIDES: Slide[] = [
     id: "impact",
     title: "What it’s worth",
     notes:
-      "Drei Gewinner. Planer: Entwurf in unter einer Sekunde, Bearbeiten nur bei Ausnahmen, Warnungen vor dem Versand. Installateur: Junioren planen wie die eigenen Senioren. Hausbesitzer: ein Link, der das Angebot erklärt. Keine erfundene Stunden-Ersparnis: Die echten Stunden pro Auslegung fehlen uns noch. ~25 s.",
+      "Drei Gewinner. Planer: Entwurf in unter einer Sekunde, Bearbeiten nur bei Ausnahmen, Warnungen vor dem Versand. Installateur: Junioren planen wie die eigenen Senioren. Hausbesitzer: ein Link, der das Angebot erklärt. Keine erfundene Stunden-Ersparnis: Die echten Stunden pro Auslegung fehlen uns noch. ~20 s.",
     body: () => (
       <Canvas tone="sand" n={10}>
         <H2>What it’s worth</H2>
@@ -342,7 +342,7 @@ export const SLIDES: Slide[] = [
             </Card>
           ))}
         </div>
-        <Source>Design latency p95: 133 ms · Hours saved per offer: [ask Reonic]</Source>
+        <Source>A design takes under a second on a laptop · Hours saved per offer: [ask Reonic]</Source>
       </Canvas>
     ),
   },
@@ -351,7 +351,7 @@ export const SLIDES: Slide[] = [
     id: "limits",
     title: "What we can’t claim yet",
     notes:
-      "Ehrlich abschließen: zwei Installateure, Wärmepumpen sind selten, also physikbasiert ausgelegt. Dachgröße fehlt und treibt den PV-Fehler, deshalb fragen wir danach. Grobe Physik. Als Nächstes: Stückliste in den Produkten des Installateurs, aus Planer-Overrides lernen, Dachkapazität als Standardfrage. Mit dem Einzeiler enden. Danke. ~20 s.",
+      "Ehrlich abschließen: zwei Installateure, Wärmepumpen sind selten, also physikbasiert ausgelegt. Dachgröße fehlt und treibt den PV-Fehler, deshalb fragen wir danach. Grobe Physik. Als Nächstes: Stückliste in den Produkten des Installateurs, aus Planer-Overrides lernen, Dachkapazität als Standardfrage. Mit dem Einzeiler enden. Danke. ~15 s.",
     body: () => (
       <Canvas n={11}>
         <H2>What we can’t claim yet, and what’s next</H2>

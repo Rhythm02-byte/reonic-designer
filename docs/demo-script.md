@@ -1,48 +1,37 @@
-# Demo script (5 minutes)
+# Demo script (under 5 minutes, run from `/pitch`)
 
-Follows the four-step demo Reonic describes (brief, p. 7): a home is described, a complete system appears, the design is refined, it is checked against reality. Numbers below were measured with the app on the real data; if they differ on your screen, the data or code has changed, so re-measure before recording.
+The deck *is* the app: `/pitch` shows the slides and, on slides 5 and 6, the real planner and homeowner page in place. Speaker notes per slide: press **N** in `/pitch`, with a timer. Timings add up to 280 s and leave 20 s spare.
 
-## Before you start
+## Before you start (T-30 min)
+- [ ] `pnpm dev` is running (engine :8000 + web :3000), and `pnpm x:train` was run after the last engine change. The served model learns from offers ≤ 2025-12-31, so the 2026 projects in Evidence are unseen.
+- [ ] Open `http://localhost:3000/pitch` in full screen (**F**). Or tap the logo three times → *Pitch mode*.
+- [ ] Offline fallback: logo ×3 → *Pitch mode, offline* (`/pitch?demo=1`): labelled toy numbers, no engine.
+- [ ] Phone: if the homeowner link should open on the jury's phones, run a tunnel (`cloudflared tunnel --url http://localhost:3000`) and test the QR once. Real projects and the test runner stay local through the tunnel (`apps/web/proxy.ts`).
+- [ ] The fallback screen recording is on the laptop (not in the repo).
+- [ ] Clear old planner drafts: open the planner once and reload, so it starts from "Familie Berger".
 
-- [ ] Real export in `data/raw/` (two installer folders). Never show or share the raw files.
-- [ ] `python -m reonic eval` has been run, so the Evaluation tab has numbers.
-- [ ] `streamlit run app.py`, browser at full width, sidebar open.
-- [ ] Have `docs/figures/deviation_chart.png` and `docs/business-case.md` open in other tabs.
-- [ ] If the web frontend has been merged (`web/`), the steps are the same; only the buttons differ.
+## The run (→ / PageDown / presenter remote steps through everything)
+| Slide | Time | What happens / what to say |
+|---|---|---|
+| 1 Cover | 10 s | One sentence: designs like your best planner, and says what it doesn't know. |
+| 2 Problem | 20 s | 8.2 days median from request to offer at installer 1: **elapsed time, not effort**. |
+| 3 Data | 20 s | We rebuilt every size from parts lists; near-identical homes get 5.4–12.6 kWp, because roof and budget are missing. |
+| 4 How | 20 s | Learned policy + similar homes → hourly simulation → rules and catalogue → design with ranges, reasons, flags, next question. No LLM sizes anything. |
+| 5 Live planner | 90 s | **Step 1:** new request; consumption and roof unknown → "Ask the customer next". **Step 2:** answer 5,200 kWh → the diff bar says what moved. **Step 3:** EV next year → wallbox appears. **Step 4:** the planner forces a 20 kWh battery → R05/R06 warnings explain why that rarely pays. **Step 5:** Evidence → load a 2026 project → compare with the expert (the model never saw it). |
+| 6 Homeowner link | 20 s | Plain words, only the options the planner allowed; switch one option. |
+| 7 Proof | 25 s | 2026 projects: **PV +17 pts** vs the installer's own habit; **whole design a tie** (20.9 vs 20.6%). Say "tie". |
+| 8 Win / tie | 15 s | PV depends on the home (model wins); battery follows the package (habit; the economic optimum is the second opinion). |
+| 9 Ask next | 25 s | Answering the roof question: up to +12 pts (**upper bound**); real consumption instead of the placeholder: +9.8 pts. |
+| 10 Value | 20 s | First draft in under a second; flags before the offer goes out; the homeowner link. Hours saved: ask Reonic. |
+| 11 Limits | 15 s | Two installers; heat pumps are physics-led; parts list preliminary; next: roof and budget at intake. |
 
-## The story
+## If something breaks
+- Engine down → the planner says "Running on synthetic data". Switch to `/pitch?demo=1` (D key) and say so.
+- Slow first design → wait for "Updating design…"; never click twice.
+- Page frozen → reload the browser (the slide number is in the URL: `#5.3` = slide 5, step 3).
 
-**0:00 The problem (30 s).** Planners spend hours designing each home before an offer can go out. We propose a first design a planner can review, explain and change. The planner keeps the final say.
-
-**0:30 Step 1 and 2: a home, and a complete design (1 min).** Sidebar, "Start from an example", choose **Typical home: we match the expert** (5,000 kWh a year, no EV).
-- Design tab: PV 8.9 kWp, battery 9 kWh, no heat pump, no wallbox.
-- Read one or two lines of "Why": what share of similar past homes got a battery, and the median size. Point at "rough assumptions" on the savings line.
-- Say: this home was never used to train the model.
-
-**1:30 Step 3: refine (1 min).**
-- Tick **Electric car**, set 12,000 km. PV goes to 9.4 kWp, battery 9.6 kWh, and a wallbox of 11 kW appears with "rule: has an EV".
-- Tick **Override PV**, leave it at 0. The battery disappears (rule R02: no PV, no battery) and the page warns that this is unusual for similar homes. Untick the override.
-- Say: the planner can override any component and the rest re-plans around it.
-
-**2:30 Step 4: check against reality (1 min).**
-- Compare tab, same typical home: expert PV 9.45 vs ours 8.9, battery 10 vs 9, all four components agree.
-- Switch to **Home with an EV and a wallbox**: expert PV 13.5 vs ours 10.8, battery 9 vs 9.6, wallbox 11 vs 11, all agree.
-- Evaluation tab, said plainly: PV size matches the installer for **45.8%** of unseen homes against **36.1%** for a "typical design" that ignores the home, and battery size for **47.3%** against **34.8%**. On the whole design the model (15.4%) is level with the typical design (15.0%) on this one split; across 1,593 projects it is 18.0% vs 16.1%, a gain whose interval touches zero. Our measurable edge is PV and battery size. Do not quote the 3.8% rule-of-thumb figure on its own: it is an easy reference.
-
-**3:30 Where we are wrong, and why (1 min).** Honest part, do not skip.
-- Choose **Home that already has PV** (6.7 kWp already): the installer added only a 5 kWh battery; we also propose 9.4 kWp of new PV. Only 18 homes in the data already have PV, too few to learn from.
-- Choose **Where we disagree: expert chose a heat pump**: we never propose one; only 13 of 1,593 designs include a heat pump.
-- Show the deviation chart: for near-identical homes the installers' own PV size varies from 5.4 to 12.6 kWp, so some disagreement is theirs, not ours.
-
-**4:30 Value and close (30 s).** Business case: about **€4,000 to €28,000 per planner per year** of design time (conservative to base), all assumptions, the biggest unknown being hours per design today. Next: Reonic's answers on which offer was signed and what the 4,500 kWh values are, then roof area and budget as inputs.
-
-## If something goes wrong
-
-- App will not start: `pytest -q` first; check `data/raw/` is present. The app falls back to synthetic data with a visible warning, so never record in that mode.
-- Numbers differ from this script: re-run the examples and update this file before recording.
-- Out of time: cut the heat pump example and keep the PV one.
-
-## Do not say
-
-- That the tool replaces the planner, or that it raises win rates (we have no data on either).
-- That the savings or payback figures are exact. They are labelled rough assumptions.
+## Honest answers to have ready
+See `docs/PITCH.md` §10 and `research/jury/questions.md`. In short:
+- "Whole design ties the installer's habit; PV is where we win."
+- "The 2026 test was never used to choose; every look at it is counted in `/lab`."
+- "With a stricter ±1-module PV tolerance, the habit wins: we report that too."

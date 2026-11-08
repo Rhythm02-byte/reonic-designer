@@ -23,6 +23,16 @@ Shared read-only: `research/`. Nobody edits another owner's folder. To get a cha
 6. **Anti-clutter:** a new UI control needs a demo-story reason or goes behind "More". See PLAN §9.1 kill list.
 7. Small PRs. Run `pnpm test` (and `pnpm eval` if you touched the engine or eval) before pushing. Use pnpm, never npm.
 
+## Bad habits (don't)
+
+- Looking at or tuning on the 2026 test; "one more try" after seeing a test number. Decide on 2025 folds/splits; `/lab` counts every test look.
+- Adopting a change from one split, or reporting the best of many settings without a fresh confirmation (seeds never used to choose).
+- Features from the future: rolling stats over all rows, a customer's later offers, anything not known when the offer was created.
+- Claims without a source: every number in pitch, README or slides comes from `eval/results/latest.json` (say which block) or is labelled an assumption. No "ceiling", no "scored once".
+- Grep/Read loops instead of CodeGraph; re-reading files; reports longer than needed.
+- npm instead of pnpm; editing another owner's folder; committing data, models, `.env` or secrets.
+- "Done" without a check: run `pnpm test`, and look at the page in a browser (full reload: a `#hash` change doesn't reload the code).
+
 ## Docs lookup (no hallucinated APIs)
 
 Before using a library API you are not sure about, fetch current docs from Context7's public API with WebFetch or curl:

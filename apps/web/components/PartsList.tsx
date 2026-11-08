@@ -49,7 +49,10 @@ export function PartsList({ parts, title = "Parts list", note }: { parts: Part[]
           </tbody>
         </table>
       )}
-      {note && <p className="mt-3 text-xs text-muted">{note}</p>}
+      {parts.length > 0 && (
+        <p className="mt-3 text-xs text-muted">Preliminary: products picked from the installer&apos;s catalogue by size. Compatibility and string layout are not checked yet.</p>
+      )}
+      {note && <p className="mt-1 text-xs text-muted">{note}</p>}
     </Card>
   );
 }

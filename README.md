@@ -10,7 +10,7 @@ From a few facts about a home (annual consumption, people, heating, electric car
 - hands the homeowner an **offer link / QR** where they can compare only the options the planner approved.
 
 ## Results (honest, on projects the model never saw)
-Trained on offers up to 2025, choices made on a Q4 2025 validation window, then scored once on **325 projects from 2026**.
+Trained on offers up to 2025, choices made on a Q4 2025 validation window, then scored on **325 projects from 2026** (never used to choose a model; scored in 3 recorded runs so far (the /lab counter shows every look)).
 
 | 2026 projects (n = 325) | Whole design right¹ | PV within ±20% | Battery within ±25% | Closeness² |
 |---|---|---|---|---|
@@ -23,7 +23,7 @@ Trained on offers up to 2025, choices made on a Q4 2025 validation window, then 
 **What this means:**
 - **PV: +17 points** over the installer's own habit. That is the model's measurable edge.
 - **Battery and whole design: a tie.** In the data, battery size follows the installer's package (≈ 0.93 kWh per kWp), not the household, so habit is hard to beat.
-- **The ceiling is the missing data.** Near-identical homes got anything from 5.4 to 12.6 kWp, because the expert saw the roof and the budget and the export doesn't contain them. So Rhythm **asks** for that information instead of guessing.
+- **Missing data explains much of the disagreement.** Near-identical homes got anything from 5.4 to 12.6 kWp, because the expert saw the roof and the budget and the export doesn't contain them (not a proven ceiling: see `research/creative/ceiling/REPORT.md`). So Rhythm **asks** for that information instead of guessing.
 - **Measured value of asking:**
   - Real annual kWh instead of the 4,500 kWh placeholder: **+9.8 points** whole design.
   - The roof size: up to **+12 points** (upper bound).

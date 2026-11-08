@@ -359,6 +359,8 @@ def main() -> None:
     physics.load_cache(cache)
     result["honesty"] = honesty.run(sys.modules[__name__], P, O, D)
     result["oracle"] = oracle.run(sys.modules[__name__], P, O, D)
+    import selective
+    result["selective"] = selective.run(D)  # business view: whole-design hit rate of the most confident homes (2025 folds)
     val, test = served(splits_validation(P, O, D), O), served(splits_temporal(P, O, D), O)
     physics.save_cache(cache)
     result["served"] = {"validation": val, "test": test}

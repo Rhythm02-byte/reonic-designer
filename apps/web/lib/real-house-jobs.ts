@@ -26,12 +26,22 @@ export async function houseStatus(id: string): Promise<HouseJob | null> {
   }
   return job;
 }
+const indexPath = (cache: string, key: string) => path.join(cache, `index-${createHash("sha256").update(key).digest("hex").slice(0, 20)}.json`);
+// ours: a finished import for this exact location, without starting a new export (lets the planner open the mesh by default)
+export async function findHouse(lat: number, lng: number): Promise<HouseJob | null> {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const { cache } = housePaths();
+  try {
+    const job = await houseStatus(JSON.parse(await readFile(indexPath(cache, locationKey(lat, lng)), "utf8")).id);
+    return job && job.state === "ready" && existsSync(housePaths(job.id).glb) ? job : null;
+  } catch { return null; }
+}
 export async function startHouse(lat: number, lng: number): Promise<HouseJob> {
   if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 85 || Math.abs(lng) > 180) throw new Error("Choose a valid map location.");
   const { root, cache } = housePaths();
   await mkdir(cache, { recursive: true });
   const key = locationKey(lat, lng);
-  const index = path.join(cache, `index-${createHash("sha256").update(key).digest("hex").slice(0, 20)}.json`);
+  const index = indexPath(cache, key);
   try {
     const previous = await houseStatus(JSON.parse(await readFile(index, "utf8")).id);
     if (previous && previous.state !== "failed" && (previous.state !== "ready" || existsSync(housePaths(previous.id).glb))) return previous;

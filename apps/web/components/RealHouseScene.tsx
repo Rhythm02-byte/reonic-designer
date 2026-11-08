@@ -2,19 +2,45 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Line, OrbitControls, useGLTF } from "@react-three/drei";
-import { Box3, Matrix4, Quaternion, Raycaster, Vector3 } from "three";
+import { Box3, Group, Matrix4, Quaternion, Raycaster, Vector3, type Object3D } from "three";
 import type { HouseJob, HouseLayout, Vec3 } from "@/lib/real-house";
-import { packRoof, type PanelPlacement } from "@/lib/roof-layout";
+import { packRoof } from "@/lib/roof-layout";
+import { buildHeightfield, MODULE, placeFromSolar, placeOnGrid, type Heightfield } from "@/lib/roof-heightfield";
 import type { RoofInfo } from "@/lib/roof";
 
 type Props = {
   job: HouseJob; layout: HouseLayout; roof: RoofInfo | null; proposedPanels: number;
   draft: Vec3[]; marking: boolean; onPoint: (p: Vec3) => void;
   onReport: (count: number, error: string | null) => void;
+  onLoaded?: () => void;
 };
 const tuple = (v: Vector3): Vec3 => [v.x,v.y,v.z];
+const STYLISED = "/models/house.glb"; // ours: Faris's Blender house; its PV_Panel_01 is the shared panel look
+const fields = new WeakMap<Object3D, Map<string, Heightfield>>(); // ours: built once per loaded GLB, survives view toggles
 
-function Building({ job, layout, roof, proposedPanels, draft, marking, onPoint, onReport }: Props) {
+/** Faris's panel (frame + cell grid), re-based so local x = width, y = height (down the slope), z = up. */
+function usePanelTemplate() {
+  const { scene } = useGLTF(STYLISED, false, false);
+  return useMemo(() => {
+    const node = scene.getObjectByName("PV_Panel_01");
+    if (!node) return null;
+    const inner = node.clone(true);
+    inner.position.set(0,0,0); inner.quaternion.identity(); inner.scale.set(1,1,1); inner.updateMatrixWorld(true);
+    const box = new Box3().setFromObject(inner), size = box.getSize(new Vector3()), mid = box.getCenter(new Vector3());
+    inner.position.copy(mid).negate();
+    const axes = [new Vector3(1,0,0),new Vector3(0,1,0),new Vector3(0,0,1)], dims=[size.x,size.y,size.z];
+    const order = [0,1,2].sort((a,b)=>dims[a]-dims[b]); // thin, width, length
+    const t = axes[order[0]], w = axes[order[1]];
+    // Blender's +Z (cells side) became glTF +Y; keep the cell side facing up
+    const up = t.y !== 0 ? t : t.clone().negate();
+    const h = new Vector3().crossVectors(up, w); // right-handed: w × h = up
+    const rot = new Matrix4().makeBasis(w, h, up).invert();
+    const pivot = new Group(); pivot.add(inner); pivot.quaternion.setFromRotationMatrix(rot);
+    return { object: pivot, width: dims[order[1]], height: dims[order[2]] };
+  }, [scene]);
+}
+
+function Building({ job, layout, roof, proposedPanels, draft, marking, onPoint, onReport, onLoaded }: Props) {
   const { scene: loaded } = useGLTF(job.modelUrl!, false, false);
   const scene = useMemo(() => { const s=loaded.clone(true);s.updateMatrixWorld(true);return s; },[loaded]);
   const bounds = useMemo(()=>new Box3().setFromObject(scene),[scene]);
@@ -29,58 +55,62 @@ function Building({ job, layout, roof, proposedPanels, draft, marking, onPoint, 
     }
     return c;
   },[bounds,job.origin,job.locationKey,scene]);
-  const size = 65;
+  const size = 38;
   const camera=useThree(s=>s.camera);
   const invalidate=useThree(s=>s.invalidate);
-  useEffect(()=>{camera.position.set(center.x+size*0.5,center.y+size*0.65,center.z+size*0.6);camera.lookAt(center);camera.updateProjectionMatrix();invalidate();},[camera,center,size,invalidate]);
   // ours: raycasting the mapped panels is costly; only recompute once typing in the layout inputs pauses
   const [settled,setSettled]=useState(layout);
   useEffect(()=>{const t=setTimeout(()=>setSettled(layout),300);return ()=>clearTimeout(t);},[layout]);
+  // ours: triangle binning near the pin, once per GLB, after the mesh is on screen (not during render)
+  const fieldKey=`${center.x.toFixed(2)},${center.z.toFixed(2)}`;
+  const [field,setField]=useState<Heightfield|null>(()=>fields.get(loaded)?.get(fieldKey)??null);
+  useEffect(()=>{
+    if(field)return;
+    const t=setTimeout(()=>{
+      const f=buildHeightfield(loaded,center),m=fields.get(loaded)??new Map<string,Heightfield>();
+      m.set(fieldKey,f);fields.set(loaded,m);setField(f);
+    },50);
+    return ()=>clearTimeout(t);
+  },[field,loaded,center,fieldKey]);
+  const template=usePanelTemplate();
   const result=useMemo(()=>{
+    if(!field)return {panels:[],width:0,height:0,error:null};
     try {
-      if(settled.surfaces.length) return {panels:packRoof(settled),error:null};
-      if(!(settled.width>0 && settled.height>0)) return {panels:[],error:"Enter or accept panel dimensions before placing modules."};
-      if(!job.origin || !roof?.solarPanels?.length) return {panels:[],error:"No mapped panel positions are available. Mark the usable roof and exclusions."};
-      if(!roof.panelWidthMeters || !roof.panelHeightMeters || Math.abs(settled.width-roof.panelWidthMeters)>0.001 || Math.abs(settled.height-roof.panelHeightMeters)>0.001)
-        return {panels:[],error:"Mapped positions require the imagery provider's panel dimensions. For different equipment, mark the usable roof manually."};
-      const ray = new Raycaster(), down=new Vector3(0,-1,0), panels:PanelPlacement[]=[];
-      const R=6371000,rad=Math.PI/180;
-      const top=bounds.max.y+20;
-      const sample=(x:number,z:number)=>{
-        ray.set(new Vector3(x,top,z),down);
-        return ray.intersectObject(scene,true).find(hit=>hit.face && hit.face.normal.clone().transformDirection(hit.object.matrixWorld).y>0.3);
-      };
-      const candidates=[...roof.solarPanels].sort((a,b)=>(b.yearlyEnergyDcKwh??0)-(a.yearlyEnergyDcKwh??0)).slice(0,500);
-      for(const p of candidates) {
-        const seg=roof.roofSegmentStats?.[p.segmentIndex]; if(!seg) continue;
-        const x=(p.center.longitude-job.origin.lng)*rad*R*Math.cos(job.origin.lat*rad),z=-(p.center.latitude-job.origin.lat)*rad*R;
-        const hit=sample(x,z);if(!hit)continue;
-        const az=seg.azimuthDegrees*rad,pitch=seg.pitchDegrees*rad;
-        let u=new Vector3(Math.cos(az),0,Math.sin(az));
-        let v=new Vector3(Math.sin(az)*Math.cos(pitch),-Math.sin(pitch),-Math.cos(az)*Math.cos(pitch));
-        const normal=new Vector3().crossVectors(u,v).normalize();
-        const meshNormal=hit.face!.normal.clone().transformDirection(hit.object.matrixWorld);
-        if(meshNormal.dot(normal)<Math.cos(Math.PI/6)) continue;
-        if(p.orientation==="LANDSCAPE") {const old=u;u=v;v=old.negate();}
-        const corners=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([a,b])=>hit.point.clone().addScaledVector(u,a*settled.width/2).addScaledVector(v,b*settled.height/2));
-        if(corners.some(c=>{const h=sample(c.x,c.z);return !h || Math.abs(h.point.y-c.y)>0.35;}))continue;
-        panels.push({position:tuple(hit.point.clone().addScaledVector(normal,0.07)),u:tuple(u),v:tuple(v),normal:tuple(normal)});
+      if(settled.surfaces.length) return {panels:packRoof(settled),width:settled.width,height:settled.height,error:null};
+      if(job.origin && roof?.solarPanels?.length) {
+        const mapped=placeFromSolar(field,roof,job.origin);
+        if(mapped.panels.length) return {...mapped,error:null};
       }
-      return {panels,error:panels.length?null:"Mapped panels do not align reliably with this mesh. Mark a usable roof face manually."};
-    } catch(e) {return {panels:[],error:e instanceof Error?e.message:"Roof placement failed."};}
-  },[scene,bounds,job.origin,settled,roof]);
+      const w=settled.width>=0.3?settled.width:MODULE.width,h=settled.height>=0.3?settled.height:MODULE.height;
+      const panels=placeOnGrid(field,center,w,h,settled.gap||MODULE.gap);
+      return {panels,width:w,height:h,error:panels.length?null:"No south-facing roof face found near the pin. Mark the usable roof manually."};
+    } catch(e) {return {panels:[],width:0,height:0,error:e instanceof Error?e.message:"Roof placement failed."};}
+  },[field,center,job.origin,settled,roof]);
+  const shown=Math.max(0,Math.min(proposedPanels,result.panels.length));
+  const clones=useMemo(()=>template?Array.from({length:shown},()=>template.object.clone(true)):[],[template,shown]);
+  useEffect(()=>{onLoaded?.();},[onLoaded]);
+  // ours: frame the placed panels (the Solar building can sit beside the pin); the pin otherwise
+  const focus=useMemo(()=>{
+    const first=result.panels.slice(0,20);
+    if(!first.length)return center;
+    return first.reduce((s,p)=>s.add(new Vector3(...p.position)),new Vector3()).divideScalar(first.length);
+  },[result,center]);
+  useEffect(()=>{camera.position.set(focus.x+size*0.5,focus.y+size*0.65,focus.z+size*0.6);camera.lookAt(focus);camera.updateProjectionMatrix();invalidate();},[camera,focus,size,invalidate]);
   useEffect(()=>{onReport(result.panels.length,result.error);},[result,onReport]);
   const click=(e:ThreeEvent<MouseEvent>)=>{if(!marking || e.delta>3)return;e.stopPropagation();onPoint(tuple(e.point));};
   return <>
     <primitive object={scene} onClick={click} />
-    {result.panels.slice(0,Math.max(0,proposedPanels)).map((p,i)=>{
+    {result.panels.slice(0,shown).map((p,i)=>{
       const q=new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(new Vector3(...p.u),new Vector3(...p.v),new Vector3(...p.normal)));
-      return <mesh key={i} position={p.position} quaternion={q}><boxGeometry args={[layout.width,layout.height,0.035]} /><meshStandardMaterial color="#143c5c" roughness={0.6} metalness={0.25} /></mesh>;
+      // 2 cm gaps: each module is drawn 2 cm smaller than its slot
+      return template&&clones[i]
+        ? <group key={i} position={p.position} quaternion={q} scale={[(result.width-0.02)/template.width,(result.height-0.02)/template.height,1]}><primitive object={clones[i]} /></group>
+        : <mesh key={i} position={p.position} quaternion={q}><boxGeometry args={[result.width-0.02,result.height-0.02,0.04]} /><meshStandardMaterial color="#1d2b3a" roughness={0.5} metalness={0.3} /></mesh>;
     })}
     {layout.surfaces.flatMap((s,i)=>[<Line key={`roof-${i}`} points={[...s.outline,s.outline[0]]} color="#2563eb" lineWidth={2} />,...s.exclusions.map((p,j)=><Line key={`hole-${i}-${j}`} points={[...p,p[0]]} color="#d97706" lineWidth={3} />)])}
     {draft.length>1 && <Line points={draft} color="#2563eb" lineWidth={3} />}
     {draft.map((p,i)=><mesh key={`draft-${i}`} position={p}><sphereGeometry args={[0.13,8,8]} /><meshBasicMaterial color="#2563eb" /></mesh>)}
-    <OrbitControls target={center} makeDefault enableDamping minDistance={3} maxDistance={size*3} />
+    <OrbitControls target={focus} makeDefault enableDamping minDistance={3} maxDistance={size*3} />
   </>;
 }
 

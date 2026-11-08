@@ -84,7 +84,8 @@ function OfferView({ offer }: { offer: Offer }) {
         </h1>
       </div>
 
-      {economics && (economics.savings_eur !== null || economics.payback_years !== null) && (
+      {/* ours: review fix, the estimate belongs to the recommended setup only */}
+      {i === 0 && economics && (economics.savings_eur !== null || economics.payback_years !== null) && (
         <Card className="grid grid-cols-2 gap-4 p-4 sm:max-w-sm">
           <div>
             <p className="text-xs text-muted">Estimated savings</p>

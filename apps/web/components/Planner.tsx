@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
 import { altLabel, CHOICE_LABEL, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
-import { CATALOG, quantityFor } from "@/lib/products"; // ours:
 import { type Customer, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace"; // ours:
 import { House } from "./House";
 import { Location } from "./Location"; // ours:
@@ -453,11 +452,8 @@ function SystemCard({ t, design, locked, selected, onSelect, onSet }: {
         </div>
       </div>
       <p className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{v > 0 ? `${num(v)} ${UNIT[t]}` : "Not included"}</p>
-      {v > 0 && (
-        <p className="text-sm text-quiet">
-          {quantityFor(t, v)}× {CATALOG[t].name}
-        </p>
-      )}
+      {/* ours: review fix, the count comes from the engine (its module watts), not an assumed 450 W / 5 kWh product */}
+      {t === "pv_kwp" && v > 0 && design.modules ? <p className="text-sm text-quiet">{design.modules}× solar module</p> : null}
       <PartRange t={t} design={design} /> {/* ours: */}
       <div className="flex items-center gap-2">
         <label htmlFor={id} className="text-xs whitespace-nowrap text-quiet">

@@ -111,20 +111,20 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
     <Card className="space-y-3 p-4">
       <div className="flex items-center gap-2 text-sm text-ink">
         <Icon name="pin" />
-        <label htmlFor={addressId} className="font-medium">Standort</label>
+        <label htmlFor={addressId} className="font-medium">Location</label>
       </div>
       <input
         id={addressId}
         type="text"
-        placeholder="Adresse eingeben"
+        placeholder="Enter the address"
         value={addressText}
         onChange={(e) => setAddressText(e.target.value)}
         className="w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-600 focus:outline-none"
       />
       <div ref={mapDiv} className="h-56 w-full rounded-xl bg-sand" />
-      <p className="text-xs text-muted">Pin ziehen, um die Dachkante genau zu treffen.</p>
+      <p className="text-xs text-muted">Drag the pin onto the roof.</p>
       <ErrorNote error={error ?? (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? null : "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set")} />
-      {loading && <p className="text-xs text-quiet">Adresse wird gesucht…</p>}
+      {loading && <p className="text-xs text-quiet">Looking up the address…</p>}
       {solar && <SolarFacts solar={solar} />}
     </Card>
   );
@@ -132,21 +132,21 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
 
 function SolarFacts({ solar }: { solar: SolarInfo }) {
   if (!solar.covered) {
-    return <p className="text-xs text-quiet">Für diese Adresse liegen keine Google-Solar-Dachdaten vor.</p>;
+    return <p className="text-xs text-quiet">No Google Solar roof data for this address.</p>;
   }
   const kwp = solar.maxArrayPanelsCount && solar.panelCapacityWatts ? (solar.maxArrayPanelsCount * solar.panelCapacityWatts) / 1000 : null;
   return (
     <dl className="grid grid-cols-3 gap-2 border-t border-zinc-200 pt-3 text-center">
       <div>
-        <dt className="text-xs text-muted">Dach-Potenzial</dt>
+        <dt className="text-xs text-muted">Roof potential</dt>
         <dd className="text-sm font-semibold tabular-nums text-ink">{kwp ? `${num(kwp)} kWp` : "n/a"}</dd>
       </div>
       <div>
-        <dt className="text-xs text-muted">Max. Module</dt>
+        <dt className="text-xs text-muted">Max. panels</dt>
         <dd className="text-sm font-semibold tabular-nums text-ink">{solar.maxArrayPanelsCount ?? "n/a"}</dd>
       </div>
       <div>
-        <dt className="text-xs text-muted">Sonnenstunden/Jahr</dt>
+        <dt className="text-xs text-muted">Sun hours / year</dt>
         <dd className="text-sm font-semibold tabular-nums text-ink">{solar.maxSunshineHoursPerYear ? num(solar.maxSunshineHoursPerYear, 0) : "n/a"}</dd>
       </div>
     </dl>

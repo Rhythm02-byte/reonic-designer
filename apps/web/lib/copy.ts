@@ -1,7 +1,6 @@
 // Wording, formatting and the planner -> homeowner offer link.
 import { TARGETS, type Inputs, type InputValue, type Target, type Values } from "./api";
 
-export const MARGIN_PCT = 0.22; // ours: assumed installer margin on list price, planner-facing only
 export const PANEL_KWP = 0.45; // Reonic's modules are 450 Wp (src/reonic/data.py MODULE_WP)
 // Same as src/reonic/schema.py LABEL / UNIT
 export const LABEL: Record<Target, string> = { pv_kwp: "PV", battery_kwh: "Battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };

@@ -19,6 +19,10 @@ const SEED: Workspace = {
     { id: "c4", name: "Müller Bungalow", owner: TEAM[2], inputs: { ...DEMO_INPUTS, annual_consumption_kwh: 2800, household_size: 2, has_ev: false, heating_type: "heat_pump" } },
   ],
 };
+// ours: review fix, a new customer starts with the household facts unknown (empty = unknown, "Ask next" asks),
+// not the demo family's 4,500 kWh / EV / gas. Only tariff defaults are prefilled.
+const NEW_INPUTS: Inputs = Object.fromEntries(Object.keys(DEMO_INPUTS).map((k) => [k, null]));
+Object.assign(NEW_INPUTS, { electricity_price_eur_kwh: DEMO_INPUTS.electricity_price_eur_kwh, energy_price_increase: DEMO_INPUTS.energy_price_increase });
 const KEY = "rhythm.workspace.v1";
 const subs = new Set<() => void>();
 let cache: Workspace | null = null;
@@ -57,7 +61,7 @@ export function addCustomer(newName: string, location: GeoLocation | null): stri
   update((w) => ({
     ...w,
     active: cid,
-    customers: [...w.customers, { id: cid, name: newName, owner: w.me, inputs: DEMO_INPUTS, location: location ?? undefined }],
+    customers: [...w.customers, { id: cid, name: newName, owner: w.me, inputs: NEW_INPUTS, location: location ?? undefined }], // ours: review fix
   }));
   return cid;
 }

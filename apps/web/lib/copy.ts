@@ -16,7 +16,6 @@ export const FIELD_GROUPS: { title: string; existing?: boolean; fields: Record<s
       household_size: { label: "People in household", step: 1 },
       heated_area_m2: { label: "Heated area", unit: "m²", step: 5 },
       annual_consumption_kwh: { label: "Annual electricity use", unit: "kWh/yr", step: 100 },
-      load_profile: { label: "Load profile" },
     },
   },
   {

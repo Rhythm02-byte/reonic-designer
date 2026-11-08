@@ -31,7 +31,10 @@ function read(): Workspace {
   if (!cache) {
     try {
       const w = JSON.parse(localStorage.getItem(KEY) ?? "null");
-      cache = w && typeof w.me === "string" && Array.isArray(w.customers) && w.customers.length ? w : SEED;
+      // ours: every customer must be an object with id, name and inputs, else a hand-edited/old entry crashes the planner
+      const ok = (c: unknown) => !!c && typeof c === "object" && typeof (c as { id?: unknown }).id === "string" &&
+        typeof (c as { name?: unknown }).name === "string" && !!(c as { inputs?: unknown }).inputs && typeof (c as { inputs?: unknown }).inputs === "object";
+      cache = w && typeof w.me === "string" && Array.isArray(w.customers) && w.customers.length && w.customers.every(ok) ? w : SEED;
     } catch {
       cache = SEED;
     }

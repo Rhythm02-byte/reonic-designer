@@ -40,6 +40,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
     const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!key) return; // ours: lint fix, the message is derived below instead of set in the effect
     let cancelled = false;
+    let cleanupMap: (() => void) | undefined;
     if (!optionsSet) {
       setOptions({ key });
       optionsSet = true;
@@ -50,6 +51,47 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
       const center = value ?? DEFAULT_CENTER;
       const map = new Map(mapDiv.current, { center, zoom: 19, mapTypeId: "satellite", streetViewControl: false, fullscreenControl: false });
       const marker = new google.maps.Marker({ map, position: center, draggable: true });
+      // OverlayView provides the exact geographic position under a held pointer.
+      const projection = new google.maps.OverlayView();
+      projection.onAdd = () => {};
+      projection.draw = () => {};
+      projection.onRemove = () => {};
+      projection.setMap(map);
+      const element = mapDiv.current;
+      let hold: ReturnType<typeof setTimeout> | undefined;
+      let origin: { x: number; y: number; pointerId: number } | null = null;
+      const cancelHold = () => { clearTimeout(hold); hold = undefined; origin = null; };
+      const pointerDown = (event: PointerEvent) => {
+        if (!event.isPrimary || event.button !== 0 || (event.target instanceof Element && event.target.closest("button, a, input, [role=button]"))) return;
+        cancelHold();
+        origin = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+        const { clientX, clientY } = event;
+        hold = setTimeout(() => {
+          const rect = element.getBoundingClientRect();
+          const point = new google.maps.Point(clientX - rect.left, clientY - rect.top);
+          const position = projection.getProjection()?.fromContainerPixelToLatLng(point);
+          cancelHold();
+          if (position) void placeAt(position.lat(), position.lng(), true);
+        }, 650);
+      };
+      const pointerMove = (event: PointerEvent) => {
+        if (origin && event.pointerId === origin.pointerId && Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > 10) cancelHold();
+      };
+      const pointerEnd = (event: PointerEvent) => { if (origin?.pointerId === event.pointerId) cancelHold(); };
+      element.addEventListener("pointerdown", pointerDown, true);
+      window.addEventListener("pointermove", pointerMove, true);
+      window.addEventListener("pointerup", pointerEnd, true);
+      window.addEventListener("pointercancel", pointerEnd, true);
+      cleanupMap = () => {
+        cancelHold();
+        element.removeEventListener("pointerdown", pointerDown, true);
+        window.removeEventListener("pointermove", pointerMove, true);
+        window.removeEventListener("pointerup", pointerEnd, true);
+        window.removeEventListener("pointercancel", pointerEnd, true);
+        projection.setMap(null);
+        google.maps.event.clearInstanceListeners(marker);
+        marker.setMap(null);
+      };
       marker.addListener("dragend", () => {
         const pos = marker.getPosition();
         if (pos) placeAt(pos.lat(), pos.lng(), true);
@@ -60,6 +102,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
     }, (e: Error) => setError(e.message));
     return () => {
       cancelled = true;
+      cleanupMap?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once; later moves go through placeAt/markerRef.
   }, []);
@@ -136,7 +179,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
         className="w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-600 focus:outline-none"
       />
       <div ref={mapDiv} className="h-56 w-full rounded-xl bg-sand" />
-      <p className="text-xs text-muted">Drag the pin onto the roof.</p>
+      <p className="text-xs text-muted">Drag the pin or press and hold a spot on the map to place it.</p>
       <ErrorNote error={error} />
       {!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && <p className="text-xs text-quiet">Map preview is off: no Google Maps key is set on this machine.</p>} {/* ours: not an error */}
       {loading && <p className="text-xs text-quiet">Looking up the address…</p>}

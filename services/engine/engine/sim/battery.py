@@ -113,8 +113,9 @@ def flows(pv: np.ndarray, load: np.ndarray, nominal_kwh, feed_in_cap_kw=None,
     U = p.usable * nom
     ch, dis = C.sum(0), D.sum(0)
     with np.errstate(divide="ignore", invalid="ignore"):
-        sc = np.where(pv_sum > 0, (pv_sum - export - curt) / pv_sum, 0.0)
-        aut = np.where(load_sum > 0, 1.0 - g2l / load_sum, 0.0)
+        # fractions are 0..1 by definition; clip float noise (no PV gave autarky -2e-16, which broke recommend_battery)
+        sc = np.clip(np.where(pv_sum > 0, (pv_sum - export - curt) / pv_sum, 0.0), 0.0, 1.0)
+        aut = np.clip(np.where(load_sum > 0, 1.0 - g2l / load_sum, 0.0), 0.0, 1.0)
         cycles = np.where(U > 0, dis / p.eta_discharge / U, 0.0)
         empty = np.where(U > 0, (S[5::24] <= 0.02 * U).mean(0), 1.0)
     out = {

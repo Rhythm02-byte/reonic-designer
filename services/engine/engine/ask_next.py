@@ -127,7 +127,8 @@ def _candidates(i: HomeInputs, st: dict, wp: float, locks: set, given: Mapping) 
         vals = _distinct([max(500.0, _round(v, 100)) for v in st["demand"]], DEFAULT_DEMAND_KWH)
         add("demandKwh", [(f"{v:,.0f} kWh", v, 1.0) for v in vals])
     p_ev = min(max(st.get("evShare", 0.0), 0.02), 0.98)
-    add("ev.has", [("Yes", True, p_ev), ("No", False, 1 - p_ev)])
+    if not i.ev.has and i.ev.km_per_year is None:  # a car with km given is already answered (has=False is also the default)
+        add("ev.has", [("Yes", True, p_ev), ("No", False, 1 - p_ev)])
     if i.heating.type in FOSSIL_ASK and heat_demand_from_inputs(i) is None and st.get("heatDemand"):
         add("heating.heatDemandKwh", [(f"{v:,.0f} kWh", v, 1.0) for v in _distinct([max(2000.0, _round(v, 500)) for v in st["heatDemand"]])])
     if i.existing_pv is None and st.get("existingPvKwp"):

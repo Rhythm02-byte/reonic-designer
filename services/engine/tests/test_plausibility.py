@@ -1,5 +1,6 @@
 """Warnings for implausible inputs (engine/plausibility.py). SYNTHETIC data only."""
 import pytest
+from pydantic import ValidationError
 from fastapi.testclient import TestClient
 
 from engine.api.main import app, get_store
@@ -38,7 +39,8 @@ def test_boundaries_and_unknowns_do_not_warn():
     assert codes(demandKwh=0) == set()                       # 0 means unknown here; UNUSUAL_OMISSION already covers it
     assert codes(ev={"has": False, "kmPerYear": 0}) == set()  # no car, so the distance is irrelevant
     assert codes(ev={"has": True}) == set()                   # distance unknown
-    assert codes(existingPv={"kwp": 5}, building={"roofMaxModules": -1}) == set()  # a negative cap is the schema's problem
+    with pytest.raises(ValidationError):  # a negative cap is the schema's problem: it is rejected before any warning
+        codes(existingPv={"kwp": 5}, building={"roofMaxModules": -1})
 
 
 @pytest.fixture()

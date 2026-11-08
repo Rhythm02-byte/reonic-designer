@@ -1,19 +1,43 @@
 "use client";
 // The homeowner's view of an offer: plain words, only the whole options the planner approved, no prices.
 import { useMemo, useState, useSyncExternalStore } from "react";
-import { TARGETS, type Target, type Values } from "@/lib/api";
+import { TARGETS, type Inputs, type Target, type Values } from "@/lib/api";
 import { decodeOffer, describe, eur, num, type Offer, panels, years } from "@/lib/copy";
 import { House } from "./House";
 import { OfferParts } from "./PartsList"; // ours:
 import { Avatar, Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook, Radio } from "./ui";
 
-const WIDTH = "max-w-5xl";
+const WIDTH = "max-w-[1440px]";
 
 const NAME: Record<Target, string> = { pv_kwp: "Solar panels", battery_kwh: "Home battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };
 
 function optionLabel(t: Target, v: number, wp?: number) { // ours: wp = the engine's module watts
   if (v === 0) return "Not included";
   return t === "pv_kwp" ? `${panels(v, wp)} panels` : `${num(v)} ${t === "battery_kwh" ? "kWh" : "kW"}`;
+}
+
+// These are explanations of the offered equipment and known inputs, not claims of a proven optimum.
+function recommendationReasons(inputs: Inputs, rec: Values, moduleWp?: number) {
+  const reasons: { title: string; text: string }[] = [];
+  const consumption = typeof inputs.annual_consumption_kwh === "number" && inputs.annual_consumption_kwh > 0 ? inputs.annual_consumption_kwh : null;
+  if (rec.pv_kwp > 0) {
+    reasons.push({
+      title: "Power for your everyday needs",
+      text: `${panels(rec.pv_kwp, moduleWp)} solar panels are proposed${consumption ? ` for a home using about ${num(consumption, 0)} kWh of electricity per year` : " for your home"}. They can generate electricity for you to use at home.`,
+    });
+  }
+  if (rec.battery_kwh > 0) {
+    reasons.push({ title: "More of your solar power, when you need it", text: `The ${num(rec.battery_kwh)} kWh battery can store solar electricity made during the day for use later. How much you use depends on your daily routine and the weather.` });
+  }
+  if (rec.heat_pump_kw > 0) {
+    const area = typeof inputs.heated_area_m2 === "number" && inputs.heated_area_m2 > 0 ? inputs.heated_area_m2 : null;
+    reasons.push({ title: "Heating included in the plan", text: `The proposed heat pump brings heating into the same energy plan${area ? ` for your ${num(area, 0)} m² heated space` : " for your home"}. Your installer still needs to check your home's heat requirements on site.` });
+  }
+  if (rec.wallbox_kw > 0) {
+    reasons.push({ title: "A convenient place to charge", text: `The ${num(rec.wallbox_kw)} kW home charger gives you a dedicated place to charge${inputs.has_ev === true ? " your electric car" : " an electric car"}. Your installer will check your car and electrical connection.` });
+  }
+  if (!reasons.length) reasons.push({ title: "A starting point for your conversation", text: "This recommendation does not add new equipment. Ask your installer how it fits your home's needs and which alternatives are available." });
+  return reasons;
 }
 
 const subscribe = (cb: () => void) => {
@@ -50,6 +74,7 @@ function OfferView({ offer }: { offer: Offer }) {
   const { inputs, options, customer, planner, economics } = offer;
   const [i, setI] = useState(0);
   const choice = options[i].values;
+  const reasons = recommendationReasons(inputs, options[0].values, offer.moduleWp);
   const subject = `Question about my home energy proposal (${options[i].label})`;
   const body = `Hello ${planner},
 
@@ -61,14 +86,11 @@ This is a request, not an order.`;
 
   return (
     <div className="space-y-5">
-      <div className="space-y-1">
-        <p className="flex items-center gap-2 text-sm text-quiet">
-            <Avatar name={planner} size={7} />
-            <span>Prepared by {planner} for {customer}</span>
-          </p>
-        <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          Your home energy <span className="text-reonic">proposal</span>
-        </h1>
+      <div className="flex flex-col justify-between gap-5 pb-2 sm:flex-row sm:items-end">
+        <div className="max-w-3xl space-y-3"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-quiet">A more personal energy plan</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-5xl">A brighter future, built around your home.</h1>
+        <p className="max-w-xl text-base leading-relaxed text-quiet">Explore your energy proposal and find the setup that feels right for you.</p></div>
+        <p className="flex shrink-0 items-center gap-2 text-sm text-quiet"><Avatar name={planner} size={7} /><span>Prepared for <span className="font-medium text-ink">{customer}</span><br />by {planner}</span></p>
         {/* ours: review fix, the estimate belongs to the recommended setup only */}
         {showEstimate && (
           <p className="pt-1 text-base text-ink tabular-nums">
@@ -79,11 +101,12 @@ This is a request, not an order.`;
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_390px] xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-4">
           <Card className="overflow-hidden">
-            <div className="h-[260px] bg-gradient-to-b from-sand-2 to-sand sm:h-[400px]">
+            <div className="h-[340px] bg-gradient-to-b from-sand-2 to-sand sm:h-[460px] xl:h-[550px]">
               <House
+                autoRotate
                 values={choice}
                 modules={panels(choice.pv_kwp, offer.moduleWp)} // ours:
                 hasEv={inputs.has_ev === true}
@@ -122,10 +145,11 @@ This is a request, not an order.`;
           </details>
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start" aria-label="Options">
+        <aside className="space-y-5 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 lg:sticky lg:top-20 lg:self-start" aria-label="Options">
           {options.length > 1 && (
             <fieldset className="space-y-2">
-              <legend className="mb-2 text-lg font-semibold text-ink">Options</legend>
+              <legend className="mb-2 text-lg font-semibold text-ink">Make it yours</legend>
+              <p className="mb-4 text-sm text-quiet">Explore the setups your installer has prepared for your home.</p>
               {options.map((o, k) => (
                 <label
                   key={k}
@@ -147,10 +171,14 @@ This is a request, not an order.`;
             href={`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}
             className={`${pill} ${pillLook.primary} w-full justify-center`}
           >
-            Ask {planner} about this option <Icon name="arrow" className="size-4" />
+            Talk to {planner} about this option <Icon name="arrow" className="size-4" />
           </a>
         </aside>
       </div>
+      <section aria-labelledby="why-recommended" className="grid gap-6 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 lg:grid-cols-[minmax(220px,0.8fr)_2fr] lg:gap-12">
+        <div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-quiet">Made for your home</p><h2 id="why-recommended" className="mt-2 text-2xl font-semibold tracking-tight text-ink">Why this recommendation?</h2><p className="mt-3 text-sm leading-relaxed text-quiet">See how the recommended setup can support your home and the details behind it.</p>{i > 0 && <p className="mt-3 text-xs font-medium text-quiet">These reasons describe the recommendation, not the alternative currently selected.</p>}</div>
+        <div><div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">{reasons.map((reason) => <div key={reason.title} className="border-t border-zinc-200 pt-3"><h3 className="font-semibold text-ink">{reason.title}</h3><p className="mt-1 text-sm leading-relaxed text-quiet">{reason.text}</p></div>)}</div><p className="mt-6 text-xs leading-relaxed text-quiet">This is a starting recommendation based on the information available and similar past projects, with any adjustments made by your installer. Estimates use rough assumptions. It is not a guarantee of the best outcome; the roof, wiring, heating needs and final quote need an on-site check.</p></div>
+      </section>
     </div>
   );
 }

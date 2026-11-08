@@ -92,7 +92,7 @@ def apply_one(target: str, value: float, current: dict[str, float], ctx: Mapping
             what = f"the {n:g} modules the roof fits" if n is not None else f"the roof limit of {roof:g} kWp"
             applied.append(Hit("R07", target, f"R07: PV limited to {what}.", "red",
                                {"roof_max_kwp": round(roof, 2), "requested_kwp": round(v, 2)}))
-            v = roof
+            v = max(0.0, roof)  # a roof cap below zero (bad input past the schema) means no PV, never negative PV
         if not locked:
             v = round(v, 1)
             if roof is not None and v > roof:  # rounding must never push PV back over the roof limit

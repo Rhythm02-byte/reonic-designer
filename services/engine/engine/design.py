@@ -161,7 +161,7 @@ def _to_design(pred: bl.Pred, wp: float, id_: str, label: str | None = None, roo
         modules = max(1, min(modules, roof_modules))  # the roof is a hard cap
     return SystemDesign(
         id=id_, label=label,
-        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 2)),
+        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 4)),
         battery=BatteryDesign(kwh=pred.battery_kwh) if pred.battery_kwh > 0 else None,
         wallbox=WallboxDesign(kw=11.0) if pred.wallbox else None,
         heat_pump=HeatPumpDesign(kw=pred.hp_kw) if pred.hp_kw > 0 else None,
@@ -379,7 +379,7 @@ def design(req: DesignRequest, store: Store) -> DesignResponse:
         reasons.append(ReasonCode(code="HP_HEAT_DEMAND", component="heatPump", value=proposal.heat_pump.kw,
                                   evidence={"heat_demand_kwh": home["heat_demand_kwh"], "full_load_hours": bl.HP_FULL_LOAD_HOURS}))
     flags: list[Flag] = []
-    if abs(i.demand_kwh - 4500) < 1e-6:
+    if abs(i.demand_kwh - 4500) < 1e-6 and "demandKwh" not in i.provenance:
         flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
     if not known:
         flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; using pooled statistics."))
@@ -412,10 +412,10 @@ def _module_wp(store: Store, installer_id: str) -> float:
 
 def system_from_values(values: dict[str, float], wp: float, id_: str, label: str | None = None) -> SystemDesign:
     kwp = values.get("pv_kwp", 0.0)
-    modules = max(1, round(kwp * 1000 / wp)) if kwp > 0 else 0
+    modules = min(max(1, round(kwp * 1000 / wp)), int(rules.PV_MAX_KWP * 1000 / wp + 1e-9)) if kwp > 0 else 0  # R03 holds after module rounding
     return SystemDesign(
         id=id_, label=label,
-        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 2)) if kwp > 0 else None,
+        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 4)) if kwp > 0 else None,
         battery=BatteryDesign(kwh=round(values["battery_kwh"], 2)) if values.get("battery_kwh", 0) > 0 else None,
         wallbox=WallboxDesign(kw=values["wallbox_kw"]) if values.get("wallbox_kw", 0) > 0 else None,
         heat_pump=HeatPumpDesign(kw=values["heat_pump_kw"]) if values.get("heat_pump_kw", 0) > 0 else None,
@@ -441,13 +441,16 @@ def design_policy(req: DesignRequest, store: Store) -> DesignResponse:
     proposal = system_from_values(res.values, wp, "proposal", "Recommended")
     if "pv" in req.locks and req.current and req.current.pv:
         proposal.pv = req.current.pv  # keep the planner's exact module choice
+        if abs(proposal.pv.module_wp - wp) > 1e-9:  # the web sends a generic 450 Wp count: re-express the locked kWp in
+            kwp = proposal.pv.kwp                    # the installer's modules so planner, house, BOM and offer agree
+            proposal.pv = PvDesign(modules=max(1, round(kwp * 1000 / wp)), module_wp=wp, kwp=kwp, product_id=proposal.pv.product_id)
     proposal.locks = list(req.locks)
     resp = DesignResponse(
         proposal=proposal, alternatives=[], confidence=res.confidence(), reasons=res.reasons, flags=list(res.flags),
         bom=_bom(store.catalogs.get(i.installer_id), proposal),
         provenance=input_provenance(i),
         engine_version=POLICY_VERSION, latency_ms=0.0)
-    if abs(i.demand_kwh - DEFAULT_DEMAND_KWH) < 1e-6:
+    if abs(i.demand_kwh - DEFAULT_DEMAND_KWH) < 1e-6 and "demandKwh" not in i.provenance:  # an entered 4,500 is real
         resp.flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
     if i.installer_id not in dz.installers:
         resp.flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; the policy falls back to pooled behaviour."))

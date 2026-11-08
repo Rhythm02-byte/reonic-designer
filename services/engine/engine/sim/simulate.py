@@ -384,5 +384,6 @@ def recommend_battery(home: dict, system: dict, sizes=DEFAULT_SIZES, opts: dict 
         best = zero
     g2 = [x for x in rows if BAT.usable * x["batteryKwh"] <= 1.5 * kt] or rows
     amax = max(x["autarky"] for x in g2)
-    alt = min((x for x in g2 if x["autarky"] >= 0.99 * amax), key=lambda x: x["batteryKwh"])
+    near = [x for x in g2 if x["autarky"] >= amax - 0.01 * abs(amax)]  # 99% of the best; never empty (the best row qualifies)
+    alt = min(near or g2, key=lambda x: x["batteryKwh"])
     return {"economic": best, "maxAutarky": alt, "nightLoadKwh": night, "rows": rows}

@@ -44,6 +44,7 @@ export default function NewCustomerPage() {
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing && name.trim()) { e.preventDefault(); setStep(1); } }} // ours: Enter continues
                 placeholder="e.g. Familie Meier"
                 autoComplete="name"
                 className="w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-600 focus:outline-none"

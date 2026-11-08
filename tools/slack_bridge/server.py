@@ -59,7 +59,7 @@ class Bridge:
         if not event.get('text') or not event.get('channel'):
             return False
         metadata = event.get('metadata', {})
-        if metadata.get('event_type') in ('thinc_status', 'thinc_run'):
+        if metadata.get('event_type') in ('thinc_status', 'thinc_run', 'thinc_rollout'):
             return False
         task_id = metadata.get('event_payload', {}).get('task')
         if metadata.get('event_type') == 'thinc_task':
@@ -83,7 +83,7 @@ class Bridge:
                     recipients.append(agent['id'])
         known = {a['id'] for a in self.store.agents()}
         statuses.extend(target + ': wartet auf Registrierung' for target in payload.get('to', []) if target not in known)
-        text = payload['text'][:2200] + '\n' + (' · '.join(statuses) or 'Kein registrierter Empfänger')
+        text = '[' + payload.get('from', 'Team') + '] ' + payload['text'][:2200] + '\n' + (' · '.join(statuses) or 'Kein registrierter Empfänger')
         blocks = [{'type': 'section', 'text': {'type': 'mrkdwn', 'text': text[:2900]}}]
         for recipient in recipients:
             agent = next(a for a in self.store.agents() if a['id'] == recipient)
@@ -131,6 +131,7 @@ class Bridge:
         cid = await self.channel(channel)
         event_id = uuid.uuid4().hex
         from .mentions import resolve_mentions
+        text = resolve_mentions(text)
         mentions = ' '.join(f"<@{agents[t]['slack_user']}>" if t in agents and agents[t]['slack_user'] else resolve_mentions('@' + t) for t in targets)
         payload = {'text': (mentions + '\n' + text).strip(), 'to': targets, 'paths': data.get('paths', []),
                    'from': agent_id, 'channel': cid, 'thread': data.get('thread'), 'created': time.time(),
@@ -232,6 +233,67 @@ class Bridge:
             except Exception:
                 log.warning('Overview could not be pinned; check pins:write')
 
+    async def rollout(self, actor, data):
+        if next(a for a in self.store.agents() if a['id'] == actor)['role'] != 'kian':
+            raise ValueError('Only the coordinator can start a team rollout')
+        import re
+        commit = data.get('commit', '')
+        targets = data.get('agents', [])
+        if not re.fullmatch(r'[0-9a-f]{7,40}', commit) or not targets or len(targets) > 12:
+            raise ValueError('commit and expected agent IDs required')
+        if any(not re.fullmatch(r'[a-zA-Z0-9_.-]{1,80}', a) for a in targets):
+            raise ValueError('invalid expected agent ID')
+        from .mentions import resolve_mentions
+        text = resolve_mentions('@Ilyas @Rhythm @Faras @Kian') + '\n'
+        text += f'*Einmaliger Team-Pull + überprüfbare Bestätigung: `{commit}` auf `next`*\n'
+        text += '1. Im sauberen Checkout `git pull --ff-only origin next`.\n'
+        text += '2. tools/README.md: Client registrieren/starten, Projekt-Hooks einmal freigeben, in der Agent-Sitzung ein Tool ausführen.\n'
+        text += f'3. `python tools/slack.py confirm-setup --commit {commit} --thread THREAD_TS` ausführen. '
+        text += 'Die Bestätigung prüft Git-Version, verbundenen Client und einen frischen Hook-Lauf dieser Sitzung. '
+        text += 'Ein normales „gelesen“ zählt nicht.\n'
+        text += 'Falls etwas fehlt: im selben Thread mit Grund @Kian taggen. Fehlende Nachweise eskalieren nach fünf Minuten einmalig an @Kian.'
+        text = resolve_mentions(text)
+        cid = await self.channel('board')
+        response = await self.api('chat.postMessage', channel=cid, text=text,
+            metadata={'event_type': 'thinc_rollout', 'event_payload': {'commit': commit}})
+        ts = response['ts']
+        text = text.replace('THREAD_TS', ts)
+        rollout = {'commit': commit, 'agents': targets, 'created': time.time(),
+                   'deadline': time.time() + 300, 'channel': cid, 'ts': ts, 'text': text, 'escalated': False}
+        self.store.put('rollout', rollout)
+        payload = {'text': text, 'to': targets, 'from': actor, 'channel': cid, 'thread': ts,
+                   'created': time.time(), 'wake': False, 'required_commit': commit}
+        self.store.ingest('rollout:' + ts, payload, targets)
+        await self.refresh_rollout()
+        return {'thread': ts, 'commit': commit, 'expected': targets}
+
+    async def refresh_rollout(self):
+        rollout = self.store.get('rollout')
+        if not rollout:
+            return
+        missing, lines = [], []
+        for target in rollout['agents']:
+            proof = self.store.get('ready:' + target, {})
+            confirmed = proof.get('commit') == rollout['commit'] and proof.get('confirmed_at', 0) >= rollout['created']
+            lines.append(('✅ ' if confirmed else '⏳ ') + target +
+                         (f" · {proof['runtime']} · Commit + Hook bestätigt" if confirmed else ' · Nachweis fehlt'))
+            if not confirmed:
+                missing.append(target)
+        text = rollout['text'] + '\n\n*Bestätigungen*\n' + '\n'.join(lines)
+        if text != self.store.get('rollout-text'):
+            await self.api('chat.update', channel=rollout['channel'], ts=rollout['ts'], text=text,
+                metadata={'event_type': 'thinc_status', 'event_payload': {}})
+            self.store.put('rollout-text', text)
+        if missing and time.time() >= rollout['deadline'] and not rollout['escalated']:
+            # Mark before sending: never blindly repeat an ambiguous escalation.
+            rollout['escalated'] = True
+            self.store.put('rollout', rollout)
+            from .mentions import resolve_mentions
+            await self.api('chat.postMessage', channel=rollout['channel'], thread_ts=rollout['ts'],
+                text=resolve_mentions('@Kian') + ' Noch keine überprüfbare Pull-/Hook-Bestätigung von: ' + ', '.join(missing) +
+                     '. Bitte Einrichtung/Hook-Freigabe klären; bloßes Lesen reicht nicht.',
+                metadata={'event_type': 'thinc_escalation', 'event_payload': {}})
+
 
 def create_app(store, bridge):
     from aiohttp import web
@@ -267,6 +329,21 @@ def create_app(store, bridge):
 
     async def identities(request):
         return web.json_response(store.get('mentions', {}))
+
+    async def ready(request):
+        from .readiness import validate
+        result = validate(store, request['agent'], await request.json())
+        rollout = store.get('rollout')
+        if rollout and result['commit'] == rollout['commit']:
+            try:
+                store.receipt(request['agent'], 'rollout:' + rollout['ts'], 'resolved')
+            except ValueError:
+                pass
+        await bridge.refresh_rollout()
+        return web.json_response(result)
+
+    async def rollout(request):
+        return web.json_response(await bridge.rollout(request['agent'], await request.json()))
 
     async def claims(request):
         if request.method == 'GET':
@@ -345,6 +422,7 @@ def create_app(store, bridge):
 
     app = web.Application(middlewares=[auth], client_max_size=128000)
     app.add_routes([web.get('/health', health), web.post('/register', register), web.get('/inbox', inbox), web.get('/identities', identities),
+                    web.post('/ready', ready), web.post('/rollout', rollout),
                     web.get('/claims', claims), web.post('/claims', claims), web.post('/receipt', receipt),
                     web.post('/post', post), web.post('/worker-finished', finish), web.get('/ws', websocket)])
     return app
@@ -390,6 +468,7 @@ async def serve(port=8765, url=None, socket_mode=True):
                 if handler:
                     bridge.socket_online = await handler.client.is_connected()
                 await bridge.overview(url)
+                await bridge.refresh_rollout()
             except Exception as error:
                 log.warning('Overview update failed (%s)', type(error).__name__)
             await asyncio.sleep(30)

@@ -1,5 +1,6 @@
 """Offline bridge tests, including real loopback WebSocket delivery."""
 import asyncio
+import hashlib
 from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
@@ -73,6 +74,12 @@ class TemporaryStore(unittest.TestCase):
         self.assertEqual(self.store.route({'text': 'follow-up', 'channel': 'C1', 'thread': '123'}), {'kian'})
         self.assertEqual(self.store.route({'text': 'unrelated', 'channel': 'C2', 'thread': '123'}), set())
 
+    def test_explicit_recipient_does_not_fan_out_to_same_human_and_replies_reach_sender(self):
+        self.store.provision('sibling', 'kian', 'U12345678')
+        self.assertEqual(self.store.route({'text': '<@U12345678>', 'to': ['kian']}), {'kian'})
+        self.store.ingest('root', {'text': 'request', 'channel': 'C1', 'thread': '321', 'from': 'other'}, ['kian'])
+        self.assertEqual(self.store.route({'text': 'reply', 'channel': 'C1', 'thread': '321'}), {'kian', 'other'})
+
     def test_wake_is_bounded_and_replay_protected(self):
         self.event()
         self.assertTrue(self.store.reserve_wake('kian', 'e1'))
@@ -142,6 +149,24 @@ class TemporaryStore(unittest.TestCase):
         with ThreadPoolExecutor(max_workers=2) as pool:
             result = list(pool.map(local.reserve_worker, ['same-event', 'same-event']))
         self.assertEqual(sum(result), 1)
+
+    def test_setup_confirmation_needs_fresh_matching_runtime_hook(self):
+        from slack_bridge.readiness import validate
+        from slack_bridge import hooks
+        data = {'commit': 'a'*7, 'revision': 'a'*40, 'hook': {'runtime': 'codex', 'session': 'session',
+            'at': time.time(), 'revision': 'a'*40, 'hash': hashlib.sha256(Path(hooks.__file__).read_bytes().replace(b'\r\n',b'\n')).hexdigest()}}
+        self.assertEqual(validate(self.store, 'kian', data)['agent'], 'kian')
+        data['hook']['session'] = 'wrong-session'
+        with self.assertRaises(ValueError):
+            validate(self.store, 'kian', data)
+
+    def test_config_files_or_stale_hook_alone_do_not_confirm_setup(self):
+        from slack_bridge.readiness import validate
+        with self.assertRaises(ValueError):
+            validate(self.store, 'kian', {'commit': 'a'*7, 'revision': 'a'*40, 'hook': {}})
+        with self.assertRaises(ValueError):
+            validate(self.store, 'kian', {'commit': 'a'*7, 'revision': 'a'*40,
+                'hook': {'runtime': 'codex', 'session': 'session', 'at': time.time()-600, 'revision':'a'*40, 'hash':'old'}})
 
 
 class CardTests(unittest.TestCase):
@@ -269,6 +294,25 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
             json={'id': 'revision-task', 'state': 'acknowledged'})
         self.assertEqual(response.status, 409)
         self.assertEqual(self.store.inbox('target')[0]['state'], 'queued')
+
+    async def test_missing_rollout_confirmation_tags_kian_once(self):
+        self.bridge.api = AsyncMock(return_value={'ok': True, 'ts': '111'})
+        self.store.put('rollout', {'commit':'a'*7, 'agents':['missing'], 'created':time.time()-400,
+            'deadline':time.time()-1, 'channel':'C1', 'ts':'111', 'text':'Pull required', 'escalated':False})
+        await self.bridge.refresh_rollout()
+        await self.bridge.refresh_rollout()
+        posts=[c for c in self.bridge.api.call_args_list if c.args[0]=='chat.postMessage']
+        self.assertEqual(len(posts),1)
+        self.assertIn('<@U0CFWEEL76V>',posts[0].kwargs['text'])
+
+    async def test_confirmed_rollout_does_not_escalate(self):
+        self.bridge.api = AsyncMock(return_value={'ok': True, 'ts': '111'})
+        started=time.time()-10
+        self.store.put('rollout', {'commit':'a'*7, 'agents':['target'], 'created':started,
+            'deadline':time.time()-1, 'channel':'C1', 'ts':'111', 'text':'Pull required', 'escalated':False})
+        self.store.put('ready:target', {'commit':'a'*7,'confirmed_at':time.time(),'runtime':'codex'})
+        await self.bridge.refresh_rollout()
+        self.assertFalse(any(c.args[0]=='chat.postMessage' for c in self.bridge.api.call_args_list))
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ import uuid
 from .common import ROOT, config_path, private_json, read_config, request, setting, state_dir
 from .store import Store, ROLES
 
-COMMANDS = {'bridge', 'register', 'client', 'inbox', 'ack', 'resolve', 'block', 'doctor', 'task'}
+COMMANDS = {'bridge', 'register', 'client', 'inbox', 'ack', 'resolve', 'block', 'doctor', 'task', 'confirm-setup'}
 
 
 def config_option(parser):
@@ -29,6 +29,10 @@ def main(argv=None):
     tunnel.add_argument('--port', type=int, default=8765)
     endpoint = bridge.add_parser('endpoint')
     endpoint.add_argument('url')
+    rollout = bridge.add_parser('rollout')
+    rollout.add_argument('--commit', required=True)
+    rollout.add_argument('--agent', action='append', required=True)
+    config_option(rollout)
     provision = bridge.add_parser('provision')
     provision.add_argument('agent')
     provision.add_argument('--role', choices=ROLES, required=True)
@@ -52,6 +56,10 @@ def main(argv=None):
     config_option(register)
     for command in ('client', 'inbox', 'doctor'):
         config_option(commands.add_parser(command))
+    confirm = commands.add_parser('confirm-setup')
+    confirm.add_argument('--commit', required=True)
+    confirm.add_argument('--thread')
+    config_option(confirm)
     for command in ('ack', 'resolve', 'block'):
         sub = commands.add_parser(command)
         sub.add_argument('id')
@@ -90,6 +98,11 @@ def main(argv=None):
             print('Registered:', config['agent'], 'configuration:', target)
             return 0
         config = read_config()
+        if args.cmd == 'confirm-setup':
+            from .readiness import evidence
+            result = request(config, '/ready', evidence(config, args.commit))
+            print('Verified:', result['agent'], 'commit', result['revision'], 'runtime', result['runtime'], 'fresh hook execution')
+            return 0
         if args.cmd == 'doctor':
             return doctor(config)
         if not config:
@@ -127,6 +140,15 @@ def main(argv=None):
     except Exception as error:
         # API exception strings can include request headers; report only safe known validation text.
         message = str(error) if isinstance(error, ValueError) else type(error).__name__
+        if args.cmd == 'confirm-setup' and args.thread:
+            import slack
+            from .mentions import resolve_mentions
+            failures = Store(state_dir() / 'cards.sqlite')
+            key = 'setup-blocked:' + args.commit + ':' + read_config().get('agent', slack.who(None))
+            if not failures.get(key):
+                slack.send('board', resolve_mentions('@Kian') + ' Setup noch nicht bestätigt (' + slack.who(None) + '): ' + message,
+                           thread_ts=args.thread)
+                failures.put(key, True)
         print('slack bridge: ' + message, file=sys.stderr)
         return 1
 
@@ -161,6 +183,8 @@ def bridge_command(args):
             raise ValueError('public endpoint must be an HTTPS URL')
         store.put('public-url', args.url.rstrip('/'))
         print('Setup card endpoint updated')
+    elif args.operation == 'rollout':
+        print(json.dumps(request(read_config(), '/rollout', {'commit': args.commit, 'agents': args.agent})))
     elif args.operation == 'provision':
         from .mentions import DEFAULT_MENTIONS
         owner_alias = {'kian': 'kian', 'iemko': 'ilyas', 'rhythm': 'rhythm', 'faris': 'faris'}[args.role]
@@ -184,11 +208,22 @@ def bridge_command(args):
         if board is None or registry is None:
             raise ValueError('cannot read legacy claim state')
         bindings = dict(v.split('=', 1) for v in args.bind)
-        for scope, label in slack.open_claims(board + registry).items():
+        active = slack.open_claims(board + registry)
+        owners = {}
+        for scope, label in active.items():
             legacy = __import__('re').match(r"\[([^\]]+)'s agent\]", label)
             if not legacy or legacy[1] not in bindings:
                 raise ValueError('explicit --bind required for active owner: ' + label)
-            store.claim(bindings[legacy[1]], [scope], migration=True)
+            owners[scope] = bindings[legacy[1]]
+        # Validate the whole mapping before importing any individual owner.
+        if any(target not in {a['id'] for a in store.agents()} for target in owners.values()):
+            raise ValueError('provision every bound target before migration')
+        for scope, agent in owners.items():
+            store.claim(agent, [scope], migration=True)
+        for message in registry:
+            row = slack.registry_row(message)
+            if row and row[0] in bindings:
+                store.put('claim-message:' + bindings[row[0]], message['ts'])
         print('Active claims imported:', len(store.claims()))
     elif args.operation == 'runs-backfill':
         backfill(store, args.limit)

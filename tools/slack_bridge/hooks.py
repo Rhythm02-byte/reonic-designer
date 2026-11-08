@@ -3,6 +3,9 @@ import json
 import os
 from pathlib import Path
 import sys
+import time
+import hashlib
+import subprocess
 
 from .client import Inbox
 from .common import read_config, state_dir
@@ -30,6 +33,14 @@ def hook(runtime, body, config=None):
             return None
         if not inbox.bind(session_id):
             return None
+    try:
+        revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=config.get('workdir', str(Path(__file__).resolve().parents[2])),
+                                           text=True, stderr=subprocess.DEVNULL, timeout=1).strip()
+        inbox.status('hook_proof', json.dumps({'runtime': runtime, 'session': session_id,
+            'event': event, 'at': time.time(), 'revision': revision,
+            'hash': hashlib.sha256(Path(__file__).read_bytes().replace(b'\r\n', b'\n')).hexdigest()}))
+    except (OSError, subprocess.SubprocessError):
+        pass
     items = inbox.pending()[:5]
     if not items:
         return None

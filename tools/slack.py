@@ -104,7 +104,7 @@ def persona(text: str) -> dict:
     return {"username": f"{name}'s agent", "icon_emoji": ICONS[sum(map(ord, name.lower())) % len(ICONS)]}
 
 
-def send(channel: str, text: str) -> int:
+def send(channel: str, text: str, thread_ts: str | None = None) -> int:
     tok = token()
     if not tok:
         print(NOTE)
@@ -112,9 +112,12 @@ def send(channel: str, text: str) -> int:
     from slack_bridge.mentions import resolve_mentions
     text = resolve_mentions(text)
     cid = channel_id(tok, channel) or channel.lstrip("#")
-    r = call("chat.postMessage", tok, {"channel": cid, "text": text, **persona(text)}, True)
+    params = {"channel": cid, "text": text, **persona(text)}
+    if thread_ts:
+        params['thread_ts'] = thread_ts
+    r = call("chat.postMessage", tok, params, True)
     if not r.get("ok") and r.get("error") == "missing_scope":  # no chat:write.customize: post as the plain bot
-        r = call("chat.postMessage", tok, {"channel": cid, "text": text}, True)
+        r = call("chat.postMessage", tok, {k: v for k, v in params.items() if k not in ('username', 'icon_emoji')}, True)
     if r.get("ok"):
         print(f"posted to #{channel.lstrip('#')}")
         return 0
@@ -420,8 +423,11 @@ def main() -> int:
     text = " ".join(a.text)
     if a.to or a.wake or a.path or a.thread:
         from slack_bridge.common import read_config, request
+        config = read_config()
+        if a.thread and not config and not (a.to or a.wake or a.path):
+            return send(a.channel, f"[{n}'s agent] " + text, thread_ts=a.thread)
         try:
-            print(json.dumps(request(read_config(), '/post', {'text': text, 'channel': a.channel, 'to': a.to,
+            print(json.dumps(request(config, '/post', {'text': text, 'channel': a.channel, 'to': a.to,
                 'paths': a.path, 'priority': a.priority, 'wake': a.wake, 'thread': a.thread})))
             return 0
         except Exception as error:

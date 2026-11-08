@@ -112,8 +112,9 @@ class Store:
     def route(self, payload):
         recipients = set(payload.get('to', []))
         text = payload.get('text', '')
-        for row in self.agents():
-            if row['slack_user'] and f"<@{row['slack_user']}>" in text:
+        agents = self.agents()
+        for row in agents:
+            if not payload.get('to') and row['slack_user'] and f"<@{row['slack_user']}>" in text:
                 recipients.add(row['id'])
             if any(overlaps(scope, root) for scope in payload.get('paths', []) for root in ROLES[row['role']]):
                 if row['role'] != 'faris' or not all(area(p).startswith('apps/web/e2e') for p in payload['paths']):
@@ -126,6 +127,8 @@ class Store:
                     previous = json.loads(row['payload'])
                     if previous.get('channel') == payload.get('channel') and previous.get('thread') == thread:
                         recipients.add(row['agent'])
+                        source = previous.get('from')
+                        recipients.update(a['id'] for a in agents if a['id'] == source or a['slack_user'] == source)
         return recipients
 
     def inbox(self, agent, pending_only=False):
@@ -181,6 +184,8 @@ class Store:
             if not row or not delivery:
                 return False
             payload = json.loads(delivery['payload'])
+            if payload.get('to') and agent not in payload['to']:
+                return False
             if payload.get('wake_to') and agent not in payload['wake_to']:
                 return False
             key = f'wake:{agent}:{event}'

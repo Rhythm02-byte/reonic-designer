@@ -3,6 +3,7 @@
 // and a few of those projects side by side ("expert vs ours"). Numbers come from /eval/summary and /holdout.
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { isDemoForced } from "@/lib/pitch";
 import { LABEL, pct, size, UNIT } from "@/lib/format";
 import { TARGETS } from "@/lib/types";
 import type { EvalSummary, HoldoutRow, ModelScore, Source, Target } from "@/lib/types";
@@ -101,7 +102,11 @@ export function Reality({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
         <p className="text-sm font-semibold">No evaluation yet. Run <code>npm run eval</code>.</p>
       )}
       {report?.source === "demo" && (
-        <p className="text-xs font-medium">Demo numbers: the engine is not connected, so none of this was measured.</p>
+        <p className="text-xs font-medium">
+          {isDemoForced()
+            ? "Presentation mode: the scores are the real 2026 test results; the example projects below are made up."
+            : "Demo numbers: the engine is not connected, so none of this was measured."}
+        </p>
       )}
 
       <div className="space-y-4 rounded-xl bg-ink p-4 text-sm text-zinc-300">

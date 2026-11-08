@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, applyAnswer } from "@/lib/api";
+import { isDemoForced, isPitchPlan } from "@/lib/pitch";
 import { DEMO_INPUTS, deltas, describe, eur, HEATING_LABEL, homeOf, LABEL, num, pct, size, UNIT, withHome, years, type Home } from "@/lib/format";
 import type { AskNext, Design, HoldoutRow, HomeInputs, Meta, Sizes, Source, Target } from "@/lib/types";
 import { AskNextCard } from "./AskNextCard";
@@ -115,6 +116,27 @@ export default function Planner() {
     else locked[t] = design.sizes[t];
     commit(t in plan.locked ? `you unpinned the ${LABEL[t].toLowerCase()}` : `you pinned the ${LABEL[t].toLowerCase()}`, { ...plan, locked });
   };
+  // Pitch mode: /pitch drives this page from outside (same origin only). With `because` it is a planner change
+  // (diff bar); without, a fresh start like loading a project.
+  const commitRef = useRef(commit);
+  useEffect(() => {
+    commitRef.current = commit;
+  });
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.origin !== window.location.origin || !isPitchPlan(e.data)) return;
+      const next = { inputs: e.data.inputs, locked: e.data.locked ?? {} };
+      if (e.data.because) return commitRef.current(e.data.because, next);
+      pending.current = null;
+      setDiff(null);
+      setTouched([]);
+      setSource(null);
+      setPlan(next);
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
   const undo = () => {
     if (!diff) return;
     pending.current = null;
@@ -163,8 +185,14 @@ export default function Planner() {
         <ErrorNote error={metaError ?? shown.error} />
         {demo && (
           <p className="text-sm text-amber-900">
-            <strong className="font-semibold">Demo data.</strong> The engine is not reachable, so the numbers come from a toy model.
-            Start it with <code>npm run engine:dev</code>.
+            <strong className="font-semibold">Demo data.</strong>{" "}
+            {isDemoForced() ? (
+              "Presentation mode: the numbers come from a toy model, not from the trained engine."
+            ) : (
+              <>
+                The engine is not reachable, so the numbers come from a toy model. Start it with <code>npm run engine:dev</code>.
+              </>
+            )}
           </p>
         )}
         {!demo && meta?.data.synthetic && <p className="text-sm text-amber-900">Running on synthetic data: numbers are for the demo only.</p>}

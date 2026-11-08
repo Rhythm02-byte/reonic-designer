@@ -2,6 +2,7 @@
 // The homeowner's view of an offer: plain words, only the options the planner allowed, every number from the engine.
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { api } from "@/lib/api";
+import { isDemoForced } from "@/lib/pitch";
 
 import { CHOICE_NOTE, describe, eur, HOME_NAME, num, panels, pct, years } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
@@ -124,7 +125,8 @@ function OfferView({ offer }: { offer: Offer }) {
       </h1>
       {base.source === "demo" && (
         <p className="text-sm text-amber-900">
-          <strong className="font-semibold">Demo data.</strong> The engine is not reachable, so these numbers come from a toy model.
+          <strong className="font-semibold">Demo data.</strong>{" "}
+          {isDemoForced() ? "Presentation mode: these numbers come from a toy model, not from the trained engine." : "The engine is not reachable, so these numbers come from a toy model."}
         </p>
       )}
 

@@ -22,7 +22,8 @@
   "sizing": {
     "coverage": [
       "battery"
-    ]
+    ],
+    "coverageCandidates": "catalog"
   },
   "chosen": "composite",
   "selectedOn": "validation 2025-10-01..2025-12-31 (train <= 2025-09-30)",
@@ -35,5 +36,6 @@
     "heatPump": 0.9655172413793104,
     "wallbox": 0.7672413793103449
   },
-  "generatedAt": "2026-11-07T21:16:14+00:00"
+  "generatedAt": "2026-11-07T21:16:14+00:00",
+  "adoptedFrom": "research combo C_bat_catalog (post-hoc ablation; passed 4 folds +2.03 pts and fresh seeds 20-39 +1.59 \u00b1 1.36; shuffled control 19.4% < 24.1%)"
 }

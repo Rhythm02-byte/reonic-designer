@@ -16,21 +16,21 @@ Trained on offers up to 2025, choices made on a Q4 2025 validation window, then 
 |---|---|---|---|---|
 | Rule of thumb | 14.8% | 32.9% | 40.0% | 55.0 |
 | Copy the installer's usual design | 20.6% | 42.5% | 47.4% | 61.1 |
-| **Rhythm** | **20.9%** | **59.7%** | 47.4% | 61.0 |
+| **Rhythm** | **22.2%** | **59.7%** | **48.9%** | 61.2 |
 
 ¹ PV, battery, heat pump and wallbox all within tolerance of the expert's design. ² Average closeness to the expert design, 0–100.
 
 **What this means:**
 - **PV: +17 points** over the installer's own habit. That is the model's measurable edge.
-- **Battery and whole design: a tie.** In the data, battery size follows the installer's package (≈ 0.93 kWh per kWp), not the household, so habit is hard to beat.
+- **Battery and whole design: on par** (whole design 22.2% vs 20.6%, battery 48.9% vs 47.4%; within noise). In the data, battery size follows the installer's package (≈ 0.93 kWh per kWp), not the household, so habit is hard to beat.
 - **Missing data explains much of the disagreement.** Near-identical homes got anything from 5.4 to 12.6 kWp, because the expert saw the roof and the budget and the export doesn't contain them (not a proven ceiling: see `research/creative/ceiling/REPORT.md`). So Rhythm **asks** for that information instead of guessing.
 - **Measured value of asking:**
-  - Real annual kWh instead of the 4,500 kWh placeholder: **+9.8 points** whole design.
-  - The roof size: up to **+12 points** (upper bound).
+  - Real annual kWh instead of the 4,500 kWh placeholder: **+10.8 points** whole design.
+  - The roof size: up to **+11 points** (upper bound).
 
 **Honesty checks** (run with every evaluation; see [Evaluation](#evaluation-and-the-test-lab)):
 - With shuffled answers the model loses its edge, so it learns real signal.
-- Across 20 random splits, ours minus the usual design on whole design is +0.6 ± 2.0 points, which is not distinguishable from zero. We say so.
+- Across 20 random splits, ours minus the usual design on whole design is +2.1 ± 2.3 points: slightly ahead, but within noise. We say so.
 - 2,000 random and extreme homes: 0 rule violations, 0 crashes.
 
 ## How it works

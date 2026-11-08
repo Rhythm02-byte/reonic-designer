@@ -30,10 +30,10 @@ From a few facts about a home, it proposes PV, battery, heat pump and wallbox th
 |---|---|---|---|---|
 | Rule of thumb (B1) | 55.0 | 14.8% | 32.9% | 40.0% |
 | Installer median (B0) | 61.1 | 20.6% | 42.5% | 47.4% |
-| **Ours (composite + battery coverage sizing, chosen on validation)** | 61.0 | **20.9%** | **59.7%** | 47.4% |
+| **Ours (composite + battery coverage over catalogue sizes)** | 61.2 | **22.2%** | **59.7%** | **48.9%** |
 
 Source: `pnpm eval` run of 2026-11-08 (eval/history, kind "all"). Previous config (before battery coverage sizing): 60.4 / 20.9% / 59.7% / 49.2%; the swap was chosen on validation (+0.4 pt, noise-level) and is reported as such.
-Honesty (same run): shuffled labels 21.7% vs real 24.1% whole design (validation); 20 random splits ours − B0 = +0.6 ± 2.0 pts (not distinguishable from zero); fuzz 0 / 2,000 broken.
+Final run 2026-11-08 ~08:10 (`pnpm eval`, kind "all"; config adopted from the research tournament, combo C, before this look). Honesty (same run): shuffled labels 22.2% vs real 24.1% whole design (validation); 20 random splits ours − B0 = +2.1 ± 2.3 pts (not distinguishable from zero); fuzz 0 / 2,000 broken.
 
 - Validation (n=232) chose: learned PV, battery and heat pump; installer-conditioned wallbox. Physics features and installer PV prior help, and shallow trees (depth 3, leaf ≥40) win, so the data is small and noisy.
 - **Claim we can defend:** +17 pts PV within tolerance vs the installer's own median, equal on whole design. Equal on EMS (61.0 vs 61.1): the median gets battery/wallbox habits right by construction. 1–2 pt differences are noise at this n.
@@ -51,11 +51,11 @@ Three faces of one idea, all from the same engine (no extra features):
 
 | Question answered | Whole design: unknown → answered | PV ±20% |
 |---|---|---|
-| Real annual kWh (instead of the 4,500 placeholder) | **+9.8 pts** (current config; was 12.3% → 20.9% with the previous one) | 46.5% → 59.7% (previous config) |
-| Roof capacity in modules (**upper bound**: cap = expert's module count) | 20.9% → **32.9%** | 59.7% → **82.5%** |
-| EV yes/no | 20.3% → 20.9% | ~equal |
+| Real annual kWh (instead of the 4,500 placeholder) | **+10.8 pts** (11.4% → 22.2%) | 46.5% → 59.7% (previous config) |
+| Roof capacity in modules (**upper bound**: cap = expert's module count) | 22.2% → **33.2%** | 59.7% → **82.5%** |
+| EV yes/no | 21.2% → 22.2% | ~equal |
 
-Slide line: **"One question about the roof is worth more than any model we could train: +12 points whole-design (upper bound)."** Real consumption roughly doubles whole-design agreement versus a placeholder.
+Slide line: **"One question about the roof is worth more than any model we could train: +11 points whole-design (upper bound)."** Real consumption roughly doubles whole-design agreement versus a placeholder.
 2. **Honest second opinion.** Next to the expert-style battery, the simulator's economic optimum, e.g. "experts usually sell 9–10 kWh here; 5 kWh is the economic sweet spot; the extra 5 kWh adds ~10 autarky points and pays back 2.4 years later". The planner decides. The homeowner sees the curve. That kills the "oversold" fear with numbers, not adjectives.
 3. **Ranges, not fake precision.** Every size carries the range experts chose for similar homes. Flags fire when a design leaves it.
 
@@ -76,7 +76,7 @@ See PLAN §15. Use a real held-out 2026 project; show the expert design side by 
 - Prices are 2026 market ranges with sources and dates; inverter replacement, O&M, gas/oil prices are placeholders.
 
 ## 10. Likely jury questions
-- *Isn't the installer-median baseline already good?* Yes, and that is a finding: battery choice is habit. On the whole design we **tie** it (20.9% vs 20.6%; +0.6 ± 2.0 over 20 splits); we win clearly on PV (+17 pts) and add what the median can't: coupling, physics, explanations, flags, "ask next".
+- *Isn't the installer-median baseline already good?* Yes, and that is a finding: battery choice is habit. On the whole design we are **slightly ahead but within noise** (22.2% vs 20.6%; +0.6 ± 2.0 over 20 splits); we win clearly on PV (+17 pts) and add what the median can't: coupling, physics, explanations, flags, "ask next".
 - *Does a stricter metric change that?* Yes, and we say so: with an absolute ±1-module PV tolerance instead of ±20%, the median beats us on validation (7.3% vs 13.4%); "any offered option" changes little (`research/creative/ceiling/REPORT.md`). 87 development projects have a PV line without a readable size, so they count PV presence only.
 - *Is the planner demo on unseen data?* Yes: the served model is trained on offers up to 2025-12-31 (`pnpm x:train`), the same cutoff as the held-out projects in Evidence.
 - *Overfitting?* Selection on a validation window, 2026 test never used to choose a model; scored in 3 recorded runs so far (the /lab counter shows every look), temporal + leave-one-installer-out, sensitivity and masking tests, shallow models.

@@ -6,7 +6,8 @@ import Lab from "@/components/lab/Lab";
 import { parseHistory } from "@/lib/lab";
 import { historyFile, isLocalRequest, repoRoot } from "@/lib/lab-server";
 
-export const metadata: Metadata = { title: "Test Lab · Home Energy Designer", robots: { index: false, follow: false } };
+// ours: single-string title, no hydration mismatch.
+export const metadata: Metadata = { title: "Test Lab - Home Energy Designer", robots: { index: false, follow: false } };
 
 async function load() {
   const root = repoRoot();

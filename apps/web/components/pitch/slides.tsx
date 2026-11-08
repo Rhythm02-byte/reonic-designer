@@ -1,6 +1,5 @@
 // The pitch, slide by slide. Content slides are drawn on a 1920×1080 canvas; live slides show the real app.
-// Every number on a content slide is a real aggregate (eval/results/latest.json, docs/PITCH.md) and says what it was
-// measured on. Live slides run on the engine, or with ?demo=1 on the labelled toy model in lib/pitchDemo.ts.
+// Every number on a content slide is a real aggregate (eval/results/latest.json, docs/PITCH.md) and says what it was measured on.
 import type { ReactNode } from "react";
 import type { Inputs, Values } from "@/lib/api";
 import { DEMO_INPUTS } from "@/lib/copy";
@@ -33,160 +32,90 @@ function Canvas({ children, tone = "paper", n }: { children: ReactNode; tone?: "
     </div>
   );
 }
-const H2 = ({ children }: { children: ReactNode }) => <h2 className="text-[72px] leading-[1.1] font-semibold tracking-[-0.02em]">{children}</h2>;
 const Source = ({ children }: { children: ReactNode }) => <p className="absolute bottom-16 left-32 w-[1400px] text-[24px] text-quiet">{children}</p>;
-const Eyebrow = ({ children, dark }: { children: ReactNode; dark?: boolean }) => (
-  <p className={`text-[24px] font-semibold tracking-[0.06em] uppercase ${dark ? "text-orange-300" : "text-quiet"}`}>{children}</p>
-);
-const Card = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`flex flex-col gap-4 rounded-3xl border border-zinc-200 bg-paper p-10 ${className}`}>{children}</div>
-);
-const Body = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <p className={`text-[32px] leading-[1.4] text-body ${className}`}>{children}</p>
-);
 
-function Table({ head, rows, highlight }: { head: string[]; rows: string[][]; highlight: number }) {
-  return (
-    <table className="w-full text-[32px] tabular-nums">
-      <thead>
-        <tr className="border-b border-zinc-300 text-left text-quiet">
-          {head.map((h, i) => (
-            <th key={h} className={`py-4 font-semibold ${i ? "text-right" : ""}`}>{h}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r, j) => (
-          <tr key={r[0]} className={`border-b border-zinc-200 ${j === highlight ? "bg-sand font-semibold text-ink" : "text-body"}`}>
-            {r.map((c, i) => (
-              <td key={i} className={`px-3 py-5 ${i ? "text-right" : ""}`}>{c}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
 
 // -- the deck ---------------------------------------------------------------------------------------------------
+// Story: hook, unsolvable problem, turn, how, live demo (planner, offer), honest proof, value, close. About 220 s in total.
 export const SLIDES: Slide[] = [
   {
     kind: "content",
-    id: "cover",
-    title: "Designs like your best planner",
-    notes: "Ein Satz: eine KI, die wie eure beste Planerin auslegt und sagt, was sie nicht weiß. Teamnamen nennen. ~10 s.",
+    id: "hook",
+    title: "Eight days for an offer",
+    notes:
+      "Hook, ~10 s. Kurz warten lassen, dann: „Eine Familie will Solar. Sie wartet 8,2 Tage auf ein Angebot, im Median bei Installateur 1 (Durchlaufzeit, nicht Arbeitszeit). Am anderen Ende sitzt eine Planerin mit Dutzenden Anfragen.“ Teamnamen nennen: Rhythm and his dancers. Produkt: Rhythm.",
     body: () => (
       <Canvas>
         <div className="flex flex-1 flex-col justify-center gap-12">
           <div className="bg-reonic h-3 w-48 rounded-full" />
-          <Eyebrow>Reonic challenge · thinc! München 2026</Eyebrow>
-          <h1 className="w-[1500px] text-[120px] leading-[1.05] font-semibold tracking-[-0.03em]">
-            Designs like your <span className="text-reonic">best planner.</span>
+          <h1 className="w-[1600px] text-[160px] leading-[1.02] font-semibold tracking-[-0.03em]">
+            A family waits <span className="text-reonic">8.2 days</span> for an offer.
           </h1>
-          <p className="w-[1400px] text-[44px] leading-[1.3] text-body">
-            A complete PV, battery, heat pump and wallbox design in under a second, checked against real experts, and honest about
-            what it doesn’t know.
-          </p>
+          <p className="text-[40px] text-quiet">Median at installer 1, request to offer (n=257). Elapsed time, not planner hours.</p>
         </div>
-        <Source>Rhythm · Home Energy Designer · [Team names]</Source>
+        <Source>Rhythm and his dancers · Rhythm, the home energy designer · Reonic challenge, thinc! München 2026</Source>
       </Canvas>
     ),
   },
   {
     kind: "content",
     id: "problem",
-    title: "The planner’s problem",
+    title: "Why prediction alone fails",
     notes:
-      "Bei Installateur 1 dauerte es im Median 8,2 Tage von der Anfrage bis zum Angebot. Das ist Durchlaufzeit, keine Arbeitszeit. Jede Anlage wird von Hand ausgelegt, das erste glaubwürdige Angebot gewinnt oft, und Hausbesitzer haben Angst, überverkauft zu werden. ~20 s.",
+      "Problem, ~20 s. „Wir haben 1.619 echte Projekte angeschaut. Fast gleiche Häuser bekommen von Experten zwischen 5,4 und 12,6 kWp (p10 bis p90, n=216). Warum? Dachfläche und Budget stehen nicht in den Daten. Also kann ‚einfach vorhersagen‘ nicht funktionieren: Selbst das beste Modell rät.“",
     body: () => (
-      <Canvas n={2}>
-        <H2>The planner’s problem</H2>
-        <div className="flex flex-1 items-center gap-24">
-          <div className="flex w-[720px] flex-col gap-4">
-            <p className="text-[200px] leading-none font-semibold tracking-[-0.04em]">8.2 days</p>
-            <Body className="text-quiet">Median time from request to offer at installer 1 (n=257). Elapsed time, not planner hours.</Body>
-          </div>
-          <div className="flex flex-1 flex-col gap-8">
-            {[
-              ["Every home is designed by hand", "PV, battery, heat pump and wallbox are sized one project at a time before an offer can go out."],
-              ["The first credible offer often wins", "And homeowners fear being oversold, so the offer has to explain itself."],
-            ].map(([h, t]) => (
-              <div key={h} className="flex flex-col gap-2 border-t border-zinc-200 pt-6">
-                <h3 className="text-[44px] leading-[1.2] font-semibold">{h}</h3>
-                <Body>{t}</Body>
-              </div>
-            ))}
-          </div>
+      <Canvas tone="sand" n={2}>
+        <div className="flex flex-1 flex-col justify-center gap-10">
+          <p className="text-[48px] text-quiet">Near-identical homes. Expert designs:</p>
+          <p className="text-[260px] leading-none font-semibold tracking-[-0.04em]">5.4–12.6 kWp</p>
+          <p className="w-[1500px] text-[64px] leading-[1.15] font-semibold">Roof and budget aren’t in the data. Guessing can’t fix that.</p>
         </div>
-        <Source>Source: Reonic export, installer 1; challenge brief p. 5</Source>
+        <Source>p10–p90, 216 near-identical homes (4–5 MWh, no EV), 1,619 signed projects · Reonic export, aggregates only</Source>
       </Canvas>
     ),
   },
   {
     kind: "content",
-    id: "data",
-    title: "What the data really holds",
+    id: "turn",
+    title: "A designer that asks",
     notes:
-      "Die „Wir haben wirklich reingeschaut“-Folie. Das Expertendesign gibt es nur als Stückliste, wir rekonstruieren alle Größen. Fast gleiche Häuser bekommen 5,4 bis 12,6 kWp, weil Dach und Budget fehlen: eine Grenze für jedes Modell. Speicher folgen dem Paket (0,93 kWh pro kWp), nicht dem Haushalt. ~20 s.",
+      "Wendepunkt, ~15 s. Langsam sprechen: „Also haben wir einen Designer gebaut, der weiß, was er nicht weiß, und fragt.“ Kein LLM legt aus; ein Sprachmodell darf nur formulieren.",
     body: () => (
-      <Canvas tone="sand" n={3}>
-        <H2>What the data really holds</H2>
-        <div className="grid grid-cols-2 gap-8">
-          {[
-            ["1,619", "signed projects, 2 installers. The design is only a parts list, so we rebuild every size from it."],
-            ["5.4–12.6 kWp", "for near-identical homes (p10–p90, n=216). Roof size and budget aren’t in the data."],
-            ["0.93 kWh per kWp", "battery to PV in every segment. Batteries follow the package, not the household."],
-            ["~25%", "of installer 2’s offers have no PV, and their consumption is a 4,500 kWh placeholder."],
-          ].map(([big, t]) => (
-            <Card key={big} className="p-9">
-              <p className="text-[72px] leading-[1.1] font-semibold tracking-[-0.02em]">{big}</p>
-              <Body>{t}</Body>
-            </Card>
-          ))}
+      <Canvas tone="dark" n={3}>
+        <div className="flex flex-1 items-center">
+          <h2 className="w-[1550px] text-[120px] leading-[1.08] font-semibold tracking-[-0.03em]">
+            So we built a designer that knows what it doesn’t know, <span className="text-orange-300">and asks.</span>
+          </h2>
         </div>
-        <Source>Source: Reonic export, aggregates only</Source>
       </Canvas>
     ),
   },
   {
     kind: "content",
     id: "how",
-    title: "How it designs a home",
+    title: "How it works",
     notes:
-      "Ein Durchlauf von links nach rechts: gelernte Installateurs-Policy plus ähnliche Häuser, stündliche Simulation, Regeln und Katalog, dann das Design mit Bandbreiten, Gründen, Warnungen und der nächsten Frage. Reihenfolge nach Physik: Wärmepumpe, PV, Speicher. Kein LLM legt etwas aus. Danach direkt in die Live-Demo. ~20 s.",
+      "Wie, ~15 s. Von links nach rechts: ein paar Fakten zum Haus, gelernte Installateurs-Gewohnheit plus stündliche Simulation, dann ein Entwurf mit Bandbreiten, und die Frage, die am meisten ändert. Kein LLM legt aus; alles läuft ohne API-Key. Danach direkt in die Live-Demo.",
     body: () => (
       <Canvas n={4}>
-        <H2>How it designs a home</H2>
-        <div className="flex items-stretch gap-4">
+        <div className="flex flex-1 items-center gap-6">
           {[
-            ["Home facts", "Demand, EV, heating, roof type, existing PV"],
-            ["Learned policy", "Gradient boosting chain plus similar past homes"],
-            ["Hourly simulation", "PV yield, load, battery, EV, heat pump, 20-year money"],
-            ["Rules + catalogue", "Hard limits, then snap to sizes the installer sells"],
+            ["A few facts", "about the home"],
+            ["Learned + simulated", "installer habit, hourly physics"],
+            ["A design with ranges", "and reasons"],
           ].map(([h, t]) => (
-            <div key={h} className="flex flex-1 items-center gap-4">
-              <div className="flex h-full flex-1 flex-col gap-3 rounded-[20px] border border-zinc-200 bg-sand p-6">
-                <h3 className="text-[32px] leading-[1.2] font-semibold">{h}</h3>
-                <p className="text-[24px] leading-[1.4] text-body">{t}</p>
+            <div key={h} className="flex flex-1 items-center gap-6">
+              <div className="flex h-[360px] flex-1 flex-col justify-center gap-4 rounded-3xl border border-zinc-200 bg-sand p-10">
+                <h3 className="text-[56px] leading-[1.1] font-semibold">{h}</h3>
+                <p className="text-[36px] leading-[1.3] text-body">{t}</p>
               </div>
-              <span aria-hidden className="text-[40px] text-quiet">→</span>
+              <span aria-hidden className="text-[64px] text-quiet">→</span>
             </div>
           ))}
-          <div className="flex flex-1 flex-col gap-3 rounded-[20px] bg-ink p-6">
-            <h3 className="text-[32px] leading-[1.2] font-semibold text-paper">Design</h3>
-            <p className="text-[24px] leading-[1.4] text-zinc-300">Sizes with ranges, reasons, flags, and what to ask next</p>
+          <div className="bg-reonic flex h-[360px] flex-1 flex-col justify-center gap-4 rounded-3xl p-10 text-ink">
+            <h3 className="text-[56px] leading-[1.1] font-semibold">The next question</h3>
+            <p className="text-[36px] leading-[1.3]">the one that changes it most</p>
           </div>
-        </div>
-        <div className="flex gap-12">
-          {[
-            ["Coupled, not four guesses", "Heat pump, then PV, then battery: each step sees the one before, so a planner’s change flows through."],
-            ["No LLM in the decision", "Models trained on Reonic’s data size the system. An LLM may only phrase text, and everything works without one."],
-          ].map(([h, t]) => (
-            <div key={h} className="flex flex-1 flex-col gap-2 border-t border-zinc-200 pt-6">
-              <h3 className="text-[32px] font-semibold">{h}</h3>
-              <p className="text-[28px] leading-[1.4] text-body">{t}</p>
-            </div>
-          ))}
         </div>
       </Canvas>
     ),
@@ -197,7 +126,7 @@ export const SLIDES: Slide[] = [
     frame: "planner",
     title: "Live: the planner",
     notes:
-      "Ihr bedient die echte Seite. Mit → (oder dem Presenter) springt die Demo zum nächsten Schritt, ihr könnt aber jederzeit selbst klicken und tippen. 1) Neue Anfrage: 4.500 kWh sehen nach Platzhalter aus, das Dach ist unbekannt, siehe „Ask next“. 2) Echten Verbrauch beantworten, der Diff-Balken erklärt, was sich bewegt. 3) E-Auto kommt: Wallbox erscheint. 4) Planer setzt den Speicher auf 20 kWh: Warnung. 5) Reality check: unter Evidence ein zurückgehaltenes Projekt laden und mit dem Experten vergleichen (Modell kennt es nicht). ~90 s.",
+      "Ihr bedient die echte Seite. Mit → (oder dem Presenter) springt die Demo zum nächsten Schritt, ihr könnt aber jederzeit selbst klicken und tippen. 1) Neue Anfrage: 4.500 kWh sehen nach Platzhalter aus, das Dach ist unbekannt, siehe „Ask next“. 2) Echten Verbrauch beantworten, der Diff-Balken erklärt, was sich bewegt. 3) E-Auto kommt: Wallbox erscheint. 4) Planer setzt den Speicher auf 20 kWh: Warnung. 5) Reality check: unter Evidence ein zurückgehaltenes Projekt laden und mit dem Experten vergleichen (Modell kennt es nicht). ~90 s. Absturzsicher: Falls die Engine ausfällt, D drücken für Offline-Demodaten (die Folien laufen weiter).",
     steps: [
       {
         label: "New request",
@@ -236,7 +165,7 @@ export const SLIDES: Slide[] = [
     frame: "offer",
     title: "Live: the homeowner’s link",
     notes:
-      "Das ist der Link, den der Planer teilt. Der Hausbesitzer sieht das Angebot in einfachen Worten, Bandbreiten statt Scheingenauigkeit, und kann nur zwischen den Optionen wechseln, die der Planer freigegeben hat, z. B. Speicher ja/nein. Einmal umschalten, dann zurück zu den Folien. ~20 s.",
+      "Das ist der Link, den der Planer teilt. Der Hausbesitzer sieht das Angebot in einfachen Worten, Bandbreiten statt Scheingenauigkeit, und kann nur zwischen den Optionen wechseln, die der Planer freigegeben hat, z. B. Speicher ja/nein. Einmal umschalten, dann zurück zu den Folien. ~20 s. Absturzsicher: Falls die Engine ausfällt, D drücken für Offline-Demodaten.",
     steps: [
       { label: "The offer", hint: "Plain words, the house, and only the options the planner allowed. Try switching the battery." },
     ],
@@ -244,136 +173,68 @@ export const SLIDES: Slide[] = [
   {
     kind: "content",
     id: "proof",
-    title: "Measured against experts",
+    title: "Honest proof",
     notes:
-      "Trainiert auf Angeboten bis September 2025, Modell auf Q4 2025 gewählt, dann auf 325 Projekten aus 2026 bewertet (nie zur Modellwahl genutzt; jede Auswertung zählt das Lab mit). Die harte Baseline ist der Median des Installateurs selbst. Bei PV-Größe 17 Punkte besser, bei Speicher und Gesamtdesign gleichauf; 1 Punkt ist bei dieser Stichprobe Rauschen. Größenbandbreiten decken 85,5 % der PV-Entscheidungen der Experten ab (Ziel 80 %). ~25 s.",
+      "Beweis, ~20 s, ehrlich. Test: 325 Projekte aus 2026, nie zur Modellwahl benutzt. „Bei der PV-Größe sind wir 17 Punkte besser als die Gewohnheit des Installateurs selbst (59,7 gegen 42,5 Prozent innerhalb ±20 %). Beim ganzen Design gleichauf: 20,9 gegen 20,6 Prozent, das sagen wir offen. Und eine einzige Frage, die nach dem Dach, ist bis zu 12 Punkte wert: das ist eine Obergrenze.“",
     body: () => (
-      <Canvas n={7}>
-        <H2>Measured against experts on unseen projects</H2>
-        <Table
-          head={["Designer", "Expert Match", "Whole design", "PV ±20%", "Battery ±25%"]}
-          rows={[
-            ["Rule of thumb", "55.0", "14.8%", "32.9%", "40.0%"],
-            ["Installer’s own median", "61.1", "20.6%", "42.5%", "47.4%"],
-            ["Ours", "61.0", "20.9%", "59.7%", "47.4%"],
-          ]}
-          highlight={2}
-        />
-        <div className="bg-reonic flex flex-col gap-2 rounded-3xl px-12 py-10 text-ink">
-          <p className="text-[44px] leading-[1.2] font-semibold">+17 points on PV size against the installer’s own median.</p>
-          <p className="text-[32px] leading-[1.4]">Level with it on battery and on the whole design.</p>
-        </div>
-        <Source>Test: 325 projects from 2026, held out from training and model choice; every look is counted in /lab</Source>
-      </Canvas>
-    ),
-  },
-  {
-    kind: "content",
-    id: "reading",
-    title: "Where we win, and where we tie",
-    notes:
-      "PV hängt vom Haus ab, also lernt das Modell es und gewinnt klar. Der Speicher nicht: Experten verkaufen ~0,93 kWh pro kWp, egal welcher Haushalt. Das wirtschaftliche Optimum unseres Simulators trifft den Experten nur in 23 % der Fälle. Also übernehmen wir die Gewohnheit und zeigen die Wirtschaftlichkeit daneben als zweite Meinung. ~15 s.",
-    body: () => (
-      <Canvas tone="sand" n={8}>
-        <H2>Where we win, and where we tie</H2>
-        <div className="flex flex-1 gap-8">
-          <Card className="flex-1 p-12">
-            <Eyebrow>PV size · we win</Eyebrow>
-            <p className="text-[120px] leading-none font-semibold tracking-[-0.03em]">59.7%</p>
-            <Body>within 20% of the expert, against 42.5% for the installer’s median. PV depends on the home, so a model can learn it.</Body>
-          </Card>
-          <Card className="flex-1 p-12">
-            <Eyebrow>Battery · we tie, and that’s a finding</Eyebrow>
-            <p className="text-[120px] leading-none font-semibold tracking-[-0.03em]">23%</p>
-            <Body>
-              is how often the economic optimum matches the expert. Batteries are sized by habit, so we copy the habit and show the
-              economics beside it.
-            </Body>
-          </Card>
-        </div>
-        <Source>PV: 2026 test, n=325 · Battery optimum: validation, n=232</Source>
-      </Canvas>
-    ),
-  },
-  {
-    kind: "content",
-    id: "asknext",
-    title: "It knows which question to ask next",
-    notes:
-      "Unser Alleinstellungsmerkmal. Die größte Schwäche der Daten wird zum Arbeitsschritt: Die Engine sagt, welche ein, zwei Fragen für dieses Haus am meisten ändern. Gemessen: Die Dachfrage hebt das Gesamtdesign von 20,9 % auf 32,9 % (Obergrenze, gedeckelt auf die Modulzahl des Experten). Echter Verbrauch statt Platzhalter: 11,1 % auf 20,9 %. ~25 s.",
-    body: () => (
-      <Canvas n={9}>
-        <H2>It knows which question to ask next</H2>
-        <Body className="w-[1500px]">
-          The engine ranks missing inputs by how much they would change the design. We measured what each answer is worth on the 2026 test.
-        </Body>
-        <Table
-          head={["Question answered", "Whole design right", "PV within ±20%"]}
-          rows={[
-            ["How many modules fit the roof?*", "20.9% → 32.9%", "59.7% → 82.5%"],
-            ["Real yearly consumption", "11.1% → 20.9%", "46.5% → 59.7%"],
-            ["Is there an EV?", "20.0% → 20.9%", "60.6% → 59.7%"],
-          ]}
-          highlight={0}
-        />
-        <p className="text-[44px] leading-[1.2] font-semibold">One question about the roof is worth more than any model we could train.</p>
-        <Source>*Upper bound: the cap is the expert’s own module count · 2026 test, n=325</Source>
-      </Canvas>
-    ),
-  },
-  {
-    kind: "content",
-    id: "impact",
-    title: "What it’s worth",
-    notes:
-      "Drei Gewinner. Planer: Entwurf in unter einer Sekunde, Bearbeiten nur bei Ausnahmen, Warnungen vor dem Versand. Installateur: Junioren planen wie die eigenen Senioren. Hausbesitzer: ein Link, der das Angebot erklärt. Keine erfundene Stunden-Ersparnis: Die echten Stunden pro Auslegung fehlen uns noch. ~20 s.",
-    body: () => (
-      <Canvas tone="sand" n={10}>
-        <H2>What it’s worth</H2>
-        <div className="flex flex-1 gap-8">
+      <Canvas tone="sand" n={7}>
+        <div className="flex flex-1 items-stretch gap-8">
           {[
-            ["Planner", "A full first draft in under a second. Edit by exception, and see the flags before the offer goes out."],
-            ["Installer", "Juniors design the way the installer’s seniors do, learned from its own history. More offers out, sooner."],
-            ["Homeowner", "A link that explains the offer in plain words, with ranges instead of fake precision, and only the options the planner allowed."],
-          ].map(([h, t]) => (
-            <Card key={h} className="flex-1">
-              <h3 className="text-[44px] leading-[1.2] font-semibold">{h}</h3>
-              <Body>{t}</Body>
-            </Card>
+            ["+17 pts", "PV size vs the installer’s own habit", false],
+            ["22.2 vs 20.6%", "Whole design: slightly ahead, within noise", false],
+            ["up to +11 pts", "from one roof question (upper bound)", true],
+          ].map(([big, t, hot]) => (
+            <div
+              key={String(big)}
+              className={`flex flex-1 flex-col justify-center gap-6 rounded-3xl p-12 ${hot ? "bg-reonic text-ink" : "border border-zinc-200 bg-paper"}`}
+            >
+              <p className="text-[110px] leading-none font-semibold tracking-[-0.03em]">{big}</p>
+              <p className="text-[44px] leading-[1.2]">{t}</p>
+            </div>
           ))}
         </div>
-        <Source>A design takes under a second on a laptop · Hours saved per offer: [ask Reonic]</Source>
+        <Source>2026 test, n=325, held out from training and model choice. Roof gain is an upper bound (cap = expert’s own module count).</Source>
       </Canvas>
     ),
   },
   {
     kind: "content",
-    id: "limits",
-    title: "What we can’t claim yet",
+    id: "value",
+    title: "Who wins",
     notes:
-      "Ehrlich abschließen: zwei Installateure, Wärmepumpen sind selten, also physikbasiert ausgelegt. Dachgröße fehlt und treibt den PV-Fehler, deshalb fragen wir danach. Grobe Physik. Als Nächstes: Stückliste in den Produkten des Installateurs, aus Planer-Overrides lernen, Dachkapazität als Standardfrage. Mit dem Einzeiler enden. Danke. ~15 s.",
+      "Wert, ~20 s. „Planer: ein vollständiger Entwurf in unter einer Sekunde, Warnungen vor dem Versand. Installateur: Junioren planen wie die eigenen Senioren. Hausbesitzer: ein Link, der das Angebot erklärt. Wie viele Stunden das pro Angebot spart, wissen wir nicht, das müssen wir von Reonic erfahren. Wir erfinden keine Zahl.“",
     body: () => (
-      <Canvas n={11}>
-        <H2>What we can’t claim yet, and what’s next</H2>
-        <div className="flex flex-1 gap-16">
-          <div className="flex flex-[3] flex-col gap-6">
-            <Eyebrow>Limits</Eyebrow>
-            {[
-              ["Two installers only.", "Heat pumps are about 2% of designs, so heat pump sizing comes from physics, not learning."],
-              ["No roof size in the data.", "It’s the biggest source of PV error, so we ask for it instead of guessing."],
-              ["Rough physics.", "One weather site; prices are 2026 ranges, and some costs are placeholders."],
-            ].map(([b, t]) => (
-              <p key={b} className="border-t border-zinc-200 pt-5 text-[32px] leading-[1.4] text-body">
-                <b className="font-semibold text-ink">{b}</b> {t}
-              </p>
-            ))}
-          </div>
-          <div className="flex flex-[2] flex-col gap-6 rounded-3xl bg-ink p-12 text-paper">
-            <Eyebrow dark>Next</Eyebrow>
-            {["Parts list in the installer’s own products", "Learn each installer’s style from planner overrides", "Roof capacity as a standard intake question"].map((t) => (
-              <p key={t} className="text-[32px] leading-[1.4]">{t}</p>
-            ))}
-          </div>
+      <Canvas n={8}>
+        <div className="flex flex-1 gap-8">
+          {[
+            ["Planner", "A first draft in under a second."],
+            ["Installer", "Juniors design like seniors."],
+            ["Homeowner", "An offer that explains itself."],
+          ].map(([h, t]) => (
+            <div key={h} className="flex flex-1 flex-col justify-center gap-6 rounded-3xl border border-zinc-200 bg-sand p-12">
+              <h3 className="text-[48px] leading-[1.2] font-semibold text-quiet">{h}</h3>
+              <p className="text-[72px] leading-[1.1] font-semibold tracking-[-0.02em]">{t}</p>
+            </div>
+          ))}
+        </div>
+        <Source>Hours saved per offer: ask Reonic. We have no measured figure and won’t invent one. Draft time: a laptop, same input.</Source>
+      </Canvas>
+    ),
+  },
+  {
+    kind: "content",
+    id: "close",
+    title: "Rhythm and his dancers",
+    notes:
+      "Schluss mit Energie, ~10 s. „Gute Planer raten nicht, sie fragen. Rhythm fragt für sie.“ Pause. „Wir sind Rhythm and his dancers. Danke.“ Bei Fragen: docs/PITCH.md, Abschnitt Jury-Fragen. Grenzen ehrlich nennen: zwei Installateure, Dachgröße fehlt, Stückliste vorläufig.",
+    body: () => (
+      <Canvas tone="dark">
+        <div className="flex flex-1 flex-col justify-center gap-16">
+          <div className="bg-reonic h-3 w-48 rounded-full" />
+          <h2 className="w-[1600px] text-[140px] leading-[1.05] font-semibold tracking-[-0.03em]">
+            Great planners don’t guess. <span className="text-orange-300">They ask.</span>
+          </h2>
+          <p className="text-[56px] font-semibold">Rhythm and his dancers</p>
         </div>
       </Canvas>
     ),

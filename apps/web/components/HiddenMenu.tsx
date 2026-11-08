@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { pill, pillLook, Segmented } from "./ui";
+import { Icon, Segmented } from "./ui";
 
 const TRIGGER = '[data-hidden-menu-trigger], [aria-label="Rhythm"]';
 const TAPS = 3;
@@ -44,38 +44,25 @@ export default function HiddenMenu() {
   }, []);
 
   const close = () => dialog.current?.close();
-  const item = "group flex min-h-16 w-full items-center gap-3 rounded-xl px-3 py-3 text-left ring-1 ring-zinc-200 transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600";
+  // ours: minimal rows, icon + one word; a row click goes
+  const row = "flex min-h-14 items-center gap-3 rounded-xl px-3 ring-1 ring-zinc-200 transition-colors hover:bg-sand-2 focus-within:bg-sand-2";
+  const go = "flex min-h-14 flex-1 cursor-pointer items-center gap-3 rounded-xl text-sm font-semibold text-ink focus-visible:outline-2 focus-visible:outline-blue-600";
 
   return (
     <dialog
       ref={dialog}
       aria-label="Presenter menu"
       onClick={(e) => e.target === dialog.current && close()} // click on the backdrop closes
-      className="m-auto w-[min(92vw,26rem)] rounded-2xl border border-zinc-200 bg-white p-0 text-ink shadow-xl backdrop:bg-ink/40"
+      className="m-auto w-[min(92vw,22rem)] rounded-2xl border border-zinc-200 bg-white p-0 text-ink shadow-xl backdrop:bg-ink/40"
     >
-      <motion.div key={openCount} initial={{ opacity: 0, y: 8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.18, ease: "easeOut" }} className="overflow-hidden rounded-2xl">
-        <div className="flex items-start justify-between border-b border-zinc-200 bg-sand-2 px-5 py-4">
-          <div><p className="text-xs font-medium uppercase tracking-wide text-quiet">Rhythm · presenter tools</p><h2 className="mt-1 text-lg font-semibold">Where do you want to go?</h2><p className="mt-1 text-sm text-quiet">Choose a mode for the next part of the demo.</p></div>
-          <button ref={closeButton} type="button" onClick={close} aria-label="Close menu" className="grid size-9 shrink-0 place-items-center rounded-full text-lg text-quiet transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-blue-600">×</button>
+      <motion.div key={openCount} initial={{ opacity: 0, y: 8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.18, ease: "easeOut" }} className="relative space-y-2 p-3">
+        <button ref={closeButton} type="button" onClick={close} aria-label="Close menu" className="absolute right-1 top-1 grid size-7 cursor-pointer place-items-center rounded-full text-quiet transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600"><span aria-hidden>×</span></button>
+        <div className={`${row} mt-5`}>
+          <Link href={PITCH_HREF[pitchMode]} onClick={close} className={go}><Icon name="present" className="size-5 text-quiet" />Pitch</Link>
+          <div className="w-36 shrink-0"><Segmented name="pitch-mode" label="Pitch data" value={pitchMode} options={PITCH_MODES} onChange={setPitchMode} /></div>
         </div>
-        <div className="space-y-2 p-4">
-          <div className="rounded-xl px-3 py-3 ring-1 ring-zinc-200">
-            <div className="flex items-center gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sand text-sm font-semibold text-ink ring-1 ring-zinc-200">01</span>
-              <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-ink">Pitch mode</span><span className="mt-0.5 block text-xs leading-relaxed text-quiet">The guided deck with the live app</span></span>
-            </div>
-            <div className="mt-3 flex items-center gap-2">
-              <div className="min-w-0 flex-1"><Segmented name="pitch-mode" label="Pitch data" value={pitchMode} options={PITCH_MODES} onChange={setPitchMode} /></div>
-              <Link href={PITCH_HREF[pitchMode]} onClick={close} className={`${pill} ${pillLook.primary} shrink-0`}>Start</Link>
-            </div>
-            <p className="mt-2 text-xs text-quiet">Offline uses labelled demo data, no engine.</p>
-          </div>
-          <Link href="/lab" onClick={close} className={item}>
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sand text-sm font-semibold text-ink ring-1 ring-zinc-200 transition-colors group-hover:bg-white">02</span>
-            <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-ink">Lab results</span><span className="mt-0.5 block text-xs leading-relaxed text-quiet">How often we match the experts, per run and branch</span></span>
-            <span aria-hidden className="text-lg text-quiet transition-transform group-hover:translate-x-0.5">›</span>
-          </Link>
-          <p className="px-2 pt-1 text-center text-xs text-quiet">Press Escape to close</p>
+        <div className={row}>
+          <Link href="/lab" onClick={close} className={go}><Icon name="chart" className="size-5 text-quiet" />Lab</Link>
         </div>
       </motion.div>
     </dialog>

@@ -60,7 +60,7 @@ export const PITCH_EVAL: EvalSummary = {
   models: {
     B1: { ems: 55.0, wholeDesign: 0.148, pv: 0.329, battery: 0.4, heatPump: 0.994, wallbox: 0.782 },
     B0: { ems: 61.1, wholeDesign: 0.206, pv: 0.425, battery: 0.474, heatPump: 0.991, wallbox: 0.76 },
-    ours: { ems: 61.0, wholeDesign: 0.209, pv: 0.597, battery: 0.474, heatPump: 0.991, wallbox: 0.782 },
+    ours: { ems: 61.2, wholeDesign: 0.222, pv: 0.597, battery: 0.489, heatPump: 0.991, wallbox: 0.782 },
   },
   selection: "Chosen per component on the Q4 2025 validation window.",
   tolerances: { pv: 0.2, battery: 0.25, heatPump: 0.25 },

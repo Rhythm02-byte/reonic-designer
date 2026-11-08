@@ -1,6 +1,6 @@
 # Demo script (under 5 minutes, run from `/pitch`)
 
-The deck *is* the app: `/pitch` shows the slides and, on slides 5 and 6, the real planner and homeowner page in place. Speaker notes per slide: press **N** in `/pitch`, with a timer. Timings add up to 280 s and leave 20 s spare.
+The deck *is* the app: `/pitch` shows the slides and, on slides 5 and 6, the real planner and homeowner page in place. Speaker notes per slide: press **N** in `/pitch`, with a timer. Timings add up to 220 s, leaving time for questions.
 
 ## Before you start (T-30 min)
 - [ ] `pnpm dev` is running (engine :8000 + web :3000), and `pnpm x:train` was run after the last engine change. The served model learns from offers ≤ 2025-12-31, so the 2026 projects in Evidence are unseen.
@@ -13,17 +13,15 @@ The deck *is* the app: `/pitch` shows the slides and, on slides 5 and 6, the rea
 ## The run (→ / PageDown / presenter remote steps through everything)
 | Slide | Time | What happens / what to say |
 |---|---|---|
-| 1 Cover | 10 s | One sentence: designs like your best planner, and says what it doesn't know. |
-| 2 Problem | 20 s | 8.2 days median from request to offer at installer 1: **elapsed time, not effort**. |
-| 3 Data | 20 s | We rebuilt every size from parts lists; near-identical homes get 5.4–12.6 kWp, because roof and budget are missing. |
-| 4 How | 20 s | Learned policy + similar homes → hourly simulation → rules and catalogue → design with ranges, reasons, flags, next question. No LLM sizes anything. |
-| 5 Live planner | 90 s | **Step 1:** new request; consumption and roof unknown → "Ask the customer next". **Step 2:** answer 5,200 kWh → the diff bar says what moved. **Step 3:** EV next year → wallbox appears. **Step 4:** the planner forces a 20 kWh battery → R05/R06 warnings explain why that rarely pays. **Step 5:** Evidence → load a 2026 project → compare with the expert (the model never saw it). |
-| 6 Homeowner link | 20 s | Plain words, only the options the planner allowed; switch one option. |
-| 7 Proof | 25 s | 2026 projects: **PV +17 pts** vs the installer's own habit; **whole design a tie** (20.9 vs 20.6%). Say "tie". |
-| 8 Win / tie | 15 s | PV depends on the home (model wins); battery follows the package (habit; the economic optimum is the second opinion). |
-| 9 Ask next | 25 s | Answering the roof question: up to +12 pts (**upper bound**); real consumption instead of the placeholder: +9.8 pts. |
-| 10 Value | 20 s | First draft in under a second; flags before the offer goes out; the homeowner link. Hours saved: ask Reonic. |
-| 11 Limits | 15 s | Two installers; heat pumps are physics-led; parts list preliminary; next: roof and budget at intake. |
+| 1 Hook | 10 s | "A family waits 8.2 days for an offer." (median, installer 1; elapsed time, not effort) |
+| 2 Problem | 20 s | Near-identical homes get 5.4–12.6 kWp from experts: roof and budget aren't in the data. "Just predict it" can't work. |
+| 3 Turn | 15 s | "So we built a designer that knows what it doesn't know, and asks." |
+| 4 How | 15 s | Home facts → learned installer habits + hourly simulation → design with ranges → the next question. No LLM sizes anything. |
+| 5 Live planner | 90 s | New request → Ask next → answer 5,200 kWh (diff bar) → EV next year (wallbox) → planner forces 20 kWh battery (warnings) → Evidence: a 2026 project the model never saw. If the engine fails: press **D** (offline demo data). |
+| 6 Homeowner link | 20 s | Share → QR → the plain homeowner view; switch one option. |
+| 7 Proof | 20 s | 2026 test: **solar +17 pts** vs the installer's own habit; whole design 22.2 vs 20.6% (**on par, within noise**); roof question worth up to +11 pts (upper bound). |
+| 8 Value | 20 s | Planner, installer, homeowner. Hours saved: ask Reonic. |
+| 9 Close | 10 s | "Great planners don't guess. They ask." · Rhythm and his dancers |
 
 ## If something breaks
 - Engine down → the planner says "Running on synthetic data". Switch to `/pitch?demo=1` (D key) and say so.

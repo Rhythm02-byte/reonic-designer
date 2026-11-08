@@ -59,5 +59,39 @@ export const pts = (v: number | null | undefined, rate: boolean) =>
   v == null ? null : rate ? v * 100 : v;
 export const fmt = (v: number | null | undefined, rate = false, digits = 1) =>
   v == null ? "–" : `${(rate ? v * 100 : v).toFixed(digits)}${rate ? "%" : ""}`;
+// ours: Test Lab at-a-glance helpers (headline numbers, research table, de-duplicated history).
+export const day = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Europe/Berlin" });
+
+/** Latest run that scored the unseen 2026 homes for our model. */
+export const examRun = (runs: Run[]) => [...runs].reverse().find((r) => r.kind !== "research" && r.test?.models.ours);
+
+export type ResearchRow = { name: string; gain: number; adopted: boolean };
+/** One row per research run: gain = candidate minus default, in points of whole-design match (repeated splits). */
+export function researchRows(runs: Run[]): ResearchRow[] {
+  return runs.filter((r) => r.kind === "research").map((r) => {
+    const label = r.label ?? "";
+    const name = label.replace(/^research\s+/, "").replace(/\s+vs\s+default.*$/, "").replace(/__/g, " · ").replace(/_/g, " ");
+    const gap = r.repeated?.gap?.mean;
+    return { name: name || r.id, gain: gap != null ? gap * 100 : 0, adopted: /\(adopt\)/.test(label) };
+  }).sort((a, b) => b.gain - a.gain);
+}
+
+/** Whole-design % (validation) per run; identical results collapsed; newest 12 points. */
+export function historyPoints(runs: Run[]) {
+  const seen = new Set<string>();
+  const out: { t: string; ours: number; b0: number | null }[] = [];
+  for (const r of runs) {
+    const m = r.kind === "research" ? undefined : r.validation?.models;
+    const ours = m?.ours?.wholeDesign;
+    if (ours == null) continue;
+    const b0 = m?.B0?.wholeDesign ?? null;
+    const key = `${r.validation?.n}|${ours}|${b0}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ t: r.timestamp, ours: ours * 100, b0: b0 == null ? null : b0 * 100 });
+  }
+  return out.slice(-12);
+}
+
 export const when = (iso: string) =>
   new Date(iso).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }); // fixed zone: server and browser render the same text (no hydration mismatch)

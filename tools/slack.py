@@ -44,7 +44,7 @@ def token() -> str | None:
 
 
 def call(method: str, tok: str, params: dict, post: bool) -> dict:
-    data = urllib.parse.urlencode(params)
+    data = urllib.parse.urlencode({k: json.dumps(v) if isinstance(v, (dict, list, bool)) else v for k, v in params.items()})
     req = urllib.request.Request(API + method + ("" if post else "?" + data), data=data.encode() if post else None,
                                  headers={"Authorization": f"Bearer {tok}"})
     try:
@@ -109,6 +109,8 @@ def send(channel: str, text: str) -> int:
     if not tok:
         print(NOTE)
         return 0
+    from slack_bridge.mentions import resolve_mentions
+    text = resolve_mentions(text)
     cid = channel_id(tok, channel) or channel.lstrip("#")
     r = call("chat.postMessage", tok, {"channel": cid, "text": text, **persona(text)}, True)
     if not r.get("ok") and r.get("error") == "missing_scope":  # no chat:write.customize: post as the plain bot
@@ -209,6 +211,16 @@ def overlaps(a: str, b: str) -> bool:
 
 
 def change_claims(name: str, areas: list[str], release: bool = False) -> int:
+    from slack_bridge.common import read_config, request
+    config = read_config()
+    if config:
+        try:
+            request(config, '/claims', {'paths': areas, 'release': release})
+            print('claims updated via bridge')
+            return 0
+        except Exception as error:
+            print('slack: bridge claim failed; no unsafe fallback (' + type(error).__name__ + ')', file=sys.stderr)
+            return 1
     tok = token()
     if not tok:
         print(NOTE)
@@ -267,6 +279,9 @@ def start(name: str, full: bool = False) -> int:
         print(NOTE)
         return 0
     me = name.lower().split()[0]
+    from slack_bridge.mentions import resolve_mentions
+    from slack_bridge.common import read_config, request
+    mention = resolve_mentions('@' + me)
     board = fetch(tok, "board", "12h", 100, paginate=True)
     registry = fetch(tok, "claims", None, 100, paginate=True)
     if board is None or registry is None:
@@ -293,7 +308,16 @@ def start(name: str, full: bool = False) -> int:
     recent = [m for m in board if time.time() - float(m["ts"]) < 21600]
     section("board", [m for m in recent if full or not is_claim(m)], 8)
     print("== open claims (#claims + legacy board 12h; don't touch these areas) ==")
-    print("\n".join(f"  {a} — {w}" for a, w in open_claims(board + registry).items()) or "  none")
+    config = read_config()
+    if config:
+        try:
+            active = {c['area']: c['agent'] for c in request(config, '/claims')}
+        except Exception:
+            print('slack: authoritative bridge claims unavailable', file=sys.stderr)
+            return 1
+    else:
+        active = open_claims(board + registry)
+    print("\n".join(f"  {a} — {w}" for a, w in active.items()) or "  none")
     changelog = fetch(tok, "changelog", "1d", 100, paginate=True)
     print("== #changelog, last 1d ==")
     section("changelog", changelog or [], 5)
@@ -308,7 +332,8 @@ def start(name: str, full: bool = False) -> int:
                 failed.append(c)
             continue
         hits = [m for m in msgs if time.time() - float(m["ts"]) < 21600
-                and re.search(r"(?<!\w)" + re.escape(me) + r"(?!\w)", m.get("text", ""), re.I)
+                and (re.search(r"(?<!\w)" + re.escape(me) + r"(?!\w)", m.get("text", ""), re.I)
+                     or (mention != '@' + me and mention in m.get('text', '')))
                 and f"[{me}" not in m.get("text", "").lower() and not is_claim(m)
                 and (c, m["ts"]) not in seen]
         if hits:
@@ -321,10 +346,15 @@ def start(name: str, full: bool = False) -> int:
 def notify_run(summary: dict) -> None:
     """Post an eval run summary to #runs. Never raises; no-op without a token."""
     try:
-        send("runs", "[eval run] " + " · ".join(f"{k}={v}" for k, v in summary.items()
-                                               if isinstance(v, (str, int, float, bool)) and v is not None))
-    except Exception:
-        pass
+        tok = token()
+        if not tok:
+            return
+        from slack_bridge.runs import publish
+        result = publish(summary, lambda method, params: call(method, tok, params, True), channel_id(tok, 'runs'))
+        if result.get('status') not in ('published', 'pending'):
+            print('slack: run card ' + str(result.get('status', result.get('error', 'failed'))), file=sys.stderr)
+    except Exception as error:
+        print('slack: run notification failed (' + type(error).__name__ + ')', file=sys.stderr)
 
 
 def setup() -> int:
@@ -350,6 +380,9 @@ def setup() -> int:
 
 
 def main() -> int:
+    from slack_bridge.cli import COMMANDS, main as bridge_main
+    if len(sys.argv) > 1 and sys.argv[1] in COMMANDS:
+        return bridge_main(sys.argv[1:])
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -361,7 +394,9 @@ def main() -> int:
         for k, v in opts.items():
             s.add_argument("--" + k, **v)
     cmd("start", full={"action": "store_true"})
-    cmd("post", "channel", "text", kind={"choices": list(KINDS)})
+    cmd("post", "channel", "text", kind={"choices": list(KINDS)},
+        to={"action": "append", "default": []}, path={"action": "append", "default": []},
+        priority={"choices": ['normal', 'critical'], "default": 'normal'}, wake={"action": 'store_true'}, thread={})
     cmd("claim", "area")
     cmd("release", "area")
     cmd("done", "text")
@@ -383,6 +418,15 @@ def main() -> int:
         c = commit()
         return send("changelog", f"✅ [{n}'s agent] {' '.join(a.text)}" + (f" · {c}" if c else ""))
     text = " ".join(a.text)
+    if a.to or a.wake or a.path or a.thread:
+        from slack_bridge.common import read_config, request
+        try:
+            print(json.dumps(request(read_config(), '/post', {'text': text, 'channel': a.channel, 'to': a.to,
+                'paths': a.path, 'priority': a.priority, 'wake': a.wake, 'thread': a.thread})))
+            return 0
+        except Exception as error:
+            print('slack: task post failed (' + type(error).__name__ + ')', file=sys.stderr)
+            return 1
     if not re.match(r"\[.+'s agent\]", text):
         text = f"[{n}'s agent] {text}"
     return send(a.channel, (KINDS[a.kind] + " " if a.kind else "") + text)

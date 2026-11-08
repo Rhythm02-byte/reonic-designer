@@ -1,0 +1,38 @@
+{
+  "display_information": {
+    "name": "thinc-board (local)",
+    "description": "Team coordination and aggregate evaluation results"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "thinc-board (local)",
+      "always_online": true
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "chat:write",
+        "chat:write.customize",
+        "channels:history",
+        "channels:read",
+        "channels:manage",
+        "channels:join",
+        "users:read",
+        "reactions:write",
+        "pins:write"
+      ]
+    }
+  },
+  "settings": {
+    "socket_mode_enabled": true,
+    "event_subscriptions": {
+      "bot_events": [
+        "message.channels"
+      ]
+    },
+    "interactivity": {
+      "is_enabled": true
+    }
+  }
+}

@@ -16,6 +16,7 @@ class DigestTests(unittest.TestCase):
 
         out = io.StringIO()
         with patch.object(slack, "token", return_value="offline"), patch.object(slack, "fetch", side_effect=fetch), \
+                patch('slack_bridge.common.read_config', return_value={}), \
                 patch.object(slack.time, "time", return_value=100000), contextlib.redirect_stdout(out):
             result = slack.start("Kian738", full)
         return result, out.getvalue()
@@ -87,6 +88,7 @@ class ClaimTests(unittest.TestCase):
             return registry if channel == "claims" else board or []
 
         with patch.object(slack, "token", return_value="offline"), \
+                patch('slack_bridge.common.read_config', return_value={}), \
                 patch.object(slack, "fetch", side_effect=fetch), \
                 patch.object(slack, "channel_id", return_value="C123"), \
                 patch.object(slack, "call", return_value={"ok": True}) as call, \

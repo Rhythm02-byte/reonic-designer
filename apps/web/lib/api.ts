@@ -274,6 +274,24 @@ const whole = (m: { wholeDesign: number; pv: number; battery: number; heatPump: 
 
 const installer = async () => (await engineMeta()).data.installers[0] ?? "default";
 
+// His real-roof house: the LoD2 render job (app/api/lod2-house) started and polled until the GLB is ready.
+type Lod2Reply = { job?: { id: string; state: "running" | "ready" | "failed"; error?: string; modelUrl?: string; panels?: number | null; source?: string }; error?: string };
+async function lod2(url: string, init?: RequestInit) {
+  const r = await fetch(url, { cache: "no-store", ...init, signal: AbortSignal.timeout(15_000) });
+  const d = (await r.json().catch(() => ({}))) as Lod2Reply;
+  if (!r.ok || !d.job) throw new Error(d.error ?? `House render failed (${r.status})`);
+  return d.job;
+}
+async function house(lat: number, lng: number): Promise<HouseModel> {
+  let job = await lod2("/api/lod2-house", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ lat, lng }) });
+  for (let i = 0; job.state === "running" && i < 240; i++) { // ~10 min
+    await new Promise((r) => setTimeout(r, 2500));
+    job = await lod2(`/api/lod2-house/${job.id}`);
+  }
+  if (job.state !== "ready" || !job.modelUrl) throw new Error(job.error ?? "The house render did not finish.");
+  return { id: job.id, url: job.modelUrl, panels: job.panels ?? null, source: job.source ?? "LoD2" };
+}
+
 export const api = {
   meta: async (): Promise<Meta> => {
     const { data, source } = await engineMeta();
@@ -312,4 +330,5 @@ export const api = {
       })),
     };
   },
+  house,
 };

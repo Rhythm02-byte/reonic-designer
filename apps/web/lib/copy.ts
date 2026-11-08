@@ -1,5 +1,6 @@
 // Wording, formatting and the planner -> homeowner offer link.
 import { TARGETS, type Inputs, type InputValue, type Target, type Values } from "./api";
+export const MARGIN_PCT = 0.22; // installer margin on the offer total, from Faris's spike
 
 export const PANEL_KWP = 0.45; // Reonic's modules are 450 Wp (src/reonic/data.py MODULE_WP)
 // Same as src/reonic/schema.py LABEL / UNIT

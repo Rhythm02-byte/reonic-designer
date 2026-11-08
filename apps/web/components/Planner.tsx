@@ -1,40 +1,24 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
-import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
-import { altLabel, CHOICE_LABEL, describe, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
-import { type Customer, removeCustomer, setCustomerStatus, STATUS_LABEL, STATUS_ORDER, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace"; // ours:
+import { useEffect, useMemo, useState } from "react";
+import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type HouseModel, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
+import { altLabel, CHOICE_LABEL, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, MARGIN_PCT, NOT_SUPPLIED, num, PANEL_KWP, type Offer, pct, size, UNIT, years } from "@/lib/copy";
+import { CATALOG, quantityFor } from "@/lib/products";
+import { type Customer, removeCustomer, setCustomerStatus, STATUS_LABEL, STATUS_ORDER, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace";
 import { House } from "./House";
-import { RealHouse } from "./RealHouse";
-import { locationKey } from "@/lib/real-house";
-import { Location } from "./Location"; // ours:
-import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { Share } from "./Share"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
-import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Skeleton, Spinner, Avatar, Stat, Checkbox } from "./ui";
-import { Select } from "./Select";
+import { Location } from "./Location";
+import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Skeleton, Spinner, Stat } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
 
 // What the planner is editing. It stays a draft, marked unsaved, until "Save" writes it to the customer.
 type Draft = { inputs: Inputs; locked: Partial<Values> };
 type Step = { id: string; draft: Draft; label: string; before: Values | null };
-const NO_LOCKS: Partial<Values> = {}; // ours: fix (stable identity for the design effect)
-
-// ours: restart the short highlight on the section a header link jumped to (CSS drops it for reduced motion)
-function flash(id: string) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove("anchor-flash");
-  void el.offsetWidth;
-  el.classList.add("anchor-flash");
-  el.addEventListener("animationend", () => el.classList.remove("anchor-flash"), { once: true });
-}
 
 export default function Planner() {
   const ws = useWorkspace();
-  const [scope, setScope] = useState<"mine" | "team">("mine");
   const [collapsed, setCollapsed] = useState(false);
-  // A held-out project opens as an unsaved preview so it never overwrites a customer.
-  const [preview, setPreview] = useState<{ id: string; inputs: Inputs } | null>(null);
+  const [scope, setScope] = useState<"mine" | "team">("mine");
   const [query, setQuery] = useState("");
   const [meta, setMeta] = useState<Meta | null>(null);
   const [metaError, setMetaError] = useState<string | null>(null);
@@ -44,63 +28,68 @@ export default function Planner() {
   // Alternatives the planner has ticked on or off for the homeowner; unticked default: the ones without warnings.
   const [offered, setOffered] = useState<Partial<Record<Target, boolean>>>({});
   // The last good design stays on screen while the next one is computed.
-  const [state, setState] = useState<{ id: string | null; key: string | null; design: Design | null; error: string | null }>({
-    id: null, key: null, design: null, error: null, // ours: id = whose design this is
+  const [state, setState] = useState<{ key: string | null; design: Design | null; error: string | null }>({
+    key: null, design: null, error: null,
   });
-  const [recommendation, setRecommendation] = useState<{ inputKey: string | null; values: Values | null }>({ inputKey: null, values: null });
-  const recommendationRef = useRef(recommendation);
+  const [houseModel, setHouseModel] = useState<{ key: string | null; model: HouseModel | null; error: string | null }>({ key: null, model: null, error: null });
 
   useEffect(() => {
     api.meta().then(setMeta, (e: Error) => setMetaError(e.message));
   }, []);
 
   const customer = ws.customers.find((c) => c.id === ws.active) ?? ws.customers[0];
-  const id = preview?.id ?? customer.id;
-  const saved: Draft = preview ? { inputs: preview.inputs, locked: NO_LOCKS } : { inputs: customer.inputs, locked: customer.locked ?? NO_LOCKS }; // ours: fix, a fresh {} each render re-ran the design effect forever
+  const id = customer.id;
+  const saved: Draft = { inputs: customer.inputs, locked: customer.locked ?? {} };
   const draft = drafts[id] ?? saved;
-  const dirty = !preview && JSON.stringify(draft) !== JSON.stringify(saved);
+  const dirty = JSON.stringify(draft) !== JSON.stringify(saved);
   const { inputs, locked } = draft;
   const q = query.trim().toLowerCase();
   const list = ws.customers.filter((c) => (scope === "team" || c.owner === ws.me) && c.name.toLowerCase().includes(q));
+  const roofPanelCapacity = houseModel.model?.panels;
+
+  const locationKey = customer.location ? `${customer.location.lat},${customer.location.lng}` : null;
+  useEffect(() => {
+    let live = true;
+    // Defer the state sync to the request turn.  React's effect lint rightly
+    // rejects synchronous state updates in an effect body.
+    void Promise.resolve().then(() => {
+      if (!locationKey || !customer.location) {
+        if (live) setHouseModel({ key: null, model: null, error: null });
+        return;
+      }
+      setHouseModel((old) => ({ key: locationKey, model: old.key === locationKey ? old.model : null, error: null }));
+      return api.house(customer.location.lat, customer.location.lng).then(
+        (model) => live && setHouseModel({ key: locationKey, model, error: null }),
+        (e: Error) => live && setHouseModel({ key: locationKey, model: null, error: e.message }),
+      );
+    });
+    return () => { live = false; };
+  }, [locationKey, customer.location]);
 
   // Without an electric car the distance means nothing; sent anyway, the model reads it as one and adds a wallbox.
   // The value stays in state so switching back to "Yes" restores it.
   const sent = useMemo(() => (inputs.has_ev === false ? { ...inputs, ev_km_per_year: null } : inputs), [inputs]);
-  const inputKey = JSON.stringify(sent);
   const key = JSON.stringify([sent, locked]);
   useEffect(() => {
     let live = true;
     const t = setTimeout(() => {
       api.design(sent, locked).then(
-        (design) => {
-          if (!live) return;
-          setState({ id, key, design, error: null });
-          if (Object.keys(locked).length === 0) {
-            const next = { inputKey, values: design.values };
-            recommendationRef.current = next;
-            setRecommendation(next);
-          } else if (recommendationRef.current.inputKey !== inputKey) {
-            api.design(sent, NO_LOCKS).then((baseline) => {
-              if (!live) return;
-              const next = { inputKey, values: baseline.values };
-              recommendationRef.current = next;
-              setRecommendation(next);
-            }).catch(() => {});
-          }
-        },
-        (e: Error) => live && setState((s) => ({ id, key, design: s.id === id ? s.design : null, error: e.message })),
+        (design) => live && setState({ key, design, error: null }),
+        (e: Error) => live && setState((s) => ({ ...s, key, error: e.message })),
       );
     }, 250);
     return () => {
       live = false;
       clearTimeout(t);
     };
-  }, [sent, locked, key, inputKey, id]);
+  }, [sent, locked, key]);
 
-  // ours: another customer's design (or error) must not flash while this one loads
-  const design = state.id === id ? state.design : null;
-  const error = state.id === id ? state.error : null;
-  const busy = state.key !== key || state.id !== id;
+  const { design } = state;
+  const busy = state.key !== key;
+  const plannedPanels = design ? Math.round(design.values.pv_kwp / PANEL_KWP) : 0;
+  const existingPanels = Math.max(0, Math.round(existingOf(inputs).pv_kwp / PANEL_KWP));
+  const availableNewPanels = roofPanelCapacity === undefined || roofPanelCapacity === null ? undefined : Math.max(0, roofPanelCapacity - existingPanels);
+  const roofCapacityExceeded = availableNewPanels !== undefined && plannedPanels > availableNewPanels;
   const editCustomer = (patch: Partial<Customer>) =>
     update((w) => ({ ...w, customers: w.customers.map((c) => (c.id === customer.id ? { ...c, ...patch } : c)) }));
   const edit = (label: string, next: Draft) => {
@@ -120,102 +109,84 @@ export default function Planner() {
     setHistory((h) => h.filter((x) => x.id !== id));
   };
   const setInput = (name: string, v: InputValue) => {
-    if (name === "roof_max_modules") editCustomer({ roofCapacityConfirmed: false });
     const was = inputs[name] ?? null;
     edit(`${FIELD_COPY[name]?.label ?? name}: ${show(name, was)} → ${show(name, v)}`, { inputs: { ...inputs, [name]: v }, locked });
   };
   const setSize = (t: Target, v: number | null) => {
     const rest = Object.fromEntries(Object.entries(locked).filter(([k]) => k !== t));
-    const backToRecommendation = v === null || (recommendation.inputKey === inputKey && recommendation.values?.[t] === v);
-    edit(backToRecommendation ? `${LABEL[t]} back to the recommendation` : `${LABEL[t]} set to ${size(v!, UNIT[t])}`, {
+    edit(v === null ? `${LABEL[t]} back to the recommendation` : `${LABEL[t]} set to ${size(v, UNIT[t])}`, {
       inputs,
-      locked: backToRecommendation ? rest : { ...rest, [t]: v! },
+      locked: v === null ? rest : { ...rest, [t]: v },
     });
   };
-  // ours: pitch mode (iemko). /pitch drives this page from outside (same origin only). With `because` it is a
-  // planner change (diff bar + undo); without, the draft is simply replaced, like opening a project.
-  const onPitch = useEffectEvent((p: PitchPlan) => {
-    const next = { inputs: p.inputs, locked: p.locked ?? {} };
-    if (p.because) return edit(p.because, next);
-    setHistory((h) => h.filter((x) => x.id !== id));
-    setDrafts((d) => ({ ...d, [id]: next }));
-  });
-  useEffect(() => {
-    const onMessage = (e: MessageEvent) => {
-      if (e.origin === window.location.origin && isPitchPlan(e.data)) onPitch(e.data);
-    };
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, []);
   const open = (cid: string) => {
-    setPreview(null);
     setSelected(null);
     setOffered({});
     update((w) => ({ ...w, active: cid }));
   };
-  // ours: switching planner keeps "Mine" meaningful: if the open customer isn't theirs, open their first one
-  const switchMe = (me: string) => {
-    const mine = ws.customers.find((c) => c.owner === me);
-    const move = !!mine && customer.owner !== me;
-    if (move) {
-      setPreview(null);
-      setSelected(null);
-      setOffered({});
-    }
-    update((w) => ({ ...w, me, active: move ? mine.id : w.active }));
-  };
-  const load = (row: HoldoutRow) => {
-    setSelected(null);
-    setOffered({});
-    setPreview({ id: row.project_id, inputs: row.inputs });
-  };
 
-  const name = preview ? "Real project" : customer.name || "Unnamed customer";
+  const name = customer.name || "Unnamed customer";
   const offer: Offer | null =
-    design && !busy && !error
+    design && !busy && !roofCapacityExceeded
       ? {
           v: 2,
           customer: name,
-          planner: preview ? ws.me : customer.owner,
+          planner: customer.owner,
           inputs: sent,
           options: [
             { label: "Recommended", values: design.values },
             ...TARGETS.flatMap((t) => {
               const a = design.alternatives[t];
-              return a?.validated && (offered[t] ?? a.flags.length === 0) ? [{ label: altLabel(t, a.value), values: a.values }] : [];
+              return a && (offered[t] ?? a.flags.length === 0) ? [{ label: altLabel(t, a.value), values: a.values }] : [];
             }),
           ],
-          ...(design.modules && design.values.pv_kwp > 0 && { moduleWp: Math.round((design.values.pv_kwp * 1000) / design.modules) }), // ours:
-          economics: { savings_eur: design.economics.savings_eur, payback_years: design.economics.payback_years }, // ours:
+          economics: { savings_eur: design.economics.savings_eur, payback_years: design.economics.payback_years, solar_share_of_demand: design.economics.solar_share_of_demand },
+          modelUrl: houseModel.key === locationKey ? houseModel.model?.url : undefined,
         }
       : null;
 
   return (
     <div className={`xl:grid ${collapsed ? "xl:grid-cols-[72px_minmax(0,1fr)]" : "xl:grid-cols-[248px_minmax(0,1fr)]"}`}>
-      <Sidebar ws={ws} list={list} scope={scope} setScope={setScope} activeId={preview ? null : customer.id} onOpen={open} onSwitchMe={switchMe} query={query} setQuery={setQuery} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((c) => !c)} />
+      <Sidebar
+        ws={ws}
+        list={list}
+        scope={scope}
+        setScope={setScope}
+        activeId={customer.id}
+        onOpen={open}
+        query={query}
+        setQuery={setQuery}
+        collapsed={collapsed}
+        onToggleCollapsed={() => setCollapsed((c) => !c)}
+      />
       <div className="flex min-h-dvh min-w-0 flex-col">
         <Header width={WIDTH}>
           <span className="xl:hidden">
             <Logo product={false} />
           </span>
           {/* Below xl the sidebar is gone; a native select switches customers. */}
-          <Select // ours: custom control
+          <select
             aria-label="Customer"
-            className="max-w-44 xl:hidden"
-            value={preview ? "" : customer.id}
-            onChange={(v) => v && open(v)}
-            options={[...(preview ? [{ value: "", label: "Real project" }] : []), ...ws.customers.map((c) => ({ value: c.id, label: c.name }))]}
-          />
+            className={`${inputClass} max-w-44 xl:hidden`}
+            value={customer.id}
+            onChange={(e) => e.target.value && open(e.target.value)}
+          >
+            {ws.customers.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
           <nav aria-label="Project" className="hidden gap-1 text-sm md:flex">
-            {[["design", "Design"], ["inputs", "Inputs"], ["evidence", "Evidence"]].map(([href, label]) => (
-              <a key={href} href={`#${href}`} onClick={() => flash(href)} className={`${pill} ${pillLook.ghost}`}>
+            {[["design", "Design"], ["inputs", "Inputs"]].map(([href, label]) => (
+              <a key={href} href={`#${href}`} className={`${pill} ${pillLook.ghost}`}>
                 {label}
               </a>
             ))}
           </nav>
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            <SaveState preview={!!preview} dirty={dirty} busy={busy} onSave={save} />
-            <Share offer={offer} /> {/* ours: one share entry (QR + copy + open) replaces his preview/share chevron pair and our QR button */}
+            <SaveState dirty={dirty} busy={busy} blocked={roofCapacityExceeded} onSave={save} />
+            <OfferLinks offer={offer} />
           </div>
         </Header>
 
@@ -223,19 +194,15 @@ export default function Planner() {
           <div className="space-y-1">
             <h1 className="sr-only">Design for {name}</h1>
             <p className="text-xs text-quiet">
-              {preview ? `Real project ${preview.id.slice(0, 8)} · preview, not saved` : `Customer of ${customer.owner}`}
+              Customer of {customer.owner}
             </p>
-            {preview ? (
-              <p className="text-3xl font-semibold tracking-tight text-ink">Real project</p>
-            ) : (
-              <input
-                aria-label="Customer name"
-                value={customer.name}
-                onChange={(e) => editCustomer({ name: e.target.value })}
-                className="-mx-1.5 w-full max-w-xl rounded-lg bg-transparent px-1.5 text-3xl font-semibold tracking-tight text-ink hover:bg-sand focus-visible:outline-2 focus-visible:outline-blue-600"
-              />
-            )}
-            {!preview && customer.location?.address && (
+            <input
+              aria-label="Customer name"
+              value={customer.name}
+              onChange={(e) => editCustomer({ name: e.target.value })}
+              className="-mx-1.5 w-full max-w-xl rounded-lg bg-transparent px-1.5 text-3xl font-semibold tracking-tight text-ink hover:bg-sand focus-visible:outline-2 focus-visible:outline-blue-600"
+            />
+            {customer.location?.address && (
               <p className="flex items-center gap-1.5 text-sm text-quiet">
                 <Icon name="pin" className="size-3.5 text-blue-600" />
                 {customer.location.address}
@@ -246,15 +213,15 @@ export default function Planner() {
               Check it, adjust it, then share the options with the homeowner.
             </p>
           </div>
-          <ErrorNote error={metaError ?? error} />
-          {error && design && <p className="text-sm text-amber-900">The last successful proposal is shown for reference. It has not updated to the current inputs and cannot be shared.</p>}
-          {(meta?.synthetic || design?.source === "demo") && (
+          <ErrorNote error={metaError ?? state.error} />
+          {meta?.synthetic && (
             <p className="text-sm text-amber-800">Running on synthetic data: numbers are for the demo only.</p>
           )}
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
             <div className="space-y-6">
-              <section id="inputs" className="scroll-mt-20 space-y-2 rounded-2xl" aria-labelledby="inputs-h">
+              <Location key={customer.id} value={customer.location ?? null} onChange={(location) => editCustomer({ location: location ?? undefined })} />
+              <section id="inputs" className="scroll-mt-20 space-y-2" aria-labelledby="inputs-h">
                 <h2 id="inputs-h" className="text-sm font-semibold text-ink">
                   Project inputs
                 </h2>
@@ -265,47 +232,42 @@ export default function Planner() {
                 )}
                 <p className="text-xs text-muted">Empty fields are unknown; the model does not guess them.</p>
               </section>
-              <AskNext design={design} set={setInput} /> {/* ours: */}
-              {!preview && <Location key={customer.id} value={customer.location ?? null} onChange={(location) => {
-                const changed = customer.location && (!location || locationKey(customer.location.lat, customer.location.lng) !== locationKey(location.lat, location.lng));
-                if (changed && customer.roofCapacityConfirmed) setInput("roof_max_modules", null);
-                editCustomer({ location: location ?? undefined, ...(changed ? { realHouse: undefined, roofLayout: undefined, roofCapacityConfirmed: false } : {}) });
-              }} />}
-              <div id="evidence" className="scroll-mt-20 rounded-2xl">
-                <Evidence onLoad={load} /> {/* ours: replaces his <Reality onLoad={load} /> (compares with the installer's usual design) */}
-              </div>
             </div>
 
-            <section id="design" className="min-w-0 scroll-mt-20 space-y-4 rounded-2xl" aria-labelledby="design-h">
+            <section id="design" className="min-w-0 scroll-mt-20 space-y-4" aria-labelledby="design-h">
               <h2 id="design-h" className="sr-only">Design</h2>
               <Card className="overflow-hidden">
-                <RealHouse
-                  key={`${id}-${customer.location ? locationKey(customer.location.lat, customer.location.lng) : "none"}`}
-                  location={preview ? null : customer.location ?? null}
-                  asset={preview ? undefined : customer.realHouse}
-                  layout={preview ? undefined : customer.roofLayout}
-                  proposedPanels={design?.modules ?? 0}
-                  existingPv={Number(inputs.existing_pv_kwp ?? 0) > 0}
-                  onAsset={(realHouse) => editCustomer({ realHouse })}
-                  onLayout={(roofLayout) => {
-                    if (customer.roofCapacityConfirmed) setInput("roof_max_modules", null);
-                    editCustomer({ roofLayout, roofCapacityConfirmed: false });
-                  }}
-                  onCapacity={(n) => { setInput("roof_max_modules", n); editCustomer({ roofCapacityConfirmed: true }); }}
-                  fallback={design ? (
-                    <House
-                      values={design.values}
-                      modules={design.modules} // ours:
-                      hasEv={inputs.has_ev === true}
-                      existing={existingOf(inputs)}
-                      description={describe(design.values, design.modules)} // ours: modules
-                      selected={selected}
-                      onSelect={setSelected}
-                    />
+                <div className="relative h-[320px] bg-gradient-to-b from-sand-2 to-sand sm:h-[480px]">
+                  {design ? (
+                    <div className={`h-full transition-opacity ${locationKey && houseModel.key !== locationKey && !houseModel.error ? "opacity-60" : ""}`}>
+                      <House
+                        values={design.values}
+                        hasEv={inputs.has_ev === true}
+                        existing={existingOf(inputs)}
+                        description={describe(design.values)}
+                        selected={selected}
+                        onSelect={setSelected}
+                        modelUrl={houseModel.key === locationKey ? houseModel.model?.url : undefined}
+                      />
+                    </div>
                   ) : (
-                    !error && <Skeleton className="h-full rounded-none" />
+                    !state.error && <Skeleton className="h-full rounded-none" />
                   )}
-                />
+                  {design && locationKey && houseModel.key !== locationKey && !houseModel.error && (
+                    <div className="pointer-events-none absolute top-3 right-3 rounded-full bg-white/80 p-1.5 shadow-sm">
+                      <Spinner className="size-4 text-ink/50" />
+                    </div>
+                  )}
+                  <p className="pointer-events-none absolute top-3 left-4 text-xs text-quiet">
+                    {houseModel.model ? `${houseModel.model.source}: real roof geometry · ` : ""}Drag to turn · click a part for details
+                  </p>
+                </div>
+                {houseModel.error && <p className="px-4 pt-3 text-xs text-amber-800">Real roof model unavailable: {houseModel.error}</p>}
+                {roofCapacityExceeded && design && (
+                  <p className="px-4 pt-3 text-xs text-amber-800">
+                    {plannedPanels} new modules are planned, but only {availableNewPanels} positions remain on the surveyed roof. Reduce PV to {num((availableNewPanels ?? 0) * PANEL_KWP)} kWp before saving or sharing this offer.
+                  </p>
+                )}
                 {design && <Economics design={design} />}
               </Card>
 
@@ -326,15 +288,15 @@ export default function Planner() {
                         t={t}
                         design={design}
                         locked={locked[t]}
-                        recommendation={recommendation.inputKey === inputKey ? recommendation.values?.[t] : undefined}
                         selected={selected === t}
                         onSelect={() => setSelected(selected === t ? null : t)}
                         onSet={(v) => setSize(t, v)}
+                        maxPanels={t === "pv_kwp" ? availableNewPanels ?? 24 : undefined}
                       />
                     ))}
                   </div>
                 ) : (
-                  !error && <Skeleton className="h-48" />
+                  !state.error && <Skeleton className="h-48" />
                 )}
                 {design && general(design.flags).length > 0 && (
                   <ul className="space-y-1 text-sm text-amber-800">
@@ -351,7 +313,6 @@ export default function Planner() {
                   <CheckList items={design.explanation.map(plain).slice(0, 4)} />
                 </Card>
               )}
-              <PartsList parts={design?.parts} /> {/* ours: */}
 
               {design && (
                 <OfferOptions design={design} offered={offered} setOffered={setOffered} />
@@ -390,15 +351,15 @@ const PART_WORDS: Record<Target, RegExp> = { pv_kwp: /\b(pv|solar)\b/i, battery_
 const flagsFor = (t: Target, flags: string[]) => flags.filter((f) => PART_WORDS[t].test(f));
 const general = (flags: string[]) => flags.filter((f) => !TARGETS.some((t) => PART_WORDS[t].test(f)));
 
-function SaveState({ preview, dirty, busy, onSave }: { preview: boolean; dirty: boolean; busy: boolean; onSave: () => void }) {
+function SaveState({ dirty, busy, blocked, onSave }: { dirty: boolean; busy: boolean; blocked: boolean; onSave: () => void }) {
   return (
     <>
       <span aria-live="polite" className="flex items-center gap-1.5 text-xs text-quiet">
         {busy && <Spinner className="size-3.5 text-ink/40" />}
-        {busy ? "Updating design…" : preview ? "Preview, not saved" : dirty ? "Unsaved changes" : "All changes saved"}
+        {busy ? "Updating design…" : blocked ? "Roof capacity needs review" : dirty ? "Unsaved changes" : "All changes saved"}
       </span>
       {dirty && (
-        <Button variant="secondary" onClick={onSave}>
+        <Button variant="secondary" disabled={blocked} onClick={onSave}>
           Save
         </Button>
       )}
@@ -406,10 +367,43 @@ function SaveState({ preview, dirty, busy, onSave }: { preview: boolean; dirty: 
   );
 }
 
+function OfferLinks({ offer }: { offer: Offer | null }) {
+  const [copied, setCopied] = useState<"yes" | "failed" | null>(null);
+  if (!offer) {
+    return (
+      <>
+        <Button variant="secondary" disabled>Preview homeowner view</Button>
+        <Button disabled>Share offer</Button>
+      </>
+    );
+  }
+  // The link carries this home's data in its hash: send it only to this customer.
+  const href = `/offer#${encodeOffer(offer)}`;
+  const share = () =>
+    navigator.clipboard.writeText(new URL(href, location.href).href).then(
+      () => setCopied("yes"),
+      () => setCopied("failed"),
+    );
+  return (
+    <>
+      <a href={href} target="_blank" rel="noopener" className={`${pill} ${pillLook.secondary}`}>
+        Preview homeowner view
+        <span className="sr-only">(opens in a new tab)</span>
+      </a>
+      <Button onClick={share}>
+        Share offer <Icon name="arrow" className="size-4" />
+      </Button>
+      <span aria-live="polite" className="text-xs text-quiet">
+        {copied === "yes" ? "Link copied" : copied === "failed" ? "Copy failed: open the preview and copy its address" : ""}
+      </span>
+    </>
+  );
+}
+
 function Changed({ step, now, onUndo }: { step: Step; now: Values | null; onUndo: () => void }) {
   const diff = now && step.before ? TARGETS.filter((t) => now[t] !== step.before![t]) : [];
   return (
-    <div role="status" className="fade-in flex flex-wrap items-start gap-x-4 gap-y-2 rounded-2xl border border-zinc-200 bg-sand-2 p-4 text-sm">
+    <div role="status" className="flex flex-wrap items-start gap-x-4 gap-y-2 rounded-2xl border border-zinc-200 bg-sand-2 p-4 text-sm">
       <div className="min-w-0 flex-1 space-y-1">
         <p className="font-medium text-ink">What changed? {step.label}</p>
         <p>
@@ -429,38 +423,29 @@ function Changed({ step, now, onUndo }: { step: Step; now: Values | null; onUndo
 
 const sized = (t: Target, v: number) => (v > 0 ? size(v, UNIT[t]) : "not included");
 
-const STEP: Record<Target, number> = { pv_kwp: 0.45, battery_kwh: 0.5, heat_pump_kw: 1, wallbox_kw: 0.1 };
+const STEP: Record<Target, number> = { pv_kwp: PANEL_KWP, battery_kwh: 0.5, heat_pump_kw: 1, wallbox_kw: 0.1 };
 
-// Keep partial numeric typing local; reset it when Undo, a pitch step or a customer change supplies a new value.
-// ours: review fix. A typed draft is only shown while the value it was typed against is still current; once it is
-// committed (blur/Enter) it is dropped, so "Reset to recommendation" (1 -> back to 0) shows 0, not the stale "1".
-const COMMITTED = Symbol("committed");
-function useNumericDraft(value: number | null, scale = 1) {
-  const text = value === null ? "" : String(+(value * scale).toFixed(6));
-  const [draft, setDraft] = useState<{ source: number | null | typeof COMMITTED; scale: number; text: string }>({ source: value, scale, text });
-  return [Object.is(draft.source, value) && draft.scale === scale ? draft.text : text,
-    (next: string) => setDraft({ source: value, scale, text: next }),
-    () => setDraft({ source: COMMITTED, scale, text: "" })] as const;
-}
-
-function SystemCard({ t, design, locked, recommendation, selected, onSelect, onSet }: {
+function SystemCard({ t, design, locked, selected, onSelect, onSet, maxPanels }: {
   t: Target;
   design: Design;
   locked: number | undefined;
-  recommendation: number | undefined;
   selected: boolean;
   onSelect: () => void;
   onSet: (v: number | null) => void;
+  maxPanels?: number;
 }) {
   const v = design.values[t];
-  const [sizeDraft, setSizeDraft, commitSizeDraft] = useNumericDraft(v);
   const p = design.probability[t];
-  const edited = locked !== undefined && (recommendation === undefined || locked !== recommendation);
+  const edited = locked !== undefined;
   const warnings = flagsFor(t, design.flags);
   // Similar homes split on this part: worth a planner's second look. Not shown as a number on purpose.
   const unsure = !edited && p > 0.3 && p < 0.7;
   const review = warnings.length > 0 || unsure;
   const id = `size-${t}`;
+  const panels = t === "pv_kwp" ? Math.round(v / PANEL_KWP) : null;
+  const canAddPanel = panels !== null && (maxPanels === undefined || panels < maxPanels);
+  const exceedsRoof = panels !== null && maxPanels !== undefined && panels > maxPanels;
+  const setPvSize = (next: number) => onSet(Math.min(Math.max(0, next), (maxPanels ?? Infinity) * PANEL_KWP));
   return (
     <Card className={`space-y-3 p-4 ${selected ? "outline-2 outline-blue-600" : ""}`}>
       <div className="flex items-start justify-between gap-2">
@@ -480,10 +465,12 @@ function SystemCard({ t, design, locked, recommendation, selected, onSelect, onS
           {review && <Status warn>Needs review</Status>}
         </div>
       </div>
-      <p key={v} className="fade-in text-2xl font-semibold tracking-tight text-ink tabular-nums">{v > 0 ? `${num(v)} ${UNIT[t]}` : "Not included"}</p>
-      {/* ours: review fix, the count comes from the engine (its module watts), not an assumed 450 W / 5 kWh product */}
-      {t === "pv_kwp" && v > 0 && design.modules ? <p className="text-sm text-quiet">{design.modules}× solar module</p> : null}
-      <PartRange t={t} design={design} /> {/* ours: */}
+      <p className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{v > 0 ? `${num(v)} ${UNIT[t]}` : "Not included"}</p>
+      {v > 0 && (
+        <p className="text-sm text-quiet">
+          {quantityFor(t, v)}× {CATALOG[t].name}
+        </p>
+      )}
       <div className="flex items-center gap-2">
         <label htmlFor={id} className="text-xs whitespace-nowrap text-quiet">
           Your size
@@ -493,19 +480,44 @@ function SystemCard({ t, design, locked, recommendation, selected, onSelect, onS
           type="number"
           inputMode="decimal"
           min={0}
+          max={t === "pv_kwp" && maxPanels !== undefined ? maxPanels * PANEL_KWP : undefined}
           step={STEP[t]}
-          value={sizeDraft}
-          onChange={(e) => setSizeDraft(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
-          onBlur={() => {
-            const next = Number(sizeDraft);
-            if (sizeDraft !== "" && Number.isFinite(next) && next >= 0 && next !== v) onSet(next);
-            commitSizeDraft();
-          }}
+          value={v}
+          onChange={(e) => Number.isFinite(e.target.valueAsNumber) && e.target.valueAsNumber >= 0 && (t === "pv_kwp" ? setPvSize(e.target.valueAsNumber) : onSet(e.target.valueAsNumber))}
           className={`${inputClass} w-24`}
         />
         <span className="text-xs text-muted">{UNIT[t]} · 0 = not included</span>
       </div>
+      {t === "pv_kwp" && (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="secondary"
+            className="px-2.5"
+            aria-label="Remove one solar panel"
+            disabled={v < PANEL_KWP}
+            onClick={() => setPvSize(Math.round((v - PANEL_KWP) * 100) / 100)}
+          >
+            − 1 panel
+          </Button>
+          <Button
+            variant="secondary"
+            className="px-2.5"
+            aria-label="Add one solar panel"
+            disabled={!canAddPanel}
+            onClick={() => setPvSize(Math.round((v + PANEL_KWP) * 100) / 100)}
+          >
+            + 1 panel
+          </Button>
+          <span className="text-xs text-muted">
+            {panels} module{panels === 1 ? "" : "s"} × 450 Wp{maxPanels !== undefined ? ` · ${maxPanels} valid roof positions` : ""}
+          </span>
+          {exceedsRoof && maxPanels !== undefined && (
+            <Button variant="secondary" className="px-2.5" onClick={() => setPvSize(maxPanels * PANEL_KWP)}>
+              Use roof maximum
+            </Button>
+          )}
+        </div>
+      )}
       {edited && (
         <Button variant="ghost" className="-ml-2" onClick={() => onSet(null)}>
           Reset to recommendation
@@ -548,10 +560,10 @@ function OfferOptions({ design, offered, setOffered }: {
         <legend className="sr-only">Alternatives to offer</legend>
         {alts.map(([t, a]) => (
           <label key={t} className="flex items-start gap-2">
-            <Checkbox // ours: custom control
-              className="mt-0.5"
-              disabled={!a.validated}
-              checked={a.validated && (offered[t] ?? a.flags.length === 0)}
+            <input
+              type="checkbox"
+              className="mt-0.5 size-4 accent-blue-600"
+              checked={offered[t] ?? a.flags.length === 0}
               onChange={(e) => setOffered({ ...offered, [t]: e.target.checked })}
             />
             <span>
@@ -568,14 +580,13 @@ function OfferOptions({ design, offered, setOffered }: {
 
 const toggleClass = "rounded-full p-1.5 text-quiet transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600";
 
-function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, query, setQuery, collapsed, onToggleCollapsed }: {
+function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery, collapsed, onToggleCollapsed }: {
   ws: Workspace;
   list: Customer[];
   scope: "mine" | "team";
   setScope: (s: "mine" | "team") => void;
   activeId: string | null;
   onOpen: (id: string) => void;
-  onSwitchMe: (me: string) => void; // ours:
   query: string;
   setQuery: (q: string) => void;
   collapsed: boolean;
@@ -616,9 +627,9 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
                     aria-current={c.id === activeId ? "page" : undefined}
                     onClick={() => onOpen(c.id)}
                     title={c.name || "Unnamed customer"}
-                    className="rounded-full focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:ring-2 aria-[current=page]:ring-blue-600"
+                    className="flex size-9 items-center justify-center rounded-full bg-white text-xs font-medium text-ink ring-1 ring-zinc-200 transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:ring-2 aria-[current=page]:ring-blue-600"
                   >
-                    <Avatar name={c.name || "Unnamed customer"} />
+                    {(c.name || "?").slice(0, 1).toUpperCase()}
                   </button>
                 </li>
               ))}
@@ -650,10 +661,8 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
           className={`${inputClass} pl-8`}
         />
       </div>
-      <Link href="/new-customer" className="group flex items-center gap-3 rounded-xl bg-white p-3 text-left ring-1 ring-zinc-200 transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-        <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-xl leading-none text-paper transition-transform duration-200 group-hover:rotate-90">+</span>
-        <span className="min-w-0"><span className="block text-sm font-semibold text-ink">Add a customer</span><span className="mt-0.5 block text-xs text-quiet">Create a project and pick its home</span></span>
-        <span aria-hidden className="ml-auto text-lg text-quiet transition-transform duration-200 group-hover:translate-x-0.5">›</span>
+      <Link href="/new-customer" className={`${pill} ${pillLook.secondary} w-full justify-center`}>
+        + New customer
       </Link>
       <Segmented
         name="scope"
@@ -675,17 +684,12 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
                 onClick={() => onOpen(c.id)}
                 className="w-full rounded-lg px-2.5 py-2 pr-20 text-left transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:bg-white aria-[current=page]:ring-1 aria-[current=page]:ring-zinc-200"
               >
-                <span className="flex items-center gap-2.5">
-                <Avatar name={c.name || "Unnamed customer"} />
-                <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium text-ink">{c.name || "Unnamed customer"}</span>
                 <span className="block truncate text-xs text-quiet">
                   {scope === "team" && `${c.owner.split(" ")[0]} · `}
                   {typeof c.inputs.annual_consumption_kwh === "number" ? `${num(c.inputs.annual_consumption_kwh, 0)} kWh/yr` : "Use unknown"}
                   {" · "}
                   {CHOICE_LABEL[String(c.inputs.heating_type)] ?? "Heating unknown"}
-                </span>
-                </span>
                 </span>
               </button>
               <span className="absolute top-2 right-2 flex items-center gap-1">
@@ -712,14 +716,11 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
       </nav>
       <label className="block space-y-1 text-xs text-quiet">
         <span>Signed in as</span>
-        <span className="flex items-center gap-2">
-          <Avatar name={ws.me} size={7} />
-          <Select // ours: custom control
-            value={ws.me}
-            onChange={onSwitchMe}
-            options={TEAM.map((t) => ({ value: t, label: t }))}
-          />
-        </span>
+        <select className={inputClass} value={ws.me} onChange={(e) => update((w) => ({ ...w, me: e.target.value }))}>
+          {TEAM.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
       </label>
     </aside>
     </div>
@@ -759,7 +760,7 @@ function InputsPanel({ meta, inputs, saved, set }: {
         if (fields.length === 0) return null;
         const edited = fields.filter((f) => (inputs[f.name] ?? null) !== (saved[f.name] ?? null)).length;
         return (
-          <details key={g.title} open={i < 2} className="group details-fade p-4"> {/* ours: fade the body in on expand */}
+          <details key={g.title} open={i < 2} className="group p-4">
             <summary className="flex cursor-pointer items-center justify-between gap-2 text-sm font-medium text-ink">
               <span>
                 {g.title}
@@ -790,7 +791,6 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
   // Some fields read better scaled (a 0.03 price increase shows as 3 % per yr); the API keeps the raw value.
   const scale = copy.scale ?? 1;
   const id = `field-${field.name}`;
-  const [numberDraft, setNumberDraft, commitNumberDraft] = useNumericDraft(typeof value === "number" ? value : null, scale);
   if (field.kind === "bool") {
     return (
       <div className="space-y-1">
@@ -813,12 +813,14 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
       <div className="space-y-1">
         <FieldLabel name={field.name} htmlFor={id} edited={edited}>{copy.label}</FieldLabel>
         {/* "Unknown" stays: a real project can leave this empty. */}
-        <Select // ours: custom control
-          id={id}
-          value={typeof value === "string" ? value : ""}
-          onChange={(v) => set(v || null)}
-          options={[{ value: "", label: "Unknown" }, ...field.choices.map((c) => ({ value: c, label: CHOICE_LABEL[c] ?? c }))]}
-        />
+        <select id={id} className={inputClass} value={typeof value === "string" ? value : ""} onChange={(e) => set(e.target.value || null)}>
+          <option value="">Unknown</option>
+          {field.choices.map((c) => (
+            <option key={c} value={c}>
+              {CHOICE_LABEL[c] ?? c}
+            </option>
+          ))}
+        </select>
       </div>
     );
   }
@@ -834,14 +836,10 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
           step={copy.step ?? "any"}
           placeholder="Unknown"
           className={inputClass}
-          value={numberDraft}
-          onChange={(e) => setNumberDraft(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
-          onBlur={() => {
-            // ours: review fix, only a real change becomes an edit (tabbing through a field no longer adds "4500 -> 4500")
-            const next = numberDraft === "" ? null : Number(numberDraft) / scale;
-            if (next === null ? value !== null : Number.isFinite(next) && next !== value) set(next);
-            commitNumberDraft();
+          value={typeof value === "number" ? +(value * scale).toFixed(6) : ""}
+          onChange={(e) => {
+            if (e.target.value === "") set(null);
+            else if (Number.isFinite(e.target.valueAsNumber)) set(e.target.valueAsNumber / scale);
           }}
         />
         {copy.unit && <span className="w-14 shrink-0 text-xs text-muted">{copy.unit}</span>}
@@ -852,16 +850,16 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
 
 function Economics({ design }: { design: Design }) {
   const e = design.economics;
+  const margin = e.cost_eur * MARGIN_PCT;
   return (
     <div className="border-t border-zinc-200 p-4">
-      <div key={`${e.cost_eur}-${e.savings_eur}`} className="fade-in grid grid-cols-3 gap-4"> {/* ours: numbers fade in when the design updates */}
-        <Stat icon="wallet" label="Investment (estimate)" value={eur(e.cost_eur)} />
-        <Stat icon="trend" label="Savings per year (estimate)" value={e.savings_eur === null ? "n/a" : eur(e.savings_eur)} />
-        <Stat icon="clock" label="Payback (estimate)" value={years(e.payback_years)} sub="PV + battery" />
+      <div className="grid grid-cols-2 gap-4">
+        <Stat icon="wallet" label="Revenue (estimate)" value={eur(e.cost_eur)} sub="list price, this project" />
+        <Stat icon="trend" label="Margin (estimate)" value={eur(margin)} sub={`${Math.round(MARGIN_PCT * 100)}% of revenue, not extra`} />
       </div>
-      <p className="mt-3 text-xs text-muted">
-        Estimates for the planner only, never shown to the homeowner. Rough assumptions: list prices, today&apos;s electricity price, a simple yield model. Heat pump fuel savings are not
-        included. {e.savings_eur === null && "Savings need the annual electricity use."}
+      <p className="mt-3 flex flex-wrap items-baseline gap-x-1.5 text-xs text-muted">
+        <span>Customer ROI: {e.savings_eur === null ? "n/a" : `${eur(e.savings_eur)}/yr`} · payback {years(e.payback_years)}.</span>
+        <span>Estimates for the planner only, never shown to the homeowner as-is. Rough assumptions: list prices, an assumed margin, today&apos;s electricity price. {e.savings_eur === null && "Savings need the annual electricity use."}</span>
       </p>
     </div>
   );
@@ -896,11 +894,17 @@ function Bars({ report }: { report: Evaluation }) {
         <span className="flex items-center gap-1.5">
           <span className="size-2 rounded-full bg-zinc-500" /> Rule of thumb
         </span>
+        {report.reference && (
+          <span className="flex items-center gap-1.5">
+            <span className="size-2 rounded-full bg-zinc-300" /> Typical design
+          </span>
+        )}
       </div>
       <ul className="space-y-2.5">
         {BARS.map(({ label, get }) => {
           const m = get(report.model);
           const b = get(report.baseline);
+          const t = report.reference ? get(report.reference) : null;
           return (
             <li key={label}>
               <div className="flex justify-between text-xs">
@@ -909,11 +913,18 @@ function Bars({ report }: { report: Evaluation }) {
                   {pct(m)} <span className="sr-only">for our model,</span>
                   <span aria-hidden> · </span>
                   {pct(b)} <span className="sr-only">for the rule of thumb</span>
+                  {t !== null && (
+                    <>
+                      <span aria-hidden> · </span>
+                      {pct(t)} <span className="sr-only">for a typical design</span>
+                    </>
+                  )}
                 </span>
               </div>
               <div className="mt-1 space-y-0.5" aria-hidden>
                 <div className="h-1.5 rounded-full bg-paper" style={{ width: `${Math.max(m * 100, 1)}%` }} />
                 <div className="h-1.5 rounded-full bg-zinc-500" style={{ width: `${Math.max(b * 100, 1)}%` }} />
+                {t !== null && <div className="h-1.5 rounded-full bg-zinc-300" style={{ width: `${Math.max(t * 100, 1)}%` }} />}
               </div>
             </li>
           );
@@ -923,7 +934,8 @@ function Bars({ report }: { report: Evaluation }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- ours: replaced by components/Evidence.tsx
+// Retained only as an internal component while the evaluation endpoint remains available; it is no longer rendered by the planner.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Reality({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
   const [report, setReport] = useState<Evaluation | null>(null);
   const [rows, setRows] = useState<HoldoutRow[] | null>(null);
@@ -952,12 +964,20 @@ function Reality({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
         !error && <div className="h-14 animate-pulse rounded-xl bg-ink/10" />
       ) : ready ? (
         <>
-          <p className="text-lg leading-snug font-semibold tracking-tight">
-            Across {report.n_test} projects the model did{" "}
-            {report.model.whole_design_within_tolerance >= report.baseline.whole_design_within_tolerance ? "better" : "worse"}{" "}
-            than the rule of thumb at reproducing the installer&apos;s recorded design:{" "}
-            {pct(report.model.whole_design_within_tolerance)} against {pct(report.baseline.whole_design_within_tolerance)}.
-          </p>
+          {report.reference ? (
+            <p className="text-lg leading-snug font-semibold tracking-tight">
+              Across {report.n_test} projects the model reproduced the installer&apos;s whole design for{" "}
+              {pct(report.model.whole_design_within_tolerance)}. A typical design that ignores the home matches{" "}
+              {pct(report.reference.whole_design_within_tolerance)}; a rule of thumb {pct(report.baseline.whole_design_within_tolerance)}.
+            </p>
+          ) : (
+            <p className="text-lg leading-snug font-semibold tracking-tight">
+              Across {report.n_test} projects the model did{" "}
+              {report.model.whole_design_within_tolerance >= report.baseline.whole_design_within_tolerance ? "better" : "worse"}{" "}
+              than the rule of thumb at reproducing the installer&apos;s recorded design:{" "}
+              {pct(report.model.whole_design_within_tolerance)} against {pct(report.baseline.whole_design_within_tolerance)}.
+            </p>
+          )}
           <p className="text-xs">
             A whole-design match means every part agrees with what the installer recorded for a project the model never saw.
             It is not the chance that this home&apos;s design is right.

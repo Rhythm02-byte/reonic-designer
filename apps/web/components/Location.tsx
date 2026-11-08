@@ -37,10 +37,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   // Load the map once; a missing/placeholder key fails here with a message instead of a blank div.
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (!key) {
-      setError("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set");
-      return;
-    }
+    if (!key) return; // ours: lint fix, the message is derived below instead of set in the effect
     let cancelled = false;
     if (!optionsSet) {
       setOptions({ key });
@@ -94,8 +91,8 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   useEffect(() => {
     const trimmed = addressText.trim();
     if (!trimmed || trimmed === value?.address) return;
-    setLoading(true);
     const t = setTimeout(() => {
+      setLoading(true); // ours: lint fix (not synchronously in the effect)
       postJson<{ lat: number; lng: number; formatted_address: string }>("geocode", { address: trimmed })
         .then((r) => {
           onChange({ address: r.formatted_address, lat: r.lat, lng: r.lng });
@@ -126,7 +123,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
       />
       <div ref={mapDiv} className="h-56 w-full rounded-xl bg-sand" />
       <p className="text-xs text-muted">Pin ziehen, um die Dachkante genau zu treffen.</p>
-      <ErrorNote error={error} />
+      <ErrorNote error={error ?? (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? null : "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set")} />
       {loading && <p className="text-xs text-quiet">Adresse wird gesucht…</p>}
       {solar && <SolarFacts solar={solar} />}
     </Card>

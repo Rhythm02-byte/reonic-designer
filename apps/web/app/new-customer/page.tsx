@@ -1,5 +1,6 @@
 "use client";
 // Full-screen customer creation: name, then pick the house on the map, then land on its design screen.
+import Link from "next/link"; // ours: lint fix
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Location, type GeoLocation } from "@/components/Location";
@@ -43,7 +44,7 @@ export default function NewCustomerPage() {
               />
             </label>
             <div className="flex gap-2">
-              <a href="/" className={`${pill} ${pillLook.secondary}`}>Cancel</a>
+              <Link href="/" className={`${pill} ${pillLook.secondary}`}>Cancel</Link>
               <Button onClick={() => setStep(1)} disabled={!name.trim()}>Next: pick house</Button>
             </div>
           </div>

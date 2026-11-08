@@ -20,7 +20,7 @@ from engine.models.schemas import (
     ValidateResponse, WallboxDesign,
 )
 from engine.ask_next import ask_next
-from engine.plausibility import input_flags
+from engine.plausibility import default_demand_flag, input_flags
 from engine.etl.normalize import DEFAULT_DEMAND_KWH
 from engine.policy import rules
 from engine.policy.designer import hit_to_flag
@@ -379,8 +379,8 @@ def design(req: DesignRequest, store: Store) -> DesignResponse:
         reasons.append(ReasonCode(code="HP_HEAT_DEMAND", component="heatPump", value=proposal.heat_pump.kw,
                                   evidence={"heat_demand_kwh": home["heat_demand_kwh"], "full_load_hours": bl.HP_FULL_LOAD_HOURS}))
     flags: list[Flag] = []
-    if abs(i.demand_kwh - 4500) < 1e-6 and "demandKwh" not in i.provenance:
-        flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
+    if (f := default_demand_flag(i)) is not None:
+        flags.append(f)
     if not known:
         flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; using pooled statistics."))
     if i.existing_pv and not i.existing_pv.trusted:
@@ -450,8 +450,8 @@ def design_policy(req: DesignRequest, store: Store) -> DesignResponse:
         bom=_bom(store.catalogs.get(i.installer_id), proposal),
         provenance=input_provenance(i),
         engine_version=POLICY_VERSION, latency_ms=0.0)
-    if abs(i.demand_kwh - DEFAULT_DEMAND_KWH) < 1e-6 and "demandKwh" not in i.provenance:  # an entered 4,500 is real
-        resp.flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
+    if (f := default_demand_flag(i)) is not None:  # an entered 4,500 is real
+        resp.flags.append(f)
     if i.installer_id not in dz.installers:
         resp.flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; the policy falls back to pooled behaviour."))
     if i.existing_pv and not i.existing_pv.trusted:

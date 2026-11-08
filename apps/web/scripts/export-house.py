@@ -56,7 +56,7 @@ try:
     report = transform.transform_obj(str(directory / 'model.obj'), level_ground=False, requested_level=20)
     if report.coverage == 'flat' or report.relief_m < 2:
         raise RuntimeError('Only flat imagery was returned for this address. Use the fallback or a manually measured roof.')
-    bpy_candidates = [os.environ.get('BLENDER_PATH'), shutil.which('blender')]
+    bpy_candidates = [os.environ.get('BLENDER_PATH'), shutil.which('blender'), '/Applications/Blender.app/Contents/MacOS/Blender']
     if os.name == 'nt':
         for version in ['Blender 4.3', 'Blender 5.2']:
             bpy_candidates.append(str(pathlib.Path(os.environ.get('PROGRAMFILES', 'C:/Program Files')) / 'Blender Foundation' / version / 'blender.exe'))

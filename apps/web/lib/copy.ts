@@ -105,6 +105,7 @@ export type Offer = {
   options: OfferOption[]; // options[0] is the installer's recommendation
   moduleWp?: number; // ours: the engine's module watts, so the homeowner sees the same panel count as the planner
   economics?: { savings_eur: number | null; payback_years: number | null }; // ours: homeowner-facing ROI, no prices
+  location?: { lat: number; lng: number }; // ours: lets the homeowner view open the same real 3D building (local server only)
 };
 
 const toB64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
@@ -129,6 +130,7 @@ export function decodeOffer(code: string): Offer | null {
       if (!isText(opt?.label) || !TARGETS.every((t) => isSize(opt.values?.[t]))) return null;
     }
     if (o.moduleWp !== undefined && !(typeof o.moduleWp === "number" && o.moduleWp >= 300 && o.moduleWp <= 700)) delete o.moduleWp; // ours
+    if (o.location !== undefined && !(typeof o.location?.lat === "number" && typeof o.location?.lng === "number" && Math.abs(o.location.lat) <= 85 && Math.abs(o.location.lng) <= 180)) delete o.location; // ours
     const isNum = (x: unknown): x is number => typeof x === "number" && Number.isFinite(x);
     if (o.economics !== undefined) {
       const e = o.economics;

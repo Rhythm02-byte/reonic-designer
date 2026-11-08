@@ -186,6 +186,7 @@ export default function Planner() {
           ],
           ...(design.modules && design.values.pv_kwp > 0 && { moduleWp: Math.round((design.values.pv_kwp * 1000) / design.modules) }), // ours:
           economics: { savings_eur: design.economics.savings_eur, payback_years: design.economics.payback_years }, // ours:
+          ...(!preview && customer.location && { location: { lat: customer.location.lat, lng: customer.location.lng } }), // ours: real 3D for the homeowner
         }
       : null;
 

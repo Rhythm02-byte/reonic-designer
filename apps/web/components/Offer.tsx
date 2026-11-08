@@ -4,6 +4,7 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 import { TARGETS, type Inputs, type Target, type Values } from "@/lib/api";
 import { decodeOffer, describe, eur, num, type Offer, panels, years } from "@/lib/copy";
 import { House } from "./House";
+import { RealHouse } from "./RealHouse";
 import { OfferParts } from "./PartsList"; // ours:
 import { Avatar, Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook, Radio } from "./ui";
 
@@ -73,6 +74,7 @@ export default function OfferPage() {
 function OfferView({ offer }: { offer: Offer }) {
   const { inputs, options, customer, planner, economics } = offer;
   const [i, setI] = useState(0);
+  const [asked, setAsked] = useState(false); // ours: mailto fallback note
   const choice = options[i].values;
   const reasons = recommendationReasons(inputs, options[0].values, offer.moduleWp);
   const subject = `Question about my home energy proposal (${options[i].label})`;
@@ -105,6 +107,25 @@ This is a request, not an order.`;
         <div className="space-y-4">
           <Card className="overflow-hidden">
             <div className="h-[340px] bg-gradient-to-b from-sand-2 to-sand sm:h-[460px] xl:h-[550px]">
+              {offer.location ? ( // ours: same Stylised / Real 3D toggle as the planner; stylised stays the default and the fallback
+                <RealHouse location={{ address: "", ...offer.location }} proposedPanels={panels(choice.pv_kwp, offer.moduleWp)} existingPv={(typeof inputs.existing_pv_kwp === "number" && inputs.existing_pv_kwp > 0)}
+                  fallback={
+              <House
+                    autoRotate
+                    values={choice}
+                    modules={panels(choice.pv_kwp, offer.moduleWp)} // ours:
+                    hasEv={inputs.has_ev === true}
+                    existing={{
+                      pv_kwp: typeof inputs.existing_pv_kwp === "number" ? inputs.existing_pv_kwp : 0,
+                      battery_kwh: typeof inputs.existing_battery_kwh === "number" ? inputs.existing_battery_kwh : 0,
+                      wallbox: inputs.has_existing_wallbox === true,
+                    }}
+                    description={describe(choice, panels(choice.pv_kwp, offer.moduleWp))} // ours: wp
+                    labels={{ pv_kwp: `${panels(choice.pv_kwp, offer.moduleWp)} solar panels`, battery_kwh: `Battery ${num(choice.battery_kwh)} kWh`, heat_pump_kw: NAME.heat_pump_kw, wallbox_kw: NAME.wallbox_kw }}
+                  />
+                  }
+                  onAsset={() => {}} onLayout={() => {}} onCapacity={() => {}} />
+              ) : (
               <House
                 autoRotate
                 values={choice}
@@ -118,6 +139,7 @@ This is a request, not an order.`;
                 description={describe(choice, panels(choice.pv_kwp, offer.moduleWp))} // ours: wp
                 labels={{ pv_kwp: `${panels(choice.pv_kwp, offer.moduleWp)} solar panels`, battery_kwh: `Battery ${num(choice.battery_kwh)} kWh`, heat_pump_kw: NAME.heat_pump_kw, wallbox_kw: NAME.wallbox_kw }}
               />
+              )}
             </div>
           </Card>
 
@@ -167,12 +189,17 @@ This is a request, not an order.`;
               ))}
             </fieldset>
           )}
+          {/* ours: mailto alone does nothing without a mail app; the message is also copied, and we say so */}
           <a
             href={`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}
+            onClick={() => { navigator.clipboard?.writeText(`${subject}
+
+${body}`).then(() => setAsked(true), () => setAsked(true)); }}
             className={`${pill} ${pillLook.primary} w-full justify-center`}
           >
             Talk to {planner} about this option <Icon name="arrow" className="size-4" />
           </a>
+          <p aria-live="polite" className="min-h-4 text-xs text-quiet">{asked ? `Message copied: if no email window opened, paste it into a message to ${planner}.` : ""}</p>
         </aside>
       </div>
       <section aria-labelledby="why-recommended" className="grid gap-6 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 lg:grid-cols-[minmax(220px,0.8fr)_2fr] lg:gap-12">

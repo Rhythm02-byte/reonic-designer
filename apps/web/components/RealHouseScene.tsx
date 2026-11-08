@@ -1,8 +1,8 @@
 "use client";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Line, OrbitControls, useGLTF } from "@react-three/drei";
-import { Box3, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, Raycaster, Vector3, type Object3D } from "three";
+import { Environment, Lightformer, Line, OrbitControls, useGLTF } from "@react-three/drei";
+import { Box3, Group, Matrix4, MeshStandardMaterial, Quaternion, Raycaster, Vector3, type Object3D } from "three";
 import type { HouseJob, HouseLayout, Vec3 } from "@/lib/real-house";
 import { packRoof } from "@/lib/roof-layout";
 import { buildHeightfield, MODULE, placeFromSolar, placeOnGrid, type Heightfield } from "@/lib/roof-heightfield";
@@ -18,7 +18,6 @@ const tuple = (v: Vector3): Vec3 => [v.x,v.y,v.z];
 const STYLISED = "/models/house.glb"; // ours: Faris's Blender house; its PV_Panel_01 is the shared panel look
 // ours: panel look on the photo mesh (blue glass with a slight sky reflection, light aluminium frame)
 const GLASS = new MeshStandardMaterial({ color: "#27467a", roughness: 0.18, metalness: 0.55, emissive: "#16305c", emissiveIntensity: 0.35 });
-const FRAME = new MeshStandardMaterial({ color: "#d4d8de", roughness: 0.4, metalness: 0.7 });
 const fields = new WeakMap<Object3D, Map<string, Heightfield>>(); // ours: built once per loaded GLB, survives view toggles
 
 /** Faris's panel (frame + cell grid), re-based so local x = width, y = height (down the slope), z = up. */
@@ -28,13 +27,7 @@ function usePanelTemplate() {
     const node = scene.getObjectByName("PV_Panel_01");
     if (!node) return null;
     const inner = node.clone(true);
-    // ours: on the bright photo mesh Faris's dark cells read as black blocks; dark parts become blue glass, light parts (frame) stay
-    inner.traverse(o=>{
-      const m=o as Mesh; if(!m.isMesh) return;
-      const mat=(Array.isArray(m.material)?m.material[0]:m.material) as MeshStandardMaterial;
-      const c=mat?.color; const dark=!c || (c.r+c.g+c.b)/3<0.25;
-      m.material = dark ? GLASS : FRAME;
-    });
+    // ours: Faris's own panel materials; the stylised scene's light rig (below) makes them read the same here
     inner.position.set(0,0,0); inner.quaternion.identity(); inner.scale.set(1,1,1); inner.updateMatrixWorld(true);
     const box = new Box3().setFromObject(inner), size = box.getSize(new Vector3()), mid = box.getCenter(new Vector3());
     inner.position.copy(mid).negate();
@@ -120,13 +113,15 @@ function Building({ job, layout, roof, proposedPanels, draft, marking, onPoint, 
     {layout.surfaces.flatMap((s,i)=>[<Line key={`roof-${i}`} points={[...s.outline,s.outline[0]]} color="#2563eb" lineWidth={2} />,...s.exclusions.map((p,j)=><Line key={`hole-${i}-${j}`} points={[...p,p[0]]} color="#d97706" lineWidth={3} />)])}
     {draft.length>1 && <Line points={draft} color="#2563eb" lineWidth={3} />}
     {draft.map((p,i)=><mesh key={`draft-${i}`} position={p}><sphereGeometry args={[0.13,8,8]} /><meshBasicMaterial color="#2563eb" /></mesh>)}
-    <OrbitControls target={focus} makeDefault enableDamping minDistance={3} maxDistance={size*3} />
+    <OrbitControls target={focus} makeDefault enableDamping enablePan={false} minDistance={8} maxDistance={size*2.5} minPolarAngle={0.25} maxPolarAngle={1.3} /* ours: never below the ground */ />
   </>;
 }
 
 export default function RealHouseScene(props:Props) {
   return <Canvas frameloop="demand" camera={{position:[40,50,40],near:0.1,far:10000}} dpr={[1,1.5]} aria-label="Actual building with preliminary panel placement">
     <hemisphereLight args={["#ffffff","#ddd8c9",2]} /><directionalLight position={[30,60,20]} intensity={2} />
+    {/* ours: same reflection rig as Faris's stylised house, so the panels get their sky sheen */}
+    <Environment resolution={128}><Lightformer form="rect" intensity={2} position={[0,10,10]} scale={[20,6,1]} /><Lightformer form="rect" intensity={0.8} position={[-10,4,-6]} scale={[10,4,1]} /></Environment>
     <Suspense fallback={null}><Building {...props} /></Suspense>
   </Canvas>;
 }

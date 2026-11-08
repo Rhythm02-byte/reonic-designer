@@ -221,7 +221,7 @@ export default function Planner() {
             options={[...(preview ? [{ value: "", label: "Real project" }] : []), ...ws.customers.map((c) => ({ value: c.id, label: c.name }))]}
           />
           <nav aria-label="Project" className="hidden gap-1 text-sm md:flex">
-            {[["design", "Design"], ["inputs", "Inputs"], ["evidence", "Evidence"]].map(([href, label]) => (
+            {[["design", "Design"], ["inputs", "Inputs"]].map(([href, label]) => (
               <a key={href} href={`#${href}`} onClick={() => flash(href)} className={`${pill} ${pillLook.ghost}`}>
                 {label}
               </a>
@@ -285,9 +285,7 @@ export default function Planner() {
                 if (changed && customer.roofCapacityConfirmed) setInput("roof_max_modules", null);
                 editCustomer({ location: location ?? undefined, ...(changed ? { realHouse: undefined, roofLayout: undefined, roofCapacityConfirmed: false } : {}) });
               }} />}
-              <div id="evidence" className="scroll-mt-20 rounded-2xl">
-                <Evidence onLoad={load} /> {/* ours: replaces his <Reality onLoad={load} /> (compares with the installer's usual design) */}
-              </div>
+              {/* Faris: no "Checked against reality" block on the planner; the measurement lives in /lab and the pitch */}
             </div>
 
             <section id="design" className="min-w-0 scroll-mt-20 space-y-4 rounded-2xl" aria-labelledby="design-h">

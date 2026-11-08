@@ -29,7 +29,9 @@ CACHE_DIR = Path(os.environ.get("HOUSE_CACHE_DIR", ROOT / ".cache" / "lod2-house
 # `blender` binary to PATH.  Docker uses its installed command; local macOS
 # development works out of the box with the standard app location.
 _MACOS_BLENDER = Path("/Applications/Blender.app/Contents/MacOS/Blender")
-BLENDER = os.environ.get("BLENDER_BIN") or (str(_MACOS_BLENDER) if _MACOS_BLENDER.is_file() else "blender")
+# ours: Windows installs Blender under Program Files without adding it to PATH; take the newest one found.
+_WIN_BLENDER = sorted(Path(os.environ.get("ProgramFiles", r"C:\Program Files"), "Blender Foundation").glob("Blender */blender.exe"), key=lambda p: [int(x) if x.isdigit() else 0 for x in p.parent.name.split()[-1].split(".")]) if os.name == "nt" else []
+BLENDER = os.environ.get("BLENDER_BIN") or (str(_MACOS_BLENDER) if _MACOS_BLENDER.is_file() else str(_WIN_BLENDER[-1]) if _WIN_BLENDER else "blender")
 _PANELS = re.compile(r"['\"]panels['\"]\s*:\s*(\d+)")
 # Include a renderer revision in the cache key: a corrected panel-layout
 # algorithm must not keep serving an older GLB for the same address.

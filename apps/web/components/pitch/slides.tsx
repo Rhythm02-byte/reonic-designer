@@ -470,7 +470,7 @@ export const SLIDES: Slide[] = [
       },
       {
         label: "Reality check",
-        hint: "Open “Evidence”, load a held-out project and compare our design with the expert’s.",
+        hint: "The proof is on the next slide: 325 unseen 2026 projects (details in /lab).",
         focus: "#reality",
       },
     ],

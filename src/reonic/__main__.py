@@ -1,7 +1,7 @@
 """CLI:  python -m reonic synth | build | eval | train"""
 import argparse
 
-from . import data, evaluate, synth
+from . import artifact, data, evaluate, synth
 from .engine import Designer
 
 
@@ -36,7 +36,7 @@ def main() -> None:
         print(f"wrote {len(df)} projects to {a.out}")
         print("PV size source:", df["pv_source"].value_counts().to_dict() if "pv_source" in df else "n/a")
     elif a.cmd == "train":
-        Designer.train(data.load(a.data)).save(a.out)
+        artifact.save(a.out, Designer.train(data.load(a.data)), artifact.signature(a.data))
         print(f"saved {a.out}")
 
 

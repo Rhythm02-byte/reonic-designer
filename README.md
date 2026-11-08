@@ -51,6 +51,22 @@ python -m reonic synth                          # fake data -> data/synthetic.cs
 pytest -q
 ```
 
+## Run with Docker
+
+One command starts the API and the web planner; nothing needs installing except Docker.
+
+```bash
+docker compose up --build                       # web planner http://localhost:3000, API http://localhost:8000
+docker compose --profile fallback up app        # Streamlit fallback app http://localhost:8501
+docker compose --profile tools run --rm tools python -m reonic eval   # regenerate reports/ (also: pytest -q)
+docker compose down
+```
+
+- The Reonic export is **not** in any image. `./data` is mounted read-only, so put the export in `data/raw/` first. Without it the containers fall back to synthetic data and say so; never record a demo in that mode.
+- The first start trains the model (about 40 seconds). It is then saved in a volume and reused (about 1 second) until the code or the data change, when it is rebuilt automatically.
+- Every port is published on `127.0.0.1` only. Keep it that way: the API serves designs built on confidential data.
+- The web planner's Evidence panel reads `reports/eval.json`; run the `eval` command above once if it is empty.
+
 Real data: copy the Reonic export folders (`<installer_id>/projects_status_quo.csv` + `project_options_parts.csv`) into `data/raw/`. It is gitignored; never commit it. See CONTEXT.md §7 for the export's quirks.
 
 ## Approach

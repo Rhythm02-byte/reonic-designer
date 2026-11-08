@@ -15,7 +15,7 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 from threadpoolctl import threadpool_limits
 
-from . import data, physics
+from . import artifact, data, physics
 from .engine import Designer
 from .schema import (BOOL_FIELDS, HEATING_TYPES, INPUT_FIELDS, LABEL, LOAD_PROFILES, NUMERIC_FIELDS, TARGETS,
                      UNIT, HomeInputs)
@@ -28,7 +28,14 @@ MAX_SIZE = 1_000.0  # sanity bound for locked sizes (kWp / kWh / kW)
 
 @cache
 def designer() -> Designer:
-    return Designer.load(MODEL) if MODEL.exists() else Designer.train(data.load(data.default_data_path()))
+    """The saved model if it still matches the code and data (see artifact.py); otherwise train and save it."""
+    path = data.default_data_path()
+    sig = artifact.signature(path)
+    d = artifact.load_if_fresh(MODEL, sig)
+    if d is None:
+        d = Designer.train(data.load(path))
+        artifact.save(MODEL, d, sig)
+    return d
 
 
 # -- input validation (trust boundary) ----------------------------------------------------------
@@ -93,7 +100,7 @@ def meta(_body) -> dict:
         "fields": [{"name": f, "kind": "number" if f in NUMERIC_FIELDS else "bool" if f in BOOL_FIELDS else "choice",
                     "choices": list(CHOICES.get(f, ()))} for f in INPUT_FIELDS],
         "targets": [{"name": t, "label": LABEL[t], "unit": UNIT[t], "catalog": designer().catalog[t]} for t in TARGETS],
-        "synthetic": not MODEL.exists() and data.default_data_path().endswith("synthetic.csv"),
+        "synthetic": data.default_data_path().endswith("synthetic.csv"),
     }
 
 

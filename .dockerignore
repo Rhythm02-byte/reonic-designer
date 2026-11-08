@@ -1,0 +1,14 @@
+# Never bake confidential data, trained models or reports into an image: they are mounted at run time.
+data/
+models/
+reports/
+.git/
+.venv/
+.codegraph/
+.pytest_cache/
+**/__pycache__/
+**/*.egg-info/
+**/.DS_Store
+.env
+web/
+docs/

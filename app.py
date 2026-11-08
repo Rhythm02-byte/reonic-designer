@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from reonic import data, evaluate, synth
+from reonic import artifact, data, evaluate, synth
 from reonic.baseline import rule_of_thumb
 from reonic.engine import Designer
 from reonic.model import ORDER
@@ -19,6 +19,7 @@ from reonic.schema import HEATING_TYPES, LABEL, LOAD_PROFILES, TARGETS, UNIT, Ho
 
 DATA = Path(os.environ.get("REONIC_DATA", data.default_data_path()))
 REPORTS = Path("reports")
+DEMO_MODEL = Path("models/demo_designer.joblib")  # designer trained on the training split only, plus its held-out predictions
 UNKNOWN = "unknown"
 CUSTOM = "Enter your own home"
 TOLERANCE = {"pv_kwp": 0.20, "battery_kwh": 0.25, "heat_pump_kw": 0.25}
@@ -46,10 +47,16 @@ def get_demo():
     """Designer trained on the training split, plus the held-out homes and its predictions on them."""
     if not DATA.exists() and DATA.name == "synthetic.csv":
         synth.generate().to_csv(DATA, index=False)
+    sig = artifact.signature(DATA)
+    cached = artifact.load_if_fresh(DEMO_MODEL, sig)  # saved after the first start; rebuilt if code or data changed
+    if cached is not None:
+        return cached
     df = data.load(DATA)
     train, test = evaluate.split(df, 0.2, 0, None)
     designer = Designer.train(train)
-    return designer, len(train), test, designer.design_batch(test)
+    out = designer, len(train), test, designer.design_batch(test)
+    artifact.save(DEMO_MODEL, out, sig)
+    return out
 
 
 def pick_examples(test: pd.DataFrame, pred: pd.DataFrame) -> dict[str, int]:

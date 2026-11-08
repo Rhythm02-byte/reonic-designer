@@ -1,0 +1,57 @@
+# Run the whole project:   docker compose up --build
+#   web planner       http://localhost:3000
+#   designer API      http://localhost:8000/api/meta
+#   Streamlit app     http://localhost:8501   (start it with: docker compose --profile fallback up)
+#
+# The Reonic export stays on your machine: ./data is mounted read-only and is never copied into an image.
+# Without data/raw the API and app fall back to synthetic data and say so; never record a demo in that mode.
+# Every port is published on 127.0.0.1 only. Do not change that: the API serves the confidential data's designs.
+services:
+  api:
+    build: .
+    command: ["uvicorn", "reonic.api:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports: ["127.0.0.1:8000:8000"]
+    volumes:
+      - ./data:/app/data:ro
+      - models:/app/models        # saved model; rebuilt automatically when code or data change
+      - ./reports:/app/reports    # reports/eval.json is read by the web app's Evidence panel
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/meta', timeout=120)"]
+      interval: 15s
+      timeout: 130s
+      retries: 10
+      start_period: 90s
+
+  web:
+    build:
+      context: ./web
+      args:
+        REONIC_API: http://api:8000
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api:
+        condition: service_healthy
+
+  app:
+    profiles: ["fallback"]
+    build: .
+    command: ["streamlit", "run", "app.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.headless", "true"]
+    ports: ["127.0.0.1:8501:8501"]
+    volumes:
+      - ./data:/app/data:ro
+      - models:/app/models
+      - ./reports:/app/reports
+
+  # One-off jobs:  docker compose run --rm tools python -m reonic eval
+  #                docker compose run --rm tools pytest -q
+  tools:
+    profiles: ["tools"]
+    build: .
+    command: ["pytest", "-q"]
+    volumes:
+      - ./data:/app/data:ro
+      - models:/app/models
+      - ./reports:/app/reports
+
+volumes:
+  models:

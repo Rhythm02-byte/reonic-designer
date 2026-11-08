@@ -13,4 +13,5 @@ export function proxy(req: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/engine/holdout/:path*", "/engine/holdout", "/lab/run"] };
+// /api/geocode and /api/solar spend the team's paid Google key: local only too, so a public link can't burn it.
+export const config = { matcher: ["/engine/holdout/:path*", "/engine/holdout", "/lab/run", "/api/geocode", "/api/solar"] };

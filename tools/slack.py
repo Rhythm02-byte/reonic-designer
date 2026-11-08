@@ -3,8 +3,8 @@
 
   start  [--as NAME] [--full]   compact task-start digest; --full shows all fetched activity
   post   <channel> <text> [--as NAME] [--kind done|blocked|ask|decision|contract]
-  claim  <area> [--as NAME]     lock an area/folder so nobody edits it in parallel; release <area> frees it
-  release <area> [--as NAME]
+  claim  <area> [area ...] [--as NAME]    update your single status in #claims (advisory)
+  release <area> [area ...] [--as NAME]  remove your claims without new messages
   done   <what changed> [--as NAME]   changelog line (+ short git commit) to #changelog
   read   <channel> [--since 2h] [--limit 20]
   setup                         create missing channels, bot joins (idempotent)
@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 API = "https://slack.com/api/"
-CHANNELS = ["board", "engine", "web", "eval", "pitch", "runs", "changelog"]
+CHANNELS = ["board", "engine", "web", "eval", "pitch", "runs", "changelog", "claims"]
 KINDS = {"done": "✅", "blocked": "🛑", "ask": "❓", "decision": "📌", "contract": "📜"}
 NOTE = "slack: no SLACK_BOT_TOKEN set, skipping (see tools/README.md)"
 
@@ -127,11 +127,13 @@ def since_ts(s: str) -> float:
     return time.time() - int(m[1]) * {"m": 60, "h": 3600, "d": 86400}[m[2]]
 
 
-def fetch(tok: str, channel: str, since: str, limit: int = 50, paginate: bool = False) -> list[dict] | None:
+def fetch(tok: str, channel: str, since: str | None, limit: int = 50, paginate: bool = False) -> list[dict] | None:
     cid = channel_id(tok, channel)
     if not cid:
         return None
-    params = {"channel": cid, "limit": limit, "oldest": "%.6f" % since_ts(since)}
+    params = {"channel": cid, "limit": limit}
+    if since is not None:
+        params["oldest"] = "%.6f" % since_ts(since)
     messages = []
     while True:
         r = call("conversations.history", tok, params, False)
@@ -162,9 +164,28 @@ def read(channel: str, since: str, limit: int) -> int:
     return 0
 
 
+def registry_row(m: dict) -> tuple[str, list[str]] | None:
+    lines = m.get("text", "").splitlines()
+    match = re.fullmatch(r"CLAIMS \[([^\]]+)'s agent\]", lines[0]) if lines else None
+    if match:
+        return match[1], [line[2:] for line in lines[1:] if line.startswith("- ")]
+    return None
+
+
+def owner(label: str) -> str:
+    match = re.match(r"\[([^\]]+)'s agent\]", label)
+    return match[1].casefold() if match else label.casefold()
+
+
 def open_claims(msgs: list[dict]) -> dict[str, str]:
     claims: dict[str, str] = {}
-    for m in msgs:
+    for m in sorted(msgs, key=lambda m: float((m.get("edited") or {}).get("ts", m["ts"]))):
+        row = registry_row(m)
+        if row:
+            name, areas = row
+            claims = {a: w for a, w in claims.items() if owner(w) != name.casefold()}
+            claims.update({a: f"[{name}'s agent]" for a in areas})
+            continue
         t = m.get("text", "")
         mo = re.match(r"(?:🔒|:lock:) CLAIM (\S+) — (.+)", t)
         if mo:
@@ -173,6 +194,67 @@ def open_claims(msgs: list[dict]) -> dict[str, str]:
         if mo:
             claims.pop(mo[1], None)
     return claims
+
+
+def normalize_area(area: str) -> str:
+    area = area.replace("\\", "/")
+    if area.startswith("/") or ":" in area or any(c.isspace() for c in area) or ".." in area.split("/"):
+        raise ValueError("use repository-relative paths without whitespace or '..'")
+    return "/".join(p for p in area.split("/") if p and p != ".") or "."
+
+
+def overlaps(a: str, b: str) -> bool:
+    a, b = normalize_area(a).casefold(), normalize_area(b).casefold()
+    return a == "." or b == "." or a == b or a.startswith(b + "/") or b.startswith(a + "/")
+
+
+def change_claims(name: str, areas: list[str], release: bool = False) -> int:
+    tok = token()
+    if not tok:
+        print(NOTE)
+        return 0
+    try:
+        areas = sorted({normalize_area(a) for a in areas})
+    except ValueError as e:
+        print(f"slack: {e}", file=sys.stderr)
+        return 1
+    board = fetch(tok, "board", "12h", 100, paginate=True)
+    registry = fetch(tok, "claims", None, 100, paginate=True)
+    if board is None or registry is None:
+        print("slack: cannot check claims; run setup if #claims is missing", file=sys.stderr)
+        return 1
+    active = open_claims(board + registry)
+    mine = {normalize_area(a) for a, w in active.items() if owner(w) == name.casefold()}
+    for area in areas:
+        for held, by in active.items():
+            if owner(by) != name.casefold() and (overlaps(area, held) if not release else
+                                                normalize_area(area).casefold() == normalize_area(held).casefold()):
+                print(f"slack: {area} conflicts with {held} — {by}", file=sys.stderr)
+                return 1
+    previous = set(mine)
+    if release:
+        mine = {a for a in mine if a.casefold() not in {p.casefold() for p in areas}}
+    else:
+        # One parent claim is enough; collapse redundant child scopes in a batch.
+        combined = {a.casefold(): a for a in sorted(mine | set(areas))}
+        mine = {a for key, a in combined.items() if not any(
+            parent != key and (parent == "." or key.startswith(parent + "/")) for parent in combined)}
+    rows = [m for m in registry if registry_row(m) and registry_row(m)[0].casefold() == name.casefold()]
+    row = rows[-1] if rows else None
+    stored = {normalize_area(a) for a in registry_row(row)[1]} if row else set()
+    if previous == mine and stored == mine:
+        print("claims unchanged")
+        return 0
+    text = f"CLAIMS [{name}'s agent]" + "".join(f"\n- {a}" for a in sorted(mine))
+    params = {"channel": channel_id(tok, "claims"), "text": text}
+    if row:
+        params["ts"] = row["ts"]
+    result = call("chat.update" if row else "chat.postMessage", tok, params, True)
+    if not result.get("ok"):
+        print(f"slack: claim update failed: {result.get('error')}", file=sys.stderr)
+        return 1
+    print("claims updated in #claims")
+    return 0
 
 
 def is_claim(m: dict) -> bool:
@@ -186,8 +268,9 @@ def start(name: str, full: bool = False) -> int:
         return 0
     me = name.lower().split()[0]
     board = fetch(tok, "board", "12h", 100, paginate=True)
-    if board is None:
-        print("slack: cannot read #board; claims could not be checked", file=sys.stderr)
+    registry = fetch(tok, "claims", None, 100, paginate=True)
+    if board is None or registry is None:
+        print("slack: cannot read #board/#claims; claims could not be checked (run setup)", file=sys.stderr)
         return 1
     seen = set()
 
@@ -209,15 +292,15 @@ def start(name: str, full: bool = False) -> int:
     print("== #board, last 6h ==")
     recent = [m for m in board if time.time() - float(m["ts"]) < 21600]
     section("board", [m for m in recent if full or not is_claim(m)], 8)
-    print("== open claims (12h history; don't touch these areas) ==")
-    print("\n".join(f"  {a} — {w}" for a, w in open_claims(board).items()) or "  none")
+    print("== open claims (#claims + legacy board 12h; don't touch these areas) ==")
+    print("\n".join(f"  {a} — {w}" for a, w in open_claims(board + registry).items()) or "  none")
     changelog = fetch(tok, "changelog", "1d", 100, paginate=True)
     print("== #changelog, last 1d ==")
     section("changelog", changelog or [], 5)
     print(f"== additional mentions of '{me}' (last 6h) ==")
     failed = ["changelog"] if changelog is None else []
     for c in CHANNELS:
-        if c == "runs":
+        if c in ("runs", "claims"):
             continue
         msgs = recent if c == "board" else changelog if c == "changelog" else fetch(tok, c, "6h", 100, paginate=True)
         if msgs is None:
@@ -273,7 +356,7 @@ def main() -> int:
     def cmd(n, *pos, **opts):
         s = sub.add_parser(n)
         for a in pos:
-            s.add_argument(a, nargs="+" if a == "text" else None)
+            s.add_argument(a, nargs="+" if a in ("text", "area") else None)
         s.add_argument("--as", dest="as_", default=None)
         for k, v in opts.items():
             s.add_argument("--" + k, **v)
@@ -293,9 +376,9 @@ def main() -> int:
     if a.cmd == "read":
         return read(a.channel, a.since, a.limit)
     if a.cmd == "claim":
-        return send("board", f"🔒 CLAIM {a.area} — [{n}'s agent] since {time.strftime('%H:%M')}")
+        return change_claims(n, a.area)
     if a.cmd == "release":
-        return send("board", f"🔓 RELEASE {a.area} [{n}'s agent]")
+        return change_claims(n, a.area, release=True)
     if a.cmd == "done":
         c = commit()
         return send("changelog", f"✅ [{n}'s agent] {' '.join(a.text)}" + (f" · {c}" if c else ""))

@@ -81,5 +81,72 @@ class DigestTests(unittest.TestCase):
         fetch.assert_not_called()
 
 
+class ClaimTests(unittest.TestCase):
+    def change(self, registry, areas, release=False, board=None):
+        def fetch(_tok, channel, *_args, **_kwargs):
+            return registry if channel == "claims" else board or []
+
+        with patch.object(slack, "token", return_value="offline"), \
+                patch.object(slack, "fetch", side_effect=fetch), \
+                patch.object(slack, "channel_id", return_value="C123"), \
+                patch.object(slack, "call", return_value={"ok": True}) as call, \
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            result = slack.change_claims("Kian", areas, release)
+        return result, call
+
+    def test_first_claim_batches_paths_into_one_registry_message(self):
+        result, call = self.change([], ["tools/", "AGENTS.md"])
+        self.assertEqual(result, 0)
+        self.assertEqual(call.call_count, 1)
+        self.assertEqual(call.call_args.args[0], "chat.postMessage")
+        self.assertEqual(call.call_args.args[2]["text"], "CLAIMS [Kian's agent]\n- AGENTS.md\n- tools")
+
+    def test_repeat_claim_and_release_are_noops(self):
+        for row, release in [("CLAIMS [Kian's agent]\n- tools", False), ("CLAIMS [Kian's agent]", True)]:
+            result, call = self.change([{"ts": "1", "text": row}], ["tools/"], release)
+            self.assertEqual(result, 0)
+            call.assert_not_called()
+
+    def test_release_updates_same_message_and_preserves_other_paths(self):
+        result, call = self.change([{"ts": "1", "text": "CLAIMS [Kian's agent]\n- tools\n- AGENTS.md"}], ["tools"], True)
+        self.assertEqual(result, 0)
+        self.assertEqual(call.call_args.args[0], "chat.update")
+        self.assertEqual(call.call_args.args[2]["ts"], "1")
+        self.assertEqual(call.call_args.args[2]["text"], "CLAIMS [Kian's agent]\n- AGENTS.md")
+
+    def test_foreign_parent_child_and_case_conflicts_do_not_write(self):
+        for held, requested in [("tools", "TOOLS/slack.py"), ("tools/slack.py", "tools"), ("tools", "tools")]:
+            result, call = self.change([{"ts": "1", "text": f"CLAIMS [Other's agent]\n- {held}"}], [requested])
+            self.assertEqual(result, 1)
+            call.assert_not_called()
+
+    def test_cannot_release_foreign_claim(self):
+        result, call = self.change([{"ts": "1", "text": "CLAIMS [Other's agent]\n- tools"}], ["tools"], True)
+        self.assertEqual(result, 1)
+        call.assert_not_called()
+
+    def test_batch_collapses_children_and_normalizes_windows_paths(self):
+        result, call = self.change([], ["tools/", "tools\\slack.py", "toolshed/"])
+        self.assertEqual(result, 0)
+        self.assertEqual(call.call_args.args[2]["text"], "CLAIMS [Kian's agent]\n- tools\n- toolshed")
+
+    def test_registry_supersedes_legacy_claims_without_touching_other_owners(self):
+        messages = [{"ts": "1", "text": "🔒 CLAIM tools/ — [Kian's agent] since 01:00"},
+                    {"ts": "2", "text": "🔒 CLAIM eval/ — [Other's agent] since 01:00"},
+                    {"ts": "3", "text": "CLAIMS [Kian's agent]"}]
+        self.assertEqual(slack.open_claims(messages), {"eval/": "[Other's agent] since 01:00"})
+
+    def test_edited_registry_is_replayed_at_edit_time(self):
+        messages = [{"ts": "1", "edited": {"ts": "3"}, "text": "CLAIMS [Kian's agent]"},
+                    {"ts": "2", "text": "🔒 CLAIM tools/ — [Kian's agent] since 01:00"}]
+        self.assertEqual(slack.open_claims(messages), {})
+
+    def test_failed_claim_history_and_invalid_paths_never_write(self):
+        for registry, areas in [(None, ["tools"]), ([], ["../other"]), ([], ["C:\\tools"])]:
+            result, call = self.change(registry, areas)
+            self.assertEqual(result, 1)
+            call.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -11,12 +11,12 @@ const WIDTH = "max-w-5xl";
 
 const NAME: Record<Target, string> = { pv_kwp: "Solar panels", battery_kwh: "Home battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };
 
-function optionLabel(t: Target, v: number) {
+function optionLabel(t: Target, v: number, wp?: number) { // ours: wp = the engine's module watts
   if (v === 0) return "Not included";
-  return t === "pv_kwp" ? `${panels(v)} panels` : `${num(v)} ${t === "battery_kwh" ? "kWh" : "kW"}`;
+  return t === "pv_kwp" ? `${panels(v, wp)} panels` : `${num(v)} ${t === "battery_kwh" ? "kWh" : "kW"}`;
 }
 
-function explain(t: Target, v: number, inputs: Inputs) {
+function explain(t: Target, v: number, inputs: Inputs, wp?: number) { // ours: wp
   if (v === 0) {
     return {
       pv_kwp: "No solar panels in this setup.",
@@ -27,7 +27,7 @@ function explain(t: Target, v: number, inputs: Inputs) {
   }
   const heating = typeof inputs.heating_type === "string" ? (CHOICE_LABEL[inputs.heating_type] ?? "current").toLowerCase() : "current";
   return {
-    pv_kwp: `${panels(v)} panels on your roof. Together they peak at ${num(v)} kWp (kilowatt-peak, the most they make in full sun).`,
+    pv_kwp: `${panels(v, wp)} panels on your roof. Together they peak at ${num(v)} kWp (kilowatt-peak, the most they make in full sun).`,
     battery_kwh: `Stores ${num(v)} kWh (kilowatt-hours) of daytime solar power, so you can use it in the evening.`,
     heat_pump_kw: `Heats your home and water with electricity instead of ${heating === "current" ? "your current" : heating} heating. ${num(v)} kW is its heating power.`,
     wallbox_kw: `Charges your electric car at home. At ${num(v)} kW (kilowatts) ${v > 11 ? "it charges about twice as fast, if your car supports it" : "a typical car is full overnight"}.`,
@@ -90,14 +90,15 @@ function OfferView({ offer }: { offer: Offer }) {
             <div className="h-[280px] bg-gradient-to-b from-sand-2 to-sand sm:h-[400px]">
               <House
                 values={choice}
+                modules={panels(choice.pv_kwp, offer.moduleWp)} // ours:
                 hasEv={inputs.has_ev === true}
                 existing={{
                   pv_kwp: typeof inputs.existing_pv_kwp === "number" ? inputs.existing_pv_kwp : 0,
                   battery_kwh: typeof inputs.existing_battery_kwh === "number" ? inputs.existing_battery_kwh : 0,
                   wallbox: inputs.has_existing_wallbox === true,
                 }}
-                description={describe(choice)}
-                labels={{ pv_kwp: `${panels(choice.pv_kwp)} solar panels`, battery_kwh: `Battery ${num(choice.battery_kwh)} kWh`, heat_pump_kw: NAME.heat_pump_kw, wallbox_kw: NAME.wallbox_kw }}
+                description={describe(choice, panels(choice.pv_kwp, offer.moduleWp))} // ours: wp
+                labels={{ pv_kwp: `${panels(choice.pv_kwp, offer.moduleWp)} solar panels`, battery_kwh: `Battery ${num(choice.battery_kwh)} kWh`, heat_pump_kw: NAME.heat_pump_kw, wallbox_kw: NAME.wallbox_kw }}
               />
             </div>
           </Card>
@@ -114,7 +115,7 @@ function OfferView({ offer }: { offer: Offer }) {
                     {NAME[t]}
                     <span className="text-sm font-normal text-quiet">{choice[t] > 0 ? "Included" : "Not included"}</span>
                   </h3>
-                  <p className="text-base">{explain(t, choice[t], inputs)}</p>
+                  <p className="text-base">{explain(t, choice[t], inputs, offer.moduleWp)}</p>
                 </Card>
               ))}
             </div>
@@ -137,7 +138,7 @@ function OfferView({ offer }: { offer: Offer }) {
                       {o.label}
                       {k === 0 && <span className="ml-2 rounded-full whitespace-nowrap bg-sand px-2 py-0.5 text-xs font-medium text-quiet">Installer&apos;s recommendation</span>}
                     </span>
-                    <span className="block text-sm">{summary(o.values)}</span>
+                    <span className="block text-sm">{summary(o.values, offer.moduleWp)}</span>
                   </span>
                 </label>
               ))}
@@ -151,7 +152,7 @@ function OfferView({ offer }: { offer: Offer }) {
               <ul className="space-y-1">
                 {changes.map((t) => (
                   <li key={t}>
-                    {NAME[t]}: {optionLabel(t, rec[t])} → {optionLabel(t, choice[t])}
+                    {NAME[t]}: {optionLabel(t, rec[t], offer.moduleWp)} → {optionLabel(t, choice[t], offer.moduleWp)}
                   </li>
                 ))}
               </ul>
@@ -188,7 +189,7 @@ function OfferView({ offer }: { offer: Offer }) {
   );
 }
 
-const summary = (v: Values) => {
-  const parts = TARGETS.filter((t) => v[t] > 0).map((t) => `${NAME[t]} ${optionLabel(t, v[t])}`);
+const summary = (v: Values, wp?: number) => { // ours: wp
+  const parts = TARGETS.filter((t) => v[t] > 0).map((t) => `${NAME[t]} ${optionLabel(t, v[t], wp)}`);
   return parts.length ? parts.join(" · ") : "No new equipment";
 };

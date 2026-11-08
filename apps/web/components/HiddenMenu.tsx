@@ -1,18 +1,22 @@
 "use client";
 
 // Hidden presenter menu: tap or click the logo three times quickly (or any element with data-hidden-menu-trigger).
-// Mounted once in app/layout.tsx. Pitch mode lives at /pitch (iemko's branch); until that route exists it shows as
-// unavailable instead of leading to a 404 during a demo.
+// Mounted once in app/layout.tsx. It asks where to go: iemko's pitch mode (/pitch) or the Test Lab (/lab).
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const TRIGGER = '[data-hidden-menu-trigger], [aria-label="Rhythm"]';
 const TAPS = 3;
 const WINDOW_MS = 700;
 
+const ITEMS = [
+  { href: "/pitch", title: "Pitch mode", note: "The guided deck with the live app, on the engine" },
+  { href: "/pitch?demo=1", title: "Pitch mode, offline", note: "Same deck on labelled demo data, no engine needed" },
+  { href: "/lab", title: "Lab results", note: "How often we match the experts, per run and branch" },
+];
+
 export default function HiddenMenu() {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [pitchReady, setPitchReady] = useState<boolean | null>(null);
 
   useEffect(() => {
     let taps: number[] = [];
@@ -24,7 +28,6 @@ export default function HiddenMenu() {
       taps = [];
       e.preventDefault(); // the logo is a link home; the third tap opens the menu instead
       dialog.current?.showModal();
-      fetch("/pitch", { method: "HEAD" }).then((r) => setPitchReady(r.ok), () => setPitchReady(false));
     };
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
@@ -41,22 +44,13 @@ export default function HiddenMenu() {
       className="m-auto w-[min(92vw,22rem)] rounded-2xl border border-zinc-200 bg-white p-0 text-ink shadow-xl backdrop:bg-black/30"
     >
       <div className="space-y-2 p-4">
-        <p className="px-1 text-xs font-medium text-muted">Presenter menu</p>
-        {pitchReady ? (
-          <Link href="/pitch" onClick={close} className={item}>
-            <span className="text-sm font-semibold">Pitch mode</span>
-            <span className="text-xs text-muted">The guided demo for the jury</span>
+        <p className="px-1 text-xs font-medium text-muted">Where to?</p>
+        {ITEMS.map((i) => (
+          <Link key={i.href} href={i.href} onClick={close} className={item}>
+            <span className="text-sm font-semibold">{i.title}</span>
+            <span className="text-xs text-muted">{i.note}</span>
           </Link>
-        ) : (
-          <div aria-disabled className={`${item} cursor-not-allowed opacity-50 hover:bg-transparent`}>
-            <span className="text-sm font-semibold">Pitch mode</span>
-            <span className="text-xs text-muted">{pitchReady === null ? "Checking…" : "Not on this branch yet"}</span>
-          </div>
-        )}
-        <Link href="/lab" onClick={close} className={item}>
-          <span className="text-sm font-semibold">Lab results</span>
-          <span className="text-xs text-muted">How often we match the experts, per run and branch</span>
-        </Link>
+        ))}
         <button type="button" onClick={close} className="w-full rounded-full px-4 py-2 text-sm text-muted hover:bg-zinc-50">
           Close
         </button>

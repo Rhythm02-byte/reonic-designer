@@ -60,7 +60,7 @@ pnpm dev         # engine on :8000 + web on :3000 → planner http://localhost:3
 pnpm test        # engine + eval tests, web lint
 pnpm eval        # run ALL evaluation checks (~13 min), saved to eval/history; shown in the Test Lab
 ```
-Presenter menu: **tap the logo three times** → Pitch mode or Lab results.
+Presenter menu: **tap the logo three times** → Pitch mode (`/pitch`: slides plus the live planner and offer; arrow keys or a presenter remote step through the demo, `?` shows the keys), Pitch mode offline (`/pitch?demo=1`, labelled toy data, no engine), or Lab results (`/lab`). Shared through a tunnel, real held-out projects and the test runner stay local (`apps/web/proxy.ts`).
 Rarely needed: `pnpm x:etl`, `x:train`, `x:select` (re-choose the model on validation), `x:contracts`, `x:web-build`, `x:correlations`.
 
 ## Evaluation and the Test Lab

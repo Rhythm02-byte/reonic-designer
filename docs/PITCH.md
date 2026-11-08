@@ -1,6 +1,6 @@
 # Pitch notes (single source for deck, demo and Q&A)
 
-> Keep every number here with **what it was measured on**. Update the tables when `npm run eval` changes. Never put raw project rows in the deck.
+> Keep every number here with **what it was measured on**. Update the tables when `pnpm eval` changes. Never put raw project rows in the deck.
 
 ## 1. One-liner
 **An AI planner that designs like your best colleague, and tells you what it doesn't know.**

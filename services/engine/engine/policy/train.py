@@ -1,6 +1,6 @@
 """Train the policy on ALL processed data and save it where the API picks it up.
 
-    npm run train        (or: python -m engine.policy.train [--data data/processed] [--out services/engine/models/designer.joblib])
+    pnpm x:train        (or: python -m engine.policy.train [--data data/processed] [--out services/engine/models/designer.joblib])
 """
 from __future__ import annotations
 

@@ -224,7 +224,8 @@ async function toDesign(d: EngineDesign, h: HomeInputs, locked: Partial<Values>,
   const ranges: Design["ranges"] = {};
   for (const t of TARGETS) {
     const c = d.confidence[CAMEL[t]];
-    if (c) ranges[t] = { p10: c.p10, p50: c.p50, p90: c.p90 };
+    // A locked part's interval is just the planner's own value ("Experts pick 20 kWh"): show no range for it.
+    if (c && locked[t] === undefined) ranges[t] = { p10: c.p10, p50: c.p50, p90: c.p90 };
   }
   return {
     values,

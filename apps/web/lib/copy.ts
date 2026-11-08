@@ -82,7 +82,8 @@ export const eur = (n: number) => `€${nf(0).format(Math.round(n / 10) * 10)}`;
 export const pct = (n: number) => `${Math.round(n * 100)} %`;
 export const years = (n: number | null) => (n === null ? "n/a" : `${num(n, 1)} years`);
 export const size = (v: number, unit: string) => (v > 0 ? `${num(v)} ${unit}` : "None");
-export const panels = (kwp: number) => Math.round(kwp / PANEL_KWP);
+/** ours: `wp` = the engine's module watts (Reonic's catalogue is not always 450 Wp); falls back to 450 Wp. */
+export const panels = (kwp: number, wp?: number) => Math.round((kwp * 1000) / (wp && wp >= 300 && wp <= 700 ? wp : PANEL_KWP * 1000));
 
 export function describe(values: Values, modules?: number | null) { // ours: modules = the engine's count
   const parts = [
@@ -103,6 +104,7 @@ export type Offer = {
   planner: string;
   inputs: Inputs;
   options: OfferOption[]; // options[0] is the installer's recommendation
+  moduleWp?: number; // ours: the engine's module watts, so the homeowner sees the same panel count as the planner
 };
 
 const toB64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
@@ -126,6 +128,7 @@ export function decodeOffer(code: string): Offer | null {
     for (const opt of o.options) {
       if (!isText(opt?.label) || !TARGETS.every((t) => isSize(opt.values?.[t]))) return null;
     }
+    if (o.moduleWp !== undefined && !(typeof o.moduleWp === "number" && o.moduleWp >= 300 && o.moduleWp <= 700)) delete o.moduleWp; // ours
     return o as Offer;
   } catch {
     return null;

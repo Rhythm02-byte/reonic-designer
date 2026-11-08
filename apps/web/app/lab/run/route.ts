@@ -1,17 +1,17 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { repoRoot } from "@/lib/lab-server";
+import { isLocalRequest, repoRoot } from "@/lib/lab-server";
 
-// Local-only: runs all tests (`eval/run.py`, the same as `npm run eval`). The run records itself in eval/history.
+// Local-only: runs all tests (`eval/run.py`, the same as `pnpm eval`). The run records itself in eval/history.
 let running = false;
 
 export async function POST(req: Request) {
-  if (process.env.NODE_ENV === "production") return Response.json({ error: "Runs start only on a local dev server." }, { status: 403 });
+  if (!isLocalRequest(req.headers)) return Response.json({ error: "Runs start only on a local dev server, opened as localhost." }, { status: 403 });
   if (running) return Response.json({ error: "A run is already in progress." }, { status: 409 });
   const root = repoRoot();
   const py = root && ["Scripts/python.exe", "bin/python"].map((p) => path.join(root, "services/engine/.venv", p)).find(existsSync);
-  if (!root || !py) return Response.json({ error: "services/engine/.venv not found. Run npm run setup first." }, { status: 500 });
+  if (!root || !py) return Response.json({ error: "services/engine/.venv not found. Run pnpm bootstrap first." }, { status: 500 });
 
   const { label = "" } = (await req.json().catch(() => ({}))) as { label?: string };
   const args = ["eval/run.py", "--data", "dataset", "--offline", ...(label ? ["--label", label.slice(0, 80)] : [])];

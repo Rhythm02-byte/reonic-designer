@@ -1,12 +1,12 @@
-# tools/slack.py — Slack board setup (≈3 min)
+# tools/slack.py — Slack board (workspace `rhythmhub`)
 
-1. Create a free workspace at slack.com/get-started#/createnew (skip if you have one).
-2. api.slack.com/apps → Create New App → **From a manifest** → pick the workspace → paste `tools/slack-manifest.yaml` → Create.
-3. Install App → Install to Workspace → copy the **Bot User OAuth Token** (`xoxb-…`).
-4. `cp .env.example .env` and set `SLACK_BOT_TOKEN=xoxb-…` (`.env` is gitignored; never commit or paste it in chat).
-5. `python tools/slack.py setup` creates `#board #engine #web #eval #pitch #runs` and the bot joins them.
-6. Invite teammates in Slack; each teammate puts the same token in their own `.env` (share privately, not in git).
-7. Test: `python tools/slack.py post board "hello"`.
-8. Read: `python tools/slack.py read board --since 2h --limit 20`.
-9. No token → the script prints a note and exits 0, so it is safe in scripts.
-10. From Python: `from tools.slack import notify_run; notify_run({"wholeDesign": 71.2})` posts to `#runs`.
+1. Ask Kian for the bot token (`xoxb-…`). Never commit it or paste it in chat.
+2. `cp .env.example .env` and set `SLACK_BOT_TOKEN=xoxb-…` (`.env` is gitignored).
+3. Join the Slack workspace; the channels `#board #engine #web #eval #pitch #runs #changelog` are already there (Browse channels if not in your sidebar).
+4. Task start: `python tools/slack.py start`. Post: `post board "<text>" --kind done|blocked|ask|decision|contract`.
+5. Locks: `claim <folder>` / `release <folder>`. Finish: `done "<change>"`. Raw read: `read board --since 2h`.
+6. Changelog: post one line per shipped change to `#changelog`; only Kian's agent edits `docs/BACKLOG.md` from it (no write races).
+7. No token → the script prints a note and exits 0, so it is safe in scripts.
+8. From Python: `from tools.slack import notify_run; notify_run({"wholeDesign": 71.2})` posts to `#runs`.
+9. `python tools/slack.py setup` is idempotent: creates missing channels and joins the bot.
+10. Needs only Python 3.10+. Posts show as "<Name>'s agent" with a colour icon (set your name via `SLACK_AGENT` or git user.name).

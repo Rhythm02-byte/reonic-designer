@@ -41,14 +41,14 @@ From `research/external/R2-public-datasets.md` and `TASK1-RESEARCH-COMPLETION.md
 Implement `research/external/TASK2-SYNTHETIC-TEST-SPEC.md` as `eval/external/stress.py`: edge-case homes (tiny/huge demand, existing PV/storage, heat pump with no heat demand, EV without wallbox, etc.) with the **expected rule outcome** per case. Run them through our engine (`services/engine`, `Designer` / the `/design` API on localhost:8000, whichever you prefer) and report violations.
 
 ### G5. Plausibility benchmark
-`eval/external/benchmark.py` (run via `npm run x:external`): generate N realistic German homes (sample demand/household/EV/heating from public stats you cite), get our engine's designs, and score:
+`eval/external/benchmark.py` (run via `pnpm x:external`): generate N realistic German homes (sample demand/household/EV/heating from public stats you cite), get our engine's designs, and score:
 - share of PV sizes inside the MaStR p5–p95 for that year,
 - distance of our battery/PV ratio distribution to MaStR's (e.g. Wasserstein),
 - stress-set rule violations (G4).
 Write the result to `eval/external/results.json` (aggregates). Keep it deterministic (fixed seeds) and offline after the first download.
 
 ## Done when
-- `npm run x:external` runs end-to-end offline from cached downloads and prints the benchmark.
+- `pnpm x:external` runs end-to-end offline from cached downloads and prints the benchmark.
 - `data/external/README.md` lists every source with licence + SHA + verified column meanings.
 - `git status` shows no raw data and no Reonic-derived rows staged; all committed files < 5 MB.
 - Tests: `pytest -q eval/external` (unit tests for parsers/linkers using tiny synthetic fixtures you write).

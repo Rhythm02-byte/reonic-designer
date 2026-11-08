@@ -2,6 +2,8 @@
 // to Faris's flat UI types.
 // Calls go through the Next proxy (next.config.ts, /engine/*). If the engine is unreachable (or does not have an
 // endpoint yet) the typed fixtures answer instead, and the result says so (`source: "demo"`).
+import { isDemoForced } from "./pitch";
+import { PITCH_EVAL, pitchDesign } from "./pitchDemo";
 import { designFixture, EVAL_FIXTURE, HOLDOUT_FIXTURE, META_FIXTURE, simulateFixture } from "./fixtures";
 import { PANEL_KWP } from "./format";
 import { TARGETS } from "./types";
@@ -144,6 +146,7 @@ async function call<T>(path: string, body?: unknown): Promise<T> {
 }
 
 async function withFallback<T>(live: () => Promise<T>, demo: () => T): Promise<Sourced<T>> {
+  if (isDemoForced()) return { data: demo(), source: "demo" }; // pitch mode (?demo=1): never call the engine
   try {
     return { data: await live(), source: "live" };
   } catch (e) {
@@ -183,7 +186,7 @@ export const api = {
         const sys = current || locks.length ? toSystem({ ...current, ...locked } as Sizes) : undefined;
         return toDesign(await call<S["DesignResponse"]>("design", { inputs, locks, current: sys }));
       },
-      () => designFixture(inputs, locked),
+      () => (isDemoForced() ? pitchDesign(inputs, locked) : designFixture(inputs, locked)),
     ),
 
   /** Metrics for exactly this system. */
@@ -207,7 +210,7 @@ export const api = {
       () => designFixture(inputs, sizes),
     ),
 
-  evalSummary: () => withFallback(async () => toEval(await call<WireEval>("eval/summary")), () => EVAL_FIXTURE),
+  evalSummary: () => withFallback(async () => toEval(await call<WireEval>("eval/summary")), () => (isDemoForced() ? PITCH_EVAL : EVAL_FIXTURE)),
 
   holdout: (n = 12) =>
     withFallback(

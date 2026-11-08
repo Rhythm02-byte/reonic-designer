@@ -95,7 +95,7 @@ def post_validate(req: ValidateRequest, store: Store = Depends(get_store)) -> Va
 def get_eval_summary() -> EvalSummary:
     s = demo.eval_summary()
     if s is None:
-        raise HTTPException(status_code=404, detail="no eval results yet (run: npm run eval)")
+        raise HTTPException(status_code=404, detail="no eval results yet (run: pnpm eval)")
     return s
 
 

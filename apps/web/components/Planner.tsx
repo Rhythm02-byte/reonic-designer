@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useEffectEvent, useMemo, useState, useSyncExternalStore } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
 import { altLabel, CHOICE_LABEL, DEMO_INPUTS, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
 import { House } from "./House";
-import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { OfferQr } from "./OfferQr"; import { Evidence } from "./Evidence"; // ours:
+import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { OfferQr } from "./OfferQr"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
 import { Badge, Button, Card, CheckDot, CheckList, chevron, chevronLook, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
@@ -136,6 +136,21 @@ export default function Planner() {
       locked: v === null ? rest : { ...rest, [t]: v },
     });
   };
+  // ours: pitch mode (iemko). /pitch drives this page from outside (same origin only). With `because` it is a
+  // planner change (diff bar + undo); without, the draft is simply replaced, like opening a project.
+  const onPitch = useEffectEvent((p: PitchPlan) => {
+    const next = { inputs: p.inputs, locked: p.locked ?? {} };
+    if (p.because) return edit(p.because, next);
+    setHistory((h) => h.filter((x) => x.id !== id));
+    setDrafts((d) => ({ ...d, [id]: next }));
+  });
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.origin === window.location.origin && isPitchPlan(e.data)) onPitch(e.data);
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
   const open = (cid: string) => {
     setPreview(null);
     setSelected(null);
@@ -163,6 +178,7 @@ export default function Planner() {
               return a && (offered[t] ?? a.flags.length === 0) ? [{ label: altLabel(t, a.value), values: a.values }] : [];
             }),
           ],
+          ...(design.modules && design.values.pv_kwp > 0 && { moduleWp: Math.round((design.values.pv_kwp * 1000) / design.modules) }), // ours:
         }
       : null;
 

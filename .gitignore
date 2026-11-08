@@ -22,3 +22,4 @@ apps/web/.env*
 !apps/web/.env.example
 services/engine/prof.out
 *.out
+.DS_Store

@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { Component, useCallback, useEffect, useState, type ReactNode } from "react";
-import { Button, ErrorNote, pill, pillLook } from "./ui";
+import { Button, Checkbox, ErrorNote, pill, pillLook } from "./ui";
 import type { GeoLocation } from "./Location";
 import { locationKey, type HouseAsset, type HouseJob, type HouseLayout, type Vec3 } from "@/lib/real-house";
 import { fetchRoof, type RoofInfo } from "@/lib/roof";
@@ -104,7 +104,7 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
         <p className="text-quiet">Confirm dimensions against the selected module and clearances against site requirements. These are planning assumptions.</p>
         <div className="flex flex-wrap gap-2"><Button variant="secondary" disabled={!layout.surfaces.length} onClick={()=>updateLayout({...layout,surfaces:layout.surfaces.slice(0,-1)})}>Undo last roof face</Button>
         <Button variant="secondary" onClick={()=>updateLayout({...layout,surfaces:[]})}>Clear manual outlines</Button></div>
-        <label className="flex items-start gap-2 text-quiet"><input type="checkbox" checked={reviewed} onChange={e=>{setReviewed(e.target.checked);if(e.target.checked)setError(null);}}/>I checked the roof, exclusions, module dimensions and spaces available for the new installation.</label>
+        <label className="flex items-start gap-2 text-quiet"><Checkbox /* ours: custom control */ className="mt-0.5" checked={reviewed} onChange={e=>{setReviewed(e.target.checked);if(e.target.checked)setError(null);}}/>I checked the roof, exclusions, module dimensions and spaces available for the new installation.</label>
       </div></details>
     </div>}
   </div>;

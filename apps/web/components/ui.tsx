@@ -267,3 +267,43 @@ export function Segmented<T extends string | number>({
     </fieldset>
   );
 }
+
+// ours: custom control. Native input stays (a11y, forms); a sibling SVG draws the mark.
+const boxBase =
+  "peer absolute inset-0 m-0 cursor-pointer appearance-none bg-white ring-1 ring-zinc-300 transition-colors hover:ring-zinc-400 checked:bg-blue-600 checked:ring-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:ring-zinc-200 disabled:checked:bg-zinc-300 disabled:checked:ring-zinc-300";
+
+export function Checkbox({ className = "", ...props }: Omit<ComponentProps<"input">, "type">) {
+  return (
+    <span className={`relative inline-flex size-4 shrink-0 ${className}`}>
+      <input type="checkbox" className={`${boxBase} rounded-[4px]`} {...props} />
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="pointer-events-none absolute inset-0 size-4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+        <path d="M4 8.5l2.5 2.5L12 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
+
+export function Radio({ className = "", ...props }: Omit<ComponentProps<"input">, "type">) {
+  return (
+    <span className={`relative inline-flex size-4 shrink-0 ${className}`}>
+      <input type="radio" className={`${boxBase} rounded-full`} {...props} />
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0 m-auto size-1.5 rounded-full bg-white opacity-0 transition-opacity peer-checked:opacity-100" />
+    </span>
+  );
+}
+
+export function Select({ className = "", children, ...props }: ComponentProps<"select">) {
+  return (
+    <span className={`relative inline-block w-full ${className}`}>
+      <select
+        className="w-full cursor-pointer appearance-none rounded-lg bg-white py-1.5 pr-8 pl-2.5 text-sm text-ink ring-1 ring-zinc-200 transition-colors hover:ring-zinc-300 focus:ring-2 focus:ring-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+        {...props}
+      >
+        {children}
+      </select>
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted">
+        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}

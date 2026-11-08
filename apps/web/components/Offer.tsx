@@ -5,7 +5,7 @@ import { TARGETS, type Target, type Values } from "@/lib/api";
 import { decodeOffer, describe, eur, num, type Offer, panels, years } from "@/lib/copy";
 import { House } from "./House";
 import { OfferParts } from "./PartsList"; // ours:
-import { Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook } from "./ui";
+import { Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook, Radio } from "./ui";
 
 const WIDTH = "max-w-5xl";
 
@@ -128,7 +128,7 @@ This is a request, not an order.`;
                   key={k}
                   className="flex cursor-pointer gap-3 rounded-2xl border border-zinc-200 bg-white p-3 has-checked:outline-2 has-checked:outline-blue-600 has-focus-visible:outline-2 has-focus-visible:outline-blue-600"
                 >
-                  <input type="radio" name="option" className="mt-1 size-4 accent-blue-600" checked={i === k} onChange={() => setI(k)} />
+                  <Radio /* ours: custom control */ name="option" className="mt-1" checked={i === k} onChange={() => setI(k)} />
                   <span className="space-y-0.5">
                     <span className="block font-medium text-ink">
                       {o.label}

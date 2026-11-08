@@ -9,7 +9,7 @@ import { RealHouse } from "./RealHouse";
 import { locationKey } from "@/lib/real-house";
 import { Location } from "./Location"; // ours:
 import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { Share } from "./Share"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
-import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
+import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Select, Stat, Checkbox } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
 
@@ -184,9 +184,9 @@ export default function Planner() {
             <Logo product={false} />
           </span>
           {/* Below xl the sidebar is gone; a native select switches customers. */}
-          <select
+          <Select // ours: custom control
             aria-label="Customer"
-            className={`${inputClass} max-w-44 xl:hidden`}
+            className="max-w-44 xl:hidden"
             value={preview ? "" : customer.id}
             onChange={(e) => e.target.value && open(e.target.value)}
           >
@@ -196,7 +196,7 @@ export default function Planner() {
                 {c.name}
               </option>
             ))}
-          </select>
+          </Select>
           <nav aria-label="Project" className="hidden gap-1 text-sm md:flex">
             {[["design", "Design"], ["inputs", "Inputs"], ["evidence", "Evidence"]].map(([href, label]) => (
               <a key={href} href={`#${href}`} onClick={() => flash(href)} className={`${pill} ${pillLook.ghost}`}>
@@ -538,9 +538,8 @@ function OfferOptions({ design, offered, setOffered }: {
         <legend className="sr-only">Alternatives to offer</legend>
         {alts.map(([t, a]) => (
           <label key={t} className="flex items-start gap-2">
-            <input
-              type="checkbox"
-              className="mt-0.5 size-4 accent-blue-600"
+            <Checkbox // ours: custom control
+              className="mt-0.5"
               disabled={!a.validated}
               checked={a.validated && (offered[t] ?? a.flags.length === 0)}
               onChange={(e) => setOffered({ ...offered, [t]: e.target.checked })}
@@ -627,11 +626,11 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery 
       </nav>
       <label className="block space-y-1 text-xs text-quiet">
         <span>Signed in as</span>
-        <select className={inputClass} value={ws.me} onChange={(e) => update((w) => ({ ...w, me: e.target.value }))}>
+        <Select value={ws.me} onChange={(e) => update((w) => ({ ...w, me: e.target.value }))}>
           {TEAM.map((t) => (
             <option key={t}>{t}</option>
           ))}
-        </select>
+        </Select>
       </label>
     </aside>
     </div>
@@ -729,14 +728,14 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
       <div className="space-y-1">
         <FieldLabel name={field.name} htmlFor={id} edited={edited}>{copy.label}</FieldLabel>
         {/* "Unknown" stays: a real project can leave this empty. */}
-        <select id={id} className={inputClass} value={typeof value === "string" ? value : ""} onChange={(e) => set(e.target.value || null)}>
+        <Select id={id} value={typeof value === "string" ? value : ""} onChange={(e) => set(e.target.value || null)}>
           <option value="">Unknown</option>
           {field.choices.map((c) => (
             <option key={c} value={c}>
               {CHOICE_LABEL[c] ?? c}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
     );
   }

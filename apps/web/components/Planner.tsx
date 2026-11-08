@@ -42,8 +42,8 @@ export default function Planner() {
   // Alternatives the planner has ticked on or off for the homeowner; unticked default: the ones without warnings.
   const [offered, setOffered] = useState<Partial<Record<Target, boolean>>>({});
   // The last good design stays on screen while the next one is computed.
-  const [state, setState] = useState<{ key: string | null; design: Design | null; error: string | null }>({
-    key: null, design: null, error: null,
+  const [state, setState] = useState<{ id: string | null; key: string | null; design: Design | null; error: string | null }>({
+    id: null, key: null, design: null, error: null, // ours: id = whose design this is
   });
   const [recommendation, setRecommendation] = useState<{ inputKey: string | null; values: Values | null }>({ inputKey: null, values: null });
   const recommendationRef = useRef(recommendation);
@@ -72,7 +72,7 @@ export default function Planner() {
       api.design(sent, locked).then(
         (design) => {
           if (!live) return;
-          setState({ key, design, error: null });
+          setState({ id, key, design, error: null });
           if (Object.keys(locked).length === 0) {
             const next = { inputKey, values: design.values };
             recommendationRef.current = next;
@@ -86,17 +86,19 @@ export default function Planner() {
             }).catch(() => {});
           }
         },
-        (e: Error) => live && setState((s) => ({ ...s, key, error: e.message })),
+        (e: Error) => live && setState((s) => ({ id, key, design: s.id === id ? s.design : null, error: e.message })),
       );
     }, 250);
     return () => {
       live = false;
       clearTimeout(t);
     };
-  }, [sent, locked, key, inputKey]);
+  }, [sent, locked, key, inputKey, id]);
 
-  const { design } = state;
-  const busy = state.key !== key;
+  // ours: another customer's design (or error) must not flash while this one loads
+  const design = state.id === id ? state.design : null;
+  const error = state.id === id ? state.error : null;
+  const busy = state.key !== key || state.id !== id;
   const editCustomer = (patch: Partial<Customer>) =>
     update((w) => ({ ...w, customers: w.customers.map((c) => (c.id === customer.id ? { ...c, ...patch } : c)) }));
   const edit = (label: string, next: Draft) => {
@@ -149,6 +151,17 @@ export default function Planner() {
     setOffered({});
     update((w) => ({ ...w, active: cid }));
   };
+  // ours: switching planner keeps "Mine" meaningful: if the open customer isn't theirs, open their first one
+  const switchMe = (me: string) => {
+    const mine = ws.customers.find((c) => c.owner === me);
+    const move = !!mine && customer.owner !== me;
+    if (move) {
+      setPreview(null);
+      setSelected(null);
+      setOffered({});
+    }
+    update((w) => ({ ...w, me, active: move ? mine.id : w.active }));
+  };
   const load = (row: HoldoutRow) => {
     setSelected(null);
     setOffered({});
@@ -157,7 +170,7 @@ export default function Planner() {
 
   const name = preview ? "Real project" : customer.name || "Unnamed customer";
   const offer: Offer | null =
-    design && !busy && !state.error
+    design && !busy && !error
       ? {
           v: 2,
           customer: name,
@@ -177,7 +190,7 @@ export default function Planner() {
 
   return (
     <div className="xl:grid xl:grid-cols-[248px_minmax(0,1fr)]">
-      <Sidebar ws={ws} list={list} scope={scope} setScope={setScope} activeId={preview ? null : customer.id} onOpen={open} query={query} setQuery={setQuery} />
+      <Sidebar ws={ws} list={list} scope={scope} setScope={setScope} activeId={preview ? null : customer.id} onOpen={open} onSwitchMe={switchMe} query={query} setQuery={setQuery} />
       <div className="flex min-h-dvh min-w-0 flex-col">
         <Header width={WIDTH}>
           <span className="xl:hidden">
@@ -237,8 +250,8 @@ export default function Planner() {
               Check it, adjust it, then share the options with the homeowner.
             </p>
           </div>
-          <ErrorNote error={metaError ?? state.error} />
-          {state.error && design && <p className="text-sm text-amber-900">The last successful proposal is shown for reference. It has not updated to the current inputs and cannot be shared.</p>}
+          <ErrorNote error={metaError ?? error} />
+          {error && design && <p className="text-sm text-amber-900">The last successful proposal is shown for reference. It has not updated to the current inputs and cannot be shared.</p>}
           {(meta?.synthetic || design?.source === "demo") && (
             <p className="text-sm text-amber-800">Running on synthetic data: numbers are for the demo only.</p>
           )}
@@ -294,7 +307,7 @@ export default function Planner() {
                       onSelect={setSelected}
                     />
                   ) : (
-                    !state.error && <Skeleton className="h-full rounded-none" />
+                    !error && <Skeleton className="h-full rounded-none" />
                   )}
                 />
                 {design && <Economics design={design} />}
@@ -325,7 +338,7 @@ export default function Planner() {
                     ))}
                   </div>
                 ) : (
-                  !state.error && <Skeleton className="h-48" />
+                  !error && <Skeleton className="h-48" />
                 )}
                 {design && general(design.flags).length > 0 && (
                   <ul className="space-y-1 text-sm text-amber-800">
@@ -556,13 +569,14 @@ function OfferOptions({ design, offered, setOffered }: {
   );
 }
 
-function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery }: {
+function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, query, setQuery }: {
   ws: Workspace;
   list: Customer[];
   scope: "mine" | "team";
   setScope: (s: "mine" | "team") => void;
   activeId: string | null;
   onOpen: (id: string) => void;
+  onSwitchMe: (me: string) => void; // ours:
   query: string;
   setQuery: (q: string) => void;
 }) {
@@ -626,7 +640,7 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery 
       </nav>
       <label className="block space-y-1 text-xs text-quiet">
         <span>Signed in as</span>
-        <Select value={ws.me} onChange={(e) => update((w) => ({ ...w, me: e.target.value }))}>
+        <Select value={ws.me} onChange={(e) => onSwitchMe(e.target.value)}>
           {TEAM.map((t) => (
             <option key={t}>{t}</option>
           ))}

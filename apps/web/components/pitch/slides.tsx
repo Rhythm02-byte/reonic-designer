@@ -101,11 +101,11 @@ function Hook() {
     <Canvas>
       <div className="flex flex-1 flex-col justify-center gap-16">
         <Rise>
-          <Eyebrow>Reonic challenge · thinc! München 2026</Eyebrow>
+          <p className="text-[48px] leading-[1.2] text-quiet">A family decides to go solar. They send a request.</p>
         </Rise>
-        <Rise delay={0.1}>
+        <Rise delay={0.4}>
           <h1 className="w-[1600px] text-[136px] leading-[1.02] font-semibold tracking-[-0.035em]">
-            A family waits <span className="text-reonic">8.2 days</span> for a solar offer.
+            Then they wait <span className="text-reonic">8.2 days</span> for an offer.
           </h1>
         </Rise>
         {/* the wait, drawn: one tick per day, the line runs to the median offer day */}
@@ -135,6 +135,9 @@ function Hook() {
             <span className="absolute -translate-x-1/2 font-semibold text-ink" style={{ left: `${at}%` }}>Offer</span>
           </div>
         </Rise>
+        <Rise delay={2.4}>
+          <p className="text-[44px] leading-[1.25] font-semibold">By then, another installer may have called first.</p>
+        </Rise>
       </div>
       <Source>Rhythm and his dancers · Rhythm, the home energy designer</Source>
     </Canvas>
@@ -148,11 +151,11 @@ function Problem() {
   return (
     <Canvas tone="sand" n={2}>
       <Rise>
-        <Eyebrow>What the data really holds</Eyebrow>
+        <p className="text-[48px] leading-[1.2] text-quiet">And when the offers come, they don’t agree.</p>
       </Rise>
-      <Rise delay={0.1}>
-        <h2 className="w-[1600px] text-[96px] leading-[1.05] font-semibold tracking-[-0.03em]">
-          Same kind of home. Experts install up to <span className="text-reonic">twice the PV.</span>
+      <Rise delay={0.2}>
+        <h2 className="w-[1650px] text-[96px] leading-[1.05] font-semibold tracking-[-0.03em]">
+          Same kind of home. One expert says 6 kWp, another says 12. <span className="text-reonic">Who do they trust?</span>
         </h2>
       </Rise>
       {/* the spread, drawn on a kWp axis: the middle 80% of expert PV sizes for near-identical homes */}
@@ -194,7 +197,7 @@ function Problem() {
       </Rise>
       <Rise delay={1.8}>
         <p className="w-[1700px] text-[48px] leading-[1.25] font-semibold">
-          Roof and budget aren’t in the data. <span className="text-quiet">No model can guess them.</span>
+          The reason: roof and budget. <span className="text-quiet">Neither is in the data.</span>
         </p>
       </Rise>
       <Source>Expert PV sizes for similar homes (middle 80%) · Reonic data</Source>
@@ -208,7 +211,7 @@ function Turn() {
       <div className="flex flex-1 items-center gap-24">
         <Rise className="flex-[3]">
           <h2 className="text-[100px] leading-[1.08] font-semibold tracking-[-0.03em]">
-            So we built a designer that knows what it doesn’t know, <Mint>and asks.</Mint>
+            So we built a designer that sees what’s missing, <Mint>and asks.</Mint>
           </h2>
         </Rise>
         {/* what that looks like in the product: the "Ask next" card, with the cohort's real range */}
@@ -381,7 +384,8 @@ function Close() {
           </h2>
         </Rise>
         <Rise delay={0.9}>
-          <p className="text-[52px] font-semibold">Rhythm and his dancers</p>
+          <p className="text-[44px] leading-[1.25] text-zinc-300">So the next family gets an offer sooner, and one they can trust.</p>
+          <p className="mt-10 text-[52px] font-semibold">Rhythm and his dancers</p>
         </Rise>
       </div>
     </Canvas>
@@ -396,7 +400,7 @@ export const SLIDES: Slide[] = [
     id: "hook",
     title: "Eight days for an offer",
     notes:
-      "Hook, ~10 s. Die Linie laufen lassen, dann: „Eine Familie will Solar. Sie wartet 8,2 Tage auf ein Angebot, im Median bei Installateur 1 (Durchlaufzeit, nicht Arbeitszeit; n=260; nicht auf die Folie, nur bei Rückfrage). Am anderen Ende sitzt eine Planerin mit Dutzenden Anfragen.“ Teamnamen nennen: Rhythm and his dancers. Produkt: Rhythm.",
+      "Hook, ~15 s. Als Geschichte erzählen, ruhig: „Eine Familie entscheidet sich für Solar und schickt eine Anfrage. Dann wartet sie. 8,2 Tage bis zum Angebot.“ Die Linie laufen lassen. „Und bis dahin hat vielleicht schon ein anderer Installateur angerufen.“ (Das erste glaubwürdige Angebot gewinnt oft, laut Challenge-Brief.) Nur bei Rückfrage: Median bei Installateur 1, Anfrage bis Angebot, n=260, Durchlaufzeit, nicht Arbeitszeit. Teamnamen nennen: Rhythm and his dancers.",
     body: () => <Hook />,
   },
   {
@@ -404,7 +408,7 @@ export const SLIDES: Slide[] = [
     id: "problem",
     title: "Why prediction alone fails",
     notes:
-      "Problem, ~20 s. „Wir haben 1.593 echte Projekte mit Expertendesign angeschaut. Bei fast gleichen Häusern (4.000 bis 5.000 kWh, kein E-Auto, keine PV; n=215) installieren Experten zwischen 6,3 und 12,4 kWp, also fast das Doppelte. Warum? Dachfläche und Budget stehen nicht in den Daten. ‚Einfach vorhersagen‘ kann das nicht lösen.“ Nicht „Decke“ oder „Obergrenze für jedes Modell“ sagen, das ist nicht bewiesen.",
+      "Problem, ~20 s. „Und wenn die Angebote kommen, sind sie sich nicht einig. Gleiche Art Haus: Ein Experte sagt 6 kWp, ein anderer 12. Wem soll die Familie glauben?“ Pause. „Der Grund: Dach und Budget. Die stehen nicht in den Daten, also kann kein Modell sie erraten.“ Nur bei Rückfrage: 1.593 Projekte mit Expertendesign, 215 ähnliche Häuser (4.000 bis 5.000 kWh, kein E-Auto, keine PV), mittlere 80 % liegen zwischen 6,3 und 12,4 kWp. Nicht „Decke“ sagen, das ist nicht bewiesen.",
     body: () => <Problem />,
   },
   {
@@ -412,7 +416,7 @@ export const SLIDES: Slide[] = [
     id: "turn",
     title: "A designer that asks",
     notes:
-      "Wendepunkt, ~15 s. Langsam sprechen: „Also haben wir einen Designer gebaut, der weiß, was er nicht weiß, und fragt.“ Auf die Karte zeigen: Genau so sieht das im Produkt aus. Kein Sprachmodell legt aus; es darf nur formulieren, alles läuft ohne API-Key.",
+      "Wendepunkt, ~15 s. Langsam sprechen: „Also haben wir einen Designer gebaut, der sieht, was fehlt, und danach fragt.“ Auf die Karte zeigen: Genau so sieht das im Produkt aus. Kein Sprachmodell legt aus; es darf nur formulieren, alles läuft ohne API-Key.",
     body: () => <Turn />,
   },
   {
@@ -494,7 +498,7 @@ export const SLIDES: Slide[] = [
     id: "close",
     title: "Rhythm and his dancers",
     notes:
-      "Schluss mit Energie, ~10 s. „Gute Planer raten nicht, sie fragen. Rhythm fragt für sie.“ Pause. „Wir sind Rhythm and his dancers. Danke.“ Bei Fragen: docs/PITCH.md, Abschnitt Jury-Fragen. Grenzen ehrlich nennen: zwei Installateure, Wärmepumpe in unter 1 % der Designs (13 von 1.593), Dachgröße fehlt, Stückliste vorläufig.",
+      "Schluss mit Energie, ~10 s. „Gute Planer raten nicht, sie fragen. Rhythm fragt für sie.“ Pause. „Damit die nächste Familie schneller ein Angebot bekommt, und eins, dem sie trauen kann. Wir sind Rhythm and his dancers. Danke.“ Bei Fragen: docs/PITCH.md, Abschnitt Jury-Fragen. Grenzen ehrlich nennen: zwei Installateure, Wärmepumpe in unter 1 % der Designs (13 von 1.593), Dachgröße fehlt, Stückliste vorläufig.",
     body: () => <Close />,
   },
 ];

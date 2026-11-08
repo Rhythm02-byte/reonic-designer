@@ -40,3 +40,25 @@ def test_policy_design_with_negative_roof_values_is_non_negative(designer):  # n
     i.building.roof_max_modules = -1  # bypasses validation, like a caller of the Python API
     res = designer.design(i, {}, 450.0)
     assert all(v >= 0 for v in res.values.values() if not math.isnan(v)), res.values
+
+
+# -- bug 2: no new PV -> autarky -2e-16 -> recommend_battery's max-autarky min() saw an empty list -> no metrics ----
+def test_recommend_battery_without_pv_does_not_raise():
+    home = sim_home(HomeInputs.model_validate({"installerId": "x", "demandKwh": 60000, "loadProfile": "G0"}))
+    rec = sim.recommend_battery(home, {}, [0, 5, 10])
+    assert rec["maxAutarky"]["batteryKwh"] == 0 and rec["economic"]["batteryKwh"] == 0
+    assert all(0.0 <= r["autarky"] <= 1.0 and 0.0 <= r["selfConsumption"] <= 1.0 for r in rec["rows"])
+
+
+@pytest.mark.parametrize("home", [
+    {"installerId": "synthB", "demandKwh": 60000, "loadProfile": "G0", "heating": {"type": "Gas"}, "building": {"roofMaxModules": 0}},
+    {"installerId": "synthB", "demandKwh": 4000, "building": {"roofMaxModules": 0}},
+    {"installerId": "synthA", "demandKwh": 4000, "existingPv": {"kwp": 30}, "building": {"roofMaxModules": 0}},
+    {"installerId": "synthB", "demandKwh": 0},
+    {"installerId": "nobody", "demandKwh": 200000},
+])
+def test_design_always_returns_the_core_simulation_metrics(client, home):
+    r = client.post("/design", json={"inputs": home})
+    assert r.status_code == 200, r.text
+    m = r.json()["metrics"]["proposal"]
+    assert all(m.get(k) is not None for k in REQUIRED), m

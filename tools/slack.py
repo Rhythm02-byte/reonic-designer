@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Slack board for all agents. Stdlib only, never prints the token, no token = note + exit 0.
 
-  start  [--as NAME]            ONE call at task start: digest of #board, mentions of you, open claims, #changelog
+  start  [--as NAME] [--full]   compact task-start digest; --full shows all fetched activity
   post   <channel> <text> [--as NAME] [--kind done|blocked|ask|decision|contract]
   claim  <area> [--as NAME]     lock an area/folder so nobody edits it in parallel; release <area> frees it
   release <area> [--as NAME]
@@ -127,14 +127,22 @@ def since_ts(s: str) -> float:
     return time.time() - int(m[1]) * {"m": 60, "h": 3600, "d": 86400}[m[2]]
 
 
-def fetch(tok: str, channel: str, since: str, limit: int = 50) -> list[dict] | None:
+def fetch(tok: str, channel: str, since: str, limit: int = 50, paginate: bool = False) -> list[dict] | None:
     cid = channel_id(tok, channel)
     if not cid:
         return None
-    r = call("conversations.history", tok, {"channel": cid, "limit": limit, "oldest": "%.6f" % since_ts(since)}, False)
-    if not r.get("ok"):
-        return None
-    return [m for m in reversed(r["messages"]) if m.get("subtype") not in ("channel_join", "channel_leave")]
+    params = {"channel": cid, "limit": limit, "oldest": "%.6f" % since_ts(since)}
+    messages = []
+    while True:
+        r = call("conversations.history", tok, params, False)
+        if not r.get("ok"):
+            return None
+        messages.extend(r["messages"])
+        cursor = (r.get("response_metadata") or {}).get("next_cursor", "")
+        if not paginate or not cursor:
+            break
+        params["cursor"] = cursor
+    return [m for m in reversed(messages) if m.get("subtype") not in ("channel_join", "channel_leave")]
 
 
 def line(m: dict) -> str:
@@ -167,24 +175,64 @@ def open_claims(msgs: list[dict]) -> dict[str, str]:
     return claims
 
 
-def start(name: str) -> int:
+def is_claim(m: dict) -> bool:
+    return bool(re.match(r"(?:🔒|:lock:) CLAIM |(?:🔓|:unlock:) RELEASE ", m.get("text", "")))
+
+
+def start(name: str, full: bool = False) -> int:
     tok = token()
     if not tok:
         print(NOTE)
         return 0
     me = name.lower().split()[0]
-    board = fetch(tok, "board", "12h") or []
+    board = fetch(tok, "board", "12h", 100, paginate=True)
+    if board is None:
+        print("slack: cannot read #board; claims could not be checked", file=sys.stderr)
+        return 1
+    seen = set()
+
+    def section(channel: str, messages: list[dict], limit: int, prefix: str = "") -> None:
+        fresh = [m for m in messages if (channel, m["ts"]) not in seen]
+        # Keep decisions, contracts, blockers and requests even when older than the compact tail.
+        important = r"^(?:📌|📜|🛑|❓|:pushpin:|:scroll:|:octagonal_sign:|:question:)"
+        tail = {m["ts"] for m in fresh[-limit:]}
+        shown = [m for m in fresh if full or m["ts"] in tail
+                 or (channel == "board" and re.match(important, m.get("text", "")))]
+        for m in shown:
+            print(prefix + line(m))
+            seen.add((channel, m["ts"]))
+        if not shown:
+            print("  none")
+        if len(fresh) > len(shown):
+            print(f"  ({len(fresh) - len(shown)} older messages omitted; start --full or read {channel})")
+
     print("== #board, last 6h ==")
-    print("\n".join(line(m) for m in board if time.time() - float(m["ts"]) < 21600) or "(quiet)")
-    print("== open claims (don't touch these areas) ==")
+    recent = [m for m in board if time.time() - float(m["ts"]) < 21600]
+    section("board", [m for m in recent if full or not is_claim(m)], 8)
+    print("== open claims (12h history; don't touch these areas) ==")
     print("\n".join(f"  {a} — {w}" for a, w in open_claims(board).items()) or "  none")
-    print(f"== mentions of '{me}' (last 6h, all channels) ==")
-    hits = [f"#{c}: {line(m)}" for c in CHANNELS if c != "runs" for m in (fetch(tok, c, "6h") or [])
-            if me in m.get("text", "").lower() and f"[{me}" not in m.get("text", "").lower()]
-    print("\n".join(hits) or "  none")
+    changelog = fetch(tok, "changelog", "1d", 100, paginate=True)
     print("== #changelog, last 1d ==")
-    print("\n".join(line(m) for m in (fetch(tok, "changelog", "1d", 15) or [])) or "(none)")
-    return 0
+    section("changelog", changelog or [], 5)
+    print(f"== additional mentions of '{me}' (last 6h) ==")
+    failed = ["changelog"] if changelog is None else []
+    for c in CHANNELS:
+        if c == "runs":
+            continue
+        msgs = recent if c == "board" else changelog if c == "changelog" else fetch(tok, c, "6h", 100, paginate=True)
+        if msgs is None:
+            if c not in failed:
+                failed.append(c)
+            continue
+        hits = [m for m in msgs if time.time() - float(m["ts"]) < 21600
+                and re.search(r"(?<!\w)" + re.escape(me) + r"(?!\w)", m.get("text", ""), re.I)
+                and f"[{me}" not in m.get("text", "").lower() and not is_claim(m)
+                and (c, m["ts"]) not in seen]
+        if hits:
+            section(c, hits, 8, f"#{c}: ")
+    if failed:
+        print("slack: incomplete digest; cannot read " + ", ".join("#" + c for c in failed), file=sys.stderr)
+    return 1 if failed else 0
 
 
 def notify_run(summary: dict) -> None:
@@ -229,7 +277,7 @@ def main() -> int:
         s.add_argument("--as", dest="as_", default=None)
         for k, v in opts.items():
             s.add_argument("--" + k, **v)
-    cmd("start")
+    cmd("start", full={"action": "store_true"})
     cmd("post", "channel", "text", kind={"choices": list(KINDS)})
     cmd("claim", "area")
     cmd("release", "area")
@@ -239,7 +287,7 @@ def main() -> int:
     a = p.parse_args()
     n = who(getattr(a, "as_", None))
     if a.cmd == "start":
-        return start(n)
+        return start(n, a.full)
     if a.cmd == "setup":
         return setup()
     if a.cmd == "read":

@@ -34,15 +34,14 @@ UI work follows [docs/DESIGN.md](docs/DESIGN.md) strictly.
 
 Before Grep/Read, use `codegraph_explore` (projectPath = repo root) or `codegraph explore "<symbols>"`; don't re-read files it showed you.
 
-## Board protocol (Slack, `tools/slack.py`, stdlib only; setup in [tools/README.md](tools/README.md))
+## Board protocol (Slack, `tools/slack.py`; setup: [tools/README.md](tools/README.md))
 
-Setup, once per machine: `cp .env.example .env`, put the bot token in it (ask @Kian738, never commit or paste it), then `python tools/slack.py setup`. No token = every command is a harmless no-op, so never block on it. Your name: `SLACK_AGENT=<Name>` or git user.name.
+Set `SLACK_BOT_TOKEN` in your gitignored `.env` (ask @Kian738; never paste it). Run `python tools/slack.py setup` once. No token = harmless no-op. Identity: `SLACK_AGENT=<Name>` or git user.name.
 
-**Every agent, every task:**
-1. **Start:** `python tools/slack.py start` — one digest of #board, open claims, mentions of you, #changelog. Act on anything that names you or your folders. Don't continue into an area someone has claimed.
-2. **Claim** a folder before a multi-file edit: `python tools/slack.py claim apps/web/components/` (`release` it when done). Only the folder owner may be edited anyway; claims stop two agents of the same owner colliding.
-3. **Post** when you finish something another owner depends on, when blocked, when the contract changes, or when you decide something others must follow: `python tools/slack.py post board "<what changed> · <what I need> @owner" --kind done|blocked|ask|decision|contract` (auto-prefixes `[Name's agent]`). Specific channel for detail: `#engine #web #eval #pitch`. Keep posts to 1-2 lines, aggregates only, never secrets or raw data rows.
-4. **Finish:** `python tools/slack.py done "<area>: <change>"` — one line to `#changelog` (adds the commit). Only @Kian738's agent edits `docs/BACKLOG.md` from `#changelog`; everyone else posts and never edits docs, so there are no write races (Slack is append-only).
-5. **Blocked/need a decision?** Post with `--kind blocked|ask`, tag the owner, then continue with other work instead of waiting.
+1. **Start once per task:** `python tools/slack.py start`. Compact digest: recent board/changelog, additional mentions, open claims from 12h history. Decisions, contracts, blockers and requests stay visible; `start --full` shows all fetched messages. Act on your mentions/folders; respect claims.
+2. **Claim before multi-file edits:** `python tools/slack.py claim <folder>`; `release <folder>` when done. Ownership rules still apply.
+3. **Post only new, actionable information:** `python tools/slack.py post board "<change or blocker> · <needed action> @owner" --kind done|blocked|ask|decision|contract`. One or two lines. No repeated status, mirrored posts or acknowledgements. Details belong in the area channel or a linked file. Ask/block once, then continue independent work. Aggregates only; no secrets or raw data.
+4. **Markdown changes:** promptly commit and push your own `.md` edits, then send one board post with branch, commit, changed paths and a pull request to affected agents (`git pull --ff-only origin <branch>` in their clean checkout). Do not bundle anyone else's uncommitted work. This notification also serves as the dependency/decision post; do not post it twice.
+5. **Finish once per shipped change:** `python tools/slack.py done "<area>: <change>"` adds the commit to `#changelog`. Add a board post only for a dependency/action, not another completion summary. Only @Kian738's agent updates `docs/BACKLOG.md`.
 
-`#runs` gets automatic eval results (`notify_run`). `@all` only for contract changes, feature freeze, and demo-critical breakage.
+`#runs` receives automatic eval summaries (`notify_run`). `@all` only for contract changes, feature freeze and demo-critical breakage.

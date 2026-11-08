@@ -62,7 +62,7 @@ class Building(CamelModel):
     sqm: float | None = None
     built_year: int | None = None
     roof_type: RoofType | None = None
-    roof_max_modules: int | None = None
+    roof_max_modules: int | None = Field(default=None, ge=0)  # a negative roof cap is invalid input (422), not a negative PV
     orientation: str | None = None
 
 

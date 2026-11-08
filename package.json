@@ -5,7 +5,7 @@
   "scripts": {
     "bootstrap": "node scripts/bootstrap.mjs",
     "dev": "node scripts/dev.mjs",
-    "test": "cd services/engine && node ../../scripts/py.mjs -m pytest -q && cd ../.. && node scripts/py.mjs -m pytest -q eval && pnpm --dir apps/web lint && pnpm --dir apps/web exec tsc --noEmit",
+    "test": "cd services/engine && node ../../scripts/py.mjs -m pytest -q && cd ../.. && node scripts/py.mjs -m pytest -q eval && pnpm --dir apps/web lint && pnpm --dir apps/web exec next typegen && pnpm --dir apps/web exec tsc --noEmit",
     "eval": "node scripts/py.mjs eval/run.py --data dataset --offline",
     "x:etl": "node scripts/py.mjs -m engine.etl.normalize --raw dataset --out data/processed",
     "x:train": "node scripts/py.mjs -m engine.policy.train",

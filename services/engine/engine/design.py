@@ -161,7 +161,7 @@ def _to_design(pred: bl.Pred, wp: float, id_: str, label: str | None = None, roo
         modules = max(1, min(modules, roof_modules))  # the roof is a hard cap
     return SystemDesign(
         id=id_, label=label,
-        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 2)),
+        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 4)),
         battery=BatteryDesign(kwh=pred.battery_kwh) if pred.battery_kwh > 0 else None,
         wallbox=WallboxDesign(kw=11.0) if pred.wallbox else None,
         heat_pump=HeatPumpDesign(kw=pred.hp_kw) if pred.hp_kw > 0 else None,
@@ -415,7 +415,7 @@ def system_from_values(values: dict[str, float], wp: float, id_: str, label: str
     modules = max(1, round(kwp * 1000 / wp)) if kwp > 0 else 0
     return SystemDesign(
         id=id_, label=label,
-        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 2)) if kwp > 0 else None,
+        pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 4)) if kwp > 0 else None,
         battery=BatteryDesign(kwh=round(values["battery_kwh"], 2)) if values.get("battery_kwh", 0) > 0 else None,
         wallbox=WallboxDesign(kw=values["wallbox_kw"]) if values.get("wallbox_kw", 0) > 0 else None,
         heat_pump=HeatPumpDesign(kw=values["heat_pump_kw"]) if values.get("heat_pump_kw", 0) > 0 else None,

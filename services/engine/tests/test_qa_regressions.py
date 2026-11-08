@@ -62,3 +62,11 @@ def test_design_always_returns_the_core_simulation_metrics(client, home):
     assert r.status_code == 200, r.text
     m = r.json()["metrics"]["proposal"]
     assert all(m.get(k) is not None for k in REQUIRED), m
+
+
+# -- bug 3: kWp was rounded to 2 dp, so modules x moduleWp != kWp for e.g. 415 W modules --------------------------
+@pytest.mark.parametrize("wp", [415.0, 435.0, 450.0, 375.5])
+@pytest.mark.parametrize("kwp", [3.1, 7.9, 12.34])
+def test_pv_kwp_is_exactly_modules_times_module_wp(wp, kwp):
+    pv = system_from_values({"pv_kwp": kwp}, wp, "p").pv
+    assert pv.kwp == pytest.approx(pv.modules * pv.module_wp / 1000, abs=1e-9)

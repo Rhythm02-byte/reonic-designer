@@ -20,6 +20,7 @@ from engine.models.schemas import (
     ValidateResponse, WallboxDesign,
 )
 from engine.ask_next import ask_next
+from engine.plausibility import input_flags
 from engine.etl.normalize import DEFAULT_DEMAND_KWH
 from engine.policy import rules
 from engine.policy.designer import hit_to_flag
@@ -384,6 +385,7 @@ def design(req: DesignRequest, store: Store) -> DesignResponse:
         flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; using pooled statistics."))
     if i.existing_pv and not i.existing_pv.trusted:
         flags.append(Flag(severity="warn", code="EXISTING_PV_AMBIGUOUS", component="pv", message="Existing PV was built in or after the offer year; it may be the planned system."))
+    flags.extend(input_flags(i))  # ours: implausible inputs (engine/plausibility.py)
 
     resp = DesignResponse(
         proposal=proposal, alternatives=alts, metrics=metrics, confidence=conf, reasons=reasons, flags=flags,
@@ -451,6 +453,7 @@ def design_policy(req: DesignRequest, store: Store) -> DesignResponse:
         resp.flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; the policy falls back to pooled behaviour."))
     if i.existing_pv and not i.existing_pv.trusted:
         resp.flags.append(Flag(severity="warn", code="EXISTING_PV_AMBIGUOUS", component="pv", message="Existing PV was built in or after the offer year; it may be the planned system."))
+    resp.flags.extend(input_flags(i))  # ours: implausible inputs (engine/plausibility.py)
     st = dz._stats_for(i.installer_id)
     # value of information: policy only, one batch; runs beside the simulator sweeps and never breaks /design
     asking = _ASK_POOL.submit(ask_next, i, dz, wp, req.locks, budget_ms=ASK_BUDGET_MS, executor=PHYSICS_POOL)

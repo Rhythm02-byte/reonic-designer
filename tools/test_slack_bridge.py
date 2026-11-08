@@ -150,6 +150,12 @@ class TemporaryStore(unittest.TestCase):
             result = list(pool.map(local.reserve_worker, ['same-event', 'same-event']))
         self.assertEqual(sum(result), 1)
 
+    def test_once_guard_survives_concurrent_calls_and_restart(self):
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            result = list(pool.map(self.store.once, ['same-escalation','same-escalation']))
+        self.assertEqual(sum(result), 1)
+        self.assertFalse(Store(self.store.path).once('same-escalation'))
+
     def test_setup_confirmation_needs_fresh_matching_runtime_hook(self):
         from slack_bridge.readiness import validate
         from slack_bridge import hooks

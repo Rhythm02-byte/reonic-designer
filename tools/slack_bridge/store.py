@@ -219,3 +219,7 @@ class Store:
     def put(self, key, value):
         with self.db() as db:
             db.execute('INSERT INTO kv VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value', (key, json.dumps(value)))
+
+    def once(self, key):
+        with self.db() as db:
+            return bool(db.execute('INSERT OR IGNORE INTO kv VALUES(?,?)', (key, 'true')).rowcount)

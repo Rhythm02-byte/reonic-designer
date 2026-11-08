@@ -284,7 +284,8 @@ class Bridge:
             await self.api('chat.update', channel=rollout['channel'], ts=rollout['ts'], text=text,
                 metadata={'event_type': 'thinc_status', 'event_payload': {}})
             self.store.put('rollout-text', text)
-        if missing and time.time() >= rollout['deadline'] and not rollout['escalated']:
+        if (missing and time.time() >= rollout['deadline'] and not rollout['escalated']
+            and self.store.once('rollout-escalation:' + rollout['ts'])):
             # Mark before sending: never blindly repeat an ambiguous escalation.
             rollout['escalated'] = True
             self.store.put('rollout', rollout)

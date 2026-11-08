@@ -441,6 +441,9 @@ def design_policy(req: DesignRequest, store: Store) -> DesignResponse:
     proposal = system_from_values(res.values, wp, "proposal", "Recommended")
     if "pv" in req.locks and req.current and req.current.pv:
         proposal.pv = req.current.pv  # keep the planner's exact module choice
+        if abs(proposal.pv.module_wp - wp) > 1e-9:  # the web sends a generic 450 Wp count: re-express the locked kWp in
+            kwp = proposal.pv.kwp                    # the installer's modules so planner, house, BOM and offer agree
+            proposal.pv = PvDesign(modules=max(1, round(kwp * 1000 / wp)), module_wp=wp, kwp=kwp, product_id=proposal.pv.product_id)
     proposal.locks = list(req.locks)
     resp = DesignResponse(
         proposal=proposal, alternatives=[], confidence=res.confidence(), reasons=res.reasons, flags=list(res.flags),

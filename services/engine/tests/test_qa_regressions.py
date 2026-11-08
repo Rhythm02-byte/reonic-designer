@@ -70,3 +70,27 @@ def test_design_always_returns_the_core_simulation_metrics(client, home):
 def test_pv_kwp_is_exactly_modules_times_module_wp(wp, kwp):
     pv = system_from_values({"pv_kwp": kwp}, wp, "p").pv
     assert pv.kwp == pytest.approx(pv.modules * pv.module_wp / 1000, abs=1e-9)
+
+
+# -- bug 7 (hunt B): a locked PV kept the web's generic 450 Wp module count, so BOM/offer disagreed with the planner --
+def test_locked_pv_is_re_expressed_in_the_installers_modules(designer, tmp_path):  # noqa: F811
+    import json
+    from fastapi.testclient import TestClient
+    from engine.api.main import app, get_store
+    from engine.design import Store
+    cat = {"moduleWp": {"415": 40}, "inverters": [], "batteries": [], "wallboxes": [], "heatPumps": [], "services": []}
+    (tmp_path / "catalog_synthB.json").write_text(json.dumps(cat), encoding="utf-8")
+    designer.save(tmp_path / "m.joblib")
+    store = Store(tmp_path, model_path=tmp_path / "m.joblib")
+    app.dependency_overrides[get_store] = lambda: store
+    try:
+        cur = {"pv": {"modules": 18, "moduleWp": 450, "kwp": 8.3}}  # what lib/engine.ts toSystem sends for 8.3 kWp
+        r = TestClient(app).post("/design", json={"inputs": {"installerId": "synthB", "demandKwh": 6000}, "locks": ["pv"], "current": cur})
+        assert r.status_code == 200, r.text
+        d = r.json()
+        pv = d["proposal"]["pv"]
+        assert pv == {**pv, "modules": 20, "moduleWp": 415.0, "kwp": 8.3}  # the locked size is unchanged
+        mod = [b for b in d["bom"] if b.get("componentType") == "Module"]
+        assert mod and mod[0]["quantity"] == 20 and "415" in mod[0]["componentName"]
+    finally:
+        app.dependency_overrides.clear()

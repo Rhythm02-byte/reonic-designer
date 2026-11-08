@@ -14,6 +14,7 @@
     "x:web-build": "pnpm --dir apps/web build",
     "x:correlations": "node scripts/py.mjs research/data_correlations.py",
     "x:external": "node scripts/py.mjs eval/external/benchmark.py",
-    "x:research": "node scripts/py.mjs eval/research.py"
+    "x:research": "node scripts/py.mjs eval/research.py",
+    "x:e2e": "pnpm --dir apps/web exec playwright test"
   }
 }

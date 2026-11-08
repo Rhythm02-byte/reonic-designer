@@ -1,55 +1,16 @@
 "use client";
-import { useEffect, useEffectEvent, useMemo, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
-import { altLabel, CHOICE_LABEL, DEMO_INPUTS, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
+import { altLabel, CHOICE_LABEL, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
+import { CATALOG, quantityFor } from "@/lib/products"; // ours:
+import { type Customer, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace"; // ours:
 import { House } from "./House";
+import { Location } from "./Location"; // ours:
 import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { OfferQr } from "./OfferQr"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
 import { Badge, Button, Card, CheckDot, CheckList, chevron, chevronLook, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
-
-// -- workspace: customers per planner, kept in this browser --------------------------------------------------
-// ponytail: localStorage only, so the team list is per browser; move it to the API once planners share a backend.
-type Customer = { id: string; name: string; owner: string; inputs: Inputs; locked?: Partial<Values> };
-type Workspace = { me: string; active: string; customers: Customer[] };
-const TEAM = ["Anna Weber", "Jonas Keller", "Lea Brandt"];
-const SEED: Workspace = {
-  me: TEAM[0],
-  active: "c1",
-  customers: [
-    { id: "c1", name: "Familie Berger", owner: TEAM[0], inputs: DEMO_INPUTS },
-    { id: "c2", name: "Haus Yilmaz", owner: TEAM[0], inputs: { ...DEMO_INPUTS, annual_consumption_kwh: 3200, household_size: 2, has_ev: false, heating_type: "oil" } },
-    { id: "c3", name: "Schneider, Garching", owner: TEAM[1], inputs: { ...DEMO_INPUTS, annual_consumption_kwh: 6200, household_size: 5, ev_km_per_year: 18000 } },
-    { id: "c4", name: "Müller Bungalow", owner: TEAM[2], inputs: { ...DEMO_INPUTS, annual_consumption_kwh: 2800, household_size: 2, has_ev: false, heating_type: "heat_pump" } },
-  ],
-};
-const KEY = "rhythm.workspace.v1";
-const subs = new Set<() => void>();
-let cache: Workspace | null = null;
-function read(): Workspace {
-  if (!cache) {
-    try {
-      const w = JSON.parse(localStorage.getItem(KEY) ?? "null");
-      cache = w && typeof w.me === "string" && Array.isArray(w.customers) && w.customers.length ? w : SEED;
-    } catch {
-      cache = SEED;
-    }
-  }
-  return cache!;
-}
-function update(fn: (w: Workspace) => Workspace) {
-  cache = fn(read());
-  try {
-    localStorage.setItem(KEY, JSON.stringify(cache));
-  } catch {
-    // Private mode or full storage: the change lives until the tab closes.
-  }
-  subs.forEach((f) => f());
-}
-const subscribe = (f: () => void) => {
-  subs.add(f);
-  return () => subs.delete(f);
-};
 
 // What the planner is editing. It stays a draft, marked unsaved, until "Save" writes it to the customer.
 type Draft = { inputs: Inputs; locked: Partial<Values> };
@@ -57,7 +18,7 @@ type Step = { id: string; draft: Draft; label: string; before: Values | null };
 const NO_LOCKS: Partial<Values> = {}; // ours: fix (stable identity for the design effect)
 
 export default function Planner() {
-  const ws = useSyncExternalStore(subscribe, read, () => SEED);
+  const ws = useWorkspace();
   const [scope, setScope] = useState<"mine" | "team">("mine");
   // A held-out project opens as an unsaved preview so it never overwrites a customer.
   const [preview, setPreview] = useState<{ id: string; inputs: Inputs } | null>(null);
@@ -179,6 +140,7 @@ export default function Planner() {
             }),
           ],
           ...(design.modules && design.values.pv_kwp > 0 && { moduleWp: Math.round((design.values.pv_kwp * 1000) / design.modules) }), // ours:
+          economics: { savings_eur: design.economics.savings_eur, payback_years: design.economics.payback_years }, // ours:
         }
       : null;
 
@@ -234,6 +196,12 @@ export default function Planner() {
                 className="-mx-1.5 w-full max-w-xl rounded-lg bg-transparent px-1.5 text-3xl font-semibold tracking-tight text-ink hover:bg-sand focus-visible:outline-2 focus-visible:outline-blue-600"
               />
             )}
+            {!preview && customer.location?.address && (
+              <p className="flex items-center gap-1.5 text-sm text-quiet">
+                <Icon name="pin" className="size-3.5 text-blue-600" />
+                {customer.location.address}
+              </p>
+            )}
             <p className="max-w-[65ch] text-sm">
               A first system design from the home&apos;s data, sized the way installers planned similar real projects.
               Check it, adjust it, then share the options with the homeowner.
@@ -258,6 +226,7 @@ export default function Planner() {
                 <p className="text-xs text-muted">Empty fields are unknown; the model does not guess them.</p>
               </section>
               <AskNext design={design} set={setInput} /> {/* ours: */}
+              <Location value={customer.location ?? null} onChange={(location) => editCustomer({ location: location ?? undefined })} /> {/* ours: */}
               <div id="evidence" className="scroll-mt-20">
                 <Evidence onLoad={load} /> {/* ours: replaces his <Reality onLoad={load} /> (compares with the installer's usual design) */}
               </div>
@@ -484,6 +453,11 @@ function SystemCard({ t, design, locked, selected, onSelect, onSet }: {
         </div>
       </div>
       <p className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{v > 0 ? `${num(v)} ${UNIT[t]}` : "Not included"}</p>
+      {v > 0 && (
+        <p className="text-sm text-quiet">
+          {quantityFor(t, v)}× {CATALOG[t].name}
+        </p>
+      )}
       <PartRange t={t} design={design} /> {/* ours: */}
       <div className="flex items-center gap-2">
         <label htmlFor={id} className="text-xs whitespace-nowrap text-quiet">
@@ -589,6 +563,9 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery 
           className={`${inputClass} pl-8`}
         />
       </div>
+      <Link href="/new-customer" className={`${pill} ${pillLook.secondary} w-full justify-center`}>
+        + New customer
+      </Link>
       <Segmented
         name="scope"
         label="Show customers"

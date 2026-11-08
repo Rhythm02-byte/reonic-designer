@@ -2,7 +2,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Line, OrbitControls, useGLTF } from "@react-three/drei";
-import { Box3, Group, Matrix4, Quaternion, Raycaster, Vector3, type Object3D } from "three";
+import { Box3, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, Raycaster, Vector3, type Object3D } from "three";
 import type { HouseJob, HouseLayout, Vec3 } from "@/lib/real-house";
 import { packRoof } from "@/lib/roof-layout";
 import { buildHeightfield, MODULE, placeFromSolar, placeOnGrid, type Heightfield } from "@/lib/roof-heightfield";
@@ -16,6 +16,9 @@ type Props = {
 };
 const tuple = (v: Vector3): Vec3 => [v.x,v.y,v.z];
 const STYLISED = "/models/house.glb"; // ours: Faris's Blender house; its PV_Panel_01 is the shared panel look
+// ours: panel look on the photo mesh (blue glass with a slight sky reflection, light aluminium frame)
+const GLASS = new MeshStandardMaterial({ color: "#27467a", roughness: 0.18, metalness: 0.55, emissive: "#16305c", emissiveIntensity: 0.35 });
+const FRAME = new MeshStandardMaterial({ color: "#d4d8de", roughness: 0.4, metalness: 0.7 });
 const fields = new WeakMap<Object3D, Map<string, Heightfield>>(); // ours: built once per loaded GLB, survives view toggles
 
 /** Faris's panel (frame + cell grid), re-based so local x = width, y = height (down the slope), z = up. */
@@ -25,6 +28,13 @@ function usePanelTemplate() {
     const node = scene.getObjectByName("PV_Panel_01");
     if (!node) return null;
     const inner = node.clone(true);
+    // ours: on the bright photo mesh Faris's dark cells read as black blocks; dark parts become blue glass, light parts (frame) stay
+    inner.traverse(o=>{
+      const m=o as Mesh; if(!m.isMesh) return;
+      const mat=(Array.isArray(m.material)?m.material[0]:m.material) as MeshStandardMaterial;
+      const c=mat?.color; const dark=!c || (c.r+c.g+c.b)/3<0.25;
+      m.material = dark ? GLASS : FRAME;
+    });
     inner.position.set(0,0,0); inner.quaternion.identity(); inner.scale.set(1,1,1); inner.updateMatrixWorld(true);
     const box = new Box3().setFromObject(inner), size = box.getSize(new Vector3()), mid = box.getCenter(new Vector3());
     inner.position.copy(mid).negate();
@@ -105,7 +115,7 @@ function Building({ job, layout, roof, proposedPanels, draft, marking, onPoint, 
       // 2 cm gaps: each module is drawn 2 cm smaller than its slot
       return template&&clones[i]
         ? <group key={i} position={p.position} quaternion={q} scale={[(result.width-0.02)/template.width,(result.height-0.02)/template.height,1]}><primitive object={clones[i]} /></group>
-        : <mesh key={i} position={p.position} quaternion={q}><boxGeometry args={[result.width-0.02,result.height-0.02,0.04]} /><meshStandardMaterial color="#1d2b3a" roughness={0.5} metalness={0.3} /></mesh>;
+        : <mesh key={i} position={p.position} quaternion={q}><boxGeometry args={[result.width-0.02,result.height-0.02,0.04]} /><primitive object={GLASS} attach="material" /></mesh>;
     })}
     {layout.surfaces.flatMap((s,i)=>[<Line key={`roof-${i}`} points={[...s.outline,s.outline[0]]} color="#2563eb" lineWidth={2} />,...s.exclusions.map((p,j)=><Line key={`hole-${i}-${j}`} points={[...p,p[0]]} color="#d97706" lineWidth={3} />)])}
     {draft.length>1 && <Line points={draft} color="#2563eb" lineWidth={3} />}

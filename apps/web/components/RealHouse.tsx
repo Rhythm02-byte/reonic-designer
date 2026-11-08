@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { Component, useCallback, useEffect, useState, type ReactNode } from "react";
-import { Button, Checkbox, ErrorNote, pill, pillLook, Segmented } from "./ui";
+import { Button, ErrorNote, Segmented } from "./ui";
 import type { GeoLocation } from "./Location";
 import { locationKey, type HouseAsset, type HouseJob, type HouseLayout, type Vec3 } from "@/lib/real-house";
 import { fetchRoof, type RoofInfo } from "@/lib/roof";
@@ -109,23 +109,11 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
       {show&&loaded&&!mark&&report.count>0&&report.count<proposedPanels&&<p role="status" className="pointer-events-none absolute bottom-3 left-4 rounded-lg bg-paper/90 px-2 py-1 text-xs text-quiet">Roof fits ~{report.count} panels · {proposedPanels} designed</p>}
       <p className="pointer-events-none absolute top-3 left-4 rounded-lg bg-paper/90 px-2 py-1 text-xs text-quiet">{mark?`Click ${mark} corners; the first edge aligns the panel rows.`:"Drag to turn · scroll to zoom"}</p>
     </div>
-    {show&&<div className="space-y-3 border-t border-zinc-200 p-3 text-xs">
-      {report.error&&<p className="text-amber-900">{report.error}</p>}
+    {/* ours: one quiet line instead of the manual roof marking (removed before the demo: too fiddly) */}
+    {show&&loaded&&<div className="flex flex-wrap items-center gap-3 border-t border-zinc-200 p-3 text-xs">
+      {report.error?<p className="text-amber-900">{report.error}</p>:<p className="text-quiet">Roof faces from Google Solar · fits ~{report.count} panels · {Math.min(proposedPanels,report.count)} of {proposedPanels} designed shown. Preliminary.</p>}
       <ErrorNote error={error}/>
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="text-quiet">Spaces available for NEW panels{existingPv?" (exclude all existing equipment)":""}<input type="number" min="0" max={report.count} value={spaces||(existingPv?"":report.count||"")} onChange={e=>{setSpaces(e.target.value);setReviewed(false);}} className="ml-2 w-20 rounded-lg border border-zinc-200 px-2 py-1.5"/></label>
-        <Button disabled={!Number.isInteger(capacity)||capacity<0||capacity>report.count||report.count===0} onClick={()=>{if(!reviewed){setAdjustOpen(true);setError("Open Adjust roof and tick the review box first.");return;}if(!canConfirm)return;setError(null);onCapacity(capacity);setReviewed(false);}}>Use confirmed capacity and redesign</Button>
-      </div>
-      <details open={adjustOpen} onToggle={e=>setAdjustOpen(e.currentTarget.open)}><summary className={`${pill} ${pillLook.secondary} cursor-pointer`}>Adjust roof</summary><div className="mt-3 space-y-3">
-        <p className="text-quiet">Preliminary roof view · {Math.min(proposedPanels,report.count)} of {proposedPanels} proposed new panels shown · {report.count} candidate spaces. Geometry does not change the energy simulation.</p>
-        <div className="flex flex-wrap gap-2"><Button variant="secondary" onClick={()=>{setMark("roof");setDraft([]);}}>Mark usable roof</Button><Button variant="secondary" disabled={!layout.surfaces.length} onClick={()=>{setMark("exclusion");setDraft([]);}}>Mark exclusion</Button>{mark&&<><Button variant="secondary" disabled={draft.length<3} onClick={finish}>Finish outline ({draft.length})</Button><Button variant="secondary" onClick={()=>{setMark(null);setDraft([]);}}>Cancel</Button></>}</div>
-        {solar?.panelWidthMeters&&solar.panelHeightMeters?<Button variant="secondary" onClick={()=>updateLayout({...layout,width:solar.panelWidthMeters!,height:solar.panelHeightMeters!})}>Use Google panel dimensions ({solar.panelWidthMeters} × {solar.panelHeightMeters} m)</Button>:null}
-        <div className="grid grid-cols-2 gap-3">{(["width","height","gap","setback"] as const).map(field=><label key={field} className="space-y-1"><span className="block text-quiet">{({width:"Module width",height:"Module length",gap:"Gap (assumed 0.02)",setback:"Edge clearance (assumed 0.3)"})[field]} · m</span><input type="number" min={field==="width"||field==="height"?0.3:0} max={5} step="0.01" value={layout[field]||""} onChange={e=>updateLayout({...layout,[field]:Number(e.target.value)})} className="w-full rounded-lg border border-zinc-200 px-2 py-1.5"/></label>)}</div>
-        <p className="text-quiet">Confirm dimensions against the selected module and clearances against site requirements. These are planning assumptions.</p>
-        <div className="flex flex-wrap gap-2"><Button variant="secondary" disabled={!layout.surfaces.length} onClick={()=>updateLayout({...layout,surfaces:layout.surfaces.slice(0,-1)})}>Undo last roof face</Button>
-        <Button variant="secondary" onClick={()=>updateLayout({...layout,surfaces:[]})}>Clear manual outlines</Button></div>
-        <label className="flex items-start gap-2 text-quiet"><Checkbox /* ours: custom control */ className="mt-0.5" checked={reviewed} onChange={e=>{setReviewed(e.target.checked);if(e.target.checked)setError(null);}}/>I checked the roof, exclusions, module dimensions and spaces available for the new installation.</label>
-      </div></details>
+      {!existingPv&&report.count>0&&report.count<proposedPanels&&<Button variant="secondary" onClick={()=>onCapacity(report.count)}>Limit design to {report.count} panels</Button>}
     </div>}
   </div>;
 }

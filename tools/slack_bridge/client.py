@@ -3,6 +3,7 @@ import asyncio
 import json
 from pathlib import Path
 import sqlite3
+import subprocess
 import time
 from contextlib import contextmanager
 
@@ -77,18 +78,19 @@ async def run_client(config, stop=None):
     workers = set()
     backoff = 1
     # Validate HTTPS/loopback and credentials before opening a persistent connection.
-    await asyncio.to_thread(request, config, '/register', {
-        'runtime': config['runtime'], 'session': config['session'], 'workdir': config['workdir']})
-    from .common import private_json
-    private_json(state_dir() / 'mentions.json', await asyncio.to_thread(request, config, '/identities'))
     url = config['url'].rstrip('/') + '/ws'
     async with ClientSession(timeout=ClientTimeout(total=None, connect=10),
                              headers={'Authorization': 'Bearer ' + config['token']}) as session:
         try:
             while not stop or not stop.is_set():
                 try:
+                    await asyncio.to_thread(request, config, '/register', {
+                        'runtime': config['runtime'], 'session': config['session'], 'workdir': config['workdir']})
+                    from .common import private_json
+                    private_json(state_dir() / 'mentions.json', await asyncio.to_thread(request, config, '/identities'))
                     async with session.ws_connect(url, heartbeat=15, max_msg_size=128000) as ws:
                         backoff = 1
+                        last_ready_check = 0
                         while not ws.closed and (not stop or not stop.is_set()):
                             inbox.status('connected', time.time())
                             bound = inbox.status('session_id')
@@ -96,6 +98,18 @@ async def run_client(config, stop=None):
                                 await asyncio.to_thread(request, config, '/register', {
                                     'runtime': config['runtime'], 'session': bound, 'workdir': config['workdir']})
                                 config['session'] = bound
+                            if time.time() - last_ready_check >= 30:
+                                last_ready_check = time.time()
+                                try:
+                                    rollout = await asyncio.to_thread(request, config, '/rollout')
+                                    commit = rollout.get('commit')
+                                    if rollout.get('expected') and commit and inbox.status('ready_commit') != commit:
+                                        from .readiness import evidence
+                                        proof = await asyncio.to_thread(evidence, config, commit)
+                                        await asyncio.to_thread(request, config, '/ready', proof)
+                                        inbox.status('ready_commit', commit)
+                                except (ValueError, OSError, KeyError, subprocess.SubprocessError):
+                                    pass  # stay pending until the real hook runs and the client is ready
                             # Explicit receipts are durable until the server confirms them.
                             with inbox.connect() as db:
                                 receipts = list(db.execute('SELECT id,state FROM outbox'))

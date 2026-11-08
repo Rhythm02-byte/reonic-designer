@@ -346,6 +346,10 @@ def create_app(store, bridge):
     async def rollout(request):
         return web.json_response(await bridge.rollout(request['agent'], await request.json()))
 
+    async def rollout_status(request):
+        rollout = store.get('rollout') or {}
+        return web.json_response({'commit': rollout.get('commit'), 'expected': request['agent'] in rollout.get('agents', [])})
+
     async def claims(request):
         if request.method == 'GET':
             return web.json_response(store.claims())
@@ -427,7 +431,7 @@ def create_app(store, bridge):
 
     app = web.Application(middlewares=[auth], client_max_size=128000)
     app.add_routes([web.get('/health', health), web.post('/register', register), web.get('/inbox', inbox), web.get('/identities', identities),
-                    web.post('/ready', ready), web.post('/rollout', rollout),
+                    web.post('/ready', ready), web.post('/rollout', rollout), web.get('/rollout', rollout_status),
                     web.get('/claims', claims), web.post('/claims', claims), web.post('/receipt', receipt),
                     web.post('/post', post), web.post('/worker-finished', finish), web.get('/ws', websocket)])
     return app

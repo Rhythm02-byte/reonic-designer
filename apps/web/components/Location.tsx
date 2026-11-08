@@ -29,6 +29,8 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   const mapDiv = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
+  // Every pin move or typed address invalidates older geocode and Solar responses.
+  const requestVersion = useRef(0);
   const [addressText, setAddressText] = useState(value?.address ?? "");
   const [solar, setSolar] = useState<SolarInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
       });
       mapRef.current = map;
       markerRef.current = marker;
-      if (value) fetchSolar(value.lat, value.lng);
+      if (value) fetchSolar(value.lat, value.lng, ++requestVersion.current);
     }, (e: Error) => setError(e.message));
     return () => {
       cancelled = true;
@@ -63,27 +65,32 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once; later moves go through placeAt/markerRef.
   }, []);
 
-  async function fetchSolar(lat: number, lng: number) {
+  async function fetchSolar(lat: number, lng: number, version: number) {
     try {
-      setSolar(await postJson<SolarInfo>("solar", { lat, lng }));
+      const result = await postJson<SolarInfo>("solar", { lat, lng });
+      if (requestVersion.current === version) setSolar(result);
     } catch (e) {
-      setSolar(null);
-      setError((e as Error).message);
+      if (requestVersion.current === version) {
+        setSolar(null);
+        setError((e as Error).message);
+      }
     }
   }
 
   // The one place that moves the pin, whichever side triggered it (typed address or drag).
   async function placeAt(lat: number, lng: number, fromDrag: boolean) {
+    const version = ++requestVersion.current;
     setError(null);
     markerRef.current?.setPosition({ lat, lng });
     mapRef.current?.panTo({ lat, lng });
     try {
       const address = fromDrag ? (await postJson<{ formatted_address: string }>("geocode", { lat, lng })).formatted_address : addressText.trim();
+      if (requestVersion.current !== version) return;
       setAddressText(address);
       onChange({ address, lat, lng });
-      fetchSolar(lat, lng);
+      fetchSolar(lat, lng, version);
     } catch (e) {
-      setError((e as Error).message);
+      if (requestVersion.current === version) setError((e as Error).message);
     }
   }
 
@@ -91,17 +98,25 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   useEffect(() => {
     const trimmed = addressText.trim();
     if (!trimmed || trimmed === value?.address) return;
+    const typedVersion = requestVersion.current;
     const t = setTimeout(() => {
+      if (requestVersion.current !== typedVersion) return;
+      const version = typedVersion;
       setLoading(true); // ours: lint fix (not synchronously in the effect)
       postJson<{ lat: number; lng: number; formatted_address: string }>("geocode", { address: trimmed })
         .then((r) => {
+          if (requestVersion.current !== version) return;
           onChange({ address: r.formatted_address, lat: r.lat, lng: r.lng });
           markerRef.current?.setPosition({ lat: r.lat, lng: r.lng });
           mapRef.current?.panTo({ lat: r.lat, lng: r.lng });
-          fetchSolar(r.lat, r.lng);
+          fetchSolar(r.lat, r.lng, version);
           setError(null);
-        }, (e: Error) => setError(e.message))
-        .finally(() => setLoading(false));
+        }, (e: Error) => {
+          if (requestVersion.current === version) setError(e.message);
+        })
+        .finally(() => {
+          if (requestVersion.current === version) setLoading(false);
+        });
     }, 600);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only the typed text should re-trigger this.
@@ -118,7 +133,10 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
         type="text"
         placeholder="Enter the address"
         value={addressText}
-        onChange={(e) => setAddressText(e.target.value)}
+        onChange={(e) => {
+          requestVersion.current += 1;
+          setAddressText(e.target.value);
+        }}
         className="w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-600 focus:outline-none"
       />
       <div ref={mapDiv} className="h-56 w-full rounded-xl bg-sand" />

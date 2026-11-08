@@ -1,0 +1,2002 @@
+[
+  {
+    "id": "01-01",
+    "lens": "Reonic CTO",
+    "title": "Replay receipt",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-02",
+    "lens": "Reonic CTO",
+    "title": "Existing/new boundary",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-03",
+    "lens": "Reonic CTO",
+    "title": "Joint package learner",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.55,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-04",
+    "lens": "Reonic CTO",
+    "title": "No silent lock violation",
+    "canonical_id": "I13",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.177,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-05",
+    "lens": "Reonic CTO",
+    "title": "Input provenance is part of the model",
+    "canonical_id": "I03",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.642,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-06",
+    "lens": "Reonic CTO",
+    "title": "Typed survey-needed handoff",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.07,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-07",
+    "lens": "Reonic CTO",
+    "title": "Installer transfer failure table",
+    "canonical_id": "I18",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1492.228,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-08",
+    "lens": "Reonic CTO",
+    "title": "Metric contract before optimization",
+    "canonical_id": "I24",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-09",
+    "lens": "Reonic CTO",
+    "title": "Regret not resemblance",
+    "canonical_id": "I26",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1271.204,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "01-10",
+    "lens": "Reonic CTO",
+    "title": "Expiry on assumption changes",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-01",
+    "lens": "Reonic customer-success lead",
+    "title": "Ask one useful question on a call",
+    "canonical_id": "I02",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1718.1,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-02",
+    "lens": "Reonic customer-success lead",
+    "title": "Effort-weighted qualification",
+    "canonical_id": "I15",
+    "typical_team_probability": 0.07,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1349.275,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-03",
+    "lens": "Reonic customer-success lead",
+    "title": "Separate elapsed and working time",
+    "canonical_id": "I23",
+    "typical_team_probability": 0.12,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1733.103,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-04",
+    "lens": "Reonic customer-success lead",
+    "title": "Prevent replacement-as-addition confusion",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-05",
+    "lens": "Reonic customer-success lead",
+    "title": "Explain battery oversell concern",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-06",
+    "lens": "Reonic customer-success lead",
+    "title": "Collect missing roof/budget",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-07",
+    "lens": "Reonic customer-success lead",
+    "title": "Future EV intent is not current EV",
+    "canonical_id": "I16",
+    "typical_team_probability": 0.28,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.382,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-08",
+    "lens": "Reonic customer-success lead",
+    "title": "Confirm-before-send checklist",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-09",
+    "lens": "Reonic customer-success lead",
+    "title": "Own a baseline loss",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "02-10",
+    "lens": "Reonic customer-success lead",
+    "title": "Facts passport across handoffs",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.06,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-01",
+    "lens": "15-year installer planner",
+    "title": "Existing-system accounting first",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-02",
+    "lens": "15-year installer planner",
+    "title": "Preserve the part I locked",
+    "canonical_id": "I13",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.177,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-03",
+    "lens": "15-year installer planner",
+    "title": "Compare to my actual cohort",
+    "canonical_id": "I11",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1444.252,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-04",
+    "lens": "15-year installer planner",
+    "title": "Do not replace heat-loss calculation",
+    "canonical_id": "I20",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.135,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-05",
+    "lens": "15-year installer planner",
+    "title": "Which option was really signed?",
+    "canonical_id": "I05",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1587.537,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-06",
+    "lens": "15-year installer planner",
+    "title": "Reuse my successful packages",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.6,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-07",
+    "lens": "15-year installer planner",
+    "title": "One more roof module tradeoff",
+    "canonical_id": "I21",
+    "typical_team_probability": 0.09,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1401.879,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-08",
+    "lens": "15-year installer planner",
+    "title": "Two approved offers not twenty",
+    "canonical_id": "I22",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.07,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-09",
+    "lens": "15-year installer planner",
+    "title": "4500 could be real",
+    "canonical_id": "I03",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.642,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "03-10",
+    "lens": "15-year installer planner",
+    "title": "Survey before quote",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.07,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-01",
+    "lens": "Sceptical homeowner",
+    "title": "Why the larger battery?",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.6,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-02",
+    "lens": "Sceptical homeowner",
+    "title": "Savings when tariff assumptions fail",
+    "canonical_id": "I10",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1379.868,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-03",
+    "lens": "Sceptical homeowner",
+    "title": "What still needs a site visit?",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-04",
+    "lens": "Sceptical homeowner",
+    "title": "A simpler approved alternative",
+    "canonical_id": "I22",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.07,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-05",
+    "lens": "Sceptical homeowner",
+    "title": "Do not infer EV from a charger sale",
+    "canonical_id": "I16",
+    "typical_team_probability": 0.07,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.382,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-06",
+    "lens": "Sceptical homeowner",
+    "title": "Is HP really sized for cold days?",
+    "canonical_id": "I20",
+    "typical_team_probability": 0.22,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.135,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-07",
+    "lens": "Sceptical homeowner",
+    "title": "Show assumptions that can expire",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-08",
+    "lens": "Sceptical homeowner",
+    "title": "No labor-savings marketing claim",
+    "canonical_id": "I23",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1733.103,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-09",
+    "lens": "Sceptical homeowner",
+    "title": "Show a case AI loses",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "04-10",
+    "lens": "Sceptical homeowner",
+    "title": "Pay for certainty first",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-01",
+    "lens": "ML researcher jury",
+    "title": "Tolerance collision ceiling",
+    "canonical_id": "I06",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1547.089,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-02",
+    "lens": "ML researcher jury",
+    "title": "Freeze score definitions",
+    "canonical_id": "I24",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-03",
+    "lens": "ML researcher jury",
+    "title": "Paired discordance not two percentages",
+    "canonical_id": "I09",
+    "typical_team_probability": 0.22,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.474,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-04",
+    "lens": "ML researcher jury",
+    "title": "Transfer calibration",
+    "canonical_id": "I18",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1492.228,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-05",
+    "lens": "ML researcher jury",
+    "title": "Coverage-risk curve",
+    "canonical_id": "I14",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1429.755,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-06",
+    "lens": "ML researcher jury",
+    "title": "Default-value provenance negative control",
+    "canonical_id": "I03",
+    "typical_team_probability": 0.07,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.642,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-07",
+    "lens": "ML researcher jury",
+    "title": "Ambiguous signed-option labels",
+    "canonical_id": "I05",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1587.537,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-08",
+    "lens": "ML researcher jury",
+    "title": "Joint bundle probability",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.65,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-09",
+    "lens": "ML researcher jury",
+    "title": "Optimize tolerance coverage",
+    "canonical_id": "I08",
+    "typical_team_probability": 0.28,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.548,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "05-10",
+    "lens": "ML researcher jury",
+    "title": "Decision regret without label worship",
+    "canonical_id": "I26",
+    "typical_team_probability": 0.09,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1271.204,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-01",
+    "lens": "VC",
+    "title": "Measure actual planner effort later",
+    "canonical_id": "I23",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1733.103,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-02",
+    "lens": "VC",
+    "title": "Workflow wedge rather than roof arms race",
+    "canonical_id": "I25",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.904,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-03",
+    "lens": "VC",
+    "title": "Unique missing-data collection loop",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-04",
+    "lens": "VC",
+    "title": "Auditable infrastructure trust",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-05",
+    "lens": "VC",
+    "title": "Qualification cost not inference cost",
+    "canonical_id": "I15",
+    "typical_team_probability": 0.07,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1349.275,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-06",
+    "lens": "VC",
+    "title": "Draft-to-survey handoff",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-07",
+    "lens": "VC",
+    "title": "Longitudinal energy passport",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-08",
+    "lens": "VC",
+    "title": "Trust by admitting median wins",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-09",
+    "lens": "VC",
+    "title": "Avoid overselling to reduce objections",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "06-10",
+    "lens": "VC",
+    "title": "Information product before hardware",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.05,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-01",
+    "lens": "Competitor PM - Enpal",
+    "title": "Do not copy integrated tariff promises",
+    "canonical_id": "I25",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.904,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-02",
+    "lens": "Competitor PM - Enpal",
+    "title": "Test tariff dependence",
+    "canonical_id": "I10",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1379.868,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-03",
+    "lens": "Competitor PM - Enpal",
+    "title": "Retrofit existing hardware boundary",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.09,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-04",
+    "lens": "Competitor PM - Enpal",
+    "title": "Show energy economics versus sales habit",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-05",
+    "lens": "Competitor PM - Enpal",
+    "title": "Compare planner-approved packages",
+    "canonical_id": "I22",
+    "typical_team_probability": 0.55,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.07,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-06",
+    "lens": "Competitor PM - Enpal",
+    "title": "Proof tied to system versions",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-07",
+    "lens": "Competitor PM - Enpal",
+    "title": "Local roof/budget evidence advantage",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-08",
+    "lens": "Competitor PM - Enpal",
+    "title": "Qualification friction measure",
+    "canonical_id": "I15",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1349.275,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-09",
+    "lens": "Competitor PM - Enpal",
+    "title": "Cost of regret",
+    "canonical_id": "I26",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1271.204,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "07-10",
+    "lens": "Competitor PM - Enpal",
+    "title": "Public loss as trust move",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.02,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-01",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "No unsupported tariff optimization",
+    "canonical_id": "I10",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1379.868,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-02",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Compatibility and installed assets boundary",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-03",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Installer assistance not EMS control",
+    "canonical_id": "I25",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.904,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-04",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Assumption changes trigger review",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.05,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-05",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Independent cohort evidence",
+    "canonical_id": "I11",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1444.252,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-06",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Actual profile shape sensitivity",
+    "canonical_id": "I12",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.343,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-07",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Fixed-design second opinion",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-08",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Buying versus usage distinction",
+    "canonical_id": "I16",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.382,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-09",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Prospective field evidence",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.22,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "08-10",
+    "lens": "Competitor PM - 1KOMMA5",
+    "title": "Information-only first offer",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-01",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Avoid roof automation feature race",
+    "canonical_id": "I25",
+    "typical_team_probability": 0.6,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.904,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-02",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Roof cap value rather than fake geometry",
+    "canonical_id": "I21",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1401.879,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-03",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Versioned design evidence",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.1,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-04",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Declare missing survey facts",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-05",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Useful question before roof model",
+    "canonical_id": "I02",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1718.1,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-06",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Learn installer package style",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-07",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Ground truth target ambiguity",
+    "canonical_id": "I05",
+    "typical_team_probability": 0.09,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1587.537,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-08",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "National register reference population",
+    "canonical_id": "I11",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1444.252,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-09",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Installer transfer evidence",
+    "canonical_id": "I18",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1492.228,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "09-10",
+    "lens": "Competitor PM - Aurora Solar",
+    "title": "Honest baseline failure reveal",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-01",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Do not claim auto-design novelty",
+    "canonical_id": "I25",
+    "typical_team_probability": 0.55,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.904,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-02",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Narrow approved option set",
+    "canonical_id": "I22",
+    "typical_team_probability": 0.5,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.07,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-03",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Empirical package policy",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-04",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Independent expert-match audit",
+    "canonical_id": "I24",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-05",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Economics disagreement as second reader",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-06",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Rules remain true after locks",
+    "canonical_id": "I13",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.177,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-07",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Provenance-sensitive qualification",
+    "canonical_id": "I03",
+    "typical_team_probability": 0.09,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.642,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-08",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Reduce information burden",
+    "canonical_id": "I15",
+    "typical_team_probability": 0.1,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1349.275,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-09",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Capture budget constraints",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "10-10",
+    "lens": "Competitor PM - OpenSolar",
+    "title": "Survey as an initial product",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-01",
+    "lens": "Radiology second-reader analogy",
+    "title": "Independent physics second reader",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.55,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-02",
+    "lens": "Radiology second-reader analogy",
+    "title": "Escalate ambiguous home",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-03",
+    "lens": "Radiology second-reader analogy",
+    "title": "Sensitivity against deferral rate",
+    "canonical_id": "I14",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1429.755,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-04",
+    "lens": "Radiology second-reader analogy",
+    "title": "Reader disagreement ledger",
+    "canonical_id": "I09",
+    "typical_team_probability": 0.1,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.474,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-05",
+    "lens": "Radiology second-reader analogy",
+    "title": "Hospital/domain shift analogy",
+    "canonical_id": "I18",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1492.228,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-06",
+    "lens": "Radiology second-reader analogy",
+    "title": "Trace the model version",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-07",
+    "lens": "Radiology second-reader analogy",
+    "title": "Sparse-subtype evidence warning",
+    "canonical_id": "I20",
+    "typical_team_probability": 0.22,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.135,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-08",
+    "lens": "Radiology second-reader analogy",
+    "title": "Critical invariant not mean accuracy",
+    "canonical_id": "I13",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.177,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-09",
+    "lens": "Radiology second-reader analogy",
+    "title": "Show a second-reader disagreement openly",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.05,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "11-10",
+    "lens": "Radiology second-reader analogy",
+    "title": "Stale study requires new facts",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-01",
+    "lens": "Credit adverse-action analogy",
+    "title": "Specific missing-fact reason",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-02",
+    "lens": "Credit adverse-action analogy",
+    "title": "Challenge incorrect input provenance",
+    "canonical_id": "I03",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.642,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-03",
+    "lens": "Credit adverse-action analogy",
+    "title": "Actionable smallest information request",
+    "canonical_id": "I15",
+    "typical_team_probability": 0.1,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1349.275,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-04",
+    "lens": "Credit adverse-action analogy",
+    "title": "Metric consequences transparent",
+    "canonical_id": "I24",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-05",
+    "lens": "Credit adverse-action analogy",
+    "title": "Groupwise uncertainty audit",
+    "canonical_id": "I18",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1492.228,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-06",
+    "lens": "Credit adverse-action analogy",
+    "title": "Who benefits and who loses",
+    "canonical_id": "I09",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.474,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-07",
+    "lens": "Credit adverse-action analogy",
+    "title": "Behavior score is not physical need",
+    "canonical_id": "I16",
+    "typical_team_probability": 0.06,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.382,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-08",
+    "lens": "Credit adverse-action analogy",
+    "title": "Reproducible decision receipt",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-09",
+    "lens": "Credit adverse-action analogy",
+    "title": "Prospective missing-data collection",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "12-10",
+    "lens": "Credit adverse-action analogy",
+    "title": "Defer equipment decision for evidence",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.05,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-01",
+    "lens": "Car-configurator analogy",
+    "title": "Choose coherent packages",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.65,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-02",
+    "lens": "Car-configurator analogy",
+    "title": "Only compatible approved choices",
+    "canonical_id": "I22",
+    "typical_team_probability": 0.6,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.07,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-03",
+    "lens": "Car-configurator analogy",
+    "title": "Replacement versus added equipment",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-04",
+    "lens": "Car-configurator analogy",
+    "title": "Locked option invariant",
+    "canonical_id": "I13",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.177,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-05",
+    "lens": "Car-configurator analogy",
+    "title": "Discrete catalogue target",
+    "canonical_id": "I08",
+    "typical_team_probability": 0.5,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.548,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-06",
+    "lens": "Car-configurator analogy",
+    "title": "Next roof module price step",
+    "canonical_id": "I21",
+    "typical_team_probability": 0.09,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1401.879,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-07",
+    "lens": "Car-configurator analogy",
+    "title": "Nearest suitable package regret",
+    "canonical_id": "I26",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1271.204,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-08",
+    "lens": "Car-configurator analogy",
+    "title": "Which configuration was purchased?",
+    "canonical_id": "I05",
+    "typical_team_probability": 0.1,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1587.537,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-09",
+    "lens": "Car-configurator analogy",
+    "title": "Ask budget before expensive choice",
+    "canonical_id": "I15",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1349.275,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "13-10",
+    "lens": "Car-configurator analogy",
+    "title": "Versioned household configuration",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-01",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Best candidate plus alternatives",
+    "canonical_id": "I22",
+    "typical_team_probability": 0.6,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.07,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-02",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Regret of second choice",
+    "canonical_id": "I26",
+    "typical_team_probability": 0.22,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1271.204,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-03",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Flat evaluation means defer",
+    "canonical_id": "I14",
+    "typical_team_probability": 0.09,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1429.755,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-04",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Roof-cap principal variation",
+    "canonical_id": "I21",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1401.879,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-05",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "One answer changes the move",
+    "canonical_id": "I02",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1718.1,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-06",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Different objectives yield different moves",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-07",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Paired blunders not aggregate score",
+    "canonical_id": "I09",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.474,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-08",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Same engine and position replay",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-09",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Show the baseline winning line",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.04,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "14-10",
+    "lens": "Chess best-move/eval-bar analogy",
+    "title": "Incomplete board means no final move",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.06,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-01",
+    "lens": "Insurance underwriting analogy",
+    "title": "Refer unknown roof/budget",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-02",
+    "lens": "Insurance underwriting analogy",
+    "title": "Coverage-risk tradeoff",
+    "canonical_id": "I14",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1429.755,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-03",
+    "lens": "Insurance underwriting analogy",
+    "title": "Missingness mechanism",
+    "canonical_id": "I03",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.642,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-04",
+    "lens": "Insurance underwriting analogy",
+    "title": "Reference cohort selection",
+    "canonical_id": "I11",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1444.252,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-05",
+    "lens": "Insurance underwriting analogy",
+    "title": "New installer population shift",
+    "canonical_id": "I18",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1492.228,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-06",
+    "lens": "Insurance underwriting analogy",
+    "title": "Scenario stress envelope",
+    "canonical_id": "I10",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1379.868,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-07",
+    "lens": "Insurance underwriting analogy",
+    "title": "Loss function before approval",
+    "canonical_id": "I24",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-08",
+    "lens": "Insurance underwriting analogy",
+    "title": "Collect high-value facts",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-09",
+    "lens": "Insurance underwriting analogy",
+    "title": "Existing assets declared explicitly",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "15-10",
+    "lens": "Insurance underwriting analogy",
+    "title": "Assumptions expire after household change",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.06,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-01",
+    "lens": "Assumption reversal",
+    "title": "Rank packages instead of predict sizes",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.55,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-02",
+    "lens": "Assumption reversal",
+    "title": "Ask before predicting",
+    "canonical_id": "I02",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1718.1,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-03",
+    "lens": "Assumption reversal",
+    "title": "Use simulator to disagree rather than size",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-04",
+    "lens": "Assumption reversal",
+    "title": "Measure observability rather than accuracy",
+    "canonical_id": "I06",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1547.089,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-05",
+    "lens": "Assumption reversal",
+    "title": "Minimize regret rather than imitate",
+    "canonical_id": "I26",
+    "typical_team_probability": 0.12,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1271.204,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-06",
+    "lens": "Assumption reversal",
+    "title": "Lead with a loss rather than a win",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-07",
+    "lens": "Assumption reversal",
+    "title": "Offer information rather than equipment",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.02,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-08",
+    "lens": "Assumption reversal",
+    "title": "Collect labels for questions not systems",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.07,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-09",
+    "lens": "Assumption reversal",
+    "title": "Sell readiness not precision",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "16-10",
+    "lens": "Assumption reversal",
+    "title": "Maintain facts not a one-time quote",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.05,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-01",
+    "lens": "SCAMPER",
+    "title": "Substitute bundle ranking for chain",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.5,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-02",
+    "lens": "SCAMPER",
+    "title": "Combine habit and physics as disagreement",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-03",
+    "lens": "SCAMPER",
+    "title": "Adapt underwriting referral",
+    "canonical_id": "I14",
+    "typical_team_probability": 0.12,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1429.755,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-04",
+    "lens": "SCAMPER",
+    "title": "Magnify one useful question",
+    "canonical_id": "I02",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1718.1,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-05",
+    "lens": "SCAMPER",
+    "title": "Put replay evidence to another use",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-06",
+    "lens": "SCAMPER",
+    "title": "Eliminate unsupported business claim",
+    "canonical_id": "I23",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1733.103,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-07",
+    "lens": "SCAMPER",
+    "title": "Reverse offer then survey order",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-08",
+    "lens": "SCAMPER",
+    "title": "Substitute measured profile for smooth H0",
+    "canonical_id": "I12",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.343,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-09",
+    "lens": "SCAMPER",
+    "title": "Combine retrofit boundaries consistently",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.12,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "17-10",
+    "lens": "SCAMPER",
+    "title": "Reduce choice overload",
+    "canonical_id": "I22",
+    "typical_team_probability": 0.5,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1347.07,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-01",
+    "lens": "Morphological box",
+    "title": "Installer ID x bundle classifier x joint hit x approved menu x temporal folds",
+    "canonical_id": "I07",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1306.394,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-02",
+    "lens": "Morphological box",
+    "title": "Provenance x boosted chain x calibrated missingness x ask-next x paired test",
+    "canonical_id": "I03",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.642,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-03",
+    "lens": "Morphological box",
+    "title": "Measured load x simulator x import gap x second-opinion x public replay",
+    "canonical_id": "I12",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.343,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-04",
+    "lens": "Morphological box",
+    "title": "Missing mask x calibrated model x risk-coverage x refer x heldout calibration",
+    "canonical_id": "I14",
+    "typical_team_probability": 0.12,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1429.755,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-05",
+    "lens": "Morphological box",
+    "title": "Budget x ranked catalogue x regret x Pareto choice x prospective cases",
+    "canonical_id": "I26",
+    "typical_team_probability": 0.08,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1271.204,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-06",
+    "lens": "Morphological box",
+    "title": "Cohort year x empirical CDF x plausibility x percentile x register metadata",
+    "canonical_id": "I11",
+    "typical_team_probability": 0.18,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1444.252,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-07",
+    "lens": "Morphological box",
+    "title": "Existing assets x accounting x invariants x locked draft x stress cases",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-08",
+    "lens": "Morphological box",
+    "title": "Roof unknown x fixed policy x readiness x site survey x critical checks",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.12,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-09",
+    "lens": "Morphological box",
+    "title": "Artifact hash x same engine x reproducibility x receipt x deterministic replay",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.1,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "18-10",
+    "lens": "Morphological box",
+    "title": "Changing household x versioned facts x validity x passport x follow-up",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-01",
+    "lens": "Premortem 15:30 lost",
+    "title": "Jury says we overstated the tie",
+    "canonical_id": "I23",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1733.103,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-02",
+    "lens": "Premortem 15:30 lost",
+    "title": "Jury questions selected signed option",
+    "canonical_id": "I05",
+    "typical_team_probability": 0.12,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1587.537,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-03",
+    "lens": "Premortem 15:30 lost",
+    "title": "Jury has seen solar auto-design already",
+    "canonical_id": "I25",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1555.904,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-04",
+    "lens": "Premortem 15:30 lost",
+    "title": "Retrofit double-counts installed equipment",
+    "canonical_id": "I19",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1562.518,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-05",
+    "lens": "Premortem 15:30 lost",
+    "title": "Jury asks for HP sizing evidence",
+    "canonical_id": "I20",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1660.135,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-06",
+    "lens": "Premortem 15:30 lost",
+    "title": "Demo cannot run offline",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.5,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-07",
+    "lens": "Premortem 15:30 lost",
+    "title": "Manual override breaks a rule silently",
+    "canonical_id": "I13",
+    "typical_team_probability": 0.15,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.177,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-08",
+    "lens": "Premortem 15:30 lost",
+    "title": "Metric appears chosen after results",
+    "canonical_id": "I24",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-09",
+    "lens": "Premortem 15:30 lost",
+    "title": "Savings collapse under plausible prices",
+    "canonical_id": "I10",
+    "typical_team_probability": 0.35,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1379.868,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "19-10",
+    "lens": "Premortem 15:30 lost",
+    "title": "We hid the baseline and lost trust",
+    "canonical_id": "I28",
+    "typical_team_probability": 0.06,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1484.313,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-01",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on information acquisition",
+    "canonical_id": "I02",
+    "typical_team_probability": 0.45,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1718.1,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-02",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on independent second opinion",
+    "canonical_id": "I04",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1572.733,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-03",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on bounded handoff",
+    "canonical_id": "I01",
+    "typical_team_probability": 0.25,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1495.864,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-04",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on critical error prevention",
+    "canonical_id": "I13",
+    "typical_team_probability": 0.4,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1652.177,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-05",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on reproducibility",
+    "canonical_id": "I17",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1683.891,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-06",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on prospective data collection",
+    "canonical_id": "I27",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1437.011,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-07",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on honesty of claims",
+    "canonical_id": "I23",
+    "typical_team_probability": 0.3,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1733.103,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-08",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on transparent population limits",
+    "canonical_id": "I18",
+    "typical_team_probability": 0.2,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1492.228,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-09",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on selling certainty before hardware",
+    "canonical_id": "I29",
+    "typical_team_probability": 0.03,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1308.401,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  },
+  {
+    "id": "20-10",
+    "lens": "Accuracy capped at 25 percent thought experiment",
+    "title": "Win on continuity after quote",
+    "canonical_id": "I30",
+    "typical_team_probability": 0.05,
+    "probability_status": "subjective_uncalibrated_generation_prior",
+    "elo": 1273.176,
+    "elo_status": "canonical_idea_tournament_rating_not_raw_idea_test"
+  }
+]

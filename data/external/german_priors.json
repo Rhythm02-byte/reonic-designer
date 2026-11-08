@@ -1,0 +1,84 @@
+{
+  "accessed_at": "2026-11-08",
+  "analyst_assumptions": [
+    "Independence of household size, plug-in ownership and heating across different survey years; unsupported for adopters.",
+    "All synthesized homes use SFH demand anchors even though marginal frequencies describe all households/dwellings.",
+    "5plus topcoded to5 persons and uses5-person demand anchor.",
+    "Source ambient-heat category mapped to Heatpump as a scenario proxy, not verified universal label.",
+    "Demand multiplier uniform0.6-1.6, conditional EV km5000-25000, useful heat8000-30000, price0.32, and installer mixing are analyst choices, not empirical distributions.",
+    "Other heating including district heat maps Unknown with heat demand omitted; no invented district-to-gas translation."
+  ],
+  "demand_source": "https://www.stromspiegel.de/stromverbrauch-verstehen/stromverbrauch-im-haushalt/",
+  "heating": {
+    "mapping": "Gas->Gas; oil->Oil; wood->OtherRenewable; ambientgroup->Heatpump is an explicit proxy assumption, since source category is not pure heat pumps; other18%->Unknown because no district-heat schema enum.",
+    "meaning": "Dwelling heating primary energy: gas56%,oil19%,wood/pellets4%,solar/geothermal/ambient/exhaust heat3%,district15% plus arithmetic remainder3%.",
+    "percent_gas_oil_wood_ambientgroup_other": [
+      56,
+      19,
+      4,
+      3,
+      18
+    ],
+    "source_index": 2,
+    "year": 2022
+  },
+  "household_demand_without_electric_dhw_kwh": [
+    1800,
+    2700,
+    3500,
+    3800,
+    4500
+  ],
+  "household_size": {
+    "meaning": "Percent of main-residence households by size, final2024;5plus is not exactly5.",
+    "percent_1_2_3_4_5plus": [
+      42.3,
+      32.8,
+      11.7,
+      9.4,
+      3.8
+    ],
+    "source_index": 0,
+    "year": 2024
+  },
+  "interpretation": "Source-backed independent marginal scenario over all German households/dwellings in different years. Not a German SFH/PV-adopter joint distribution or a population accuracy estimate.",
+  "plug_in_vehicle": {
+    "EVS_2023_household_percent": 6.0,
+    "meaning": "Households possessing electric car or plug-in hybrid; includes privately usable company cars under EVS definition. Not pure BEV, not percent of vehicles, not home-charging share.",
+    "selection": "EVS2023 section, not LWR2024(6.3%) or stock-per100households(7.1).",
+    "source_index": 1
+  },
+  "schema_version": 1,
+  "sources": [
+    {
+      "accessed_at": "2026-11-08",
+      "bytes": 79985,
+      "license": "UNVERIFIED for page redistribution; numerical reference facts cited only; ignored HTML not redistributed",
+      "local_artifact": "raw/destatis_households.html",
+      "sha256": "db6d17784f0e6cec310858b543d0f4f006c7ab5a09bc37ddee3dc436099d59ac",
+      "url": "https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Haushalte-Familien/Tabellen/1-3-privathaushalte-neuer-zeitvergleich.html",
+      "verification": "Official HTML successfully fetched via urllib; browser extraction403",
+      "version": "2024 final results, page stand2026-04-13"
+    },
+    {
+      "accessed_at": "2026-11-08",
+      "bytes": 106478,
+      "license": "UNVERIFIED for page redistribution; numerical reference facts cited only; ignored HTML not redistributed",
+      "local_artifact": "raw/destatis_ev.html",
+      "sha256": "0bece31f8e6e28d8ae1c206604511fa3a0ec0028a46927dc98d9076da815ab0e",
+      "url": "https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Einkommen-Konsum-Lebensbedingungen/Ausstattung-Gebrauchsgueter/Tabellen/liste-fahrzeuge-d.html",
+      "verification": "Official HTML successfully fetched via urllib; browser extraction403",
+      "version": "EVS2023 at Jan1, page stand2026-08-17; do not use distinct LWR2024 table"
+    },
+    {
+      "accessed_at": "2026-11-08",
+      "bytes": 86559,
+      "license": "UNVERIFIED for page redistribution; numerical reference facts cited only; ignored HTML not redistributed",
+      "local_artifact": "raw/destatis_heating.html",
+      "sha256": "0aa61a88379aa6bb78465dc805306031b434ad5ff9a06f0eae4ce9f876b1cde2",
+      "url": "https://www.destatis.de/DE/Presse/Pressemitteilungen/Zensus2022-Pressemitteilungen/PM_zenus2022_45.html",
+      "verification": "Official HTML successfully fetched via urllib; browser extraction403",
+      "version": "Zensus2022, press release2024-06-25 corrected rental figures"
+    }
+  ]
+}

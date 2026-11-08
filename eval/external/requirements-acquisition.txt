@@ -1,0 +1,3 @@
+# Optional only for rebuilding WPuQ profiles from downloaded HDF5.
+# Cached benchmark and parser tests use the engine's existing environment.
+h5py==3.16.0

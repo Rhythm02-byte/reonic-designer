@@ -1,0 +1,4300 @@
+{
+  "as_of": "2026-11-08",
+  "type": "subjective rubric-derived pairwise tournament",
+  "pool_sha256": "a5e732bcf2b7f4e10483e0a1849217fdaf3c73af3c411f1ccda9ee59ede4f6e4",
+  "limitations": [
+    "One critic is also the explicit judge, not a third independent expert.",
+    "All scores/hours/risks are reviewer estimates, not measurements.",
+    "Elo ranks the rubric's judgments, not independent empirical quality.",
+    "Order ranges quantify replay order only, not uncertainty about idea value.",
+    "Other teams' intentions and scores remain UNVERIFIED."
+  ],
+  "rubric": {
+    "scale": "jury/evidence/time/safety 0..5, higher better",
+    "weights": {
+      "jury_impact": 0.35,
+      "evidence": 0.3,
+      "time": 0.2,
+      "safety": 0.15
+    },
+    "time": "max(0, 5*(1-hours/8)); hours are estimated owner implementation/review effort",
+    "safety": "5 minus estimated demo risk on 0..5",
+    "decision": "weighted-score difference <0.075 is a tie; otherwise higher wins",
+    "elo": "1500 initial, K=24, 400 logistic scale, one full round robin, 20 seeded order replays; reported mean",
+    "purpose": "Prioritize before freeze; no quantitative expected model gain is claimed."
+  },
+  "generator_reply": {
+    "received": "2026-11-08 Europe/Berlin",
+    "text": "Generator accepted I02,03,05,06,09,11,12,14,15,16,18,20,24,25,26,27,28,29,30 critiques fully. Amended I01 to a pitch-only site-survey checklist; I04 to a frozen scenario receipt; deferred I07/08; limited I10 to deterministic sourced scenarios; I13 to incremental independent coverage; I17 to report hashes, no UI; I19 to accounting audit; I21 to scenario difference; I22 to existing sweep inspection; I23 top-priority owner request.",
+    "source": "Actual collaboration message from /root/creative_generate after two critic messages, retained verbatim in the chat; this is a concise paraphrase."
+  },
+  "ranked": [
+    {
+      "id": "I23",
+      "title": "Remove unsupported labor and superiority claims",
+      "category": "pitch",
+      "hours": 0.5,
+      "risk": "low",
+      "owner": "Pitch",
+      "first_step": "Replace elapsed lead time with elapsed lead time, and overall win with PV win plus whole-design tie; reconcile latency claim.",
+      "review_hours": 0.5,
+      "risk_0_best_5_worst": 0,
+      "axes": {
+        "jury_impact": 5,
+        "evidence": 5,
+        "time": 4.6875,
+        "safety": 5
+      },
+      "weighted_score": 4.9375,
+      "critic": "Whole-design superiority, labor saving and stale latency could invalidate an otherwise honest pitch.",
+      "judge_decision": "KEEP FIRST: request precise PV gain/tie/oracle/elapsed-time language and fresh benchmark receipt.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1733.103,
+      "elo_order_min": 1721.01,
+      "elo_order_max": 1745.734,
+      "wins": 29,
+      "ties": 0
+    },
+    {
+      "id": "I02",
+      "title": "One-question rescue on the existing planner",
+      "category": "pitch",
+      "hours": 0.5,
+      "risk": "low",
+      "owner": "Pitch",
+      "first_step": "Rehearse a synthetic home with entered demand and show the existing Ask next re-design; cite the published oracle qualification separately.",
+      "review_hours": 0.5,
+      "risk_0_best_5_worst": 0.5,
+      "axes": {
+        "jury_impact": 5,
+        "evidence": 5,
+        "time": 4.6875,
+        "safety": 4.5
+      },
+      "weighted_score": 4.8625,
+      "critic": "Masking/oracle gains are not a prospective customer-question trial; expert roof cap is target leakage if presented as observed roof.",
+      "judge_decision": "KEEP: rehearse existing Ask next; state oracle qualifier beside proof, use synthetic interactive home.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1718.1,
+      "elo_order_min": 1706.614,
+      "elo_order_max": 1725.603,
+      "wins": 28,
+      "ties": 0
+    },
+    {
+      "id": "I17",
+      "title": "Offline replay and artifact receipt",
+      "category": "risk",
+      "hours": 1,
+      "risk": "low",
+      "owner": "Eval",
+      "first_step": "Record hashes of policy, catalogue, config and generated case code plus OFFLINE status; rerun deterministic outputs.",
+      "review_hours": 1,
+      "risk_0_best_5_worst": 0.5,
+      "axes": {
+        "jury_impact": 4.5,
+        "evidence": 4.5,
+        "time": 4.375,
+        "safety": 4.5
+      },
+      "weighted_score": 4.475,
+      "critic": "New receipt UI is scope creep; a hash alone does not prove no network or fresh code.",
+      "judge_decision": "KEEP: offline artifact/config/source-hash and replay report with attempted-network coverage; no UI.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1683.891,
+      "elo_order_min": 1675.865,
+      "elo_order_max": 1693.028,
+      "wins": 25,
+      "ties": 2
+    },
+    {
+      "id": "I03",
+      "title": "Provenance audit for genuine 4500 versus defaults",
+      "category": "data",
+      "hours": 1.5,
+      "risk": "low",
+      "owner": "Eval",
+      "first_step": "Build paired synthetic requests with identical values and different provenance; inspect question and warning behavior.",
+      "review_hours": 1.5,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4.8,
+        "evidence": 4.5,
+        "time": 4.0625,
+        "safety": 4
+      },
+      "weighted_score": 4.4425,
+      "critic": "Value 4500 alone cannot prove a default; current design warning ignores entered provenance although Ask next respects it.",
+      "judge_decision": "KEEP: paired provenance cases, aggregate findings and owner request; no engine edit by Codex.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1660.642,
+      "elo_order_min": 1647.171,
+      "elo_order_max": 1670.282,
+      "wins": 22,
+      "ties": 5
+    },
+    {
+      "id": "I20",
+      "title": "Heat-pump evidence scope statement",
+      "category": "pitch",
+      "hours": 0.5,
+      "risk": "low",
+      "owner": "Pitch",
+      "first_step": "State sparse HP labels and physics-led sizing in pitch notes; ask planner what site inputs remain necessary.",
+      "review_hours": 0.5,
+      "risk_0_best_5_worst": 0.5,
+      "axes": {
+        "jury_impact": 4.2,
+        "evidence": 4.5,
+        "time": 4.6875,
+        "safety": 4.5
+      },
+      "weighted_score": 4.4325,
+      "critic": "Very few HP labels cannot justify a learned sizing or standards-compliance claim.",
+      "judge_decision": "KEEP: physics-led evidence statement and required site inputs; no compliance guarantee.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1660.135,
+      "elo_order_min": 1653.101,
+      "elo_order_max": 1667.579,
+      "wins": 22,
+      "ties": 5
+    },
+    {
+      "id": "I24",
+      "title": "Frozen score-definition sensitivity",
+      "category": "risk",
+      "hours": 1.5,
+      "risk": "low",
+      "owner": "Eval",
+      "first_step": "Keep original whole-design metric primary; compare module, presence and any-option metrics with identical predictions as diagnostics.",
+      "review_hours": 1,
+      "risk_0_best_5_worst": 0.5,
+      "axes": {
+        "jury_impact": 4.2,
+        "evidence": 4.5,
+        "time": 4.375,
+        "safety": 4.5
+      },
+      "weighted_score": 4.37,
+      "critic": "Choosing the scoring rule that makes ours win is metric overfitting.",
+      "judge_decision": "KEEP: freeze sensitivity definitions first, report all and retain primary metric.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1652.733,
+      "elo_order_min": 1643.548,
+      "elo_order_max": 1661.192,
+      "wins": 22,
+      "ties": 4
+    },
+    {
+      "id": "I09",
+      "title": "Paired per-home model versus median win/loss audit",
+      "category": "risk",
+      "hours": 1,
+      "risk": "low",
+      "owner": "Eval",
+      "first_step": "Publish aggregate paired wins/losses by component and missingness; no held-out rows.",
+      "review_hours": 1,
+      "risk_0_best_5_worst": 0.5,
+      "axes": {
+        "jury_impact": 4.2,
+        "evidence": 4.5,
+        "time": 4.375,
+        "safety": 4.5
+      },
+      "weighted_score": 4.37,
+      "critic": "Test-based example selection could become flattering cherry-picking; paired uncertainty matters.",
+      "judge_decision": "KEEP: fixed validation aggregate win/loss/error intersections; do not select models from 2026.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1652.474,
+      "elo_order_min": 1643.635,
+      "elo_order_max": 1662.363,
+      "wins": 22,
+      "ties": 4
+    },
+    {
+      "id": "I13",
+      "title": "Locks and existing-assets invariants stress ledger",
+      "category": "risk",
+      "hours": 2,
+      "risk": "low",
+      "owner": "Eval",
+      "first_step": "Freeze valid/invalid/review expectations, run synthetic cases, and report eligible/pass/fail/blocked denominators.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4.8,
+        "evidence": 4.5,
+        "time": 3.75,
+        "safety": 4
+      },
+      "weighted_score": 4.38,
+      "critic": "Existing fuzz already covers basic cases; a checker reusing optimizer rules is not independent; missing conservation trace blocks coverage.",
+      "judge_decision": "KEEP: frozen reject/review expectations, independent identities and explicit eligible denominators; report blocked checks.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1652.177,
+      "elo_order_min": 1643.171,
+      "elo_order_max": 1658.931,
+      "wins": 22,
+      "ties": 4
+    },
+    {
+      "id": "I05",
+      "title": "Signed-option and target reconstruction ambiguity audit",
+      "category": "data",
+      "hours": 2,
+      "risk": "medium",
+      "owner": "Eval",
+      "first_step": "Ask ETL owner for aggregate alternative-option sensitivity and target missingness, keeping option-selection rules fixed.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4.8,
+        "evidence": 4,
+        "time": 3.75,
+        "safety": 4
+      },
+      "weighted_score": 4.2299999999999995,
+      "critic": "No source establishes which option was signed; any-option scoring rewards option count.",
+      "judge_decision": "KEEP: label audit and mentor question before fitting; keep primary score unchanged.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1587.537,
+      "elo_order_min": 1575.539,
+      "elo_order_max": 1603.362,
+      "wins": 19,
+      "ties": 2
+    },
+    {
+      "id": "I04",
+      "title": "Expert-style versus economic battery disagreement ledger",
+      "category": "feature",
+      "hours": 1.5,
+      "risk": "medium",
+      "owner": "Engine",
+      "first_step": "Capture frozen synthetic-home expert-style and simulator sweeps; report assumptions and disagreements, never claim optimal real savings.",
+      "review_hours": 1.5,
+      "risk_0_best_5_worst": 1.5,
+      "axes": {
+        "jury_impact": 4.8,
+        "evidence": 4,
+        "time": 4.0625,
+        "safety": 3.5
+      },
+      "weighted_score": 4.2175,
+      "critic": "Simulator choice is assumption-sensitive; a zero can follow exception; optimum only among tested candidates.",
+      "judge_decision": "AMEND: frozen successful-simulation receipt and scenario comparator; no universal economic optimum.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1572.733,
+      "elo_order_min": 1561.811,
+      "elo_order_max": 1582.158,
+      "wins": 17,
+      "ties": 4
+    },
+    {
+      "id": "I19",
+      "title": "New versus total retrofit accounting audit",
+      "category": "risk",
+      "hours": 2,
+      "risk": "medium",
+      "owner": "Engine",
+      "first_step": "Ask owner to freeze existing-PV/storage semantics, then check proposal, BOM and simulation use the same boundary.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4.6,
+        "evidence": 4,
+        "time": 3.75,
+        "safety": 4
+      },
+      "weighted_score": 4.16,
+      "critic": "Existing versus total sizes and incremental economics may disagree across layers; require owner-confirmed semantics.",
+      "judge_decision": "KEEP: synthetic semantic accounting fixtures and request, not a prefreeze engine rewrite.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1562.518,
+      "elo_order_min": 1553.141,
+      "elo_order_max": 1569.576,
+      "wins": 16,
+      "ties": 5
+    },
+    {
+      "id": "I25",
+      "title": "Differentiate against an auto-layout race",
+      "category": "pitch",
+      "hours": 0.5,
+      "risk": "low",
+      "owner": "Pitch",
+      "first_step": "Position installer habits plus useful missing-information questions; do not claim competitors lack them.",
+      "review_hours": 1,
+      "risk_0_best_5_worst": 0.5,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 4,
+        "time": 4.375,
+        "safety": 4.5
+      },
+      "weighted_score": 4.1499999999999995,
+      "critic": "Other teams' actions/scores are rumors; product marketing does not independently establish comparative performance.",
+      "judge_decision": "KEEP: cite vendor features narrowly; differentiate on evidence/workflow, not unsupported novelty.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1555.904,
+      "elo_order_min": 1546.451,
+      "elo_order_max": 1568.852,
+      "wins": 16,
+      "ties": 4
+    },
+    {
+      "id": "I16",
+      "title": "Buying propensity versus physical requirement",
+      "category": "pitch",
+      "hours": 0.5,
+      "risk": "low",
+      "owner": "Pitch",
+      "first_step": "Explain that wallbox labels measure offer inclusion; EV fields and a purchaser future intent can differ.",
+      "review_hours": 1,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4.2,
+        "evidence": 4,
+        "time": 4.375,
+        "safety": 4
+      },
+      "weighted_score": 4.145,
+      "critic": "Signed offers identify purchases among observed projects, not causal physical need; EV flag absence may be missingness.",
+      "judge_decision": "KEEP: language and attribution audit, no causal claim from observational bundles.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1555.382,
+      "elo_order_min": 1547.117,
+      "elo_order_max": 1563.86,
+      "wins": 16,
+      "ties": 4
+    },
+    {
+      "id": "I06",
+      "title": "Tolerance-aware collision ceiling",
+      "category": "model",
+      "hours": 2,
+      "risk": "low",
+      "owner": "Eval",
+      "first_step": "Group exact observed inputs, find largest overlapping label-tolerance region, and distinguish empirical upper bounds from a population ceiling.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4.5,
+        "evidence": 4,
+        "time": 3.75,
+        "safety": 4
+      },
+      "weighted_score": 4.125,
+      "critic": "Coarse neighbors do not prove an information-theoretic ceiling; exact collisions give only an empirical finite-sample bound.",
+      "judge_decision": "KEEP: expose exact/collapsed feature definition and singleton counts; never claim a 25% universal ceiling.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1547.089,
+      "elo_order_min": 1534.634,
+      "elo_order_max": 1560.034,
+      "wins": 16,
+      "ties": 3
+    },
+    {
+      "id": "I01",
+      "title": "Survey-needed handoff checklist",
+      "category": "UX",
+      "hours": 0.5,
+      "risk": "low",
+      "owner": "Pitch",
+      "first_step": "Write a pitch-only site-survey checklist using existing missing inputs and warning semantics; no new readiness gate.",
+      "review_hours": 0.5,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 3.5,
+        "time": 4.6875,
+        "safety": 4
+      },
+      "weighted_score": 3.9875,
+      "critic": "No empirically justified install-ready threshold; new UI outside scope.",
+      "judge_decision": "AMEND: pitch-only survey checklist, existing warnings; no new gate or UI.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1495.864,
+      "elo_order_min": 1484.33,
+      "elo_order_max": 1505.104,
+      "wins": 14,
+      "ties": 1
+    },
+    {
+      "id": "I18",
+      "title": "Unseen-installer calibration audit",
+      "category": "model",
+      "hours": 2,
+      "risk": "medium",
+      "owner": "Eval",
+      "first_step": "Use existing leave-one-installer-out results and compare interval coverage/width; two installers do not prove generalization.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 4,
+        "time": 3.75,
+        "safety": 4
+      },
+      "weighted_score": 3.9499999999999997,
+      "critic": "Two installers supply only two transfer directions, not general unseen-installer validation.",
+      "judge_decision": "KEEP AUDIT: per-transfer counts/coverage; qualify pooled fallback; no universal generalization claim.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1492.228,
+      "elo_order_min": 1484.18,
+      "elo_order_max": 1507.653,
+      "wins": 13,
+      "ties": 2
+    },
+    {
+      "id": "I28",
+      "title": "WILDCARD: show the median winning live",
+      "category": "pitch",
+      "hours": 0.75,
+      "risk": "medium",
+      "owner": "Pitch",
+      "first_step": "Use a frozen synthetic example or aggregate segment and explain why assistance still matters; no cherry-picked superiority.",
+      "review_hours": 0.75,
+      "risk_0_best_5_worst": 1.5,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 3.5,
+        "time": 4.53125,
+        "safety": 3.5
+      },
+      "weighted_score": 3.88125,
+      "critic": "Opening with failure can confuse; selected test example may be cherry-picked.",
+      "judge_decision": "PROTECT WILDCARD: rehearsed synthetic or fixed validation counterexample; show why assistance still helps.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1484.313,
+      "elo_order_min": 1469.937,
+      "elo_order_max": 1496.57,
+      "wins": 13,
+      "ties": 1
+    },
+    {
+      "id": "I11",
+      "title": "Cohort-qualified MaStR percentile",
+      "category": "data",
+      "hours": 2,
+      "risk": "medium",
+      "owner": "Eval",
+      "first_step": "Use verified gross-PV units and rooftop/year/status filters; label residential-like proxy and avoid unsupported storage linkage.",
+      "review_hours": 1.5,
+      "risk_0_best_5_worst": 1.5,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 3,
+        "time": 4.0625,
+        "safety": 3.5
+      },
+      "weighted_score": 3.6374999999999997,
+      "critic": "Rooftop proxy is not verified residential status; observed market practice is not correct sizing; linkage must use official IDs.",
+      "judge_decision": "CONDITIONAL: show only real extracted cohort counts/years and separately report unlinked storage.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1444.252,
+      "elo_order_min": 1434.601,
+      "elo_order_max": 1455.136,
+      "wins": 10,
+      "ties": 2
+    },
+    {
+      "id": "I12",
+      "title": "Measured-profile simulation gap",
+      "category": "data",
+      "hours": 3,
+      "risk": "medium",
+      "owner": "Eval",
+      "first_step": "Compare fixed systems on normalized measured loads with the current smoothed load; retain annual energy normalization and profile year.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1.5,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 3,
+        "time": 3.75,
+        "safety": 3.5
+      },
+      "weighted_score": 3.5749999999999997,
+      "critic": "Few measured homes are not population uncertainty; hourly aggregation still loses intrahour dynamics.",
+      "judge_decision": "CONDITIONAL: paired fixed-design profile sensitivity, named datasets and coverage; no new calibration claim without data.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1437.343,
+      "elo_order_min": 1425.854,
+      "elo_order_max": 1450.951,
+      "wins": 9,
+      "ties": 3
+    },
+    {
+      "id": "I27",
+      "title": "Roof and budget field-collection experiment",
+      "category": "data",
+      "hours": 2,
+      "risk": "low",
+      "owner": "Pitch",
+      "first_step": "Ask mentors to label 20 new opt-in cases prospectively with roof/budget; define future evaluation before collecting.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1,
+      "axes": {
+        "jury_impact": 4.2,
+        "evidence": 2.5,
+        "time": 3.75,
+        "safety": 4
+      },
+      "weighted_score": 3.57,
+      "critic": "No prospective roof/budget trial can deliver reliable gain before freeze.",
+      "judge_decision": "KEEP PLAN: define a small future collection study; no claimed measured gain.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1437.011,
+      "elo_order_min": 1427.149,
+      "elo_order_max": 1447.785,
+      "wins": 9,
+      "ties": 3
+    },
+    {
+      "id": "I14",
+      "title": "Selective risk versus coverage curve",
+      "category": "model",
+      "hours": 3,
+      "risk": "high",
+      "owner": "Eval",
+      "first_step": "Fit abstention thresholds on pre-2026 validation; show the cost of deferring difficult homes without hiding them.",
+      "review_hours": 3,
+      "risk_0_best_5_worst": 1.5,
+      "axes": {
+        "jury_impact": 4.3,
+        "evidence": 3,
+        "time": 3.125,
+        "safety": 3.5
+      },
+      "weighted_score": 3.5549999999999997,
+      "critic": "Validation threshold cannot promise calibration for new installers or shifted data.",
+      "judge_decision": "DEFER deployment: make validation-only selective-risk curve; pooled transfer remains unverified.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1429.755,
+      "elo_order_min": 1421.073,
+      "elo_order_max": 1441.664,
+      "wins": 9,
+      "ties": 2
+    },
+    {
+      "id": "I21",
+      "title": "One-more-module scenario difference",
+      "category": "feature",
+      "hours": 2,
+      "risk": "medium",
+      "owner": "Engine",
+      "first_step": "Freeze one synthetic home and compare fixed constraints differing by one module; label a scenario difference, not shadow price.",
+      "review_hours": 2,
+      "risk_0_best_5_worst": 1.5,
+      "axes": {
+        "jury_impact": 3.5,
+        "evidence": 3,
+        "time": 3.75,
+        "safety": 3.5
+      },
+      "weighted_score": 3.4,
+      "critic": "Shadow price implies an optimization interpretation unsupported by a discrete coupled policy.",
+      "judge_decision": "AMEND: one-more-module scenario difference, no monotonicity/general economic guarantee.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1401.879,
+      "elo_order_min": 1391.059,
+      "elo_order_max": 1412.532,
+      "wins": 8,
+      "ties": 0
+    },
+    {
+      "id": "I10",
+      "title": "Conservative savings sensitivity envelope",
+      "category": "feature",
+      "hours": 3,
+      "risk": "medium",
+      "owner": "Engine",
+      "first_step": "Freeze tariff, generation, load-profile and cost scenarios before evaluating fixed synthetic designs.",
+      "review_hours": 3,
+      "risk_0_best_5_worst": 2,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 2.5,
+        "time": 3.125,
+        "safety": 3
+      },
+      "weighted_score": 3.2249999999999996,
+      "critic": "Uncited bounds create fake certainty; scenario range is not a confidence interval.",
+      "judge_decision": "DEFER unless cited frozen bounds exist: deterministic tariff/profile scenarios only.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1379.868,
+      "elo_order_min": 1365.001,
+      "elo_order_max": 1392.147,
+      "wins": 7,
+      "ties": 0
+    },
+    {
+      "id": "I15",
+      "title": "Question value per minute of customer effort",
+      "category": "UX",
+      "hours": 2,
+      "risk": "medium",
+      "owner": "Engine",
+      "first_step": "Keep existing price-swing score as a heuristic; annotate survey versus bill versus yes/no effort, not unmeasured accuracy value.",
+      "review_hours": 4,
+      "risk_0_best_5_worst": 2,
+      "axes": {
+        "jury_impact": 3.7,
+        "evidence": 2,
+        "time": 2.5,
+        "safety": 3
+      },
+      "weighted_score": 2.8449999999999998,
+      "critic": "Answer weights and user-time costs unmeasured; policy sensitivity is not accuracy uplift.",
+      "judge_decision": "RESEARCH: log question sensitivity and propose timed planner study; no minutes or accuracy claim.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1349.275,
+      "elo_order_min": 1338.232,
+      "elo_order_max": 1356.296,
+      "wins": 4,
+      "ties": 2
+    },
+    {
+      "id": "I08",
+      "title": "Catalogue tolerance-mass classifier",
+      "category": "model",
+      "hours": 3,
+      "risk": "high",
+      "owner": "Engine",
+      "first_step": "Score candidate catalogue sizes by predicted tolerance-hit mass; compare on fixed pre-2026 folds.",
+      "review_hours": 5,
+      "risk_0_best_5_worst": 2.5,
+      "axes": {
+        "jury_impact": 3.8,
+        "evidence": 2.5,
+        "time": 1.875,
+        "safety": 2.5
+      },
+      "weighted_score": 2.83,
+      "critic": "Already registered experiment; catalogue classes do not guarantee joint-objective gain.",
+      "judge_decision": "DEFER: tolerance-mass objective on registered settings and pre-2026 folds.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1347.548,
+      "elo_order_min": 1339.427,
+      "elo_order_max": 1361.973,
+      "wins": 4,
+      "ties": 2
+    },
+    {
+      "id": "I22",
+      "title": "Pareto menu of approved alternatives",
+      "category": "UX",
+      "hours": 4,
+      "risk": "high",
+      "owner": "Web",
+      "first_step": "Inspect existing alternatives first; retain only dominated-free cost/autarky points under a common simulation and planner approval.",
+      "review_hours": 4,
+      "risk_0_best_5_worst": 2.5,
+      "axes": {
+        "jury_impact": 3.8,
+        "evidence": 2,
+        "time": 2.5,
+        "safety": 2.5
+      },
+      "weighted_score": 2.8049999999999997,
+      "critic": "Existing variants are battery sweeps, not an established whole-system Pareto frontier; new UI is forbidden.",
+      "judge_decision": "DEFER: inspect existing approved variants only; no frontier or Pareto optimality claim.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1347.07,
+      "elo_order_min": 1333.992,
+      "elo_order_max": 1355.129,
+      "wins": 4,
+      "ties": 2
+    },
+    {
+      "id": "I29",
+      "title": "WILDCARD: sell the information before the equipment",
+      "category": "feature",
+      "hours": 3,
+      "risk": "high",
+      "owner": "Pitch",
+      "first_step": "Prototype a text-only survey-needed handoff; price of information is a hypothesis, not a measured revenue claim.",
+      "review_hours": 3,
+      "risk_0_best_5_worst": 3,
+      "axes": {
+        "jury_impact": 3.8,
+        "evidence": 1.5,
+        "time": 3.125,
+        "safety": 2
+      },
+      "weighted_score": 2.7049999999999996,
+      "critic": "Sales model and information pricing are untested; new gating product exceeds scope.",
+      "judge_decision": "PROTECT WILDCARD: pitch-only future information-first experiment, no price/revenue assertion.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1308.401,
+      "elo_order_min": 1297.333,
+      "elo_order_max": 1316.721,
+      "wins": 2,
+      "ties": 1
+    },
+    {
+      "id": "I07",
+      "title": "Rank historical bundles jointly",
+      "category": "model",
+      "hours": 4,
+      "risk": "high",
+      "owner": "Engine",
+      "first_step": "Use predeclared bundle K=10 or 20 from training only under research/experiments.md, rather than independent component regression.",
+      "review_hours": 6,
+      "risk_0_best_5_worst": 3,
+      "axes": {
+        "jury_impact": 4,
+        "evidence": 2.5,
+        "time": 1.25,
+        "safety": 2
+      },
+      "weighted_score": 2.6999999999999997,
+      "critic": "Already registered experiment; no measured gain and full fold research can exceed freeze budget.",
+      "judge_decision": "DEFER: top-K bundle ranking on pre-2026 folds only; no new model adoption now.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1306.394,
+      "elo_order_min": 1298.891,
+      "elo_order_max": 1315.835,
+      "wins": 2,
+      "ties": 1
+    },
+    {
+      "id": "I30",
+      "title": "WILDCARD: uncertainty expiry energy passport",
+      "category": "feature",
+      "hours": 6,
+      "risk": "high",
+      "owner": "Engine",
+      "first_step": "Define a future versioned facts-and-assumptions export that expires when tariff, roof or household facts change.",
+      "review_hours": 6,
+      "risk_0_best_5_worst": 3.5,
+      "axes": {
+        "jury_impact": 3.7,
+        "evidence": 1.5,
+        "time": 1.25,
+        "safety": 1.5
+      },
+      "weighted_score": 2.2199999999999998,
+      "critic": "Passport/export lifecycle is a different product with substantial data governance and stale-assumption work.",
+      "judge_decision": "PROTECT WILDCARD: future versioned assumptions receipt concept, no implementation before freeze.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1273.176,
+      "elo_order_min": 1264.279,
+      "elo_order_max": 1283.685,
+      "wins": 0,
+      "ties": 1
+    },
+    {
+      "id": "I26",
+      "title": "Bundle regret alongside agreement",
+      "category": "model",
+      "hours": 3,
+      "risk": "high",
+      "owner": "Eval",
+      "first_step": "Specify an independently priced regret proxy before testing; never substitute simulator preference for expert ground truth.",
+      "review_hours": 6,
+      "risk_0_best_5_worst": 3,
+      "axes": {
+        "jury_impact": 3.5,
+        "evidence": 1.5,
+        "time": 1.25,
+        "safety": 2
+      },
+      "weighted_score": 2.2249999999999996,
+      "critic": "Regret requires independently defined utility; one purchased bundle is not a counterfactual utility label.",
+      "judge_decision": "RESEARCH ONLY: elicit planner preferences and freeze utility before a regret experiment.",
+      "judge_identity": "critic agent /root/creative_critic; parent/Claude final review required",
+      "elo": 1271.204,
+      "elo_order_min": 1259.645,
+      "elo_order_max": 1287.96,
+      "wins": 0,
+      "ties": 1
+    }
+  ],
+  "protected_wildcards": [
+    "I28",
+    "I29",
+    "I30"
+  ],
+  "matches": [
+    {
+      "a": "I01",
+      "b": "I02",
+      "score_a": 0.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": -0.875,
+      "rationale": "evidence: I01=3.500, I02=5.000, weighted difference=-0.450; jury_impact: I01=4.000, I02=5.000, weighted difference=-0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I03",
+      "score_a": 0.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": -0.455,
+      "rationale": "evidence: I01=3.500, I03=4.500, weighted difference=-0.300; jury_impact: I01=4.000, I03=4.800, weighted difference=-0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I04",
+      "score_a": 0.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": -0.23,
+      "rationale": "jury_impact: I01=4.000, I04=4.800, weighted difference=-0.280; evidence: I01=3.500, I04=4.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I05",
+      "score_a": 0.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": -0.2425,
+      "rationale": "jury_impact: I01=4.000, I05=4.800, weighted difference=-0.280; time: I01=4.688, I05=3.750, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I06",
+      "score_a": 0.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": -0.1375,
+      "rationale": "time: I01=4.688, I06=3.750, weighted difference=+0.188; jury_impact: I01=4.000, I06=4.500, weighted difference=-0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I07",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 1.2875,
+      "rationale": "time: I01=4.688, I07=1.250, weighted difference=+0.688; evidence: I01=3.500, I07=2.500, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I08",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 1.1575,
+      "rationale": "time: I01=4.688, I08=1.875, weighted difference=+0.562; evidence: I01=3.500, I08=2.500, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I09",
+      "score_a": 0.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": -0.3825,
+      "rationale": "evidence: I01=3.500, I09=4.500, weighted difference=-0.300; safety: I01=4.000, I09=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I10",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 0.7625,
+      "rationale": "time: I01=4.688, I10=3.125, weighted difference=+0.312; evidence: I01=3.500, I10=2.500, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I11",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 0.35,
+      "rationale": "evidence: I01=3.500, I11=3.000, weighted difference=+0.150; time: I01=4.688, I11=4.062, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I12",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 0.4125,
+      "rationale": "time: I01=4.688, I12=3.750, weighted difference=+0.188; evidence: I01=3.500, I12=3.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -0.3925,
+      "rationale": "evidence: I01=3.500, I13=4.500, weighted difference=-0.300; jury_impact: I01=4.000, I13=4.800, weighted difference=-0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 0.4325,
+      "rationale": "time: I01=4.688, I14=3.125, weighted difference=+0.312; evidence: I01=3.500, I14=3.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 1.1425,
+      "rationale": "evidence: I01=3.500, I15=2.000, weighted difference=+0.450; time: I01=4.688, I15=2.500, weighted difference=+0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -0.1575,
+      "rationale": "evidence: I01=3.500, I16=4.000, weighted difference=-0.150; jury_impact: I01=4.000, I16=4.200, weighted difference=-0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.4875,
+      "rationale": "evidence: I01=3.500, I17=4.500, weighted difference=-0.300; jury_impact: I01=4.000, I17=4.500, weighted difference=-0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I18",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0375,
+      "rationale": "time: I01=4.688, I18=3.750, weighted difference=+0.188; evidence: I01=3.500, I18=4.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -0.1725,
+      "rationale": "jury_impact: I01=4.000, I19=4.600, weighted difference=-0.210; time: I01=4.688, I19=3.750, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.445,
+      "rationale": "evidence: I01=3.500, I20=4.500, weighted difference=-0.300; safety: I01=4.000, I20=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 0.5875,
+      "rationale": "time: I01=4.688, I21=3.750, weighted difference=+0.188; jury_impact: I01=4.000, I21=3.500, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 1.1825,
+      "rationale": "evidence: I01=3.500, I22=2.000, weighted difference=+0.450; time: I01=4.688, I22=2.500, weighted difference=+0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.95,
+      "rationale": "evidence: I01=3.500, I23=5.000, weighted difference=-0.450; jury_impact: I01=4.000, I23=5.000, weighted difference=-0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.3825,
+      "rationale": "evidence: I01=3.500, I24=4.500, weighted difference=-0.300; safety: I01=4.000, I24=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -0.1625,
+      "rationale": "evidence: I01=3.500, I25=4.000, weighted difference=-0.150; safety: I01=4.000, I25=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 1.7625,
+      "rationale": "time: I01=4.688, I26=1.250, weighted difference=+0.688; evidence: I01=3.500, I26=1.500, weighted difference=+0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 0.4175,
+      "rationale": "evidence: I01=3.500, I27=2.500, weighted difference=+0.300; time: I01=4.688, I27=3.750, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 0.10625,
+      "rationale": "safety: I01=4.000, I28=3.500, weighted difference=+0.075; time: I01=4.688, I28=4.531, weighted difference=+0.031. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 1.2825,
+      "rationale": "evidence: I01=3.500, I29=1.500, weighted difference=+0.600; time: I01=4.688, I29=3.125, weighted difference=+0.312. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I01",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I01",
+      "weighted_difference_a_minus_b": 1.7675,
+      "rationale": "time: I01=4.688, I30=1.250, weighted difference=+0.688; evidence: I01=3.500, I30=1.500, weighted difference=+0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I03",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.42,
+      "rationale": "evidence: I02=5.000, I03=4.500, weighted difference=+0.150; time: I02=4.688, I03=4.062, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I04",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.645,
+      "rationale": "evidence: I02=5.000, I04=4.000, weighted difference=+0.300; safety: I02=4.500, I04=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I05",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.6325,
+      "rationale": "evidence: I02=5.000, I05=4.000, weighted difference=+0.300; time: I02=4.688, I05=3.750, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I06",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.7375,
+      "rationale": "evidence: I02=5.000, I06=4.000, weighted difference=+0.300; time: I02=4.688, I06=3.750, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I07",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 2.1625,
+      "rationale": "evidence: I02=5.000, I07=2.500, weighted difference=+0.750; time: I02=4.688, I07=1.250, weighted difference=+0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I08",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 2.0325,
+      "rationale": "evidence: I02=5.000, I08=2.500, weighted difference=+0.750; time: I02=4.688, I08=1.875, weighted difference=+0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I09",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.4925,
+      "rationale": "jury_impact: I02=5.000, I09=4.200, weighted difference=+0.280; evidence: I02=5.000, I09=4.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I10",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 1.6375,
+      "rationale": "evidence: I02=5.000, I10=2.500, weighted difference=+0.750; jury_impact: I02=5.000, I10=4.000, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I11",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 1.225,
+      "rationale": "evidence: I02=5.000, I11=3.000, weighted difference=+0.600; jury_impact: I02=5.000, I11=4.000, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I12",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 1.2875,
+      "rationale": "evidence: I02=5.000, I12=3.000, weighted difference=+0.600; jury_impact: I02=5.000, I12=4.000, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I13",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.4825,
+      "rationale": "time: I02=4.688, I13=3.750, weighted difference=+0.188; evidence: I02=5.000, I13=4.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 1.3075,
+      "rationale": "evidence: I02=5.000, I14=3.000, weighted difference=+0.600; time: I02=4.688, I14=3.125, weighted difference=+0.312. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 2.0175,
+      "rationale": "evidence: I02=5.000, I15=2.000, weighted difference=+0.900; jury_impact: I02=5.000, I15=3.700, weighted difference=+0.455. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I16",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.7175,
+      "rationale": "evidence: I02=5.000, I16=4.000, weighted difference=+0.300; jury_impact: I02=5.000, I16=4.200, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I17",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.3875,
+      "rationale": "jury_impact: I02=5.000, I17=4.500, weighted difference=+0.175; evidence: I02=5.000, I17=4.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.9125,
+      "rationale": "jury_impact: I02=5.000, I18=4.000, weighted difference=+0.350; evidence: I02=5.000, I18=4.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I19",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.7025,
+      "rationale": "evidence: I02=5.000, I19=4.000, weighted difference=+0.300; time: I02=4.688, I19=3.750, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I20",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.43,
+      "rationale": "jury_impact: I02=5.000, I20=4.200, weighted difference=+0.280; evidence: I02=5.000, I20=4.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 1.4625,
+      "rationale": "evidence: I02=5.000, I21=3.000, weighted difference=+0.600; jury_impact: I02=5.000, I21=3.500, weighted difference=+0.525. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 2.0575,
+      "rationale": "evidence: I02=5.000, I22=2.000, weighted difference=+0.900; time: I02=4.688, I22=2.500, weighted difference=+0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.075,
+      "rationale": "safety: I02=4.500, I23=5.000, weighted difference=-0.075; jury_impact: I02=5.000, I23=5.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I24",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.4925,
+      "rationale": "jury_impact: I02=5.000, I24=4.200, weighted difference=+0.280; evidence: I02=5.000, I24=4.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.7125,
+      "rationale": "jury_impact: I02=5.000, I25=4.000, weighted difference=+0.350; evidence: I02=5.000, I25=4.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 2.6375,
+      "rationale": "evidence: I02=5.000, I26=1.500, weighted difference=+1.050; time: I02=4.688, I26=1.250, weighted difference=+0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 1.2925,
+      "rationale": "evidence: I02=5.000, I27=2.500, weighted difference=+0.750; jury_impact: I02=5.000, I27=4.200, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 0.98125,
+      "rationale": "evidence: I02=5.000, I28=3.500, weighted difference=+0.450; jury_impact: I02=5.000, I28=4.000, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 2.1575,
+      "rationale": "evidence: I02=5.000, I29=1.500, weighted difference=+1.050; jury_impact: I02=5.000, I29=3.800, weighted difference=+0.420. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I02",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I02",
+      "weighted_difference_a_minus_b": 2.6425,
+      "rationale": "evidence: I02=5.000, I30=1.500, weighted difference=+1.050; time: I02=4.688, I30=1.250, weighted difference=+0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I04",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.225,
+      "rationale": "evidence: I03=4.500, I04=4.000, weighted difference=+0.150; safety: I03=4.000, I04=3.500, weighted difference=+0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I05",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.2125,
+      "rationale": "evidence: I03=4.500, I05=4.000, weighted difference=+0.150; time: I03=4.062, I05=3.750, weighted difference=+0.062. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I06",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.3175,
+      "rationale": "evidence: I03=4.500, I06=4.000, weighted difference=+0.150; jury_impact: I03=4.800, I06=4.500, weighted difference=+0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I07",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 1.7425,
+      "rationale": "evidence: I03=4.500, I07=2.500, weighted difference=+0.600; time: I03=4.062, I07=1.250, weighted difference=+0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I08",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 1.6125,
+      "rationale": "evidence: I03=4.500, I08=2.500, weighted difference=+0.600; time: I03=4.062, I08=1.875, weighted difference=+0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I09",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0725,
+      "rationale": "jury_impact: I03=4.800, I09=4.200, weighted difference=+0.210; safety: I03=4.000, I09=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I10",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 1.2175,
+      "rationale": "evidence: I03=4.500, I10=2.500, weighted difference=+0.600; jury_impact: I03=4.800, I10=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I11",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.805,
+      "rationale": "evidence: I03=4.500, I11=3.000, weighted difference=+0.450; jury_impact: I03=4.800, I11=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I12",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.8675,
+      "rationale": "evidence: I03=4.500, I12=3.000, weighted difference=+0.450; jury_impact: I03=4.800, I12=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I13",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0625,
+      "rationale": "time: I03=4.062, I13=3.750, weighted difference=+0.062; jury_impact: I03=4.800, I13=4.800, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.8875,
+      "rationale": "evidence: I03=4.500, I14=3.000, weighted difference=+0.450; time: I03=4.062, I14=3.125, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 1.5975,
+      "rationale": "evidence: I03=4.500, I15=2.000, weighted difference=+0.750; jury_impact: I03=4.800, I15=3.700, weighted difference=+0.385. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I16",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.2975,
+      "rationale": "jury_impact: I03=4.800, I16=4.200, weighted difference=+0.210; evidence: I03=4.500, I16=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I17",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.0325,
+      "rationale": "jury_impact: I03=4.800, I17=4.500, weighted difference=+0.105; safety: I03=4.000, I17=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.4925,
+      "rationale": "jury_impact: I03=4.800, I18=4.000, weighted difference=+0.280; evidence: I03=4.500, I18=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I19",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.2825,
+      "rationale": "evidence: I03=4.500, I19=4.000, weighted difference=+0.150; jury_impact: I03=4.800, I19=4.600, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I20",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.01,
+      "rationale": "jury_impact: I03=4.800, I20=4.200, weighted difference=+0.210; time: I03=4.062, I20=4.688, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 1.0425,
+      "rationale": "jury_impact: I03=4.800, I21=3.500, weighted difference=+0.455; evidence: I03=4.500, I21=3.000, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 1.6375,
+      "rationale": "evidence: I03=4.500, I22=2.000, weighted difference=+0.750; jury_impact: I03=4.800, I22=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.495,
+      "rationale": "evidence: I03=4.500, I23=5.000, weighted difference=-0.150; safety: I03=4.000, I23=5.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I24",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0725,
+      "rationale": "jury_impact: I03=4.800, I24=4.200, weighted difference=+0.210; safety: I03=4.000, I24=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.2925,
+      "rationale": "jury_impact: I03=4.800, I25=4.000, weighted difference=+0.280; evidence: I03=4.500, I25=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 2.2175,
+      "rationale": "evidence: I03=4.500, I26=1.500, weighted difference=+0.900; time: I03=4.062, I26=1.250, weighted difference=+0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.8725,
+      "rationale": "evidence: I03=4.500, I27=2.500, weighted difference=+0.600; jury_impact: I03=4.800, I27=4.200, weighted difference=+0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 0.56125,
+      "rationale": "evidence: I03=4.500, I28=3.500, weighted difference=+0.300; jury_impact: I03=4.800, I28=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 1.7375,
+      "rationale": "evidence: I03=4.500, I29=1.500, weighted difference=+0.900; jury_impact: I03=4.800, I29=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I03",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I03",
+      "weighted_difference_a_minus_b": 2.2225,
+      "rationale": "evidence: I03=4.500, I30=1.500, weighted difference=+0.900; time: I03=4.062, I30=1.250, weighted difference=+0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I05",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.0125,
+      "rationale": "safety: I04=3.500, I05=4.000, weighted difference=-0.075; time: I04=4.062, I05=3.750, weighted difference=+0.062. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I06",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.0925,
+      "rationale": "jury_impact: I04=4.800, I06=4.500, weighted difference=+0.105; safety: I04=3.500, I06=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I07",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 1.5175,
+      "rationale": "time: I04=4.062, I07=1.250, weighted difference=+0.562; evidence: I04=4.000, I07=2.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I08",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 1.3875,
+      "rationale": "evidence: I04=4.000, I08=2.500, weighted difference=+0.450; time: I04=4.062, I08=1.875, weighted difference=+0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I09",
+      "score_a": 0.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": -0.1525,
+      "rationale": "jury_impact: I04=4.800, I09=4.200, weighted difference=+0.210; evidence: I04=4.000, I09=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I10",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.9925,
+      "rationale": "evidence: I04=4.000, I10=2.500, weighted difference=+0.450; jury_impact: I04=4.800, I10=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I11",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.58,
+      "rationale": "evidence: I04=4.000, I11=3.000, weighted difference=+0.300; jury_impact: I04=4.800, I11=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I12",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.6425,
+      "rationale": "evidence: I04=4.000, I12=3.000, weighted difference=+0.300; jury_impact: I04=4.800, I12=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -0.1625,
+      "rationale": "evidence: I04=4.000, I13=4.500, weighted difference=-0.150; safety: I04=3.500, I13=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.6625,
+      "rationale": "evidence: I04=4.000, I14=3.000, weighted difference=+0.300; time: I04=4.062, I14=3.125, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 1.3725,
+      "rationale": "evidence: I04=4.000, I15=2.000, weighted difference=+0.600; jury_impact: I04=4.800, I15=3.700, weighted difference=+0.385. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I16",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0725,
+      "rationale": "jury_impact: I04=4.800, I16=4.200, weighted difference=+0.210; safety: I04=3.500, I16=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.2575,
+      "rationale": "evidence: I04=4.000, I17=4.500, weighted difference=-0.150; safety: I04=3.500, I17=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.2675,
+      "rationale": "jury_impact: I04=4.800, I18=4.000, weighted difference=+0.280; safety: I04=3.500, I18=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I19",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0575,
+      "rationale": "safety: I04=3.500, I19=4.000, weighted difference=-0.075; jury_impact: I04=4.800, I19=4.600, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.215,
+      "rationale": "jury_impact: I04=4.800, I20=4.200, weighted difference=+0.210; evidence: I04=4.000, I20=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.8175,
+      "rationale": "jury_impact: I04=4.800, I21=3.500, weighted difference=+0.455; evidence: I04=4.000, I21=3.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 1.4125,
+      "rationale": "evidence: I04=4.000, I22=2.000, weighted difference=+0.600; jury_impact: I04=4.800, I22=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.72,
+      "rationale": "evidence: I04=4.000, I23=5.000, weighted difference=-0.300; safety: I04=3.500, I23=5.000, weighted difference=-0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.1525,
+      "rationale": "jury_impact: I04=4.800, I24=4.200, weighted difference=+0.210; evidence: I04=4.000, I24=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I25",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0675,
+      "rationale": "jury_impact: I04=4.800, I25=4.000, weighted difference=+0.280; safety: I04=3.500, I25=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 1.9925,
+      "rationale": "evidence: I04=4.000, I26=1.500, weighted difference=+0.750; time: I04=4.062, I26=1.250, weighted difference=+0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.6475,
+      "rationale": "evidence: I04=4.000, I27=2.500, weighted difference=+0.450; jury_impact: I04=4.800, I27=4.200, weighted difference=+0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 0.33625,
+      "rationale": "jury_impact: I04=4.800, I28=4.000, weighted difference=+0.280; evidence: I04=4.000, I28=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 1.5125,
+      "rationale": "evidence: I04=4.000, I29=1.500, weighted difference=+0.750; jury_impact: I04=4.800, I29=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I04",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I04",
+      "weighted_difference_a_minus_b": 1.9975,
+      "rationale": "evidence: I04=4.000, I30=1.500, weighted difference=+0.750; time: I04=4.062, I30=1.250, weighted difference=+0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I06",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.105,
+      "rationale": "jury_impact: I05=4.800, I06=4.500, weighted difference=+0.105; evidence: I05=4.000, I06=4.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I07",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 1.53,
+      "rationale": "time: I05=3.750, I07=1.250, weighted difference=+0.500; evidence: I05=4.000, I07=2.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I08",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 1.4,
+      "rationale": "evidence: I05=4.000, I08=2.500, weighted difference=+0.450; time: I05=3.750, I08=1.875, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I09",
+      "score_a": 0.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": -0.14,
+      "rationale": "jury_impact: I05=4.800, I09=4.200, weighted difference=+0.210; evidence: I05=4.000, I09=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I10",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 1.005,
+      "rationale": "evidence: I05=4.000, I10=2.500, weighted difference=+0.450; jury_impact: I05=4.800, I10=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I11",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.5925,
+      "rationale": "evidence: I05=4.000, I11=3.000, weighted difference=+0.300; jury_impact: I05=4.800, I11=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I12",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.655,
+      "rationale": "evidence: I05=4.000, I12=3.000, weighted difference=+0.300; jury_impact: I05=4.800, I12=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -0.15,
+      "rationale": "evidence: I05=4.000, I13=4.500, weighted difference=-0.150; jury_impact: I05=4.800, I13=4.800, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.675,
+      "rationale": "evidence: I05=4.000, I14=3.000, weighted difference=+0.300; jury_impact: I05=4.800, I14=4.300, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 1.385,
+      "rationale": "evidence: I05=4.000, I15=2.000, weighted difference=+0.600; jury_impact: I05=4.800, I15=3.700, weighted difference=+0.385. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I16",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.085,
+      "rationale": "jury_impact: I05=4.800, I16=4.200, weighted difference=+0.210; time: I05=3.750, I16=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.245,
+      "rationale": "evidence: I05=4.000, I17=4.500, weighted difference=-0.150; time: I05=3.750, I17=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.28,
+      "rationale": "jury_impact: I05=4.800, I18=4.000, weighted difference=+0.280; evidence: I05=4.000, I18=4.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I19",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.07,
+      "rationale": "jury_impact: I05=4.800, I19=4.600, weighted difference=+0.070; evidence: I05=4.000, I19=4.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.2025,
+      "rationale": "jury_impact: I05=4.800, I20=4.200, weighted difference=+0.210; time: I05=3.750, I20=4.688, weighted difference=-0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.83,
+      "rationale": "jury_impact: I05=4.800, I21=3.500, weighted difference=+0.455; evidence: I05=4.000, I21=3.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 1.425,
+      "rationale": "evidence: I05=4.000, I22=2.000, weighted difference=+0.600; jury_impact: I05=4.800, I22=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.7075,
+      "rationale": "evidence: I05=4.000, I23=5.000, weighted difference=-0.300; time: I05=3.750, I23=4.688, weighted difference=-0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.14,
+      "rationale": "jury_impact: I05=4.800, I24=4.200, weighted difference=+0.210; evidence: I05=4.000, I24=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.08,
+      "rationale": "jury_impact: I05=4.800, I25=4.000, weighted difference=+0.280; time: I05=3.750, I25=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 2.005,
+      "rationale": "evidence: I05=4.000, I26=1.500, weighted difference=+0.750; time: I05=3.750, I26=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.66,
+      "rationale": "evidence: I05=4.000, I27=2.500, weighted difference=+0.450; jury_impact: I05=4.800, I27=4.200, weighted difference=+0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 0.34875,
+      "rationale": "jury_impact: I05=4.800, I28=4.000, weighted difference=+0.280; time: I05=3.750, I28=4.531, weighted difference=-0.156. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 1.525,
+      "rationale": "evidence: I05=4.000, I29=1.500, weighted difference=+0.750; jury_impact: I05=4.800, I29=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I05",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I05",
+      "weighted_difference_a_minus_b": 2.01,
+      "rationale": "evidence: I05=4.000, I30=1.500, weighted difference=+0.750; time: I05=3.750, I30=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I07",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 1.425,
+      "rationale": "time: I06=3.750, I07=1.250, weighted difference=+0.500; evidence: I06=4.000, I07=2.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I08",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 1.295,
+      "rationale": "evidence: I06=4.000, I08=2.500, weighted difference=+0.450; time: I06=3.750, I08=1.875, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I09",
+      "score_a": 0.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": -0.245,
+      "rationale": "evidence: I06=4.000, I09=4.500, weighted difference=-0.150; time: I06=3.750, I09=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I10",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.9,
+      "rationale": "evidence: I06=4.000, I10=2.500, weighted difference=+0.450; jury_impact: I06=4.500, I10=4.000, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I11",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.4875,
+      "rationale": "evidence: I06=4.000, I11=3.000, weighted difference=+0.300; jury_impact: I06=4.500, I11=4.000, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I12",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.55,
+      "rationale": "evidence: I06=4.000, I12=3.000, weighted difference=+0.300; jury_impact: I06=4.500, I12=4.000, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -0.255,
+      "rationale": "evidence: I06=4.000, I13=4.500, weighted difference=-0.150; jury_impact: I06=4.500, I13=4.800, weighted difference=-0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.57,
+      "rationale": "evidence: I06=4.000, I14=3.000, weighted difference=+0.300; time: I06=3.750, I14=3.125, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 1.28,
+      "rationale": "evidence: I06=4.000, I15=2.000, weighted difference=+0.600; jury_impact: I06=4.500, I15=3.700, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I16",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.02,
+      "rationale": "time: I06=3.750, I16=4.375, weighted difference=-0.125; jury_impact: I06=4.500, I16=4.200, weighted difference=+0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.35,
+      "rationale": "evidence: I06=4.000, I17=4.500, weighted difference=-0.150; time: I06=3.750, I17=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.175,
+      "rationale": "jury_impact: I06=4.500, I18=4.000, weighted difference=+0.175; evidence: I06=4.000, I18=4.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I19",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.035,
+      "rationale": "jury_impact: I06=4.500, I19=4.600, weighted difference=-0.035; evidence: I06=4.000, I19=4.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.3075,
+      "rationale": "time: I06=3.750, I20=4.688, weighted difference=-0.188; evidence: I06=4.000, I20=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.725,
+      "rationale": "jury_impact: I06=4.500, I21=3.500, weighted difference=+0.350; evidence: I06=4.000, I21=3.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 1.32,
+      "rationale": "evidence: I06=4.000, I22=2.000, weighted difference=+0.600; time: I06=3.750, I22=2.500, weighted difference=+0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.8125,
+      "rationale": "evidence: I06=4.000, I23=5.000, weighted difference=-0.300; time: I06=3.750, I23=4.688, weighted difference=-0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.245,
+      "rationale": "evidence: I06=4.000, I24=4.500, weighted difference=-0.150; time: I06=3.750, I24=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I25",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.025,
+      "rationale": "jury_impact: I06=4.500, I25=4.000, weighted difference=+0.175; time: I06=3.750, I25=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 1.9,
+      "rationale": "evidence: I06=4.000, I26=1.500, weighted difference=+0.750; time: I06=3.750, I26=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.555,
+      "rationale": "evidence: I06=4.000, I27=2.500, weighted difference=+0.450; jury_impact: I06=4.500, I27=4.200, weighted difference=+0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 0.24375,
+      "rationale": "jury_impact: I06=4.500, I28=4.000, weighted difference=+0.175; time: I06=3.750, I28=4.531, weighted difference=-0.156. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 1.42,
+      "rationale": "evidence: I06=4.000, I29=1.500, weighted difference=+0.750; safety: I06=4.000, I29=2.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I06",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I06",
+      "weighted_difference_a_minus_b": 1.905,
+      "rationale": "evidence: I06=4.000, I30=1.500, weighted difference=+0.750; time: I06=3.750, I30=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I08",
+      "score_a": 0.0,
+      "winner": "I08",
+      "weighted_difference_a_minus_b": -0.13,
+      "rationale": "time: I07=1.250, I08=1.875, weighted difference=-0.125; safety: I07=2.000, I08=2.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I09",
+      "score_a": 0.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": -1.67,
+      "rationale": "time: I07=1.250, I09=4.375, weighted difference=-0.625; evidence: I07=2.500, I09=4.500, weighted difference=-0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I10",
+      "score_a": 0.0,
+      "winner": "I10",
+      "weighted_difference_a_minus_b": -0.525,
+      "rationale": "time: I07=1.250, I10=3.125, weighted difference=-0.375; safety: I07=2.000, I10=3.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I11",
+      "score_a": 0.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": -0.9375,
+      "rationale": "time: I07=1.250, I11=4.062, weighted difference=-0.562; safety: I07=2.000, I11=3.500, weighted difference=-0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I12",
+      "score_a": 0.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": -0.875,
+      "rationale": "time: I07=1.250, I12=3.750, weighted difference=-0.500; safety: I07=2.000, I12=3.500, weighted difference=-0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -1.68,
+      "rationale": "evidence: I07=2.500, I13=4.500, weighted difference=-0.600; time: I07=1.250, I13=3.750, weighted difference=-0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I14",
+      "score_a": 0.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": -0.855,
+      "rationale": "time: I07=1.250, I14=3.125, weighted difference=-0.375; safety: I07=2.000, I14=3.500, weighted difference=-0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I15",
+      "score_a": 0.0,
+      "winner": "I15",
+      "weighted_difference_a_minus_b": -0.145,
+      "rationale": "time: I07=1.250, I15=2.500, weighted difference=-0.250; evidence: I07=2.500, I15=2.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -1.445,
+      "rationale": "time: I07=1.250, I16=4.375, weighted difference=-0.625; evidence: I07=2.500, I16=4.000, weighted difference=-0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -1.775,
+      "rationale": "time: I07=1.250, I17=4.375, weighted difference=-0.625; evidence: I07=2.500, I17=4.500, weighted difference=-0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I18",
+      "score_a": 0.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": -1.25,
+      "rationale": "time: I07=1.250, I18=3.750, weighted difference=-0.500; evidence: I07=2.500, I18=4.000, weighted difference=-0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -1.46,
+      "rationale": "time: I07=1.250, I19=3.750, weighted difference=-0.500; evidence: I07=2.500, I19=4.000, weighted difference=-0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -1.7325,
+      "rationale": "time: I07=1.250, I20=4.688, weighted difference=-0.688; evidence: I07=2.500, I20=4.500, weighted difference=-0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I21",
+      "score_a": 0.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": -0.7,
+      "rationale": "time: I07=1.250, I21=3.750, weighted difference=-0.500; safety: I07=2.000, I21=3.500, weighted difference=-0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I22",
+      "score_a": 0.0,
+      "winner": "I22",
+      "weighted_difference_a_minus_b": -0.105,
+      "rationale": "time: I07=1.250, I22=2.500, weighted difference=-0.250; evidence: I07=2.500, I22=2.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -2.2375,
+      "rationale": "evidence: I07=2.500, I23=5.000, weighted difference=-0.750; time: I07=1.250, I23=4.688, weighted difference=-0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -1.67,
+      "rationale": "time: I07=1.250, I24=4.375, weighted difference=-0.625; evidence: I07=2.500, I24=4.500, weighted difference=-0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -1.45,
+      "rationale": "time: I07=1.250, I25=4.375, weighted difference=-0.625; evidence: I07=2.500, I25=4.000, weighted difference=-0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I07",
+      "weighted_difference_a_minus_b": 0.475,
+      "rationale": "evidence: I07=2.500, I26=1.500, weighted difference=+0.300; jury_impact: I07=4.000, I26=3.500, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I27",
+      "score_a": 0.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": -0.87,
+      "rationale": "time: I07=1.250, I27=3.750, weighted difference=-0.500; safety: I07=2.000, I27=4.000, weighted difference=-0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -1.18125,
+      "rationale": "time: I07=1.250, I28=4.531, weighted difference=-0.656; evidence: I07=2.500, I28=3.500, weighted difference=-0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I29",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.005,
+      "rationale": "time: I07=1.250, I29=3.125, weighted difference=-0.375; evidence: I07=2.500, I29=1.500, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I07",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I07",
+      "weighted_difference_a_minus_b": 0.48,
+      "rationale": "evidence: I07=2.500, I30=1.500, weighted difference=+0.300; jury_impact: I07=4.000, I30=3.700, weighted difference=+0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I09",
+      "score_a": 0.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": -1.54,
+      "rationale": "evidence: I08=2.500, I09=4.500, weighted difference=-0.600; time: I08=1.875, I09=4.375, weighted difference=-0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I10",
+      "score_a": 0.0,
+      "winner": "I10",
+      "weighted_difference_a_minus_b": -0.395,
+      "rationale": "time: I08=1.875, I10=3.125, weighted difference=-0.250; safety: I08=2.500, I10=3.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I11",
+      "score_a": 0.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": -0.8075,
+      "rationale": "time: I08=1.875, I11=4.062, weighted difference=-0.438; evidence: I08=2.500, I11=3.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I12",
+      "score_a": 0.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": -0.745,
+      "rationale": "time: I08=1.875, I12=3.750, weighted difference=-0.375; evidence: I08=2.500, I12=3.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -1.55,
+      "rationale": "evidence: I08=2.500, I13=4.500, weighted difference=-0.600; time: I08=1.875, I13=3.750, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I14",
+      "score_a": 0.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": -0.725,
+      "rationale": "time: I08=1.875, I14=3.125, weighted difference=-0.250; jury_impact: I08=3.800, I14=4.300, weighted difference=-0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I15",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.015,
+      "rationale": "evidence: I08=2.500, I15=2.000, weighted difference=+0.150; time: I08=1.875, I15=2.500, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -1.315,
+      "rationale": "time: I08=1.875, I16=4.375, weighted difference=-0.500; evidence: I08=2.500, I16=4.000, weighted difference=-0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -1.645,
+      "rationale": "evidence: I08=2.500, I17=4.500, weighted difference=-0.600; time: I08=1.875, I17=4.375, weighted difference=-0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I18",
+      "score_a": 0.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": -1.12,
+      "rationale": "evidence: I08=2.500, I18=4.000, weighted difference=-0.450; time: I08=1.875, I18=3.750, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -1.33,
+      "rationale": "evidence: I08=2.500, I19=4.000, weighted difference=-0.450; time: I08=1.875, I19=3.750, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -1.6025,
+      "rationale": "evidence: I08=2.500, I20=4.500, weighted difference=-0.600; time: I08=1.875, I20=4.688, weighted difference=-0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I21",
+      "score_a": 0.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": -0.57,
+      "rationale": "time: I08=1.875, I21=3.750, weighted difference=-0.375; evidence: I08=2.500, I21=3.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I22",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.025,
+      "rationale": "evidence: I08=2.500, I22=2.000, weighted difference=+0.150; time: I08=1.875, I22=2.500, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -2.1075,
+      "rationale": "evidence: I08=2.500, I23=5.000, weighted difference=-0.750; time: I08=1.875, I23=4.688, weighted difference=-0.562. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -1.54,
+      "rationale": "evidence: I08=2.500, I24=4.500, weighted difference=-0.600; time: I08=1.875, I24=4.375, weighted difference=-0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -1.32,
+      "rationale": "time: I08=1.875, I25=4.375, weighted difference=-0.500; evidence: I08=2.500, I25=4.000, weighted difference=-0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I08",
+      "weighted_difference_a_minus_b": 0.605,
+      "rationale": "evidence: I08=2.500, I26=1.500, weighted difference=+0.300; time: I08=1.875, I26=1.250, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I27",
+      "score_a": 0.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": -0.74,
+      "rationale": "time: I08=1.875, I27=3.750, weighted difference=-0.375; safety: I08=2.500, I27=4.000, weighted difference=-0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -1.05125,
+      "rationale": "time: I08=1.875, I28=4.531, weighted difference=-0.531; evidence: I08=2.500, I28=3.500, weighted difference=-0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I08",
+      "weighted_difference_a_minus_b": 0.125,
+      "rationale": "evidence: I08=2.500, I29=1.500, weighted difference=+0.300; time: I08=1.875, I29=3.125, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I08",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I08",
+      "weighted_difference_a_minus_b": 0.61,
+      "rationale": "evidence: I08=2.500, I30=1.500, weighted difference=+0.300; safety: I08=2.500, I30=1.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I10",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 1.145,
+      "rationale": "evidence: I09=4.500, I10=2.500, weighted difference=+0.600; time: I09=4.375, I10=3.125, weighted difference=+0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I11",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.7325,
+      "rationale": "evidence: I09=4.500, I11=3.000, weighted difference=+0.450; safety: I09=4.500, I11=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I12",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.795,
+      "rationale": "evidence: I09=4.500, I12=3.000, weighted difference=+0.450; safety: I09=4.500, I12=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I13",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.01,
+      "rationale": "jury_impact: I09=4.200, I13=4.800, weighted difference=-0.210; time: I09=4.375, I13=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.815,
+      "rationale": "evidence: I09=4.500, I14=3.000, weighted difference=+0.450; time: I09=4.375, I14=3.125, weighted difference=+0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 1.525,
+      "rationale": "evidence: I09=4.500, I15=2.000, weighted difference=+0.750; time: I09=4.375, I15=2.500, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I16",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.225,
+      "rationale": "evidence: I09=4.500, I16=4.000, weighted difference=+0.150; safety: I09=4.500, I16=4.000, weighted difference=+0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.105,
+      "rationale": "jury_impact: I09=4.200, I17=4.500, weighted difference=-0.105; evidence: I09=4.500, I17=4.500, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.42,
+      "rationale": "evidence: I09=4.500, I18=4.000, weighted difference=+0.150; time: I09=4.375, I18=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I19",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.21,
+      "rationale": "evidence: I09=4.500, I19=4.000, weighted difference=+0.150; jury_impact: I09=4.200, I19=4.600, weighted difference=-0.140. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I20",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.0625,
+      "rationale": "time: I09=4.375, I20=4.688, weighted difference=-0.062; jury_impact: I09=4.200, I20=4.200, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.97,
+      "rationale": "evidence: I09=4.500, I21=3.000, weighted difference=+0.450; jury_impact: I09=4.200, I21=3.500, weighted difference=+0.245. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 1.565,
+      "rationale": "evidence: I09=4.500, I22=2.000, weighted difference=+0.750; time: I09=4.375, I22=2.500, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.5675,
+      "rationale": "jury_impact: I09=4.200, I23=5.000, weighted difference=-0.280; evidence: I09=4.500, I23=5.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I24",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0,
+      "rationale": "jury_impact: I09=4.200, I24=4.200, weighted difference=+0.000; evidence: I09=4.500, I24=4.500, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.22,
+      "rationale": "evidence: I09=4.500, I25=4.000, weighted difference=+0.150; jury_impact: I09=4.200, I25=4.000, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 2.145,
+      "rationale": "evidence: I09=4.500, I26=1.500, weighted difference=+0.900; time: I09=4.375, I26=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.8,
+      "rationale": "evidence: I09=4.500, I27=2.500, weighted difference=+0.600; time: I09=4.375, I27=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 0.48875,
+      "rationale": "evidence: I09=4.500, I28=3.500, weighted difference=+0.300; safety: I09=4.500, I28=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 1.665,
+      "rationale": "evidence: I09=4.500, I29=1.500, weighted difference=+0.900; safety: I09=4.500, I29=2.000, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I09",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I09",
+      "weighted_difference_a_minus_b": 2.15,
+      "rationale": "evidence: I09=4.500, I30=1.500, weighted difference=+0.900; time: I09=4.375, I30=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I11",
+      "score_a": 0.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": -0.4125,
+      "rationale": "time: I10=3.125, I11=4.062, weighted difference=-0.188; evidence: I10=2.500, I11=3.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I12",
+      "score_a": 0.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": -0.35,
+      "rationale": "evidence: I10=2.500, I12=3.000, weighted difference=-0.150; time: I10=3.125, I12=3.750, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -1.155,
+      "rationale": "evidence: I10=2.500, I13=4.500, weighted difference=-0.600; jury_impact: I10=4.000, I13=4.800, weighted difference=-0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I14",
+      "score_a": 0.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": -0.33,
+      "rationale": "evidence: I10=2.500, I14=3.000, weighted difference=-0.150; jury_impact: I10=4.000, I14=4.300, weighted difference=-0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I10",
+      "weighted_difference_a_minus_b": 0.38,
+      "rationale": "evidence: I10=2.500, I15=2.000, weighted difference=+0.150; time: I10=3.125, I15=2.500, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -0.92,
+      "rationale": "evidence: I10=2.500, I16=4.000, weighted difference=-0.450; time: I10=3.125, I16=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -1.25,
+      "rationale": "evidence: I10=2.500, I17=4.500, weighted difference=-0.600; time: I10=3.125, I17=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I18",
+      "score_a": 0.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": -0.725,
+      "rationale": "evidence: I10=2.500, I18=4.000, weighted difference=-0.450; safety: I10=3.000, I18=4.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -0.935,
+      "rationale": "evidence: I10=2.500, I19=4.000, weighted difference=-0.450; jury_impact: I10=4.000, I19=4.600, weighted difference=-0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -1.2075,
+      "rationale": "evidence: I10=2.500, I20=4.500, weighted difference=-0.600; time: I10=3.125, I20=4.688, weighted difference=-0.312. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I21",
+      "score_a": 0.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": -0.175,
+      "rationale": "jury_impact: I10=4.000, I21=3.500, weighted difference=+0.175; evidence: I10=2.500, I21=3.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I10",
+      "weighted_difference_a_minus_b": 0.42,
+      "rationale": "evidence: I10=2.500, I22=2.000, weighted difference=+0.150; time: I10=3.125, I22=2.500, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -1.7125,
+      "rationale": "evidence: I10=2.500, I23=5.000, weighted difference=-0.750; jury_impact: I10=4.000, I23=5.000, weighted difference=-0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -1.145,
+      "rationale": "evidence: I10=2.500, I24=4.500, weighted difference=-0.600; time: I10=3.125, I24=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -0.925,
+      "rationale": "evidence: I10=2.500, I25=4.000, weighted difference=-0.450; time: I10=3.125, I25=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I10",
+      "weighted_difference_a_minus_b": 1.0,
+      "rationale": "time: I10=3.125, I26=1.250, weighted difference=+0.375; evidence: I10=2.500, I26=1.500, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I27",
+      "score_a": 0.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": -0.345,
+      "rationale": "safety: I10=3.000, I27=4.000, weighted difference=-0.150; time: I10=3.125, I27=3.750, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -0.65625,
+      "rationale": "evidence: I10=2.500, I28=3.500, weighted difference=-0.300; time: I10=3.125, I28=4.531, weighted difference=-0.281. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I10",
+      "weighted_difference_a_minus_b": 0.52,
+      "rationale": "evidence: I10=2.500, I29=1.500, weighted difference=+0.300; safety: I10=3.000, I29=2.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I10",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I10",
+      "weighted_difference_a_minus_b": 1.005,
+      "rationale": "time: I10=3.125, I30=1.250, weighted difference=+0.375; evidence: I10=2.500, I30=1.500, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I12",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0625,
+      "rationale": "time: I11=4.062, I12=3.750, weighted difference=+0.062; jury_impact: I11=4.000, I12=4.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -0.7425,
+      "rationale": "evidence: I11=3.000, I13=4.500, weighted difference=-0.450; jury_impact: I11=4.000, I13=4.800, weighted difference=-0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": 0.0825,
+      "rationale": "time: I11=4.062, I14=3.125, weighted difference=+0.188; jury_impact: I11=4.000, I14=4.300, weighted difference=-0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": 0.7925,
+      "rationale": "time: I11=4.062, I15=2.500, weighted difference=+0.312; evidence: I11=3.000, I15=2.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -0.5075,
+      "rationale": "evidence: I11=3.000, I16=4.000, weighted difference=-0.300; safety: I11=3.500, I16=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.8375,
+      "rationale": "evidence: I11=3.000, I17=4.500, weighted difference=-0.450; jury_impact: I11=4.000, I17=4.500, weighted difference=-0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I18",
+      "score_a": 0.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": -0.3125,
+      "rationale": "evidence: I11=3.000, I18=4.000, weighted difference=-0.300; safety: I11=3.500, I18=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -0.5225,
+      "rationale": "evidence: I11=3.000, I19=4.000, weighted difference=-0.300; jury_impact: I11=4.000, I19=4.600, weighted difference=-0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.795,
+      "rationale": "evidence: I11=3.000, I20=4.500, weighted difference=-0.450; safety: I11=3.500, I20=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": 0.2375,
+      "rationale": "jury_impact: I11=4.000, I21=3.500, weighted difference=+0.175; time: I11=4.062, I21=3.750, weighted difference=+0.062. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": 0.8325,
+      "rationale": "time: I11=4.062, I22=2.500, weighted difference=+0.312; evidence: I11=3.000, I22=2.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -1.3,
+      "rationale": "evidence: I11=3.000, I23=5.000, weighted difference=-0.600; jury_impact: I11=4.000, I23=5.000, weighted difference=-0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.7325,
+      "rationale": "evidence: I11=3.000, I24=4.500, weighted difference=-0.450; safety: I11=3.500, I24=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -0.5125,
+      "rationale": "evidence: I11=3.000, I25=4.000, weighted difference=-0.300; safety: I11=3.500, I25=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": 1.4125,
+      "rationale": "time: I11=4.062, I26=1.250, weighted difference=+0.562; evidence: I11=3.000, I26=1.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I27",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0675,
+      "rationale": "evidence: I11=3.000, I27=2.500, weighted difference=+0.150; safety: I11=3.500, I27=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -0.24375,
+      "rationale": "evidence: I11=3.000, I28=3.500, weighted difference=-0.150; time: I11=4.062, I28=4.531, weighted difference=-0.094. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": 0.9325,
+      "rationale": "evidence: I11=3.000, I29=1.500, weighted difference=+0.450; safety: I11=3.500, I29=2.000, weighted difference=+0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I11",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I11",
+      "weighted_difference_a_minus_b": 1.4175,
+      "rationale": "time: I11=4.062, I30=1.250, weighted difference=+0.562; evidence: I11=3.000, I30=1.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I13",
+      "score_a": 0.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": -0.805,
+      "rationale": "evidence: I12=3.000, I13=4.500, weighted difference=-0.450; jury_impact: I12=4.000, I13=4.800, weighted difference=-0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I14",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.02,
+      "rationale": "time: I12=3.750, I14=3.125, weighted difference=+0.125; jury_impact: I12=4.000, I14=4.300, weighted difference=-0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": 0.73,
+      "rationale": "evidence: I12=3.000, I15=2.000, weighted difference=+0.300; time: I12=3.750, I15=2.500, weighted difference=+0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -0.57,
+      "rationale": "evidence: I12=3.000, I16=4.000, weighted difference=-0.300; time: I12=3.750, I16=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.9,
+      "rationale": "evidence: I12=3.000, I17=4.500, weighted difference=-0.450; jury_impact: I12=4.000, I17=4.500, weighted difference=-0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I18",
+      "score_a": 0.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": -0.375,
+      "rationale": "evidence: I12=3.000, I18=4.000, weighted difference=-0.300; safety: I12=3.500, I18=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -0.585,
+      "rationale": "evidence: I12=3.000, I19=4.000, weighted difference=-0.300; jury_impact: I12=4.000, I19=4.600, weighted difference=-0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.8575,
+      "rationale": "evidence: I12=3.000, I20=4.500, weighted difference=-0.450; time: I12=3.750, I20=4.688, weighted difference=-0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": 0.175,
+      "rationale": "jury_impact: I12=4.000, I21=3.500, weighted difference=+0.175; evidence: I12=3.000, I21=3.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": 0.77,
+      "rationale": "evidence: I12=3.000, I22=2.000, weighted difference=+0.300; time: I12=3.750, I22=2.500, weighted difference=+0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -1.3625,
+      "rationale": "evidence: I12=3.000, I23=5.000, weighted difference=-0.600; jury_impact: I12=4.000, I23=5.000, weighted difference=-0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.795,
+      "rationale": "evidence: I12=3.000, I24=4.500, weighted difference=-0.450; safety: I12=3.500, I24=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -0.575,
+      "rationale": "evidence: I12=3.000, I25=4.000, weighted difference=-0.300; safety: I12=3.500, I25=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": 1.35,
+      "rationale": "time: I12=3.750, I26=1.250, weighted difference=+0.500; evidence: I12=3.000, I26=1.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I27",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.005,
+      "rationale": "evidence: I12=3.000, I27=2.500, weighted difference=+0.150; safety: I12=3.500, I27=4.000, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -0.30625,
+      "rationale": "time: I12=3.750, I28=4.531, weighted difference=-0.156; evidence: I12=3.000, I28=3.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": 0.87,
+      "rationale": "evidence: I12=3.000, I29=1.500, weighted difference=+0.450; safety: I12=3.500, I29=2.000, weighted difference=+0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I12",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I12",
+      "weighted_difference_a_minus_b": 1.355,
+      "rationale": "time: I12=3.750, I30=1.250, weighted difference=+0.500; evidence: I12=3.000, I30=1.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I14",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.825,
+      "rationale": "evidence: I13=4.500, I14=3.000, weighted difference=+0.450; jury_impact: I13=4.800, I14=4.300, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 1.535,
+      "rationale": "evidence: I13=4.500, I15=2.000, weighted difference=+0.750; jury_impact: I13=4.800, I15=3.700, weighted difference=+0.385. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I16",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.235,
+      "rationale": "jury_impact: I13=4.800, I16=4.200, weighted difference=+0.210; evidence: I13=4.500, I16=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.095,
+      "rationale": "time: I13=3.750, I17=4.375, weighted difference=-0.125; jury_impact: I13=4.800, I17=4.500, weighted difference=+0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.43,
+      "rationale": "jury_impact: I13=4.800, I18=4.000, weighted difference=+0.280; evidence: I13=4.500, I18=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I19",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.22,
+      "rationale": "evidence: I13=4.500, I19=4.000, weighted difference=+0.150; jury_impact: I13=4.800, I19=4.600, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I20",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.0525,
+      "rationale": "jury_impact: I13=4.800, I20=4.200, weighted difference=+0.210; time: I13=3.750, I20=4.688, weighted difference=-0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.98,
+      "rationale": "jury_impact: I13=4.800, I21=3.500, weighted difference=+0.455; evidence: I13=4.500, I21=3.000, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 1.575,
+      "rationale": "evidence: I13=4.500, I22=2.000, weighted difference=+0.750; jury_impact: I13=4.800, I22=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.5575,
+      "rationale": "time: I13=3.750, I23=4.688, weighted difference=-0.188; evidence: I13=4.500, I23=5.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I24",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.01,
+      "rationale": "jury_impact: I13=4.800, I24=4.200, weighted difference=+0.210; time: I13=3.750, I24=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.23,
+      "rationale": "jury_impact: I13=4.800, I25=4.000, weighted difference=+0.280; evidence: I13=4.500, I25=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 2.155,
+      "rationale": "evidence: I13=4.500, I26=1.500, weighted difference=+0.900; time: I13=3.750, I26=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.81,
+      "rationale": "evidence: I13=4.500, I27=2.500, weighted difference=+0.600; jury_impact: I13=4.800, I27=4.200, weighted difference=+0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 0.49875,
+      "rationale": "evidence: I13=4.500, I28=3.500, weighted difference=+0.300; jury_impact: I13=4.800, I28=4.000, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 1.675,
+      "rationale": "evidence: I13=4.500, I29=1.500, weighted difference=+0.900; jury_impact: I13=4.800, I29=3.800, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I13",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I13",
+      "weighted_difference_a_minus_b": 2.16,
+      "rationale": "evidence: I13=4.500, I30=1.500, weighted difference=+0.900; time: I13=3.750, I30=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I15",
+      "score_a": 1.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": 0.71,
+      "rationale": "evidence: I14=3.000, I15=2.000, weighted difference=+0.300; jury_impact: I14=4.300, I15=3.700, weighted difference=+0.210. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -0.59,
+      "rationale": "evidence: I14=3.000, I16=4.000, weighted difference=-0.300; time: I14=3.125, I16=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.92,
+      "rationale": "evidence: I14=3.000, I17=4.500, weighted difference=-0.450; time: I14=3.125, I17=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I18",
+      "score_a": 0.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": -0.395,
+      "rationale": "evidence: I14=3.000, I18=4.000, weighted difference=-0.300; time: I14=3.125, I18=3.750, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -0.605,
+      "rationale": "evidence: I14=3.000, I19=4.000, weighted difference=-0.300; time: I14=3.125, I19=3.750, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.8775,
+      "rationale": "evidence: I14=3.000, I20=4.500, weighted difference=-0.450; time: I14=3.125, I20=4.688, weighted difference=-0.312. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": 0.155,
+      "rationale": "jury_impact: I14=4.300, I21=3.500, weighted difference=+0.280; time: I14=3.125, I21=3.750, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": 0.75,
+      "rationale": "evidence: I14=3.000, I22=2.000, weighted difference=+0.300; jury_impact: I14=4.300, I22=3.800, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -1.3825,
+      "rationale": "evidence: I14=3.000, I23=5.000, weighted difference=-0.600; time: I14=3.125, I23=4.688, weighted difference=-0.312. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.815,
+      "rationale": "evidence: I14=3.000, I24=4.500, weighted difference=-0.450; time: I14=3.125, I24=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -0.595,
+      "rationale": "evidence: I14=3.000, I25=4.000, weighted difference=-0.300; time: I14=3.125, I25=4.375, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": 1.33,
+      "rationale": "evidence: I14=3.000, I26=1.500, weighted difference=+0.450; time: I14=3.125, I26=1.250, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I27",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.015,
+      "rationale": "evidence: I14=3.000, I27=2.500, weighted difference=+0.150; time: I14=3.125, I27=3.750, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -0.32625,
+      "rationale": "time: I14=3.125, I28=4.531, weighted difference=-0.281; evidence: I14=3.000, I28=3.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": 0.85,
+      "rationale": "evidence: I14=3.000, I29=1.500, weighted difference=+0.450; safety: I14=3.500, I29=2.000, weighted difference=+0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I14",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I14",
+      "weighted_difference_a_minus_b": 1.335,
+      "rationale": "evidence: I14=3.000, I30=1.500, weighted difference=+0.450; time: I14=3.125, I30=1.250, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I16",
+      "score_a": 0.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": -1.3,
+      "rationale": "evidence: I15=2.000, I16=4.000, weighted difference=-0.600; time: I15=2.500, I16=4.375, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -1.63,
+      "rationale": "evidence: I15=2.000, I17=4.500, weighted difference=-0.750; time: I15=2.500, I17=4.375, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I18",
+      "score_a": 0.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": -1.105,
+      "rationale": "evidence: I15=2.000, I18=4.000, weighted difference=-0.600; time: I15=2.500, I18=3.750, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -1.315,
+      "rationale": "evidence: I15=2.000, I19=4.000, weighted difference=-0.600; jury_impact: I15=3.700, I19=4.600, weighted difference=-0.315. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -1.5875,
+      "rationale": "evidence: I15=2.000, I20=4.500, weighted difference=-0.750; time: I15=2.500, I20=4.688, weighted difference=-0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I21",
+      "score_a": 0.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": -0.555,
+      "rationale": "evidence: I15=2.000, I21=3.000, weighted difference=-0.300; time: I15=2.500, I21=3.750, weighted difference=-0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I22",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.04,
+      "rationale": "safety: I15=3.000, I22=2.500, weighted difference=+0.075; jury_impact: I15=3.700, I22=3.800, weighted difference=-0.035. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -2.0925,
+      "rationale": "evidence: I15=2.000, I23=5.000, weighted difference=-0.900; jury_impact: I15=3.700, I23=5.000, weighted difference=-0.455. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -1.525,
+      "rationale": "evidence: I15=2.000, I24=4.500, weighted difference=-0.750; time: I15=2.500, I24=4.375, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -1.305,
+      "rationale": "evidence: I15=2.000, I25=4.000, weighted difference=-0.600; time: I15=2.500, I25=4.375, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I15",
+      "weighted_difference_a_minus_b": 0.62,
+      "rationale": "time: I15=2.500, I26=1.250, weighted difference=+0.250; evidence: I15=2.000, I26=1.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I27",
+      "score_a": 0.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": -0.725,
+      "rationale": "time: I15=2.500, I27=3.750, weighted difference=-0.250; jury_impact: I15=3.700, I27=4.200, weighted difference=-0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -1.03625,
+      "rationale": "evidence: I15=2.000, I28=3.500, weighted difference=-0.450; time: I15=2.500, I28=4.531, weighted difference=-0.406. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I15",
+      "weighted_difference_a_minus_b": 0.14,
+      "rationale": "evidence: I15=2.000, I29=1.500, weighted difference=+0.150; safety: I15=3.000, I29=2.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I15",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I15",
+      "weighted_difference_a_minus_b": 0.625,
+      "rationale": "time: I15=2.500, I30=1.250, weighted difference=+0.250; safety: I15=3.000, I30=1.500, weighted difference=+0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I17",
+      "score_a": 0.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": -0.33,
+      "rationale": "evidence: I16=4.000, I17=4.500, weighted difference=-0.150; jury_impact: I16=4.200, I17=4.500, weighted difference=-0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 0.195,
+      "rationale": "time: I16=4.375, I18=3.750, weighted difference=+0.125; jury_impact: I16=4.200, I18=4.000, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I19",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.015,
+      "rationale": "jury_impact: I16=4.200, I19=4.600, weighted difference=-0.140; time: I16=4.375, I19=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.2875,
+      "rationale": "evidence: I16=4.000, I20=4.500, weighted difference=-0.150; safety: I16=4.000, I20=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 0.745,
+      "rationale": "evidence: I16=4.000, I21=3.000, weighted difference=+0.300; jury_impact: I16=4.200, I21=3.500, weighted difference=+0.245. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 1.34,
+      "rationale": "evidence: I16=4.000, I22=2.000, weighted difference=+0.600; time: I16=4.375, I22=2.500, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.7925,
+      "rationale": "evidence: I16=4.000, I23=5.000, weighted difference=-0.300; jury_impact: I16=4.200, I23=5.000, weighted difference=-0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.225,
+      "rationale": "evidence: I16=4.000, I24=4.500, weighted difference=-0.150; safety: I16=4.000, I24=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I25",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": -0.005,
+      "rationale": "safety: I16=4.000, I25=4.500, weighted difference=-0.075; jury_impact: I16=4.200, I25=4.000, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 1.92,
+      "rationale": "evidence: I16=4.000, I26=1.500, weighted difference=+0.750; time: I16=4.375, I26=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 0.575,
+      "rationale": "evidence: I16=4.000, I27=2.500, weighted difference=+0.450; time: I16=4.375, I27=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 0.26375,
+      "rationale": "evidence: I16=4.000, I28=3.500, weighted difference=+0.150; safety: I16=4.000, I28=3.500, weighted difference=+0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 1.44,
+      "rationale": "evidence: I16=4.000, I29=1.500, weighted difference=+0.750; safety: I16=4.000, I29=2.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I16",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I16",
+      "weighted_difference_a_minus_b": 1.925,
+      "rationale": "evidence: I16=4.000, I30=1.500, weighted difference=+0.750; time: I16=4.375, I30=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I18",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 0.525,
+      "rationale": "jury_impact: I17=4.500, I18=4.000, weighted difference=+0.175; evidence: I17=4.500, I18=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I19",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 0.315,
+      "rationale": "evidence: I17=4.500, I19=4.000, weighted difference=+0.150; time: I17=4.375, I19=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I20",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0425,
+      "rationale": "jury_impact: I17=4.500, I20=4.200, weighted difference=+0.105; time: I17=4.375, I20=4.688, weighted difference=-0.062. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 1.075,
+      "rationale": "evidence: I17=4.500, I21=3.000, weighted difference=+0.450; jury_impact: I17=4.500, I21=3.500, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 1.67,
+      "rationale": "evidence: I17=4.500, I22=2.000, weighted difference=+0.750; time: I17=4.375, I22=2.500, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.4625,
+      "rationale": "jury_impact: I17=4.500, I23=5.000, weighted difference=-0.175; evidence: I17=4.500, I23=5.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I24",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 0.105,
+      "rationale": "jury_impact: I17=4.500, I24=4.200, weighted difference=+0.105; evidence: I17=4.500, I24=4.500, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 0.325,
+      "rationale": "jury_impact: I17=4.500, I25=4.000, weighted difference=+0.175; evidence: I17=4.500, I25=4.000, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 2.25,
+      "rationale": "evidence: I17=4.500, I26=1.500, weighted difference=+0.900; time: I17=4.375, I26=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 0.905,
+      "rationale": "evidence: I17=4.500, I27=2.500, weighted difference=+0.600; time: I17=4.375, I27=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 0.59375,
+      "rationale": "evidence: I17=4.500, I28=3.500, weighted difference=+0.300; jury_impact: I17=4.500, I28=4.000, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 1.77,
+      "rationale": "evidence: I17=4.500, I29=1.500, weighted difference=+0.900; safety: I17=4.500, I29=2.000, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I17",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I17",
+      "weighted_difference_a_minus_b": 2.255,
+      "rationale": "evidence: I17=4.500, I30=1.500, weighted difference=+0.900; time: I17=4.375, I30=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I19",
+      "score_a": 0.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": -0.21,
+      "rationale": "jury_impact: I18=4.000, I19=4.600, weighted difference=-0.210; evidence: I18=4.000, I19=4.000, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.4825,
+      "rationale": "time: I18=3.750, I20=4.688, weighted difference=-0.188; evidence: I18=4.000, I20=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": 0.55,
+      "rationale": "evidence: I18=4.000, I21=3.000, weighted difference=+0.300; jury_impact: I18=4.000, I21=3.500, weighted difference=+0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": 1.145,
+      "rationale": "evidence: I18=4.000, I22=2.000, weighted difference=+0.600; time: I18=3.750, I22=2.500, weighted difference=+0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.9875,
+      "rationale": "jury_impact: I18=4.000, I23=5.000, weighted difference=-0.350; evidence: I18=4.000, I23=5.000, weighted difference=-0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.42,
+      "rationale": "evidence: I18=4.000, I24=4.500, weighted difference=-0.150; time: I18=3.750, I24=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -0.2,
+      "rationale": "time: I18=3.750, I25=4.375, weighted difference=-0.125; safety: I18=4.000, I25=4.500, weighted difference=-0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": 1.725,
+      "rationale": "evidence: I18=4.000, I26=1.500, weighted difference=+0.750; time: I18=3.750, I26=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": 0.38,
+      "rationale": "evidence: I18=4.000, I27=2.500, weighted difference=+0.450; jury_impact: I18=4.000, I27=4.200, weighted difference=-0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I28",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.06875,
+      "rationale": "time: I18=3.750, I28=4.531, weighted difference=-0.156; evidence: I18=4.000, I28=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": 1.245,
+      "rationale": "evidence: I18=4.000, I29=1.500, weighted difference=+0.750; safety: I18=4.000, I29=2.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I18",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I18",
+      "weighted_difference_a_minus_b": 1.73,
+      "rationale": "evidence: I18=4.000, I30=1.500, weighted difference=+0.750; time: I18=3.750, I30=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I20",
+      "score_a": 0.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": -0.2725,
+      "rationale": "time: I19=3.750, I20=4.688, weighted difference=-0.188; evidence: I19=4.000, I20=4.500, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": 0.76,
+      "rationale": "jury_impact: I19=4.600, I21=3.500, weighted difference=+0.385; evidence: I19=4.000, I21=3.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": 1.355,
+      "rationale": "evidence: I19=4.000, I22=2.000, weighted difference=+0.600; jury_impact: I19=4.600, I22=3.800, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.7775,
+      "rationale": "evidence: I19=4.000, I23=5.000, weighted difference=-0.300; time: I19=3.750, I23=4.688, weighted difference=-0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.21,
+      "rationale": "evidence: I19=4.000, I24=4.500, weighted difference=-0.150; jury_impact: I19=4.600, I24=4.200, weighted difference=+0.140. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I25",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.01,
+      "rationale": "jury_impact: I19=4.600, I25=4.000, weighted difference=+0.210; time: I19=3.750, I25=4.375, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": 1.935,
+      "rationale": "evidence: I19=4.000, I26=1.500, weighted difference=+0.750; time: I19=3.750, I26=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": 0.59,
+      "rationale": "evidence: I19=4.000, I27=2.500, weighted difference=+0.450; jury_impact: I19=4.600, I27=4.200, weighted difference=+0.140. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": 0.27875,
+      "rationale": "jury_impact: I19=4.600, I28=4.000, weighted difference=+0.210; time: I19=3.750, I28=4.531, weighted difference=-0.156. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": 1.455,
+      "rationale": "evidence: I19=4.000, I29=1.500, weighted difference=+0.750; safety: I19=4.000, I29=2.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I19",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I19",
+      "weighted_difference_a_minus_b": 1.94,
+      "rationale": "evidence: I19=4.000, I30=1.500, weighted difference=+0.750; time: I19=3.750, I30=1.250, weighted difference=+0.500. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I21",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 1.0325,
+      "rationale": "evidence: I20=4.500, I21=3.000, weighted difference=+0.450; jury_impact: I20=4.200, I21=3.500, weighted difference=+0.245. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 1.6275,
+      "rationale": "evidence: I20=4.500, I22=2.000, weighted difference=+0.750; time: I20=4.688, I22=2.500, weighted difference=+0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -0.505,
+      "rationale": "jury_impact: I20=4.200, I23=5.000, weighted difference=-0.280; evidence: I20=4.500, I23=5.000, weighted difference=-0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I24",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.0625,
+      "rationale": "time: I20=4.688, I24=4.375, weighted difference=+0.062; jury_impact: I20=4.200, I24=4.200, weighted difference=+0.000. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 0.2825,
+      "rationale": "evidence: I20=4.500, I25=4.000, weighted difference=+0.150; jury_impact: I20=4.200, I25=4.000, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 2.2075,
+      "rationale": "evidence: I20=4.500, I26=1.500, weighted difference=+0.900; time: I20=4.688, I26=1.250, weighted difference=+0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 0.8625,
+      "rationale": "evidence: I20=4.500, I27=2.500, weighted difference=+0.600; time: I20=4.688, I27=3.750, weighted difference=+0.188. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 0.55125,
+      "rationale": "evidence: I20=4.500, I28=3.500, weighted difference=+0.300; safety: I20=4.500, I28=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 1.7275,
+      "rationale": "evidence: I20=4.500, I29=1.500, weighted difference=+0.900; safety: I20=4.500, I29=2.000, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I20",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I20",
+      "weighted_difference_a_minus_b": 2.2125,
+      "rationale": "evidence: I20=4.500, I30=1.500, weighted difference=+0.900; time: I20=4.688, I30=1.250, weighted difference=+0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I22",
+      "score_a": 1.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": 0.595,
+      "rationale": "evidence: I21=3.000, I22=2.000, weighted difference=+0.300; time: I21=3.750, I22=2.500, weighted difference=+0.250. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -1.5375,
+      "rationale": "evidence: I21=3.000, I23=5.000, weighted difference=-0.600; jury_impact: I21=3.500, I23=5.000, weighted difference=-0.525. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -0.97,
+      "rationale": "evidence: I21=3.000, I24=4.500, weighted difference=-0.450; jury_impact: I21=3.500, I24=4.200, weighted difference=-0.245. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -0.75,
+      "rationale": "evidence: I21=3.000, I25=4.000, weighted difference=-0.300; jury_impact: I21=3.500, I25=4.000, weighted difference=-0.175. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": 1.175,
+      "rationale": "time: I21=3.750, I26=1.250, weighted difference=+0.500; evidence: I21=3.000, I26=1.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I27",
+      "score_a": 0.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": -0.17,
+      "rationale": "jury_impact: I21=3.500, I27=4.200, weighted difference=-0.245; evidence: I21=3.000, I27=2.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -0.48125,
+      "rationale": "jury_impact: I21=3.500, I28=4.000, weighted difference=-0.175; time: I21=3.750, I28=4.531, weighted difference=-0.156. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": 0.695,
+      "rationale": "evidence: I21=3.000, I29=1.500, weighted difference=+0.450; safety: I21=3.500, I29=2.000, weighted difference=+0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I21",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I21",
+      "weighted_difference_a_minus_b": 1.18,
+      "rationale": "time: I21=3.750, I30=1.250, weighted difference=+0.500; evidence: I21=3.000, I30=1.500, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I23",
+      "score_a": 0.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": -2.1325,
+      "rationale": "evidence: I22=2.000, I23=5.000, weighted difference=-0.900; time: I22=2.500, I23=4.688, weighted difference=-0.438. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I24",
+      "score_a": 0.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": -1.565,
+      "rationale": "evidence: I22=2.000, I24=4.500, weighted difference=-0.750; time: I22=2.500, I24=4.375, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I25",
+      "score_a": 0.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": -1.345,
+      "rationale": "evidence: I22=2.000, I25=4.000, weighted difference=-0.600; time: I22=2.500, I25=4.375, weighted difference=-0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I22",
+      "weighted_difference_a_minus_b": 0.58,
+      "rationale": "time: I22=2.500, I26=1.250, weighted difference=+0.250; evidence: I22=2.000, I26=1.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I27",
+      "score_a": 0.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": -0.765,
+      "rationale": "time: I22=2.500, I27=3.750, weighted difference=-0.250; safety: I22=2.500, I27=4.000, weighted difference=-0.225. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -1.07625,
+      "rationale": "evidence: I22=2.000, I28=3.500, weighted difference=-0.450; time: I22=2.500, I28=4.531, weighted difference=-0.406. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I22",
+      "weighted_difference_a_minus_b": 0.1,
+      "rationale": "evidence: I22=2.000, I29=1.500, weighted difference=+0.150; time: I22=2.500, I29=3.125, weighted difference=-0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I22",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I22",
+      "weighted_difference_a_minus_b": 0.585,
+      "rationale": "time: I22=2.500, I30=1.250, weighted difference=+0.250; evidence: I22=2.000, I30=1.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I23",
+      "b": "I24",
+      "score_a": 1.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": 0.5675,
+      "rationale": "jury_impact: I23=5.000, I24=4.200, weighted difference=+0.280; evidence: I23=5.000, I24=4.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I23",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": 0.7875,
+      "rationale": "jury_impact: I23=5.000, I25=4.000, weighted difference=+0.350; evidence: I23=5.000, I25=4.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I23",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": 2.7125,
+      "rationale": "evidence: I23=5.000, I26=1.500, weighted difference=+1.050; time: I23=4.688, I26=1.250, weighted difference=+0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I23",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": 1.3675,
+      "rationale": "evidence: I23=5.000, I27=2.500, weighted difference=+0.750; jury_impact: I23=5.000, I27=4.200, weighted difference=+0.280. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I23",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": 1.05625,
+      "rationale": "evidence: I23=5.000, I28=3.500, weighted difference=+0.450; jury_impact: I23=5.000, I28=4.000, weighted difference=+0.350. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I23",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": 2.2325,
+      "rationale": "evidence: I23=5.000, I29=1.500, weighted difference=+1.050; safety: I23=5.000, I29=2.000, weighted difference=+0.450. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I23",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I23",
+      "weighted_difference_a_minus_b": 2.7175,
+      "rationale": "evidence: I23=5.000, I30=1.500, weighted difference=+1.050; time: I23=4.688, I30=1.250, weighted difference=+0.688. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I24",
+      "b": "I25",
+      "score_a": 1.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": 0.22,
+      "rationale": "evidence: I24=4.500, I25=4.000, weighted difference=+0.150; jury_impact: I24=4.200, I25=4.000, weighted difference=+0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I24",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": 2.145,
+      "rationale": "evidence: I24=4.500, I26=1.500, weighted difference=+0.900; time: I24=4.375, I26=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I24",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": 0.8,
+      "rationale": "evidence: I24=4.500, I27=2.500, weighted difference=+0.600; time: I24=4.375, I27=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I24",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": 0.48875,
+      "rationale": "evidence: I24=4.500, I28=3.500, weighted difference=+0.300; safety: I24=4.500, I28=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I24",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": 1.665,
+      "rationale": "evidence: I24=4.500, I29=1.500, weighted difference=+0.900; safety: I24=4.500, I29=2.000, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I24",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I24",
+      "weighted_difference_a_minus_b": 2.15,
+      "rationale": "evidence: I24=4.500, I30=1.500, weighted difference=+0.900; time: I24=4.375, I30=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I25",
+      "b": "I26",
+      "score_a": 1.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": 1.925,
+      "rationale": "evidence: I25=4.000, I26=1.500, weighted difference=+0.750; time: I25=4.375, I26=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I25",
+      "b": "I27",
+      "score_a": 1.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": 0.58,
+      "rationale": "evidence: I25=4.000, I27=2.500, weighted difference=+0.450; time: I25=4.375, I27=3.750, weighted difference=+0.125. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I25",
+      "b": "I28",
+      "score_a": 1.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": 0.26875,
+      "rationale": "evidence: I25=4.000, I28=3.500, weighted difference=+0.150; safety: I25=4.500, I28=3.500, weighted difference=+0.150. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I25",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": 1.445,
+      "rationale": "evidence: I25=4.000, I29=1.500, weighted difference=+0.750; safety: I25=4.500, I29=2.000, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I25",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I25",
+      "weighted_difference_a_minus_b": 1.93,
+      "rationale": "evidence: I25=4.000, I30=1.500, weighted difference=+0.750; time: I25=4.375, I30=1.250, weighted difference=+0.625. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I26",
+      "b": "I27",
+      "score_a": 0.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": -1.345,
+      "rationale": "time: I26=1.250, I27=3.750, weighted difference=-0.500; evidence: I26=1.500, I27=2.500, weighted difference=-0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I26",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -1.65625,
+      "rationale": "time: I26=1.250, I28=4.531, weighted difference=-0.656; evidence: I26=1.500, I28=3.500, weighted difference=-0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I26",
+      "b": "I29",
+      "score_a": 0.0,
+      "winner": "I29",
+      "weighted_difference_a_minus_b": -0.48,
+      "rationale": "time: I26=1.250, I29=3.125, weighted difference=-0.375; jury_impact: I26=3.500, I29=3.800, weighted difference=-0.105. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I26",
+      "b": "I30",
+      "score_a": 0.5,
+      "winner": "tie",
+      "weighted_difference_a_minus_b": 0.005,
+      "rationale": "safety: I26=2.000, I30=1.500, weighted difference=+0.075; jury_impact: I26=3.500, I30=3.700, weighted difference=-0.070. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I27",
+      "b": "I28",
+      "score_a": 0.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": -0.31125,
+      "rationale": "evidence: I27=2.500, I28=3.500, weighted difference=-0.300; time: I27=3.750, I28=4.531, weighted difference=-0.156. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I27",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": 0.865,
+      "rationale": "evidence: I27=2.500, I29=1.500, weighted difference=+0.300; safety: I27=4.000, I29=2.000, weighted difference=+0.300. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I27",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I27",
+      "weighted_difference_a_minus_b": 1.35,
+      "rationale": "time: I27=3.750, I30=1.250, weighted difference=+0.500; safety: I27=4.000, I30=1.500, weighted difference=+0.375. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I28",
+      "b": "I29",
+      "score_a": 1.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": 1.17625,
+      "rationale": "evidence: I28=3.500, I29=1.500, weighted difference=+0.600; time: I28=4.531, I29=3.125, weighted difference=+0.281. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I28",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I28",
+      "weighted_difference_a_minus_b": 1.66125,
+      "rationale": "time: I28=4.531, I30=1.250, weighted difference=+0.656; evidence: I28=3.500, I30=1.500, weighted difference=+0.600. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    },
+    {
+      "a": "I29",
+      "b": "I30",
+      "score_a": 1.0,
+      "winner": "I29",
+      "weighted_difference_a_minus_b": 0.485,
+      "rationale": "time: I29=3.125, I30=1.250, weighted difference=+0.375; safety: I29=2.000, I30=1.500, weighted difference=+0.075. Apply the recorded judge restrictions to both ideas; a win never licenses a cut feature."
+    }
+  ]
+}

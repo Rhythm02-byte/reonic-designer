@@ -1,0 +1,1710 @@
+{
+  "as_of": "2026-11-08",
+  "measured_profile_calibration": {
+    "coupled_systems": [
+      {
+        "autarky_delta_pp": {
+          "n": 54,
+          "p25": -2.2026895851785384,
+          "p5": -4.201623980757376,
+          "p50": -0.6413020922723334,
+          "p75": 0.5166488029752864,
+          "p95": 1.982067499649912
+        },
+        "battery_nominal_kwh": 0,
+        "load_scenario": "household_plus_hp",
+        "n_profile_clock_scenarios": 54,
+        "pv_kwp": 5,
+        "self_consumption_delta_pp": {
+          "n": 54,
+          "p25": -4.427798931600295,
+          "p5": -8.446013590914488,
+          "p50": -1.2891315862676693,
+          "p75": 1.0385562419777672,
+          "p95": 3.9843091901658987
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 2,
+          "p25": 7.416554576519638,
+          "p5": 7.291318616859338,
+          "p50": 7.573099526095012,
+          "p75": 7.729644475670386,
+          "p95": 7.854880435330686
+        },
+        "battery_nominal_kwh": 0,
+        "load_scenario": "household_plus_ev",
+        "n_profile_clock_scenarios": 2,
+        "pv_kwp": 5,
+        "self_consumption_delta_pp": {
+          "n": 2,
+          "p25": 9.434788224743627,
+          "p5": 9.275472366506941,
+          "p50": 9.633933047539484,
+          "p75": 9.833077870335341,
+          "p95": 9.992393728572027
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 54,
+          "p25": -1.9859011642790052,
+          "p5": -5.750048129785892,
+          "p50": -0.0685516623652016,
+          "p75": 0.844332289152902,
+          "p95": 3.1445674720793155
+        },
+        "battery_nominal_kwh": 5,
+        "load_scenario": "household_plus_hp",
+        "n_profile_clock_scenarios": 54,
+        "pv_kwp": 9,
+        "self_consumption_delta_pp": {
+          "n": 54,
+          "p25": -2.1618044762212696,
+          "p5": -6.748430859888475,
+          "p50": -0.06059086792569446,
+          "p75": 0.9810261526554884,
+          "p95": 3.6043604240187195
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 2,
+          "p25": 7.887932869500619,
+          "p5": 7.658602708743633,
+          "p50": 8.174595570446852,
+          "p75": 8.461258271393085,
+          "p95": 8.690588432150072
+        },
+        "battery_nominal_kwh": 5,
+        "load_scenario": "household_plus_ev",
+        "n_profile_clock_scenarios": 2,
+        "pv_kwp": 9,
+        "self_consumption_delta_pp": {
+          "n": 2,
+          "p25": 5.475005779152957,
+          "p5": 5.313607445808184,
+          "p50": 5.676753695833922,
+          "p75": 5.878501612514888,
+          "p95": 6.03989994585966
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 54,
+          "p25": -2.701486182162907,
+          "p5": -7.799221836048575,
+          "p50": -1.5462410087235978,
+          "p75": 0.35476910090933844,
+          "p95": 6.105256306645756
+        },
+        "battery_nominal_kwh": 10,
+        "load_scenario": "household_plus_hp",
+        "n_profile_clock_scenarios": 54,
+        "pv_kwp": 12,
+        "self_consumption_delta_pp": {
+          "n": 54,
+          "p25": -2.320240410169577,
+          "p5": -6.987726719342247,
+          "p50": -1.3710446436680375,
+          "p75": 0.2593437857031991,
+          "p95": 5.418334175390066
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 2,
+          "p25": 2.1316646896323177,
+          "p5": 2.0665243510155196,
+          "p50": 2.2130901129033154,
+          "p75": 2.294515536174313,
+          "p95": 2.359655874791111
+        },
+        "battery_nominal_kwh": 10,
+        "load_scenario": "household_plus_ev",
+        "n_profile_clock_scenarios": 2,
+        "pv_kwp": 12,
+        "self_consumption_delta_pp": {
+          "n": 2,
+          "p25": 0.7615044422259563,
+          "p5": 0.7350751299586331,
+          "p50": 0.7945410825601101,
+          "p75": 0.827577722894264,
+          "p95": 0.8540070351615872
+        }
+      }
+    ],
+    "interpretation": "Timing-only fixed-design sensitivity, component-isolation and coupled household systems. Same engine dispatch/weather, equal annual energy; not independent physics validation or error against observed autarky. WPuQ 2019/OPSD2016 calendar vs H0 2023 and Kassel weather confound representativeness. 0/1h clock shifts bracket UTC/fixed-CET alignment; DST convention unresolved. Source statistical percentiles summarize selected profile/clock scenarios, not population confidence intervals.",
+    "systems": [
+      {
+        "autarky_delta_pp": {
+          "n": 56,
+          "p25": -4.3133505692509235,
+          "p5": -11.206578867004493,
+          "p50": -2.659192978463387,
+          "p75": -1.1135083210604357,
+          "p95": 0.8644420850180218
+        },
+        "battery_nominal_kwh": 0,
+        "component": "household",
+        "component_annual_kwh": 4500,
+        "n_profile_clock_scenarios": 56,
+        "pv_kwp": 5,
+        "self_consumption_delta_pp": {
+          "n": 56,
+          "p25": -4.107128192062165,
+          "p5": -10.670789508592046,
+          "p50": -2.532056292349416,
+          "p75": -1.0602712077533134,
+          "p95": 0.8231128911924082
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 56,
+          "p25": -3.4119802509791657,
+          "p5": -4.986786651324324,
+          "p50": -1.5806945055195143,
+          "p75": 0.6427529632776735,
+          "p95": 9.034296458240973
+        },
+        "battery_nominal_kwh": 0,
+        "component": "heatpump",
+        "component_annual_kwh": 5000,
+        "n_profile_clock_scenarios": 56,
+        "pv_kwp": 5,
+        "self_consumption_delta_pp": {
+          "n": 56,
+          "p25": -3.609836239721778,
+          "p5": -5.275963472691651,
+          "p50": -1.6723567811730247,
+          "p75": 0.6800253135587451,
+          "p95": 9.558182743287983
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 2,
+          "p25": 36.83111537762862,
+          "p5": 36.18988091126351,
+          "p50": 37.632658460585006,
+          "p75": 38.43420154354139,
+          "p95": 39.075436009906504
+        },
+        "battery_nominal_kwh": 0,
+        "component": "ev",
+        "component_annual_kwh": 1512,
+        "n_profile_clock_scenarios": 2,
+        "pv_kwp": 5,
+        "self_consumption_delta_pp": {
+          "n": 2,
+          "p25": 11.783590719324426,
+          "p5": 11.578436885961006,
+          "p50": 12.040033011028699,
+          "p75": 12.296475302732972,
+          "p95": 12.501629136096392
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 56,
+          "p25": -2.7009412865279914,
+          "p5": -15.832090859546248,
+          "p50": -1.6215098848230913,
+          "p75": 0.2205417985922553,
+          "p95": 2.057064072820758
+        },
+        "battery_nominal_kwh": 5,
+        "component": "household",
+        "component_annual_kwh": 4500,
+        "n_profile_clock_scenarios": 56,
+        "pv_kwp": 9,
+        "self_consumption_delta_pp": {
+          "n": 56,
+          "p25": -1.3276805396473605,
+          "p5": -8.573865910775911,
+          "p50": -0.8109820950319896,
+          "p75": 0.17050408571238768,
+          "p95": 1.0127032785453598
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 56,
+          "p25": -7.739517590369313,
+          "p5": -12.584935042828313,
+          "p50": -4.6259455163724486,
+          "p75": -1.1124392932494591,
+          "p95": 12.3568917985658
+        },
+        "battery_nominal_kwh": 5,
+        "component": "heatpump",
+        "component_annual_kwh": 5000,
+        "n_profile_clock_scenarios": 56,
+        "pv_kwp": 9,
+        "self_consumption_delta_pp": {
+          "n": 56,
+          "p25": -4.781881686961805,
+          "p5": -7.956276534800461,
+          "p50": -2.9463070556524253,
+          "p75": -0.8055717222592323,
+          "p95": 7.386945468968845
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 2,
+          "p25": 8.81732846313179,
+          "p5": 8.649663084877641,
+          "p50": 9.026910185949477,
+          "p75": 9.236491908767164,
+          "p95": 9.404157287021313
+        },
+        "battery_nominal_kwh": 5,
+        "component": "ev",
+        "component_annual_kwh": 1512,
+        "n_profile_clock_scenarios": 2,
+        "pv_kwp": 9,
+        "self_consumption_delta_pp": {
+          "n": 2,
+          "p25": 1.018151960498609,
+          "p5": 0.9994003335772417,
+          "p50": 1.041591494150318,
+          "p75": 1.065031027802027,
+          "p95": 1.0837826547233942
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 56,
+          "p25": -1.1266696579205981,
+          "p5": -16.49087251840783,
+          "p50": 0.1552472876574118,
+          "p75": 1.1877504002233725,
+          "p95": 2.5262059792168694
+        },
+        "battery_nominal_kwh": 10,
+        "component": "household",
+        "component_annual_kwh": 4500,
+        "n_profile_clock_scenarios": 56,
+        "pv_kwp": 12,
+        "self_consumption_delta_pp": {
+          "n": 56,
+          "p25": -0.4325752604094929,
+          "p5": -6.710680226813201,
+          "p50": 0.21764441919207567,
+          "p75": 0.536260017730926,
+          "p95": 1.2332917998446782
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 56,
+          "p25": -10.215996082766429,
+          "p5": -13.700832732446624,
+          "p50": -5.762961323518656,
+          "p75": 0.004878170870920018,
+          "p95": 13.68888321518873
+        },
+        "battery_nominal_kwh": 10,
+        "component": "heatpump",
+        "component_annual_kwh": 5000,
+        "n_profile_clock_scenarios": 56,
+        "pv_kwp": 12,
+        "self_consumption_delta_pp": {
+          "n": 56,
+          "p25": -4.824866829019097,
+          "p5": -6.37876072637469,
+          "p50": -2.6995121752836138,
+          "p75": 0.05896342169707386,
+          "p95": 6.170214026019637
+        }
+      },
+      {
+        "autarky_delta_pp": {
+          "n": 2,
+          "p25": -5.139859310121725,
+          "p5": -5.206481991168247,
+          "p50": -5.056580958813573,
+          "p75": -4.97330260750542,
+          "p95": -4.906679926458898
+        },
+        "battery_nominal_kwh": 10,
+        "component": "ev",
+        "component_annual_kwh": 1512,
+        "n_profile_clock_scenarios": 2,
+        "pv_kwp": 12,
+        "self_consumption_delta_pp": {
+          "n": 2,
+          "p25": -1.258723090742144,
+          "p5": -1.259645023038969,
+          "p50": -1.2575706753711127,
+          "p75": -1.2564182600000813,
+          "p95": -1.2554963277032563
+        }
+      }
+    ]
+  },
+  "offline": true,
+  "plausibility": {
+    "historical_reference": {
+      "generated_n": 240,
+      "generated_nominal_battery_kwh_per_kwp": {
+        "n": 239,
+        "p25": 0.8363636363636363,
+        "p5": 0.7070707070707071,
+        "p50": 0.9,
+        "p75": 0.9782608695652175,
+        "p95": 1.0454545454545452
+      },
+      "generated_pv_kwp": {
+        "n": 239,
+        "p25": 8.7,
+        "p5": 7.7,
+        "p50": 9.4,
+        "p75": 10.45,
+        "p95": 11.5
+      },
+      "positive_pv_inside_p5_p95_n": 239,
+      "positive_pv_inside_p5_p95_share": 1.0,
+      "positive_pv_n": 239,
+      "pv_cohort_n": 535307,
+      "pv_p5_kwp": 4.0,
+      "pv_p95_kwp": 19.86,
+      "registered_colocated_ratio_n": 323272,
+      "requested_year": 2026,
+      "scope": "Historical context only; snapshot/population mismatch, no 2026 accuracy claim",
+      "wasserstein_to_1001_quantile_sketch": {
+        "caveat": "Approximate empirical W1 against equally weighted quantile sketch. Registry usable kWh vs engine nominal kWh converted with dispatch assumption 0.92; registered co-location is not proven electrical coupling.",
+        "distance_kwh_per_kwp": 0.20695850522521883,
+        "status": "scenario_only",
+        "usable_fraction_assumption": 0.92
+      },
+      "year": 2024,
+      "zero_pv_n": 1
+    },
+    "same_year_2026": {
+      "reason": "Pinned MaStR snapshot is 2025-02-09; no 2026 cohort",
+      "status": "blocked"
+    }
+  },
+  "prng": "numpy.PCG64",
+  "purpose": "Public cohort plausibility and structural robustness, NOT expert accuracy",
+  "receipt": {
+    "benchmark_sha256": "01b2391005f0e13319118d1eb6028d86db316317ace7fd3b43f37b9ef31d3094",
+    "engine_python_tree_sha256": "736f0fbb75eddbc7b5ff58dde69b5049e9ad3c1010577cfa0fcdfa2d0c3dfd99",
+    "model_sha256": "7255a2bf1386e378c2f92b34f0f57829c0d566eaee081a8a470cd1ec51631f88",
+    "network_guard_scope": "Python sockets during computation only; not a system firewall",
+    "outbound_socket_attempts": 0,
+    "policy_sha256": "076240253e9640ea82692dd0cd4f467e2e8bfa3c5f5057f7a303510142f3776d",
+    "public_cache_sha256": {
+      "data/external/mastr_summary.json": "97ad478490f7cd250cbe67910894220e4a4839ef4fc737efbcbb1a71e842b871",
+      "data/external/profile_calibration.json": "9464726ff4bff65e2ebb72f0b4fa5631946c6c209f09a79c0760ee93fcd6b134",
+      "data/external/profiles/measured.npz": "fadef1ff0e6270620bd18739dda8e437332d5b81f6ad36a5b23f43bcbf16ba53"
+    },
+    "repeated_batch_identical": true,
+    "volatile_fields": "policy latency separated into run_timings.json; no clock time in scored aggregates"
+  },
+  "runtime": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "python": "3.13.0"
+  },
+  "sampler": {
+    "accessed_at": "2026-11-08",
+    "analyst_coverage": "Uniform demand multiplier [0.6,1.6], balanced persons/heating/EV/installer; EV km 5000-25000; useful heat 8000-30000; price .32. No measured German joint-population distribution.",
+    "demand_means_1_to_5_persons_kwh": [
+      1800,
+      2700,
+      3500,
+      3800,
+      4500
+    ],
+    "population_weighted_metric": "blocked: no verified joint distribution of adopter households",
+    "source_anchor": "https://www.stromspiegel.de/stromverbrauch-verstehen/stromverbrauch-im-haushalt/"
+  },
+  "schema_version": 1,
+  "seed": 110701,
+  "stress": {
+    "as_of": "2026-11-07",
+    "blocked_coverage": [
+      "HTTP status/invalid JSON transport, including raw NaN/Infinity tokens",
+      "full annual API conservation beyond toy seam",
+      "manufacturer compatibility and catalogue product IDs",
+      "complete numeric-field domain Cartesian boundary coverage",
+      "full BOM/VAT conventions",
+      "household billing-boundary disclosure (no contract field)",
+      "public-profile empirical resampling and held-out profile years",
+      "production deployment network isolation",
+      "same underlying base replayed over every installer (balanced combinations only)"
+    ],
+    "by_pool": {
+      "boundary": {
+        "policy_returned": 76,
+        "schema_rejected": 44
+      },
+      "metamorphic": {
+        "policy_returned": 240
+      },
+      "observation": {
+        "policy_returned": 120
+      },
+      "ordinary": {
+        "policy_returned": 240
+      }
+    },
+    "case_sha256": "8c78c58b3b4e92f4946675e86905f09a57eee5298861a1250042e96bcfe8a7b0",
+    "catalog_sha256": "7160b8101ac75011b018e3366562f89dc30b87ea719c18188e6aa638c85e4aab",
+    "contract_sha256": "c127b18c9d4494b10bfe2bbb8734e3172369e9528655c3d1d9fcf358814fc7bd",
+    "coverage": {
+      "asset_trust_occurrences": {
+        "False": 104,
+        "True": 118
+      },
+      "empirical_enabled": false,
+      "ordinary_segments": {
+        "assets": {
+          "0": 72,
+          "1": 60,
+          "2": 54,
+          "3": 54
+        },
+        "ev": {
+          "absent": 84,
+          "current": 78,
+          "planned": 78
+        },
+        "heating": {
+          "Gas": 40,
+          "Heatpump": 40,
+          "Oil": 40,
+          "OtherNonRenewable": 40,
+          "OtherRenewable": 40,
+          "Unknown": 40
+        },
+        "installer": {
+          "known_0": 78,
+          "known_1": 84,
+          "unseen_external": 78
+        },
+        "roof": {
+          "0": 48,
+          "1": 48,
+          "2": 48,
+          "3": 48,
+          "4": 48
+        }
+      },
+      "pairwise": {
+        "assets*installer": {
+          "present": 12,
+          "required_cartesian": 12
+        },
+        "assets*roof": {
+          "present": 20,
+          "required_cartesian": 20
+        },
+        "ev*assets": {
+          "present": 12,
+          "required_cartesian": 12
+        },
+        "ev*installer": {
+          "present": 9,
+          "required_cartesian": 9
+        },
+        "ev*roof": {
+          "present": 15,
+          "required_cartesian": 15
+        },
+        "heating*assets": {
+          "present": 24,
+          "required_cartesian": 24
+        },
+        "heating*ev": {
+          "present": 18,
+          "required_cartesian": 18
+        },
+        "heating*installer": {
+          "present": 18,
+          "required_cartesian": 18
+        },
+        "heating*roof": {
+          "present": 30,
+          "required_cartesian": 30
+        },
+        "roof*installer": {
+          "present": 15,
+          "required_cartesian": 15
+        }
+      },
+      "pool_requests": {
+        "boundary": 120,
+        "metamorphic": 240,
+        "observation": 120,
+        "ordinary": 240
+      },
+      "population_representative": false
+    },
+    "failures": [
+      {
+        "case_id": "dev-observation-0000",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0001",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0002",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0003",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0004",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0005",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0006",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0007",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0008",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0009",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0010",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0011",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0012",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0013",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0014",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0015",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0016",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0017",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0018",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0019",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0020",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0021",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0022",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0023",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0024",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0025",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0026",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0027",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0028",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0029",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0030",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0031",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0032",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0033",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0034",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0035",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0036",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0037",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0038",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0039",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0040",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0041",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0042",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0043",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0044",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0045",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0046",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0047",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0048",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0049",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0050",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0051",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0052",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0053",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0054",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0055",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0056",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0057",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0058",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-observation-0059",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0040",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0041",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0042",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0043",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0044",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0045",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0046",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0047",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0048",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0049",
+        "rule": "finite_nonnegative"
+      },
+      {
+        "case_id": "dev-boundary-0049",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0050",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0051",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0052",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0053",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0054",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0055",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0056",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0057",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0058",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0059",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0060",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0061",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0062",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0063",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0064",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0065",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0066",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0067",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0068",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0069",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0070",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0071",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0072",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0073",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0074",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0075",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0076",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0077",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0078",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0079",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0080",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0081",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0082",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0084",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0086",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0090",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0091",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0092",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0094",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0096",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0100",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0101",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0102",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0104",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0106",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0110",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0111",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0112",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0114",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-boundary-0116",
+        "rule": "relevant_review_warning"
+      },
+      {
+        "case_id": "dev-pair-0115",
+        "rule": "diagnostic_demand_monotonic"
+      }
+    ],
+    "final_suite": "NOT RUN: evaluator-controlled hidden seed and disjoint public profiles required",
+    "full_response_subset": {
+      "counts": {
+        "designs": 70,
+        "metric_bounds_pass": 136,
+        "missing_autarky": 2,
+        "missing_feed_in_kwh": 2,
+        "missing_grid_import_kwh": 2,
+        "missing_pv_yield_kwh": 2,
+        "pv_module_identity_fail": 39,
+        "pv_module_identity_pass": 31,
+        "required_metric_present_fail": 8,
+        "required_metric_present_pass": 339,
+        "response_roof_modules_pass": 26,
+        "response_sizes_finite_pass": 70,
+        "returned": 24,
+        "review_fail": 4,
+        "review_pass": 12
+      },
+      "failures": [
+        {
+          "case_id": "dev-ordinary-0002",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0002",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0002",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0003",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0003",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0003",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0004",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0004",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0004",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0004",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0005",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0005",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-ordinary-0005",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0061",
+          "rule": "missing_required_grid_import_kwh"
+        },
+        {
+          "case_id": "dev-observation-0061",
+          "rule": "missing_required_feed_in_kwh"
+        },
+        {
+          "case_id": "dev-observation-0061",
+          "rule": "missing_required_pv_yield_kwh"
+        },
+        {
+          "case_id": "dev-observation-0061",
+          "rule": "missing_required_autarky"
+        },
+        {
+          "case_id": "dev-observation-0090",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0090",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0090",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0090",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0091",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0091",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0091",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0091",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0092",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0092",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0092",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0092",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0093",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0093",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0093",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0093",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0094",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0094",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0094",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0094",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0095",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0095",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0095",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-observation-0095",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-boundary-0080",
+          "rule": "full_response_review"
+        },
+        {
+          "case_id": "dev-boundary-0081",
+          "rule": "missing_required_grid_import_kwh"
+        },
+        {
+          "case_id": "dev-boundary-0081",
+          "rule": "missing_required_feed_in_kwh"
+        },
+        {
+          "case_id": "dev-boundary-0081",
+          "rule": "missing_required_pv_yield_kwh"
+        },
+        {
+          "case_id": "dev-boundary-0081",
+          "rule": "missing_required_autarky"
+        },
+        {
+          "case_id": "dev-boundary-0081",
+          "rule": "full_response_review"
+        },
+        {
+          "case_id": "dev-boundary-0082",
+          "rule": "full_response_review"
+        },
+        {
+          "case_id": "dev-boundary-0084",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-boundary-0084",
+          "rule": "pv_module_identity"
+        },
+        {
+          "case_id": "dev-boundary-0084",
+          "rule": "full_response_review"
+        }
+      ],
+      "n": 24,
+      "note": "direct engine.design.design call; HTTP behavior/BOM tax semantics not certified"
+    },
+    "generator_sha256": "22118206f0279d5185cc59315943f159a87a93733f81943f16dedc8087c8d73e",
+    "hard_failure_count": 121,
+    "network_attempts": 0,
+    "policy_accepted": 676,
+    "prng": "numpy.PCG64 with SHA256 sub-seeds",
+    "requests": 720,
+    "review": {
+      "false_review_rate": null,
+      "false_review_rate_blocked_reason": "PolicyDesign omits endpoint intake review signals",
+      "policy_blocked": 58,
+      "policy_fail": 120,
+      "policy_pass": 8,
+      "predeclared_cases": 186
+    },
+    "review_semantic_mapping": {
+      "contradiction": [],
+      "cost_only": [],
+      "default_minimal": [
+        "DEMAND_DEFAULT_LIKE"
+      ],
+      "domain": [],
+      "extreme": [],
+      "future_build": [],
+      "locked_hp_conflict": [
+        "R01"
+      ],
+      "locked_roof_conflict": [
+        "R03",
+        "R07"
+      ],
+      "missing": [],
+      "placeholder": [
+        "DEMAND_DEFAULT_LIKE"
+      ],
+      "storage_only": [],
+      "unseen_installer": [
+        "INSTALLER_UNKNOWN"
+      ],
+      "untrusted_pv": [
+        "EXISTING_PV_AMBIGUOUS"
+      ]
+    },
+    "rules": {
+      "catalog_battery_kwh": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 587,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 587
+      },
+      "catalog_heat_pump_kw": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 3,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 3
+      },
+      "diagnostic_demand_monotonic": {
+        "blocked": 0,
+        "case_ids": [
+          "dev-pair-0115"
+        ],
+        "eligible": 20,
+        "fail": 1,
+        "not_applicable": 0,
+        "pass": 19
+      },
+      "existing_hp_gate": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 63,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 63
+      },
+      "finite_nonnegative": {
+        "blocked": 0,
+        "case_ids": [
+          "dev-boundary-0049"
+        ],
+        "eligible": 676,
+        "fail": 1,
+        "not_applicable": 0,
+        "pass": 675
+      },
+      "lock_conflict_surfaced_heat_pump_kw": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 4,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 4
+      },
+      "lock_conflict_surfaced_pv_kwp": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 4,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 4
+      },
+      "locks_preserved_battery_kwh": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 40,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 40
+      },
+      "locks_preserved_heat_pump_kw": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 40,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 40
+      },
+      "locks_preserved_pv_kwp": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 40,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 40
+      },
+      "locks_preserved_wallbox_kw": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 40,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 40
+      },
+      "no_battery_without_pv_policy": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 39,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 39
+      },
+      "no_duplicate_wallbox": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 104,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 104
+      },
+      "nonfossil_hp_gate": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 151,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 151
+      },
+      "offline_replay": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 676,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 676
+      },
+      "outbound_network_disabled": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 1,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 1
+      },
+      "pair_ev_present": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 20,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 20
+      },
+      "pair_ignored_extra": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 20,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 20
+      },
+      "pair_key_order": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 20,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 20
+      },
+      "pair_lock_preserve": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 20,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 20
+      },
+      "pair_roof_shrink": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 20,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 20
+      },
+      "relevant_review_warning": {
+        "blocked": 58,
+        "case_ids": [
+          "dev-observation-0000",
+          "dev-observation-0001",
+          "dev-observation-0002",
+          "dev-observation-0003",
+          "dev-observation-0004",
+          "dev-observation-0005",
+          "dev-observation-0006",
+          "dev-observation-0007",
+          "dev-observation-0008",
+          "dev-observation-0009",
+          "dev-observation-0010",
+          "dev-observation-0011",
+          "dev-observation-0012",
+          "dev-observation-0013",
+          "dev-observation-0014",
+          "dev-observation-0015",
+          "dev-observation-0016",
+          "dev-observation-0017",
+          "dev-observation-0018",
+          "dev-observation-0019",
+          "dev-observation-0020",
+          "dev-observation-0021",
+          "dev-observation-0022",
+          "dev-observation-0023",
+          "dev-observation-0024",
+          "dev-observation-0025",
+          "dev-observation-0026",
+          "dev-observation-0027",
+          "dev-observation-0028",
+          "dev-observation-0029",
+          "dev-observation-0030",
+          "dev-observation-0031",
+          "dev-observation-0032",
+          "dev-observation-0033",
+          "dev-observation-0034",
+          "dev-observation-0035",
+          "dev-observation-0036",
+          "dev-observation-0037",
+          "dev-observation-0038",
+          "dev-observation-0039",
+          "dev-observation-0040",
+          "dev-observation-0041",
+          "dev-observation-0042",
+          "dev-observation-0043",
+          "dev-observation-0044",
+          "dev-observation-0045",
+          "dev-observation-0046",
+          "dev-observation-0047",
+          "dev-observation-0048",
+          "dev-observation-0049",
+          "dev-observation-0050",
+          "dev-observation-0051",
+          "dev-observation-0052",
+          "dev-observation-0053",
+          "dev-observation-0054",
+          "dev-observation-0055",
+          "dev-observation-0056",
+          "dev-observation-0057",
+          "dev-observation-0058",
+          "dev-observation-0059",
+          "dev-observation-0061",
+          "dev-observation-0062",
+          "dev-observation-0064",
+          "dev-observation-0065",
+          "dev-observation-0067",
+          "dev-observation-0068",
+          "dev-observation-0070",
+          "dev-observation-0071",
+          "dev-observation-0073",
+          "dev-observation-0074",
+          "dev-observation-0076",
+          "dev-observation-0077",
+          "dev-observation-0079",
+          "dev-observation-0080",
+          "dev-observation-0082",
+          "dev-observation-0083",
+          "dev-observation-0085",
+          "dev-observation-0086",
+          "dev-observation-0088",
+          "dev-observation-0089",
+          "dev-observation-0090",
+          "dev-observation-0091",
+          "dev-observation-0092",
+          "dev-observation-0093",
+          "dev-observation-0094",
+          "dev-observation-0095",
+          "dev-observation-0096",
+          "dev-observation-0097",
+          "dev-observation-0098",
+          "dev-observation-0099",
+          "dev-observation-0100",
+          "dev-observation-0101",
+          "dev-observation-0102",
+          "dev-observation-0103",
+          "dev-observation-0104",
+          "dev-observation-0105",
+          "dev-observation-0106",
+          "dev-observation-0107",
+          "dev-observation-0108",
+          "dev-observation-0109",
+          "dev-observation-0110",
+          "dev-observation-0111",
+          "dev-observation-0112",
+          "dev-observation-0113",
+          "dev-observation-0114",
+          "dev-observation-0115",
+          "dev-observation-0116",
+          "dev-observation-0117",
+          "dev-observation-0118",
+          "dev-observation-0119",
+          "dev-boundary-0040",
+          "dev-boundary-0041",
+          "dev-boundary-0042",
+          "dev-boundary-0043",
+          "dev-boundary-0044",
+          "dev-boundary-0045",
+          "dev-boundary-0046",
+          "dev-boundary-0047",
+          "dev-boundary-0048",
+          "dev-boundary-0049",
+          "dev-boundary-0050",
+          "dev-boundary-0051",
+          "dev-boundary-0052",
+          "dev-boundary-0053",
+          "dev-boundary-0054",
+          "dev-boundary-0055",
+          "dev-boundary-0056",
+          "dev-boundary-0057",
+          "dev-boundary-0058",
+          "dev-boundary-0059",
+          "dev-boundary-0060",
+          "dev-boundary-0061",
+          "dev-boundary-0062",
+          "dev-boundary-0063",
+          "dev-boundary-0064",
+          "dev-boundary-0065",
+          "dev-boundary-0066",
+          "dev-boundary-0067",
+          "dev-boundary-0068",
+          "dev-boundary-0069",
+          "dev-boundary-0070",
+          "dev-boundary-0071",
+          "dev-boundary-0072",
+          "dev-boundary-0073",
+          "dev-boundary-0074",
+          "dev-boundary-0075",
+          "dev-boundary-0076",
+          "dev-boundary-0077",
+          "dev-boundary-0078",
+          "dev-boundary-0079",
+          "dev-boundary-0080",
+          "dev-boundary-0081",
+          "dev-boundary-0082",
+          "dev-boundary-0083",
+          "dev-boundary-0084",
+          "dev-boundary-0085",
+          "dev-boundary-0086",
+          "dev-boundary-0090",
+          "dev-boundary-0091",
+          "dev-boundary-0092",
+          "dev-boundary-0093",
+          "dev-boundary-0094",
+          "dev-boundary-0095",
+          "dev-boundary-0096",
+          "dev-boundary-0100",
+          "dev-boundary-0101",
+          "dev-boundary-0102",
+          "dev-boundary-0103",
+          "dev-boundary-0104",
+          "dev-boundary-0105",
+          "dev-boundary-0106",
+          "dev-boundary-0110",
+          "dev-boundary-0111",
+          "dev-boundary-0112",
+          "dev-boundary-0113",
+          "dev-boundary-0114",
+          "dev-boundary-0115",
+          "dev-boundary-0116"
+        ],
+        "eligible": 186,
+        "fail": 120,
+        "not_applicable": 0,
+        "pass": 8
+      },
+      "roof_cap": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 514,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 514
+      },
+      "schema_expected_action": {
+        "blocked": 0,
+        "case_ids": [],
+        "eligible": 44,
+        "fail": 0,
+        "not_applicable": 0,
+        "pass": 44
+      }
+    },
+    "runtime": {
+      "numpy": "2.5.4",
+      "python": "3.13.0"
+    },
+    "scope": "policy structural + Pydantic schema; representative full-response checks only when adapter supplied",
+    "seed": 110701,
+    "spec_version": "spec-v1-dev-20261108",
+    "split": "dev",
+    "status": "FAIL_WITH_BLOCKED_COVERAGE",
+    "toy_physics": {
+      "boundary": "AC hourly kWh; standby supplied separately from grid; SoC ledger excludes grid standby; empty initial SoC",
+      "counts": {
+        "ac_balance_pass": 15,
+        "no_battery_exact_export_pass": 5,
+        "no_battery_exact_import_pass": 5,
+        "ratio_bounds_pass": 15,
+        "soc_bounds_pass": 15,
+        "soc_ledger_pass": 15
+      },
+      "failures": [],
+      "scenarios": 15,
+      "scope": "hand-computable 24h traces, not full API annual conservation"
+    }
+  }
+}

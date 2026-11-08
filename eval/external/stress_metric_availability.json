@@ -1,0 +1,239 @@
+{
+  "n": 24,
+  "counts": {
+    "designs": 70,
+    "pv_module_identity_pass": 31,
+    "response_sizes_finite_pass": 70,
+    "required_metric_present_pass": 339,
+    "metric_bounds_pass": 136,
+    "returned": 24,
+    "pv_module_identity_fail": 39,
+    "response_roof_modules_pass": 26,
+    "required_metric_present_fail": 8,
+    "missing_grid_import_kwh": 2,
+    "missing_feed_in_kwh": 2,
+    "missing_pv_yield_kwh": 2,
+    "missing_autarky": 2,
+    "review_pass": 12,
+    "review_fail": 4
+  },
+  "failures": [
+    {
+      "case_id": "dev-ordinary-0002",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0002",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0002",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0003",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0003",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0003",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0004",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0004",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0004",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0004",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0005",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0005",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-ordinary-0005",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0061",
+      "rule": "missing_required_grid_import_kwh"
+    },
+    {
+      "case_id": "dev-observation-0061",
+      "rule": "missing_required_feed_in_kwh"
+    },
+    {
+      "case_id": "dev-observation-0061",
+      "rule": "missing_required_pv_yield_kwh"
+    },
+    {
+      "case_id": "dev-observation-0061",
+      "rule": "missing_required_autarky"
+    },
+    {
+      "case_id": "dev-observation-0090",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0090",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0090",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0090",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0091",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0091",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0091",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0091",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0092",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0092",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0092",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0092",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0093",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0093",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0093",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0093",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0094",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0094",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0094",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0094",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0095",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0095",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0095",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-observation-0095",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-boundary-0080",
+      "rule": "full_response_review"
+    },
+    {
+      "case_id": "dev-boundary-0081",
+      "rule": "missing_required_grid_import_kwh"
+    },
+    {
+      "case_id": "dev-boundary-0081",
+      "rule": "missing_required_feed_in_kwh"
+    },
+    {
+      "case_id": "dev-boundary-0081",
+      "rule": "missing_required_pv_yield_kwh"
+    },
+    {
+      "case_id": "dev-boundary-0081",
+      "rule": "missing_required_autarky"
+    },
+    {
+      "case_id": "dev-boundary-0081",
+      "rule": "full_response_review"
+    },
+    {
+      "case_id": "dev-boundary-0082",
+      "rule": "full_response_review"
+    },
+    {
+      "case_id": "dev-boundary-0084",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-boundary-0084",
+      "rule": "pv_module_identity"
+    },
+    {
+      "case_id": "dev-boundary-0084",
+      "rule": "full_response_review"
+    }
+  ],
+  "note": "direct engine.design.design call; HTTP behavior/BOM tax semantics not certified",
+  "scope": "24-case DEV follow-up: required-metric presence checker added after initial missing-metric observation; no model edits",
+  "start_sha256": {
+    "services\\engine\\models\\designer.joblib": "7255a2bf1386e378c2f92b34f0f57829c0d566eaee081a8a470cd1ec51631f88",
+    "services\\engine\\config\\policy.json": "076240253e9640ea82692dd0cd4f467e2e8bfa3c5f5057f7a303510142f3776d"
+  },
+  "end_sha256": {
+    "services\\engine\\models\\designer.joblib": "7255a2bf1386e378c2f92b34f0f57829c0d566eaee081a8a470cd1ec51631f88",
+    "services\\engine\\config\\policy.json": "076240253e9640ea82692dd0cd4f467e2e8bfa3c5f5057f7a303510142f3776d"
+  },
+  "artifact_unchanged": true,
+  "network_attempts": 0,
+  "checker_sha256": "22118206f0279d5185cc59315943f159a87a93733f81943f16dedc8087c8d73e"
+}

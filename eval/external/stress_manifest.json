@@ -1,0 +1,133 @@
+{
+  "spec_version": "spec-v1-dev-20261108",
+  "split": "dev",
+  "seed": 110701,
+  "as_of": "2026-11-07",
+  "cases": 720,
+  "case_file_sha256": "88b77341cad1fba0a4928f46c3f3237de4ea41dead5def9d42e478b9f46f3ee4",
+  "generator_sha256": "7c456632b70256cdb8df30eadaebe7946a93d233d706971047459ceac95381f2",
+  "prng": "numpy.PCG64",
+  "numpy": "2.5.4",
+  "coverage": {
+    "pool_requests": {
+      "ordinary": 240,
+      "observation": 120,
+      "boundary": 120,
+      "metamorphic": 240
+    },
+    "ordinary_segments": {
+      "heating": {
+        "Gas": 40,
+        "Oil": 40,
+        "Heatpump": 40,
+        "OtherRenewable": 40,
+        "OtherNonRenewable": 40,
+        "Unknown": 40
+      },
+      "ev": {
+        "absent": 84,
+        "current": 78,
+        "planned": 78
+      },
+      "assets": {
+        "0": 72,
+        "1": 60,
+        "2": 54,
+        "3": 54
+      },
+      "roof": {
+        "0": 48,
+        "1": 48,
+        "2": 48,
+        "3": 48,
+        "4": 48
+      },
+      "installer": {
+        "known_0": 78,
+        "known_1": 84,
+        "unseen_external": 78
+      }
+    },
+    "asset_trust_occurrences": {
+      "False": 104,
+      "True": 118
+    },
+    "pairwise": {
+      "heating*ev": {
+        "present": 18,
+        "required_cartesian": 18
+      },
+      "heating*assets": {
+        "present": 24,
+        "required_cartesian": 24
+      },
+      "heating*roof": {
+        "present": 30,
+        "required_cartesian": 30
+      },
+      "heating*installer": {
+        "present": 18,
+        "required_cartesian": 18
+      },
+      "ev*assets": {
+        "present": 12,
+        "required_cartesian": 12
+      },
+      "ev*roof": {
+        "present": 15,
+        "required_cartesian": 15
+      },
+      "ev*installer": {
+        "present": 9,
+        "required_cartesian": 9
+      },
+      "assets*roof": {
+        "present": 20,
+        "required_cartesian": 20
+      },
+      "assets*installer": {
+        "present": 12,
+        "required_cartesian": 12
+      },
+      "roof*installer": {
+        "present": 15,
+        "required_cartesian": 15
+      }
+    },
+    "population_representative": false,
+    "empirical_enabled": false
+  },
+  "evidence": [
+    {
+      "id": "S1",
+      "kind": "source_anchor",
+      "publisher": "Stromspiegel/co2online",
+      "url": "https://www.stromspiegel.de/stromverbrauch-verstehen/stromverbrauch-im-haushalt/",
+      "accessed_at": "2026-11-08",
+      "release": "undated current SFH table",
+      "license": "UNVERIFIED; numeric reference facts only",
+      "artifact_sha256": null,
+      "local_artifact_id": null,
+      "verified_status": "landing_or_table_verified",
+      "units": "annual household kWh; with/without electric hot water; excludes EV/HP additions in harness",
+      "note": "2-person SFH table 2700 conflicts with intro prose 3500; table chosen explicitly"
+    },
+    {
+      "id": "A-coverage",
+      "kind": "analyst_coverage",
+      "source": "research/external/TASK2-SYNTHETIC-TEST-SPEC.md",
+      "note": "All quotas/ranges/scenario efficiencies/locations/roof limits/tariffs/perturbations are coverage assumptions, not population probabilities"
+    }
+  ],
+  "units": {
+    "demandKwh": "kWh/year",
+    "heatDemandKwh": "thermal kWh/year",
+    "hpElecKwh": "electrical kWh/year",
+    "existingPv.kwp": "kWp",
+    "existingStorage.kwh": "kWh",
+    "priceEurKwh": "EUR/kWh",
+    "priceEscalation": "fraction/year"
+  },
+  "empirical_enabled": false,
+  "final_suite_status": "blocked pending independent evaluator seed/profile allocation"
+}

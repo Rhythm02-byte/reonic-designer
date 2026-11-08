@@ -1,0 +1,529 @@
+{
+  "license": "CC-BY-4.0",
+  "opsd": {
+    "boundary": "residential4 import+PV-export minus HP/EV is provisional accounting; negative residuals exclude full profile",
+    "conversion": "Backward differences of cumulative kWh. Upstream processing.ipynb uses hourly .last(); diff belongs to current hour label. Counters at both boundaries required. Minute-level boundary approximation and clock shifts disclosed.",
+    "leap_day": "24 hours dropped, retained shapes renormalized",
+    "profiles": [
+      {
+        "annual_kwh_excluding_feb29": 2713.4849999999997,
+        "name": "opsd_residential2_household",
+        "status": "retained",
+        "upstream_interpolated_hour_n": 1990
+      },
+      {
+        "annual_kwh_excluding_feb29": 1014.303,
+        "name": "opsd_residential4_ev",
+        "status": "retained",
+        "upstream_interpolated_hour_n": 2468
+      },
+      {
+        "annual_kwh_excluding_feb29": 2581.0139999999997,
+        "name": "opsd_residential4_heatpump",
+        "status": "retained",
+        "upstream_interpolated_hour_n": 2468
+      },
+      {
+        "name": "opsd_residential4_household",
+        "negative_hours": 29,
+        "reason": "Incomplete or negative year",
+        "status": "excluded"
+      }
+    ],
+    "upstream_interpolation": "present, published flags counted; no new imputation",
+    "year": 2016
+  },
+  "schema_version": 1,
+  "sources": [
+    "https://zenodo.org/records/5642902",
+    "https://data.open-power-system-data.org/household_data/2020-04-15/"
+  ],
+  "units": "hourly fractions summing to 1",
+  "wpuq": {
+    "excluded": [
+      {
+        "finite_fraction": 0.665068493150685,
+        "public_id": "NO_PV/SFH17/HOUSEHOLD",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.665068493150685,
+        "public_id": "NO_PV/SFH17/HEATPUMP",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.7894977168949772,
+        "public_id": "NO_PV/SFH25/HOUSEHOLD",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.7894977168949772,
+        "public_id": "NO_PV/SFH25/HEATPUMP",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.9134703196347032,
+        "public_id": "NO_PV/SFH31/HOUSEHOLD",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.9134703196347032,
+        "public_id": "NO_PV/SFH31/HEATPUMP",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.4267123287671233,
+        "public_id": "NO_PV/SFH37/HOUSEHOLD",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.4267123287671233,
+        "public_id": "NO_PV/SFH37/HEATPUMP",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.7005707762557077,
+        "public_id": "NO_PV/SFH40/HOUSEHOLD",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.7005707762557077,
+        "public_id": "NO_PV/SFH40/HEATPUMP",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.22511415525114156,
+        "public_id": "NO_PV/SFH6/HOUSEHOLD",
+        "reason": "Incomplete or negative year"
+      },
+      {
+        "finite_fraction": 0.22511415525114156,
+        "public_id": "NO_PV/SFH6/HEATPUMP",
+        "reason": "Incomplete or negative year"
+      }
+    ],
+    "hp_temperature_bins": [
+      {
+        "hours": 62,
+        "relative_hp_electricity_vs_annual_hourly_mean": {
+          "n": 27,
+          "p25": 2.7622009546130544,
+          "p5": 1.9831576453997208,
+          "p50": 3.8359281543565547,
+          "p75": 5.814100382733779,
+          "p95": 7.269915794117206
+        },
+        "temperature_c_high": -5,
+        "temperature_c_low": -20
+      },
+      {
+        "hours": 346,
+        "relative_hp_electricity_vs_annual_hourly_mean": {
+          "n": 27,
+          "p25": 2.4402057330444102,
+          "p5": 1.8293039706942145,
+          "p50": 2.867446448833768,
+          "p75": 3.3797518042575456,
+          "p95": 4.14584304447492
+        },
+        "temperature_c_high": 0,
+        "temperature_c_low": -5
+      },
+      {
+        "hours": 1706,
+        "relative_hp_electricity_vs_annual_hourly_mean": {
+          "n": 27,
+          "p25": 1.797128839379969,
+          "p5": 1.5194771909683307,
+          "p50": 1.9468756000195386,
+          "p75": 2.034064096009618,
+          "p95": 2.1204530362883514
+        },
+        "temperature_c_high": 5,
+        "temperature_c_low": 0
+      },
+      {
+        "hours": 2248,
+        "relative_hp_electricity_vs_annual_hourly_mean": {
+          "n": 27,
+          "p25": 1.182161815085395,
+          "p5": 1.0769371084287864,
+          "p50": 1.2975448478064626,
+          "p75": 1.3686525262187677,
+          "p95": 1.4479277486965174
+        },
+        "temperature_c_high": 10,
+        "temperature_c_low": 5
+      },
+      {
+        "hours": 1783,
+        "relative_hp_electricity_vs_annual_hourly_mean": {
+          "n": 27,
+          "p25": 0.3275810570686398,
+          "p5": 0.2558858033094075,
+          "p50": 0.48965477426245213,
+          "p75": 0.5788222680612869,
+          "p95": 0.722433476808135
+        },
+        "temperature_c_high": 15,
+        "temperature_c_low": 10
+      },
+      {
+        "hours": 1484,
+        "relative_hp_electricity_vs_annual_hourly_mean": {
+          "n": 27,
+          "p25": 0.12949528250663112,
+          "p5": 0.07647350116855696,
+          "p50": 0.18390933471502885,
+          "p75": 0.27717816183521404,
+          "p95": 0.5102362673982027
+        },
+        "temperature_c_high": 20,
+        "temperature_c_low": 15
+      },
+      {
+        "hours": 1106,
+        "relative_hp_electricity_vs_annual_hourly_mean": {
+          "n": 27,
+          "p25": 0.05010844798815292,
+          "p5": 0.02557283613728234,
+          "p50": 0.09108793605589852,
+          "p75": 0.16702777958175447,
+          "p95": 0.38846398528085946
+        },
+        "temperature_c_high": 40,
+        "temperature_c_low": 20
+      }
+    ],
+    "public_profile_statistics": [
+      {
+        "annual_kwh": 5489.323239893511,
+        "daytime_share_08_18": 0.494884908447795,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH10/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 4065.8895364494683,
+        "daytime_share_08_18": 0.35170392412844215,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH10/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3105.2208453654926,
+        "daytime_share_08_18": 0.527231456780816,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH11/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 6491.041877798516,
+        "daytime_share_08_18": 0.5367896666962001,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH11/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2891.312927334971,
+        "daytime_share_08_18": 0.6164587952440865,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH12/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 2773.0515375291443,
+        "daytime_share_08_18": 0.503115701831324,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH12/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2462.9733606468144,
+        "daytime_share_08_18": 0.451867484759123,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH14/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 9654.572032916101,
+        "daytime_share_08_18": 0.33162663686311655,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH14/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2160.3171243873703,
+        "daytime_share_08_18": 0.5385526964045654,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH16/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 3382.6748881829863,
+        "daytime_share_08_18": 0.37130075468124346,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH16/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2946.1724676369986,
+        "daytime_share_08_18": 0.5487414904276158,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH18/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 1974.2129151145855,
+        "daytime_share_08_18": 0.4211778846410664,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH18/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3425.7545509982747,
+        "daytime_share_08_18": 0.5074253024746094,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH19/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 2131.193254244913,
+        "daytime_share_08_18": 0.39404112857163687,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH19/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3046.444857310009,
+        "daytime_share_08_18": 0.5409615169340578,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH20/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 14840.159743821185,
+        "daytime_share_08_18": 0.4161176894931891,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH20/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2794.642085643747,
+        "daytime_share_08_18": 0.45882550690988805,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH21/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 5648.4346645849655,
+        "daytime_share_08_18": 0.37440673487211784,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH21/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3132.8035716570644,
+        "daytime_share_08_18": 0.49858038993958953,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH22/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 10418.47270528881,
+        "daytime_share_08_18": 0.3171285635373613,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH22/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3121.9380189243316,
+        "daytime_share_08_18": 0.4677879687053151,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH23/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 1577.6636661418352,
+        "daytime_share_08_18": 0.4606218622397657,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH23/HEATPUMP"
+      },
+      {
+        "annual_kwh": 1146.2614094658534,
+        "daytime_share_08_18": 0.5296874428786269,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH27/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 2726.346393931004,
+        "daytime_share_08_18": 0.42138806899200615,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH27/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3099.4472143257008,
+        "daytime_share_08_18": 0.5363870565816851,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH28/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 7936.2885844788025,
+        "daytime_share_08_18": 0.45063045668576523,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH28/HEATPUMP"
+      },
+      {
+        "annual_kwh": 1405.6839925184515,
+        "daytime_share_08_18": 0.472690535608289,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH29/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 3645.2731036352197,
+        "daytime_share_08_18": 0.347678731746749,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH29/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2040.3944844021426,
+        "daytime_share_08_18": 0.5517035339858852,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH3/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 2456.2869693766042,
+        "daytime_share_08_18": 0.5731428657839093,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH3/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2015.2618966486611,
+        "daytime_share_08_18": 0.5247021076642954,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH30/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 2160.032062023095,
+        "daytime_share_08_18": 0.5110768515333002,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH30/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2693.323444742081,
+        "daytime_share_08_18": 0.576476669564766,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH32/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 2814.976853638237,
+        "daytime_share_08_18": 0.4674521332199788,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH32/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3188.20140336907,
+        "daytime_share_08_18": 0.41946944223064864,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH34/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 9481.55272044209,
+        "daytime_share_08_18": 0.4592961460542559,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH34/HEATPUMP"
+      },
+      {
+        "annual_kwh": 4455.906169316895,
+        "daytime_share_08_18": 0.5781358946268856,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH35/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 1431.1441444015688,
+        "daytime_share_08_18": 0.4133459224299363,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH35/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2697.3431563387976,
+        "daytime_share_08_18": 0.6244138332344038,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH36/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 2561.6759601291315,
+        "daytime_share_08_18": 0.5702212527280028,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH36/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3680.327482521905,
+        "daytime_share_08_18": 0.4430159233442658,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH38/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 5662.099437103484,
+        "daytime_share_08_18": 0.3763274415166464,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH38/HEATPUMP"
+      },
+      {
+        "annual_kwh": 2508.166549399206,
+        "daytime_share_08_18": 0.4436923206142706,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH39/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 6696.300255706854,
+        "daytime_share_08_18": 0.3560941554783395,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH39/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3093.229454762819,
+        "daytime_share_08_18": 0.4877170602563937,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH4/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 5223.807046444796,
+        "daytime_share_08_18": 0.36739591438229935,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH4/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3057.8640889987737,
+        "daytime_share_08_18": 0.4439307667706425,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH5/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 7006.871581141682,
+        "daytime_share_08_18": 0.39079039554869205,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH5/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3071.743731702307,
+        "daytime_share_08_18": 0.5473946087931494,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH7/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 3565.0455060753375,
+        "daytime_share_08_18": 0.42723597985772893,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH7/HEATPUMP"
+      },
+      {
+        "annual_kwh": 3214.1482111634996,
+        "daytime_share_08_18": 0.5911626204205105,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH8/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 5461.164828621702,
+        "daytime_share_08_18": 0.4388349082667655,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH8/HEATPUMP"
+      },
+      {
+        "annual_kwh": 4678.75517355991,
+        "daytime_share_08_18": 0.5433747507307841,
+        "feed": "HOUSEHOLD",
+        "public_id": "NO_PV/SFH9/HOUSEHOLD"
+      },
+      {
+        "annual_kwh": 7068.214245929591,
+        "daytime_share_08_18": 0.37670406503573284,
+        "feed": "HEATPUMP",
+        "public_id": "NO_PV/SFH9/HEATPUMP"
+      }
+    ],
+    "retained_household_n": 27,
+    "retained_profile_n": 54,
+    "scope": "2019 NO_PV cohort only; nonrepresentative single-family homes with heat pumps; no new imputation",
+    "temperature_unit": "\u00b0C; verified in HDF5 group unit attribute; time alignment provisional, bins disabled as model calibration"
+  }
+}

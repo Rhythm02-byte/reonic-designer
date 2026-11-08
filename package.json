@@ -12,6 +12,8 @@
     "x:select": "node scripts/py.mjs eval/run.py --data dataset --offline --select",
     "x:contracts": "pnpm --dir packages/contracts build",
     "x:web-build": "pnpm --dir apps/web build",
-    "x:correlations": "node scripts/py.mjs research/data_correlations.py"
+    "x:correlations": "node scripts/py.mjs research/data_correlations.py",
+    "x:external": "node scripts/py.mjs eval/external/benchmark.py",
+    "x:research": "node scripts/py.mjs eval/research.py"
   }
 }

@@ -1,0 +1,1104 @@
+{
+  "spec_version": "spec-v1-dev-20261108",
+  "split": "dev",
+  "seed": 110701,
+  "as_of": "2026-11-07",
+  "scope": "policy structural + Pydantic schema; representative full-response checks only when adapter supplied",
+  "coverage": {
+    "pool_requests": {
+      "ordinary": 240,
+      "observation": 120,
+      "boundary": 120,
+      "metamorphic": 240
+    },
+    "ordinary_segments": {
+      "heating": {
+        "Gas": 40,
+        "Oil": 40,
+        "Heatpump": 40,
+        "OtherRenewable": 40,
+        "OtherNonRenewable": 40,
+        "Unknown": 40
+      },
+      "ev": {
+        "absent": 84,
+        "current": 78,
+        "planned": 78
+      },
+      "assets": {
+        "0": 72,
+        "1": 60,
+        "2": 54,
+        "3": 54
+      },
+      "roof": {
+        "0": 48,
+        "1": 48,
+        "2": 48,
+        "3": 48,
+        "4": 48
+      },
+      "installer": {
+        "known_0": 80,
+        "known_1": 80,
+        "unseen_external": 80
+      }
+    },
+    "asset_trust_occurrences": {
+      "False": 104,
+      "True": 118
+    },
+    "pairwise": {
+      "heating*ev": {
+        "present": 18,
+        "required_cartesian": 18
+      },
+      "heating*assets": {
+        "present": 24,
+        "required_cartesian": 24
+      },
+      "heating*roof": {
+        "present": 30,
+        "required_cartesian": 30
+      },
+      "heating*installer": {
+        "present": 6,
+        "required_cartesian": 18
+      },
+      "ev*assets": {
+        "present": 12,
+        "required_cartesian": 12
+      },
+      "ev*roof": {
+        "present": 15,
+        "required_cartesian": 15
+      },
+      "ev*installer": {
+        "present": 9,
+        "required_cartesian": 9
+      },
+      "assets*roof": {
+        "present": 20,
+        "required_cartesian": 20
+      },
+      "assets*installer": {
+        "present": 12,
+        "required_cartesian": 12
+      },
+      "roof*installer": {
+        "present": 15,
+        "required_cartesian": 15
+      }
+    },
+    "population_representative": false,
+    "empirical_enabled": false
+  },
+  "case_sha256": "521146acacbb838bc2d65ddd3f213131e58056b2334c8156858edce6276a22da",
+  "prng": "numpy.PCG64 with SHA256 sub-seeds",
+  "runtime": {
+    "python": "3.13.0",
+    "numpy": "2.5.4"
+  },
+  "review_semantic_mapping": {
+    "placeholder": [
+      "DEMAND_DEFAULT_LIKE"
+    ],
+    "default_minimal": [
+      "DEMAND_DEFAULT_LIKE"
+    ],
+    "untrusted_pv": [
+      "EXISTING_PV_AMBIGUOUS"
+    ],
+    "unseen_installer": [
+      "INSTALLER_UNKNOWN"
+    ],
+    "locked_roof_conflict": [
+      "R03",
+      "R07"
+    ],
+    "locked_hp_conflict": [
+      "R01"
+    ],
+    "extreme": [],
+    "domain": [],
+    "contradiction": [],
+    "missing": [],
+    "cost_only": [],
+    "storage_only": [],
+    "future_build": []
+  },
+  "final_suite": "NOT RUN: evaluator-controlled hidden seed and disjoint public profiles required",
+  "blocked_coverage": [
+    "HTTP status/invalid JSON transport, including raw NaN/Infinity tokens",
+    "full annual API conservation beyond toy seam",
+    "manufacturer compatibility and catalogue product IDs",
+    "complete numeric-field domain Cartesian boundary coverage",
+    "full BOM/VAT conventions",
+    "household billing-boundary disclosure (no contract field)",
+    "public-profile empirical resampling and held-out profile years",
+    "production deployment network isolation"
+  ],
+  "network_attempts": 0,
+  "toy_physics": {
+    "scenarios": 15,
+    "counts": {
+      "ac_balance_pass": 15,
+      "soc_ledger_pass": 15,
+      "soc_bounds_pass": 15,
+      "ratio_bounds_pass": 15,
+      "no_battery_exact_import_pass": 5,
+      "no_battery_exact_export_pass": 5
+    },
+    "failures": [],
+    "boundary": "AC hourly kWh; standby supplied separately from grid; SoC ledger excludes grid standby; empty initial SoC",
+    "scope": "hand-computable 24h traces, not full API annual conservation"
+  },
+  "full_response_subset": {
+    "n": 24,
+    "counts": {
+      "designs": 71,
+      "pv_module_identity_fail": 12,
+      "response_sizes_finite_pass": 71,
+      "metric_bounds_pass": 138,
+      "returned": 24,
+      "pv_module_identity_pass": 59,
+      "response_roof_modules_pass": 27,
+      "review_pass": 12,
+      "review_fail": 4
+    },
+    "failures": [
+      {
+        "case_id": "dev-ordinary-0000",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-ordinary-0000",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-ordinary-0000",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-ordinary-0003",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-ordinary-0003",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-ordinary-0003",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-observation-0060",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-observation-0060",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-observation-0060",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-observation-0063",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-observation-0063",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-observation-0063",
+        "rule": "pv_module_identity"
+      },
+      {
+        "case_id": "dev-boundary-0080",
+        "rule": "full_response_review"
+      },
+      {
+        "case_id": "dev-boundary-0081",
+        "rule": "full_response_review"
+      },
+      {
+        "case_id": "dev-boundary-0082",
+        "rule": "full_response_review"
+      },
+      {
+        "case_id": "dev-boundary-0084",
+        "rule": "full_response_review"
+      }
+    ],
+    "note": "direct engine.design.design call; HTTP behavior/BOM tax semantics not certified"
+  },
+  "requests": 720,
+  "policy_accepted": 676,
+  "rules": {
+    "finite_nonnegative": {
+      "eligible": 676,
+      "pass": 675,
+      "fail": 1,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": [
+        "dev-boundary-0049"
+      ]
+    },
+    "catalog_battery_kwh": {
+      "eligible": 584,
+      "pass": 584,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "no_duplicate_wallbox": {
+      "eligible": 104,
+      "pass": 104,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "offline_replay": {
+      "eligible": 676,
+      "pass": 676,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "roof_cap": {
+      "eligible": 514,
+      "pass": 514,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "no_battery_without_pv_policy": {
+      "eligible": 41,
+      "pass": 41,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "existing_hp_gate": {
+      "eligible": 63,
+      "pass": 63,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "nonfossil_hp_gate": {
+      "eligible": 151,
+      "pass": 151,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "catalog_heat_pump_kw": {
+      "eligible": 2,
+      "pass": 2,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "relevant_review_warning": {
+      "eligible": 186,
+      "pass": 8,
+      "fail": 120,
+      "blocked": 58,
+      "not_applicable": 0,
+      "case_ids": [
+        "dev-observation-0000",
+        "dev-observation-0001",
+        "dev-observation-0002",
+        "dev-observation-0003",
+        "dev-observation-0004",
+        "dev-observation-0005",
+        "dev-observation-0006",
+        "dev-observation-0007",
+        "dev-observation-0008",
+        "dev-observation-0009",
+        "dev-observation-0010",
+        "dev-observation-0011",
+        "dev-observation-0012",
+        "dev-observation-0013",
+        "dev-observation-0014",
+        "dev-observation-0015",
+        "dev-observation-0016",
+        "dev-observation-0017",
+        "dev-observation-0018",
+        "dev-observation-0019",
+        "dev-observation-0020",
+        "dev-observation-0021",
+        "dev-observation-0022",
+        "dev-observation-0023",
+        "dev-observation-0024",
+        "dev-observation-0025",
+        "dev-observation-0026",
+        "dev-observation-0027",
+        "dev-observation-0028",
+        "dev-observation-0029",
+        "dev-observation-0030",
+        "dev-observation-0031",
+        "dev-observation-0032",
+        "dev-observation-0033",
+        "dev-observation-0034",
+        "dev-observation-0035",
+        "dev-observation-0036",
+        "dev-observation-0037",
+        "dev-observation-0038",
+        "dev-observation-0039",
+        "dev-observation-0040",
+        "dev-observation-0041",
+        "dev-observation-0042",
+        "dev-observation-0043",
+        "dev-observation-0044",
+        "dev-observation-0045",
+        "dev-observation-0046",
+        "dev-observation-0047",
+        "dev-observation-0048",
+        "dev-observation-0049",
+        "dev-observation-0050",
+        "dev-observation-0051",
+        "dev-observation-0052",
+        "dev-observation-0053",
+        "dev-observation-0054",
+        "dev-observation-0055",
+        "dev-observation-0056",
+        "dev-observation-0057",
+        "dev-observation-0058",
+        "dev-observation-0059",
+        "dev-observation-0061",
+        "dev-observation-0062",
+        "dev-observation-0064",
+        "dev-observation-0065",
+        "dev-observation-0067",
+        "dev-observation-0068",
+        "dev-observation-0070",
+        "dev-observation-0071",
+        "dev-observation-0073",
+        "dev-observation-0074",
+        "dev-observation-0076",
+        "dev-observation-0077",
+        "dev-observation-0079",
+        "dev-observation-0080",
+        "dev-observation-0082",
+        "dev-observation-0083",
+        "dev-observation-0085",
+        "dev-observation-0086",
+        "dev-observation-0088",
+        "dev-observation-0089",
+        "dev-observation-0090",
+        "dev-observation-0091",
+        "dev-observation-0092",
+        "dev-observation-0093",
+        "dev-observation-0094",
+        "dev-observation-0095",
+        "dev-observation-0096",
+        "dev-observation-0097",
+        "dev-observation-0098",
+        "dev-observation-0099",
+        "dev-observation-0100",
+        "dev-observation-0101",
+        "dev-observation-0102",
+        "dev-observation-0103",
+        "dev-observation-0104",
+        "dev-observation-0105",
+        "dev-observation-0106",
+        "dev-observation-0107",
+        "dev-observation-0108",
+        "dev-observation-0109",
+        "dev-observation-0110",
+        "dev-observation-0111",
+        "dev-observation-0112",
+        "dev-observation-0113",
+        "dev-observation-0114",
+        "dev-observation-0115",
+        "dev-observation-0116",
+        "dev-observation-0117",
+        "dev-observation-0118",
+        "dev-observation-0119",
+        "dev-boundary-0040",
+        "dev-boundary-0041",
+        "dev-boundary-0042",
+        "dev-boundary-0043",
+        "dev-boundary-0044",
+        "dev-boundary-0045",
+        "dev-boundary-0046",
+        "dev-boundary-0047",
+        "dev-boundary-0048",
+        "dev-boundary-0049",
+        "dev-boundary-0050",
+        "dev-boundary-0051",
+        "dev-boundary-0052",
+        "dev-boundary-0053",
+        "dev-boundary-0054",
+        "dev-boundary-0055",
+        "dev-boundary-0056",
+        "dev-boundary-0057",
+        "dev-boundary-0058",
+        "dev-boundary-0059",
+        "dev-boundary-0060",
+        "dev-boundary-0061",
+        "dev-boundary-0062",
+        "dev-boundary-0063",
+        "dev-boundary-0064",
+        "dev-boundary-0065",
+        "dev-boundary-0066",
+        "dev-boundary-0067",
+        "dev-boundary-0068",
+        "dev-boundary-0069",
+        "dev-boundary-0070",
+        "dev-boundary-0071",
+        "dev-boundary-0072",
+        "dev-boundary-0073",
+        "dev-boundary-0074",
+        "dev-boundary-0075",
+        "dev-boundary-0076",
+        "dev-boundary-0077",
+        "dev-boundary-0078",
+        "dev-boundary-0079",
+        "dev-boundary-0080",
+        "dev-boundary-0081",
+        "dev-boundary-0082",
+        "dev-boundary-0083",
+        "dev-boundary-0084",
+        "dev-boundary-0085",
+        "dev-boundary-0086",
+        "dev-boundary-0090",
+        "dev-boundary-0091",
+        "dev-boundary-0092",
+        "dev-boundary-0093",
+        "dev-boundary-0094",
+        "dev-boundary-0095",
+        "dev-boundary-0096",
+        "dev-boundary-0100",
+        "dev-boundary-0101",
+        "dev-boundary-0102",
+        "dev-boundary-0103",
+        "dev-boundary-0104",
+        "dev-boundary-0105",
+        "dev-boundary-0106",
+        "dev-boundary-0110",
+        "dev-boundary-0111",
+        "dev-boundary-0112",
+        "dev-boundary-0113",
+        "dev-boundary-0114",
+        "dev-boundary-0115",
+        "dev-boundary-0116"
+      ]
+    },
+    "schema_expected_action": {
+      "eligible": 44,
+      "pass": 44,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "lock_conflict_surfaced": {
+      "eligible": 8,
+      "pass": 8,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "locks_preserved": {
+      "eligible": 40,
+      "pass": 40,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "pair_roof_shrink": {
+      "eligible": 20,
+      "pass": 20,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "diagnostic_demand_monotonic": {
+      "eligible": 20,
+      "pass": 20,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "pair_ev_present": {
+      "eligible": 20,
+      "pass": 20,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "pair_lock_preserve": {
+      "eligible": 20,
+      "pass": 20,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "pair_key_order": {
+      "eligible": 20,
+      "pass": 20,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "pair_ignored_extra": {
+      "eligible": 20,
+      "pass": 20,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    },
+    "outbound_network_disabled": {
+      "eligible": 1,
+      "pass": 1,
+      "fail": 0,
+      "blocked": 0,
+      "not_applicable": 0,
+      "case_ids": []
+    }
+  },
+  "failures": [
+    {
+      "case_id": "dev-observation-0000",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0001",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0002",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0003",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0004",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0005",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0006",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0007",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0008",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0009",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0010",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0011",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0012",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0013",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0014",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0015",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0016",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0017",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0018",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0019",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0020",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0021",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0022",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0023",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0024",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0025",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0026",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0027",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0028",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0029",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0030",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0031",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0032",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0033",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0034",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0035",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0036",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0037",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0038",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0039",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0040",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0041",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0042",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0043",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0044",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0045",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0046",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0047",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0048",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0049",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0050",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0051",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0052",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0053",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0054",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0055",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0056",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0057",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0058",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-observation-0059",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0040",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0041",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0042",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0043",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0044",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0045",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0046",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0047",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0048",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0049",
+      "rule": "finite_nonnegative"
+    },
+    {
+      "case_id": "dev-boundary-0049",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0050",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0051",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0052",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0053",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0054",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0055",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0056",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0057",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0058",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0059",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0060",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0061",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0062",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0063",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0064",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0065",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0066",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0067",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0068",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0069",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0070",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0071",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0072",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0073",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0074",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0075",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0076",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0077",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0078",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0079",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0080",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0081",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0082",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0084",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0086",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0090",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0091",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0092",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0094",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0096",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0100",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0101",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0102",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0104",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0106",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0110",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0111",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0112",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0114",
+      "rule": "relevant_review_warning"
+    },
+    {
+      "case_id": "dev-boundary-0116",
+      "rule": "relevant_review_warning"
+    }
+  ],
+  "by_pool": {
+    "ordinary": {
+      "policy_returned": 240
+    },
+    "observation": {
+      "policy_returned": 120
+    },
+    "boundary": {
+      "schema_rejected": 44,
+      "policy_returned": 76
+    },
+    "metamorphic": {
+      "policy_returned": 240
+    }
+  },
+  "policy_latency_ms": {
+    "p50": 311.65665001026355,
+    "p95": 707.692074982333
+  },
+  "review": {
+    "predeclared_cases": 186,
+    "policy_pass": 8,
+    "policy_fail": 120,
+    "policy_blocked": 58,
+    "false_review_rate": null,
+    "false_review_rate_blocked_reason": "PolicyDesign omits endpoint intake review signals"
+  },
+  "hard_failure_count": 121,
+  "status": "FAIL_WITH_BLOCKED_COVERAGE",
+  "manifest_sha256": "b4a0ddef6a6cc0e7ac3e0d041d80312d0278dc1552473d4853ceecddfa31a834",
+  "model_sha256": "7255a2bf1386e378c2f92b34f0f57829c0d566eaee081a8a470cd1ec51631f88",
+  "policy_config_sha256": "076240253e9640ea82692dd0cd4f467e2e8bfa3c5f5057f7a303510142f3776d",
+  "artifact_consistency": {
+    "status": "EXPLORATORY_MODEL_HASH_UNRELIABLE",
+    "reason": "Artifact file retrained by another owner at04:01:54 during this03:58-04:04 run; final SHA does not identify old loaded model. Do not compare counts as controlled improvement."
+  }
+}

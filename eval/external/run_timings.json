@@ -1,0 +1,8 @@
+{
+  "hardware": "AMD64",
+  "note": "Descriptive current-run timing; intentionally excluded from deterministic results.json",
+  "policy_latency_ms": {
+    "p50": 350.6031499709934,
+    "p95": 762.4111500190338
+  }
+}

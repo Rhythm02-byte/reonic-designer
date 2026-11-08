@@ -1,75 +1,27 @@
-# Backlog (everything asked for, with status)
+# Backlog
 
-Status: ✅ done · 🟡 in progress · ⬜ open · ✂️ cut (reason). Owner in brackets. Freeze **Sun 11:00**, submission **15:00**. Update when you finish something.
+Status: ✅ done · 🟡 in progress · ⬜ open · ✂️ cut (reason). Submission **Sun 8 Nov, 15:00**. Only Kian's agent edits this file.
 
-## A. Before freeze: demo-critical (in this order)
+## Open (today, before 15:00)
 | Item | Status |
 |---|---|
-| Faris's frontend = source of truth in `apps/web` (sidebar, drafts, grouped inputs, system cards, whole-option offers) wired to our engine via an adapter `lib/api.ts`; our extras mounted with `// ours:` lines [Claude session] | ✅ |
-| Faris pushes his unpushed work → re-copy his files (his components stay verbatim, so this takes minutes) [Faris] | ⬜ |
-| Pitch mode `/pitch` (iemko) ported onto Faris's planner; logo 3× → menu: Pitch mode · Pitch offline (`?demo=1`) · Lab results. iemko: re-check slide numbers vs `docs/PITCH.md` (latency p95 slide) [iemko] | ✅ |
-| Parts list visible in planner (+ offer): modules ×N, inverter, battery, wallbox, heat pump, service lines | ✅ |
-| QR code for the homeowner link | ✅ |
-| Make `next` the team's main: Faris + iemko pushed, team agrees, rename on GitHub (needs repo admin: Rhythm) [Kian] | ⬜ |
-| Deploy: Cloudflare quick tunnel to `pnpm dev` (one URL, no account) **or** Vercel + hosted engine; decide by 09:00. Through the tunnel, `/engine/holdout` and `/lab/run` answer 403 (`apps/web/proxy.ts`), so real projects stay on the presenter's laptop [Kian] | ⬜ |
-| Deck: Rhythm's 7-slide draft (`docs/pitch/`) with numbers from `docs/PITCH.md` (his use his older engine) [Kian/Rhythm] | ⬜ |
-| Fallback screen recording of the demo [iemko] | ⬜ |
+| Jury top 5: pinned Evidence project, slide 6 hint, Evidence headline wording, stale numbers in PITCH/slides, contradicting "similar homes" cards (`research/jury/final-review.md`) | 🟡 |
+| Playwright E2E smoke of the demo path (`pnpm x:e2e`) | 🟡 |
+| Real Google 3D mesh as the main house view, with our panels placed on its roof (local only) | 🟡 |
+| Installer 2a8ba8e2 gets no PV at exactly 4,500 kWh (`demand_is_default`): decision A, louder flag, numbers unchanged [Rhythm] | ⬜ |
+| Parts list mixes brands (inverter and battery from different makers); R06 battery flag fires even when the larger battery improves NPV [Rhythm] | ⬜ |
+| Phone test of the homeowner link (QR) and a fallback screen recording [Kian/iemko] | ⬜ |
+| Haiku where it earns points (not for bills): planned separately with `/plan` [Kian] | ⬜ |
 
-## B. Before freeze: if time (each needs a demo reason)
-| Item | Status |
-|---|---|
-| Haiku: bill photo → annual kWh (strict JSON); the measured +9.8 pts lever. Separate `/plan` [Claude] | ⬜ |
-| Haiku: grounded co-pilot (intent "EV next year" → input patch; homeowner Q&A with tool calls to our endpoints), template fallback without key [Claude] | ⬜ |
-| Metric research phase under `research/experiments.md` protocol (bundle classification, catalogue-as-classes, TabPFN, recency, …) [Claude agents] | ⬜ |
-| Codex night shift: external data pack + blind-spot sweep (`docs/tasks/CODEX-ORCHESTRATOR.md`) [Codex] | ⬜ hand to Codex |
-| Slack board live: paste the `thinc-board` bot token into `.env` [Kian] | 🟡 |
-| Reconcile ChatGPT research R1–R6 + `COMPATIBILITY.md` (verified pairings vs implemented, keep UNVERIFIED) into PLAN/PITCH [Kian] | ⬜ |
-| Mobile haptics (web-haptics; Faris's UI dropped it) [web] | ⬜ |
-| Ask Reonic mentors on site: signed option, build-year meaning, hours per design (PLAN §17) [Kian] | ⬜ |
-| E2E smoke (Playwright: intake → design → set size → share → offer on mobile) [iemko] | ⬜ |
-| From Rhythm's main (good work, other layout): model artifact freshness signature (warn when code changed since training) and a Docker compose for `next` [Rhythm] | ⬜ |
-| Real roof view: Google Maps 3D / Photorealistic 3D Tiles at the address as the primary map where panels are placed; the Blender house stays as the fallback when no coverage or no key [Faris] | ⬜ |
+## Done (highlights)
+- **Engine:** ETL with unit fixes; baselines B0/B1; learned chain + kNN + rules R01–R07; battery sized from the installer's catalogue (research winner); conformal ranges; hourly simulator; Ask next; parts list; input plausibility warnings; QA fixes (negative roof cap → 422, metrics without new PV, kWp = modules × Wp, locked PV in installer modules, R03 after rounding); `/design` ~130 ms warm.
+- **Evaluation:** 2026 test (n = 325) recorded in `eval/results/latest.json`; 4 quarterly folds + 20 splits; shuffled-label control; oracle upper bounds; selective prediction; research tournament with pre-registered adoption rule (`research/experiments.md`).
+- **Web:** Faris's planner (sidebar, drafts, undo, grouped inputs, system cards); one Share control with QR; homeowner `/offer`; `/pitch` deck with live planner and offline mode; `/lab`; `/new-customer`; custom dropdown, checkbox and radio; initials avatars; tunnel guard (`apps/web/proxy.ts`); real-house mesh import.
+- **Repo:** `next` is the team's main; pnpm with `bootstrap`, `dev`, `test`, `eval`; README for evaluators; AGENTS.md with bad habits.
 
-## C. Known bugs / polish (re-check after the Faris integration)
-| Item | Status |
-|---|---|
-| Reason text rounding (16.5 vs 16.7 kWp) | ⬜ recheck |
-| Duplicate Share button on mobile | ⬜ recheck (may be gone with Faris's UI) |
-| Offer page counted panels as kWp ÷ 450 W (23) while the planner said 22 (463 Wp modules): the link now carries the module watts | ✅ |
-| A locked part showed "Experts pick 20 kWh" (its own value as the range): no range while locked | ✅ |
-| Offer "Your choice" card updates when the homeowner changes an option | ⬜ recheck |
-| Typical-day chart + alternatives (engine returns them; no UI in Faris's design yet) | ⬜ |
-| Engine `/design` p50 ~0.35–0.5 s under load (was 92 ms before battery coverage sizing; per-row pandas features ~60 ms) | ⬜ optimise if time |
-
-## D. Done (highlights)
-- **Research:** data structure, unit traps, correlations, installer workflow, battery and simulation state of the art, competitors, source fact-check, ChatGPT R1–R6 reports in `research/external/`.
-- **Engine:**
-  - ETL with unit fixes
-  - baselines
-  - learned chain + kNN + rules R01–R07
-  - validation-selected composite (+ battery coverage sizing)
-  - conformal ranges
-  - hourly simulator
-  - Ask next
-  - API
-  - parts list (modules, inverter, storage, wallbox, heat pump, services)
-- **Quality:**
-  - 111 engine tests
-  - honesty checks (shuffled labels, 20 splits, 2,000-home fuzz, which fixed 194 rule bugs)
-  - `pnpm eval` = all checks, recorded per branch
-  - `/lab` with one button and a presenter menu
-- **Repo:**
-  - `next` pushed
-  - pnpm, with four commands (`bootstrap`, `dev`, `test`, `eval`)
-  - cross-platform scripts
-  - README for evaluators
-  - CLAUDE.md → AGENTS.md
-  - Slack script
-  - Rhythm's deck, demo script, business case, work log and specs in `docs/`
-  - unused `lightgbm` dropped
-
-## E. Cut (and why)
-- House types gable/hip/flat/shed: one Blender house; roof type shown in text.
-- Simulator upgrades U1 (load variety), U2 (forecast dispatch / negative prices): no demo impact before freeze.
-- Product library UI: price data stays in `services/engine/config/market.json`.
-- Haiku choosing sizes / scoring Haiku on the private dataset: breaks hard rule 3 (LLM never sizes), and would send project data to a third-party API.
+## Cut (and why)
+- Haiku reading the electricity bill: data is collected before the planner, not from the homeowner.
+- Haiku choosing sizes in the served engine: AGENTS rule 3 (LLM never sizes).
+- Slack coordination: the team stopped using it.
+- House types gable/hip/flat/shed: the real mesh replaces them; the stylised house stays as the fallback.
+- Simulator upgrades (load variety, forecast dispatch, per-location weather): no demo impact today; the simulator uses one PVGIS site, which understates Bavarian savings but does not change sizing.

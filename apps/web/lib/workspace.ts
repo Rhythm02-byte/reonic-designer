@@ -7,7 +7,11 @@ import { DEMO_INPUTS } from "./copy";
 import type { GeoLocation } from "@/components/Location";
 import type { HouseAsset, HouseLayout } from "./real-house";
 
-export type Customer = { id: string; name: string; owner: string; inputs: Inputs; locked?: Partial<Values>; location?: GeoLocation; realHouse?: HouseAsset; roofLayout?: HouseLayout; roofCapacityConfirmed?: boolean };
+export type CustomerStatus = "lead" | "quoted" | "won" | "lost";
+export const STATUS_ORDER: CustomerStatus[] = ["lead", "quoted", "won", "lost"];
+export const STATUS_LABEL: Record<CustomerStatus, string> = { lead: "Lead", quoted: "Quoted", won: "Won", lost: "Lost" };
+
+export type Customer = { id: string; name: string; owner: string; inputs: Inputs; locked?: Partial<Values>; location?: GeoLocation; realHouse?: HouseAsset; roofLayout?: HouseLayout; roofCapacityConfirmed?: boolean; status?: CustomerStatus };
 export type Workspace = { me: string; active: string; customers: Customer[] };
 export const TEAM = ["Anna Weber", "Jonas Keller", "Lea Brandt"];
 const SEED: Workspace = {
@@ -60,12 +64,25 @@ export function useWorkspace(): Workspace {
 }
 
 /** Creates the customer, makes it the active one, and returns its id. */
-export function addCustomer(newName: string, location: GeoLocation | null): string {
+export function addCustomer(newName: string, location: GeoLocation | null, owner?: string): string {
   const cid = crypto.randomUUID();
   update((w) => ({
     ...w,
     active: cid,
-    customers: [...w.customers, { id: cid, name: newName, owner: w.me, inputs: NEW_INPUTS, location: location ?? undefined }], // ours: review fix
+    customers: [...w.customers, { id: cid, name: newName, owner: owner ?? w.me, inputs: NEW_INPUTS, location: location ?? undefined }], // ours: review fix
   }));
   return cid;
+}
+
+/** Removes a customer; refuses to empty the workspace. Switches off the active customer if needed. */
+export function removeCustomer(id: string) {
+  update((w) => {
+    if (w.customers.length <= 1) return w;
+    const customers = w.customers.filter((c) => c.id !== id);
+    return { ...w, customers, active: w.active === id ? customers[0].id : w.active };
+  });
+}
+
+export function setCustomerStatus(id: string, status: CustomerStatus) {
+  update((w) => ({ ...w, customers: w.customers.map((c) => (c.id === id ? { ...c, status } : c)) }));
 }

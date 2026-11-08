@@ -79,8 +79,7 @@ test.describe("planner", () => {
     const radios = offer.locator('input[name="option"]');
     await expect(radios.first()).toBeAttached();
     expect(await radios.count()).toBeGreaterThan(1);
-    const parts = offer.locator("details", { hasText: "Exact parts" });
-    await parts.locator("summary").click();
+    const parts = offer.locator('section[aria-labelledby="parts"]'); // Faris's parts section (always open)
     const text = () => parts.innerText();
     const a = await text();
     await offer.locator("label").filter({ has: radios }).nth(1).click();
@@ -120,7 +119,7 @@ test.describe("other pages", () => {
   test("/new-customer creates a customer with empty facts", async ({ page }) => {
     await page.goto("/new-customer");
     await page.getByLabel("Customer name").fill("E2E Testfamilie");
-    await page.getByRole("button", { name: /Continue to location/ }).click();
+    await page.getByRole("button", { name: /Next: pick house|Continue to location/ }).click();
     await page.getByRole("button", { name: /Create customer/ }).click();
     await expect(page).toHaveURL(/localhost:3000\/$/);
     await expect(page.getByRole("heading", { name: /Design for E2E Testfamilie/ })).toBeVisible();

@@ -2,7 +2,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
 // Rhythm: an ink rounded square with three rising bars (output over a day), plus the wordmark in Geist.
-export function Logo({ product = true }: { product?: boolean }) {
+export function Logo({ product = true, iconOnly = false }: { product?: boolean; iconOnly?: boolean }) {
   return (
     <span className="flex items-center gap-3 text-ink">
       <span className="flex cursor-default items-center gap-2 select-none" role="img" aria-label="Rhythm"> {/* ours: no text selection on the triple-tap menu gesture */}
@@ -14,11 +14,13 @@ export function Logo({ product = true }: { product?: boolean }) {
             <path d="M16.5 7v10" />
           </g>
         </svg>
-        <span aria-hidden className="text-[19px] leading-none font-semibold tracking-[-0.03em]">
-          Rhythm
-        </span>
+        {!iconOnly && (
+          <span aria-hidden className="text-[19px] leading-none font-semibold tracking-[-0.03em]">
+            Rhythm
+          </span>
+        )}
       </span>
-      {product && (
+      {product && !iconOnly && (
         <>
           <span aria-hidden className="h-4 w-px bg-zinc-300" />
           <span className="text-sm font-medium tracking-tight">Home Energy Designer</span>
@@ -54,6 +56,25 @@ export function Footer({ width, children }: { width: string; children: ReactNode
 
 // Lucide icons (ISC), inlined so the kit needs no icon dependency.
 const ICONS = {
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </>
+  ),
+  battery: (
+    <>
+      <rect x="3" y="6" width="17" height="12" rx="2" />
+      <path d="M21 10v4M7 12h5M9.5 9.5v5" />
+    </>
+  ),
+  fan: (
+    <>
+      <circle cx="12" cy="12" r="2" />
+      <path d="M12 10c-1-4 1-6 4-6 1 3-1 6-4 6ZM14 12c4-1 6 1 6 4-3 1-6-1-6-4ZM11 14c-3 3-6 2-7 0 2-3 5-3 7 0Z" />
+    </>
+  ),
+  plug: <path d="M8 2v6M16 2v6M7 8h10v4a5 5 0 0 1-5 5v5M5 8h14" />,
   zap: <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />,
   users: (
     <>
@@ -128,6 +149,16 @@ const ICONS = {
       <path d="M18 17V9M13 17V5M8 17v-3" />
     </>
   ),
+  trash: (
+    <>
+      <path d="M3 6h18" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      <line x1="10" x2="10" y1="11" y2="17" />
+      <line x1="14" x2="14" y1="11" y2="17" />
+    </>
+  ),
+  chevron: <path d="m15 18-6-6 6-6" />,
 };
 export type IconName = keyof typeof ICONS;
 
@@ -202,8 +233,28 @@ export function Card({ className = "", ...props }: ComponentProps<"div">) {
   return <div className={`rounded-2xl border border-zinc-200 bg-white ${className}`} {...props} />;
 }
 
-// Used on the dark panel of the reality card: ink on emerald-400 / amber-400.
-const TONE = { good: "bg-emerald-400 text-ink", warn: "bg-amber-400 text-ink" };
+/** Small rotating ring; drop next to text or inside a Skeleton to mark something as loading. */
+export function Spinner({ className = "size-5 text-ink/40" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={`shrink-0 animate-spin ${className}`} aria-hidden>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={3} strokeOpacity={0.25} />
+      <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" strokeWidth={3} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Sand-pulse placeholder with a spinner, while something loads (see DESIGN.md: skeletons, sand pulse). */
+export function Skeleton({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex animate-pulse items-center justify-center rounded-2xl bg-sand ${className}`}>
+      <Spinner />
+    </div>
+  );
+}
+
+// Used on the dark panel of the reality card: ink on emerald-400 / amber-400. `neutral` is the restrained
+// sand/zinc tone for non-semantic chips, e.g. a customer status that isn't a match/off verdict.
+const TONE = { good: "bg-emerald-400 text-ink", warn: "bg-amber-400 text-ink", neutral: "bg-zinc-200 text-ink" };
 export function Badge({ tone, children }: { tone: keyof typeof TONE; children: ReactNode }) {
   return <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${TONE[tone]}`}>{children}</span>;
 }

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
-import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
+import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type HouseModel, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
 import { altLabel, CHOICE_LABEL, describe, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
 import { type Customer, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace"; // ours:
 import { House } from "./House";
@@ -54,6 +54,18 @@ export default function Planner() {
   }, []);
 
   const customer = ws.customers.find((c) => c.id === ws.active) ?? ws.customers[0];
+  // Faris: LoD2 cadastre house for the pinned address is the stylised view; the standard house is the fallback.
+  const [houseModel, setHouseModel] = useState<{ key: string | null; model: HouseModel | null }>({ key: null, model: null });
+  const houseKey = customer.location ? `${customer.location.lat},${customer.location.lng}` : null;
+  useEffect(() => {
+    let live = true;
+    void Promise.resolve().then(() => {
+      if (!houseKey || !customer.location) return;
+      return api.house(customer.location.lat, customer.location.lng).then((model) => live && setHouseModel({ key: houseKey, model }), () => live && setHouseModel({ key: houseKey, model: null }));
+    });
+    return () => { live = false; };
+  }, [houseKey, customer.location]);
+  const modelUrl = !preview && houseModel.key === houseKey ? houseModel.model?.url : undefined;
   const id = preview?.id ?? customer.id;
   const saved: Draft = preview ? { inputs: preview.inputs, locked: NO_LOCKS } : { inputs: customer.inputs, locked: customer.locked ?? NO_LOCKS }; // ours: fix, a fresh {} each render re-ran the design effect forever
   const draft = drafts[id] ?? saved;
@@ -187,6 +199,8 @@ export default function Planner() {
           ...(design.modules && design.values.pv_kwp > 0 && { moduleWp: Math.round((design.values.pv_kwp * 1000) / design.modules) }), // ours:
           economics: { savings_eur: design.economics.savings_eur, payback_years: design.economics.payback_years }, // ours:
           ...(!preview && customer.location && { location: { lat: customer.location.lat, lng: customer.location.lng } }), // ours: real 3D for the homeowner
+          ...(modelUrl && { modelUrl }), // Faris: LoD2 house in the homeowner view
+          ...(design.economics.solar_share_of_demand !== undefined && { economics: { savings_eur: design.economics.savings_eur, payback_years: design.economics.payback_years, solar_share_of_demand: design.economics.solar_share_of_demand } }),
         }
       : null;
 
@@ -299,6 +313,7 @@ export default function Planner() {
                       hasEv={inputs.has_ev === true}
                       existing={existingOf(inputs)}
                       description={describe(design.values, design.modules)} // ours: modules
+                      modelUrl={modelUrl}
                       selected={selected}
                       onSelect={setSelected}
                     />

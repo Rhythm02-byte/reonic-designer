@@ -8,8 +8,9 @@ import { fetchRoof, type RoofInfo } from "@/lib/roof";
 import { surfaceFrame } from "@/lib/roof-layout";
 
 const Scene=dynamic(()=>import("./RealHouseScene"),{ssr:false,loading:()=> <p className="p-6 text-sm">Loading the real building…</p>});
+type View="stylised"|"real"; // ours: LoD2 is the stylised view itself (House modelUrl), not a third option
 const VIEW_KEY="house-view"; // ours: per-session choice; Stylised is the fast, reliable default for the demo
-const readView=():"stylised"|"real"=>{try{return sessionStorage.getItem(VIEW_KEY)==="real"?"real":"stylised";}catch{return "stylised";}};
+const readView=():View=>{try{const v=sessionStorage.getItem(VIEW_KEY);return v==="real"?v:"stylised";}catch{return "stylised";}};
 // ours: the 3D import is local-only (apps/web/proxy.ts); through a tunnel the toggle would only show a 403
 const isLocalHost=()=>["localhost","127.0.0.1","[::1]"].includes(window.location.hostname);
 const noop=()=>()=>{};
@@ -27,13 +28,13 @@ type Props={
 };
 export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv,fallback,onAsset,onLayout,onCapacity}:Props){
   const [job,setJob]=useState<HouseJob|null>(null),[roof,setRoof]=useState<{key:string;data:RoofInfo}|null>(null);
-  const [error,setError]=useState<string|null>(null),[starting,setStarting]=useState(false),[view,setViewState]=useState<"stylised"|"real">("stylised");
+  const [error,setError]=useState<string|null>(null),[starting,setStarting]=useState(false),[view,setViewState]=useState<View>("stylised");
   const local=useSyncExternalStore(noop,isLocalHost,()=>true); // ours: server render assumes local; no hydration mismatch on this machine
   const [mark,setMark]=useState<"roof"|"exclusion"|null>(null),[draft,setDraft]=useState<Vec3[]>([]);
   const [report,setReport]=useState<{count:number;error:string|null}>({count:0,error:null}),[spaces,setSpaces]=useState("");
   const [reviewed,setReviewed]=useState(false),[gone,setGone]=useState(false),[adjustOpen,setAdjustOpen]=useState(false); // ours: gone = saved import vanished (404); adjustOpen = "Adjust roof" panel
   useEffect(()=>{setViewState(readView());},[]); // eslint-disable-line react-hooks/set-state-in-effect -- ours: sessionStorage is client-only; read after hydration
-  const setView=(v:"stylised"|"real")=>{setViewState(v);try{sessionStorage.setItem(VIEW_KEY,v);}catch{/* private mode */}};
+  const setView=(v:View)=>{setViewState(v);try{sessionStorage.setItem(VIEW_KEY,v);}catch{/* private mode */}};
   const fallbackMode=view==="stylised";
   const key=location?locationKey(location.lat,location.lng):"";
   const latitude=location?.lat, longitude=location?.lng;
@@ -97,7 +98,7 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
   const canConfirm=reviewed&&Number.isInteger(capacity)&&capacity>=0&&capacity<=report.count&&report.count>0;
   const solar=roof?.key===key?roof.data:null;
   return <div>
-    {location&&local&&<div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-3 py-2"><span className="text-xs text-quiet">House view</span><div className="w-56"><Segmented name="house-view" label="House view" value={view} options={[{value:"stylised",label:"Stylised"},{value:"real",label:"Real 3D"}]} onChange={v=>{setView(v);if(v==="real"&&!ready&&!starting&&activeJob?.state!=="running")void start();}}/></div></div>}
+    {location&&local&&<div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-3 py-2"><span className="text-xs text-quiet">House view</span><div className="w-56"><Segmented name="house-view" label="House view" value={view} options={[{value:"stylised",label:"Stylised"},{value:"real",label:"Real 3D"}] } onChange={v=>{setView(v);if(v==="real"&&!ready&&!starting&&activeJob?.state!=="running")void start();}}/></div></div>}
     {location&&!ready&&view==="real"&&(gone||activeJob?.state==="failed"||error)&&<div className="border-b border-zinc-200 p-3 text-xs">{/* ours: only problems show here; loading is the overlay on the house */}
       {activeJob?.state==="failed"?<p className="text-amber-900">{activeJob.error}</p>:null}
       <ErrorNote error={error}/>

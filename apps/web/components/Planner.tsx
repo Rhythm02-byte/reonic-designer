@@ -9,7 +9,8 @@ import { RealHouse } from "./RealHouse";
 import { locationKey } from "@/lib/real-house";
 import { Location } from "./Location"; // ours:
 import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { Share } from "./Share"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
-import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Select, Stat, Checkbox } from "./ui";
+import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Avatar, Stat, Checkbox } from "./ui";
+import { Select } from "./Select";
 
 const WIDTH = "max-w-[1500px]";
 
@@ -188,15 +189,9 @@ export default function Planner() {
             aria-label="Customer"
             className="max-w-44 xl:hidden"
             value={preview ? "" : customer.id}
-            onChange={(e) => e.target.value && open(e.target.value)}
-          >
-            {preview && <option value="">Real project</option>}
-            {ws.customers.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </Select>
+            onChange={(v) => v && open(v)}
+            options={[...(preview ? [{ value: "", label: "Real project" }] : []), ...ws.customers.map((c) => ({ value: c.id, label: c.name }))]}
+          />
           <nav aria-label="Project" className="hidden gap-1 text-sm md:flex">
             {[["design", "Design"], ["inputs", "Inputs"], ["evidence", "Evidence"]].map(([href, label]) => (
               <a key={href} href={`#${href}`} onClick={() => flash(href)} className={`${pill} ${pillLook.ghost}`}>
@@ -609,12 +604,17 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery 
                 onClick={() => onOpen(c.id)}
                 className="w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:bg-white aria-[current=page]:ring-1 aria-[current=page]:ring-zinc-200"
               >
+                <span className="flex items-center gap-2.5">
+                <Avatar name={c.name || "Unnamed customer"} />
+                <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium text-ink">{c.name || "Unnamed customer"}</span>
                 <span className="block truncate text-xs text-quiet">
                   {scope === "team" && `${c.owner.split(" ")[0]} · `}
                   {typeof c.inputs.annual_consumption_kwh === "number" ? `${num(c.inputs.annual_consumption_kwh, 0)} kWh/yr` : "Use unknown"}
                   {" · "}
                   {CHOICE_LABEL[String(c.inputs.heating_type)] ?? "Heating unknown"}
+                </span>
+                </span>
                 </span>
               </button>
             </li>
@@ -626,11 +626,14 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery 
       </nav>
       <label className="block space-y-1 text-xs text-quiet">
         <span>Signed in as</span>
-        <Select value={ws.me} onChange={(e) => update((w) => ({ ...w, me: e.target.value }))}>
-          {TEAM.map((t) => (
-            <option key={t}>{t}</option>
-          ))}
-        </Select>
+        <span className="flex items-center gap-2">
+          <Avatar name={ws.me} size={7} />
+          <Select // ours: custom control
+            value={ws.me}
+            onChange={(v) => update((w) => ({ ...w, me: v }))}
+            options={TEAM.map((t) => ({ value: t, label: t }))}
+          />
+        </span>
       </label>
     </aside>
     </div>
@@ -728,14 +731,12 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
       <div className="space-y-1">
         <FieldLabel name={field.name} htmlFor={id} edited={edited}>{copy.label}</FieldLabel>
         {/* "Unknown" stays: a real project can leave this empty. */}
-        <Select id={id} value={typeof value === "string" ? value : ""} onChange={(e) => set(e.target.value || null)}>
-          <option value="">Unknown</option>
-          {field.choices.map((c) => (
-            <option key={c} value={c}>
-              {CHOICE_LABEL[c] ?? c}
-            </option>
-          ))}
-        </Select>
+        <Select // ours: custom control
+          id={id}
+          value={typeof value === "string" ? value : ""}
+          onChange={(v) => set(v || null)}
+          options={[{ value: "", label: "Unknown" }, ...field.choices.map((c) => ({ value: c, label: CHOICE_LABEL[c] ?? c }))]}
+        />
       </div>
     );
   }

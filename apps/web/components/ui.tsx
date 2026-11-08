@@ -292,18 +292,24 @@ export function Radio({ className = "", ...props }: Omit<ComponentProps<"input">
   );
 }
 
-export function Select({ className = "", children, ...props }: ComponentProps<"select">) {
+// ours: initials badge. Calm tone picked from a hash of the name, so a person keeps one colour everywhere.
+const AVATAR_TONES = [
+  "bg-emerald-100 text-emerald-900",
+  "bg-lime-100 text-lime-900",
+  "bg-amber-100 text-amber-900",
+  "bg-sky-100 text-sky-900",
+  "bg-violet-100 text-violet-900",
+  "bg-rose-100 text-rose-900",
+];
+export function Avatar({ name, size = 6, className = "" }: { name: string; size?: 5 | 6 | 7 | 8; className?: string }) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const initials = (words.length > 1 ? words[0][0] + words[words.length - 1][0] : (words[0] ?? "?").slice(0, 2)).toUpperCase();
+  let h = 0;
+  for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const dim = { 5: "size-5 text-[9px]", 6: "size-6 text-[10px]", 7: "size-7 text-xs", 8: "size-8 text-xs" }[size];
   return (
-    <span className={`relative inline-block w-full ${className}`}>
-      <select
-        className="w-full cursor-pointer appearance-none rounded-lg bg-white py-1.5 pr-8 pl-2.5 text-sm text-ink ring-1 ring-zinc-200 transition-colors hover:ring-zinc-300 focus:ring-2 focus:ring-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
-        {...props}
-      >
-        {children}
-      </select>
-      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted">
-        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+    <span aria-hidden="true" title={name} className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold select-none ${dim} ${AVATAR_TONES[h % AVATAR_TONES.length]} ${className}`}>
+      {initials}
     </span>
   );
 }

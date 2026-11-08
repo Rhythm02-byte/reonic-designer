@@ -5,7 +5,7 @@ import { TARGETS, type Target, type Values } from "@/lib/api";
 import { decodeOffer, describe, eur, num, type Offer, panels, years } from "@/lib/copy";
 import { House } from "./House";
 import { OfferParts } from "./PartsList"; // ours:
-import { Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook, Radio } from "./ui";
+import { Avatar, Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook, Radio } from "./ui";
 
 const WIDTH = "max-w-5xl";
 
@@ -62,7 +62,10 @@ This is a request, not an order.`;
   return (
     <div className="space-y-5">
       <div className="space-y-1">
-        <p className="text-sm text-quiet">Prepared by {planner} for {customer}</p>
+        <p className="flex items-center gap-2 text-sm text-quiet">
+            <Avatar name={planner} size={7} />
+            <span>Prepared by {planner} for {customer}</span>
+          </p>
         <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
           Your home energy <span className="text-reonic">proposal</span>
         </h1>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>3D House Spike Viewer</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; background: #f4f1ea; font-family: system-ui, sans-serif; }
+    model-viewer { width: 100%; height: 100vh; }
+    .label { position: fixed; top: 12px; left: 12px; background: white; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="label">Spike: real Bavaria LoD2 building (DEBY_LOD2_5051589, real roof geometry) → tagged .glb</div>
+  <model-viewer
+    src="/models/spike-house-lod2.glb"
+    camera-controls
+    auto-rotate
+    shadow-intensity="1"
+    exposure="1"
+    camera-orbit="35deg 65deg 60m"
+    field-of-view="30deg"
+  ></model-viewer>
+</body>
+</html>

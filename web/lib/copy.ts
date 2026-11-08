@@ -2,6 +2,9 @@
 import { TARGETS, type Inputs, type InputValue, type Target, type Values } from "./api";
 
 export const PANEL_KWP = 0.45; // Reonic's modules are 450 Wp (src/reonic/data.py MODULE_WP)
+// ponytail: placeholder margin on list price; no real COGS/margin data exists yet (see physics.py CAPEX).
+// Swap for Reonic's real margin assumption when available.
+export const MARGIN_PCT = 0.22;
 // Same as src/reonic/schema.py LABEL / UNIT
 export const LABEL: Record<Target, string> = { pv_kwp: "PV", battery_kwh: "Battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };
 export const UNIT: Record<Target, string> = { pv_kwp: "kWp", battery_kwh: "kWh", heat_pump_kw: "kW", wallbox_kw: "kW" };
@@ -103,6 +106,7 @@ export type Offer = {
   planner: string;
   inputs: Inputs;
   options: OfferOption[]; // options[0] is the installer's recommendation
+  economics?: { savings_eur: number | null; payback_years: number | null }; // the homeowner's ROI, not the list price
 };
 
 const toB64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
@@ -125,6 +129,13 @@ export function decodeOffer(code: string): Offer | null {
     if (!Array.isArray(o.options) || o.options.length < 1 || o.options.length > 6) return null;
     for (const opt of o.options) {
       if (!isText(opt?.label) || !TARGETS.every((t) => isSize(opt.values?.[t]))) return null;
+    }
+    const isNum = (x: unknown): x is number => typeof x === "number" && Number.isFinite(x);
+    if (o.economics !== undefined) {
+      const e = o.economics;
+      if (typeof e !== "object" || e === null) return null;
+      if (!(e.savings_eur === null || isNum(e.savings_eur))) return null;
+      if (!(e.payback_years === null || isNum(e.payback_years))) return null;
     }
     return o as Offer;
   } catch {

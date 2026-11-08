@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>3D House Spike — Map Context</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+  <style>
+    html, body, #map { margin: 0; height: 100%; }
+    .label { position: fixed; top: 12px; left: 12px; z-index: 1; background: white; padding: 8px 12px;
+      border-radius: 8px; font: 13px system-ui, sans-serif; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+  </style>
+</head>
+<body>
+  <div class="label">Spike: OSM footprint (Munich school, way 23983595) extruded to real height, in map context</div>
+  <div id="map"></div>
+  <script>
+    const CENTER = [11.59667, 11.596644]; // placeholder, overwritten below
+    const BUILDING_RING = [[48.1254743, 11.5962374], [48.1257326, 11.5970052], [48.1255679, 11.5971257], [48.1253135, 11.5963525], [48.1254743, 11.5962374]]
+      .map(([lat, lon]) => [lon, lat]);
+    const HEIGHT_M = 12.0;
+    const centerLon = BUILDING_RING.reduce((s, c) => s + c[0], 0) / BUILDING_RING.length;
+    const centerLat = BUILDING_RING.reduce((s, c) => s + c[1], 0) / BUILDING_RING.length;
+
+    const map = new maplibregl.Map({
+      container: "map",
+      style: "https://tiles.openfreemap.org/styles/liberty",
+      center: [centerLon, centerLat],
+      zoom: 18,
+      pitch: 60,
+      bearing: -20,
+      antialias: true,
+    });
+
+    map.on("load", () => {
+      map.addSource("spike-building", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          properties: { height: HEIGHT_M },
+          geometry: { type: "Polygon", coordinates: [BUILDING_RING] },
+        },
+      });
+      map.addLayer({
+        id: "spike-building-extrusion",
+        type: "fill-extrusion",
+        source: "spike-building",
+        paint: {
+          "fill-extrusion-color": "#F4F1EA",
+          "fill-extrusion-height": ["get", "height"],
+          "fill-extrusion-base": 0,
+          "fill-extrusion-opacity": 0.95,
+        },
+      });
+      // outline so it's visible against the basemap's own 3D buildings
+      map.addLayer({
+        id: "spike-building-outline",
+        type: "line",
+        source: "spike-building",
+        paint: { "line-color": "#142033", "line-width": 2 },
+      });
+    });
+  </script>
+</body>
+</html>

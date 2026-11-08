@@ -2,7 +2,7 @@
 // The homeowner's view of an offer: plain words, only the whole options the planner approved, no prices.
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { TARGETS, type Inputs, type Target, type Values } from "@/lib/api";
-import { CHOICE_LABEL, decodeOffer, describe, num, type Offer, panels } from "@/lib/copy";
+import { CHOICE_LABEL, decodeOffer, describe, eur, num, type Offer, panels, years } from "@/lib/copy";
 import { House } from "./House";
 import { Button, Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook } from "./ui";
 
@@ -63,7 +63,7 @@ export default function OfferPage() {
 }
 
 function OfferView({ offer }: { offer: Offer }) {
-  const { inputs, options, customer, planner } = offer;
+  const { inputs, options, customer, planner, economics } = offer;
   const [i, setI] = useState(0);
   const choice = options[i].values;
   const rec = options[0].values;
@@ -82,6 +82,21 @@ function OfferView({ offer }: { offer: Offer }) {
           Your home energy <span className="text-reonic">proposal</span>
         </h1>
       </div>
+
+      {economics && (economics.savings_eur !== null || economics.payback_years !== null) && (
+        <Card className="grid grid-cols-2 gap-4 p-4 sm:max-w-sm">
+          <div>
+            <p className="text-xs text-muted">Estimated savings</p>
+            <p className="text-lg font-semibold tracking-tight text-ink tabular-nums">
+              {economics.savings_eur === null ? "n/a" : `${eur(economics.savings_eur)}/yr`}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted">Estimated payback</p>
+            <p className="text-lg font-semibold tracking-tight text-ink tabular-nums">{years(economics.payback_years)}</p>
+          </div>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-6">

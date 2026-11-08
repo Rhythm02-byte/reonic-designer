@@ -45,6 +45,15 @@ class Inbox:
             return [{'id': r[0], 'payload': json.loads(r[1]), 'state': r[2]} for r in db.execute(
                 "SELECT id,payload,state FROM inbox WHERE state='delivered' ORDER BY updated")]
 
+    def remote_state(self, event_id, state):
+        from .store import STATES
+        if state not in STATES:
+            return
+        with self.connect() as db:
+            row = db.execute('SELECT state FROM inbox WHERE id=?', (event_id,)).fetchone()
+            if row and (STATES.index(state) > STATES.index(row[0]) or (row[0] == 'blocked' and state == 'acknowledged')):
+                db.execute('UPDATE inbox SET state=?,updated=? WHERE id=?', (state, time.time(), event_id))
+
     def status(self, key, value=None):
         with self.connect() as db:
             if value is not None:
@@ -105,6 +114,8 @@ async def run_client(config, stop=None):
                             item = json.loads(msg.data)
                             if item['type'] == 'event':
                                 inbox.add(item)
+                            elif item['type'] == 'state':
+                                inbox.remote_state(item['id'], item['state'])
                             elif item['type'] == 'wake':
                                 from .workers import run_worker
                                 if not inbox.reserve_worker(item['id']):

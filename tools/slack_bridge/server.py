@@ -394,6 +394,7 @@ def create_app(store, bridge):
             await bridge.connections[agent].close(code=1000, message=b'replaced by a new connection')
         bridge.connections[agent] = ws
         sent = set()
+        states_sent = {}
         wakes_sent = set()
         try:
             while not ws.closed:
@@ -402,6 +403,9 @@ def create_app(store, bridge):
                     if item['id'] not in sent and item['state'] in ('queued', 'delivered'):
                         await ws.send_json({'type': 'event', **item})
                         sent.add(item['id'])
+                    if states_sent.get(item['id']) != item['state']:
+                        await ws.send_json({'type': 'state', 'id': item['id'], 'state': item['state']})
+                        states_sent[item['id']] = item['state']
                     if item['payload'].get('wake') and item['id'] not in wakes_sent and store.reserve_wake(agent, item['id']):
                         await ws.send_json({'type': 'wake', **item})
                         wakes_sent.add(item['id'])

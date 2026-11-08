@@ -150,6 +150,13 @@ class TemporaryStore(unittest.TestCase):
             result = list(pool.map(local.reserve_worker, ['same-event', 'same-event']))
         self.assertEqual(sum(result), 1)
 
+    def test_remote_resolution_removes_pending_local_work_without_regression(self):
+        local = Inbox('kian', Path(self.temp.name) / 'local.sqlite')
+        local.add({'id':'done','payload':{'text':'already resolved elsewhere'}})
+        local.remote_state('done','resolved')
+        local.remote_state('done','delivered')
+        self.assertEqual(local.pending(),[])
+
     def test_once_guard_survives_concurrent_calls_and_restart(self):
         with ThreadPoolExecutor(max_workers=2) as pool:
             result = list(pool.map(self.store.once, ['same-escalation','same-escalation']))

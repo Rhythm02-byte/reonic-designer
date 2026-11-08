@@ -379,7 +379,7 @@ def design(req: DesignRequest, store: Store) -> DesignResponse:
         reasons.append(ReasonCode(code="HP_HEAT_DEMAND", component="heatPump", value=proposal.heat_pump.kw,
                                   evidence={"heat_demand_kwh": home["heat_demand_kwh"], "full_load_hours": bl.HP_FULL_LOAD_HOURS}))
     flags: list[Flag] = []
-    if abs(i.demand_kwh - 4500) < 1e-6:
+    if abs(i.demand_kwh - 4500) < 1e-6 and "demandKwh" not in i.provenance:
         flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
     if not known:
         flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; using pooled statistics."))
@@ -412,7 +412,7 @@ def _module_wp(store: Store, installer_id: str) -> float:
 
 def system_from_values(values: dict[str, float], wp: float, id_: str, label: str | None = None) -> SystemDesign:
     kwp = values.get("pv_kwp", 0.0)
-    modules = max(1, round(kwp * 1000 / wp)) if kwp > 0 else 0
+    modules = min(max(1, round(kwp * 1000 / wp)), int(rules.PV_MAX_KWP * 1000 / wp + 1e-9)) if kwp > 0 else 0  # R03 holds after module rounding
     return SystemDesign(
         id=id_, label=label,
         pv=PvDesign(modules=modules, module_wp=wp, kwp=round(modules * wp / 1000, 4)) if kwp > 0 else None,
@@ -450,7 +450,7 @@ def design_policy(req: DesignRequest, store: Store) -> DesignResponse:
         bom=_bom(store.catalogs.get(i.installer_id), proposal),
         provenance=input_provenance(i),
         engine_version=POLICY_VERSION, latency_ms=0.0)
-    if abs(i.demand_kwh - DEFAULT_DEMAND_KWH) < 1e-6:
+    if abs(i.demand_kwh - DEFAULT_DEMAND_KWH) < 1e-6 and "demandKwh" not in i.provenance:  # an entered 4,500 is real
         resp.flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
     if i.installer_id not in dz.installers:
         resp.flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; the policy falls back to pooled behaviour."))

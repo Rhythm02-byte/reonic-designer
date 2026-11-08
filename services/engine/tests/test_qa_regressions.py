@@ -94,3 +94,25 @@ def test_locked_pv_is_re_expressed_in_the_installers_modules(designer, tmp_path)
         assert mod and mod[0]["quantity"] == 20 and "415" in mod[0]["componentName"]
     finally:
         app.dependency_overrides.clear()
+
+
+# -- hunt A: R03 after module rounding, Ask-next asking for an entered EV, default-demand flag ignoring provenance ----
+def test_pv_never_exceeds_the_r03_cap_after_module_rounding():
+    for wp in (450.0, 415.0, 400.0):
+        pv = system_from_values({"pv_kwp": rules.PV_MAX_KWP}, wp, "p").pv
+        assert pv.kwp <= rules.PV_MAX_KWP + 1e-9, (wp, pv)
+
+
+def test_ask_next_does_not_ask_for_an_ev_the_inputs_already_give(client):
+    for ev in ({"has": True, "kmPerYear": 15000}, {"has": True}):
+        r = client.post("/design", json={"inputs": {"installerId": "synthB", "demandKwh": 6000, "ev": ev}})
+        assert r.status_code == 200
+        assert all(q["field"] != "ev.has" for q in (r.json().get("askNext") or [])), ev
+
+
+def test_entered_4500_kwh_is_not_flagged_as_a_tool_default(client):
+    def codes(prov):
+        r = client.post("/design", json={"inputs": {"installerId": "synthB", "demandKwh": 4500, "provenance": prov}})
+        return {f["code"] for f in r.json()["flags"]}
+    assert "DEMAND_DEFAULT_LIKE" in codes({})
+    assert "DEMAND_DEFAULT_LIKE" not in codes({"demandKwh": {"source": "entered", "confidence": 1.0}})

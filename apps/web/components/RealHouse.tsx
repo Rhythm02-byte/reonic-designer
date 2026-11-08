@@ -43,19 +43,19 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
   },[latitude,longitude,key]);
   useEffect(()=>{
     if(!id)return;let active=true;
-    const poll=()=>fetch(`/api/real-house/${id}`,{cache:"no-store",signal:AbortSignal.timeout(8000)}).then(async r=>{
+    const poll=()=>fetch(`/api/real-house/${id}`,{cache:"no-store",signal:AbortSignal.timeout(30000)}).then(async r=>{
       if(r.status===404){ // ours: asset gone; stop polling and offer a fresh import
         if(active){clearInterval(timer);setJob(null);onAsset(undefined);setGone(true);setError(null);}
         return;
       }
       const data=await r.json();if(!r.ok)throw new Error(data.error??"Import status unavailable.");
       if(active){setJob(data.job);setError(null);if(data.job.state!=="running")clearInterval(timer);}
-    }).catch(e=>{if(active)setError(e.message);});
+    }).catch(e=>{if(active&&e?.name!=="TimeoutError"&&e?.name!=="AbortError")setError(e.message);}); // ours: a slow dev server is not an error; the next poll retries
     const timer=setInterval(poll,2500);void poll();return ()=>{active=false;clearInterval(timer);};
   },[id]); // eslint-disable-line react-hooks/exhaustive-deps -- ours: onAsset only clears a stale id
   useEffect(()=>{ // ours: a finished import for this location opens as the default view; never starts an export
     if(latitude===undefined||longitude===undefined||id)return;let active=true;
-    fetch(`/api/real-house?lat=${latitude}&lng=${longitude}`,{cache:"no-store",signal:AbortSignal.timeout(8000)}).then(r=>r.ok?r.json():null).then(d=>{
+    fetch(`/api/real-house?lat=${latitude}&lng=${longitude}`,{cache:"no-store",signal:AbortSignal.timeout(30000)}).then(r=>r.ok?r.json():null).then(d=>{
       if(active&&d?.job?.state==="ready"&&d.job.locationKey===key){setJob(d.job);onAsset({id:d.job.id,locationKey:key});}
     }).catch(()=>{});
     return ()=>{active=false;};
@@ -67,10 +67,10 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
     if(!location)return; // ours: the button itself is the building confirmation
     setStarting(true);setError(null);setGone(false);setView("real");
     try{
-      const r=await fetch("/api/real-house",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...location,confirmed:true}),signal:AbortSignal.timeout(15000)});
+      const r=await fetch("/api/real-house",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...location,confirmed:true}),signal:AbortSignal.timeout(30000)});
       const d=await r.json();if(!r.ok)throw new Error(d.error??"Import failed.");
       setJob(d.job);onAsset({id:d.job.id,locationKey:key});
-    }catch(e){setError(e instanceof Error?e.message:"Import failed.");}finally{setStarting(false);}
+    }catch(e){setError(e instanceof Error&&e.name==="TimeoutError"?"The 3D import is taking longer than usual. Try Real 3D again in a moment.":e instanceof Error?e.message:"Import failed.");}finally{setStarting(false);}
   }
   function updateLayout(next:HouseLayout){onLayout(next);setReviewed(false);setSpaces("");}
   function finish(){

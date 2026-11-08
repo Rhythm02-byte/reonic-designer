@@ -46,6 +46,9 @@ const subscribe = (cb: () => void) => {
   return () => window.removeEventListener("hashchange", cb);
 };
 
+// ours: demo recipient, first.last@rhythm.com (no real planner addresses in the link)
+const demoMail = (name: string) => `${name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim().split(/\s+/).join(".").replace(/[^a-z.]/g, "")}@rhythm.com`;
+
 export default function OfferPage() {
   // The offer travels in the URL hash. null on the server, where there is no hash.
   const hash = useSyncExternalStore(subscribe, () => window.location.hash.slice(1), () => null);
@@ -191,7 +194,7 @@ This is a request, not an order.`;
           )}
           {/* ours: mailto alone does nothing without a mail app; the message is also copied, and we say so */}
           <a
-            href={`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}
+            href={`mailto:${demoMail(planner)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}
             onClick={() => { navigator.clipboard?.writeText(`${subject}
 
 ${body}`).then(() => setAsked(true), () => setAsked(true)); }}

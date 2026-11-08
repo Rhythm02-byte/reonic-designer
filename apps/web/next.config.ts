@@ -5,6 +5,8 @@ import type { NextConfig } from "next";
 const ENGINE = process.env.ENGINE_URL ?? process.env.NEXT_PUBLIC_ENGINE_URL ?? "http://127.0.0.1:8000";
 
 const nextConfig: NextConfig = {
+  // ours: a Cloudflare tunnel to `pnpm dev` (quick tunnels and named tunnels); add more hosts with DEV_ORIGINS=a.example,b.example
+  allowedDevOrigins: ["*.trycloudflare.com", ...(process.env.DEV_ORIGINS?.split(",").map((s) => s.trim()).filter(Boolean) ?? [])],
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

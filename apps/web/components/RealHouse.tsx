@@ -93,11 +93,9 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
   const canConfirm=reviewed&&Number.isInteger(capacity)&&capacity>=0&&capacity<=report.count&&report.count>0;
   const solar=roof?.key===key?roof.data:null;
   return <div>
-    {location&&<div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-3 py-2"><span className="text-xs text-quiet">House view</span><div className="w-56"><Segmented name="house-view" label="House view" value={view} options={[{value:"stylised",label:"Stylised"},{value:"real",label:"Real 3D"}]} onChange={setView}/></div></div>}
-    {location&&!ready&&view==="real"&&<div className="space-y-2 border-b border-zinc-200 p-3 text-xs">
-      {gone&&<p role="status" className="text-amber-900">The saved 3D import is no longer available.</p>}
-      <div className="flex flex-wrap items-center gap-2"><Button variant="secondary" disabled={starting||activeJob?.state==="running"} onClick={start}>{starting?"Starting…":activeJob?.state==="running"?"Importing house…":gone?"Start a fresh import":"Load the 3D model of this building"}</Button><span className="text-quiet">Loading confirms the pin marks the right building.</span></div>
-      {activeJob&&<p role="status" className="text-quiet">{activeJob.stage}{activeJob.state==="failed"?` · ${activeJob.error}`:""}</p>}
+    {location&&<div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-3 py-2"><span className="text-xs text-quiet">House view</span><div className="w-56"><Segmented name="house-view" label="House view" value={view} options={[{value:"stylised",label:"Stylised"},{value:"real",label:"Real 3D"}]} onChange={v=>{setView(v);if(v==="real"&&!ready&&!starting&&activeJob?.state!=="running")void start();}}/></div></div>}
+    {location&&!ready&&view==="real"&&(gone||activeJob?.state==="failed"||error)&&<div className="border-b border-zinc-200 p-3 text-xs">{/* ours: only problems show here; loading is the overlay on the house */}
+      {activeJob?.state==="failed"?<p className="text-amber-900">{activeJob.error}</p>:null}
       <ErrorNote error={error}/>
     </div>}
     <div className="relative h-[320px] bg-sand sm:h-[480px]">
@@ -105,15 +103,13 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
         {!loaded&&<div className="absolute inset-0">{fallback}</div>}
         <div className={loaded?"h-full":"absolute inset-0 opacity-0"}><ModelBoundary key={activeJob.id} fallback={fallback}><Scene job={activeJob} roof={solar} layout={layout} proposedPanels={proposedPanels} draft={draft} marking={!!mark} onPoint={p=>setDraft(d=>[...d,p])} onReport={onReport} onLoaded={onLoaded}/></ModelBoundary></div>
       </>:fallback}
-      {show&&!loaded&&<p role="status" className="pointer-events-none absolute top-3 right-4 rounded-lg bg-paper/90 px-2 py-1 text-xs text-quiet">Loading real building…</p>}
-      {show&&loaded&&!mark&&report.count>0&&report.count<proposedPanels&&<p role="status" className="pointer-events-none absolute bottom-3 left-4 rounded-lg bg-paper/90 px-2 py-1 text-xs text-quiet">Roof fits ~{report.count} panels · {proposedPanels} designed</p>}
+      {view==="real"&&!loaded&&(starting||activeJob?.state==="running"||show)&&<p role="status" className="pointer-events-none absolute top-3 right-4 rounded-lg bg-paper/90 px-2 py-1 text-xs text-quiet">Loading real building…</p>}
       <p className="pointer-events-none absolute top-3 left-4 rounded-lg bg-paper/90 px-2 py-1 text-xs text-quiet">{mark?`Click ${mark} corners; the first edge aligns the panel rows.`:"Drag to turn · scroll to zoom"}</p>
     </div>
     {/* ours: one quiet line instead of the manual roof marking (removed before the demo: too fiddly) */}
     {show&&loaded&&<div className="flex flex-wrap items-center gap-3 border-t border-zinc-200 p-3 text-xs">
       {report.error?<p className="text-amber-900">{report.error}</p>:<p className="text-quiet">Roof faces from Google Solar · fits ~{report.count} panels · {Math.min(proposedPanels,report.count)} of {proposedPanels} designed shown. Preliminary.</p>}
       <ErrorNote error={error}/>
-      {!existingPv&&report.count>0&&report.count<proposedPanels&&<Button variant="secondary" onClick={()=>onCapacity(report.count)}>Limit design to {report.count} panels</Button>}
     </div>}
   </div>;
 }

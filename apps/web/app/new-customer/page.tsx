@@ -6,18 +6,21 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Location, type GeoLocation } from "@/components/Location";
 import { Button, Footer, Header, Icon, Logo, pill, pillLook } from "@/components/ui";
-import { addCustomer } from "@/lib/workspace";
+import { addCustomer, TEAM, useWorkspace } from "@/lib/workspace";
 
 const WIDTH = "max-w-2xl";
+const selectClass = "w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 focus:ring-2 focus:ring-blue-600 focus:outline-none";
 
 export default function NewCustomerPage() {
   const router = useRouter();
+  const ws = useWorkspace();
   const [step, setStep] = useState<0 | 1>(0);
   const [name, setName] = useState("");
+  const [owner, setOwner] = useState(ws.me);
   const [location, setLocation] = useState<GeoLocation | null>(null);
 
   const create = () => {
-    addCustomer(name.trim(), location);
+    addCustomer(name.trim(), location, owner);
     router.push("/");
   };
 
@@ -48,6 +51,14 @@ export default function NewCustomerPage() {
                 autoComplete="name"
                 className="w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-600 focus:outline-none"
               />
+            </label>
+            <label className="block space-y-1 text-sm text-ink">
+              <span className="font-medium">Owner</span>
+              <select value={owner} onChange={(e) => setOwner(e.target.value)} className={selectClass}>
+                {TEAM.map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
             </label>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <Link href="/" className={`${pill} ${pillLook.secondary}`}>Cancel</Link>

@@ -104,7 +104,8 @@ export type Offer = {
   inputs: Inputs;
   options: OfferOption[]; // options[0] is the installer's recommendation
   moduleWp?: number; // ours: the engine's module watts, so the homeowner sees the same panel count as the planner
-  economics?: { savings_eur: number | null; payback_years: number | null }; // ours: homeowner-facing ROI, no prices
+  economics?: { savings_eur: number | null; payback_years: number | null; solar_share_of_demand?: number | null }; // ours: homeowner-facing ROI, no prices
+  modelUrl?: string; // generated LoD2 GLB for the customer's pinned address (see HouseScene's House)
 };
 
 const toB64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
@@ -117,6 +118,8 @@ const isSize = (x: unknown): x is number => typeof x === "number" && Number.isFi
 const isInput = (x: unknown): x is InputValue =>
   x === null || typeof x === "boolean" || typeof x === "string" || (typeof x === "number" && Number.isFinite(x));
 const isText = (x: unknown): x is string => typeof x === "string" && x.length <= 120;
+// The hash is user-controlled: only our own LoD2 model route, never an arbitrary URL.
+const isUrl = (x: unknown): x is string => typeof x === "string" && /^\/api\/lod2-house\/[0-9a-f-]{36}\/model$/.test(x);
 
 /** The link is user-controlled: anything malformed yields null. */
 export function decodeOffer(code: string): Offer | null {
@@ -135,7 +138,9 @@ export function decodeOffer(code: string): Offer | null {
       if (typeof e !== "object" || e === null) return null;
       if (!(e.savings_eur === null || isNum(e.savings_eur))) return null;
       if (!(e.payback_years === null || isNum(e.payback_years))) return null;
+      if (e.solar_share_of_demand !== undefined && e.solar_share_of_demand !== null && (!isNum(e.solar_share_of_demand) || e.solar_share_of_demand < 0 || e.solar_share_of_demand > 1)) return null;
     }
+    if (o.modelUrl !== undefined && !isUrl(o.modelUrl)) return null;
     return o as Offer;
   } catch {
     return null;

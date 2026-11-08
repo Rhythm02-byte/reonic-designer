@@ -21,7 +21,7 @@ export type Meta = {
   synthetic: boolean;
 };
 
-export type Economics = { cost_eur: number; savings_eur: number | null; payback_years: number | null };
+export type Economics = { cost_eur: number; savings_eur: number | null; payback_years: number | null; solar_share_of_demand?: number | null };
 export type Alternative = { value: number; values: Values; flags: string[]; validated: boolean };
 export type Design = {
   values: Values;
@@ -44,6 +44,7 @@ export type Design = {
   source?: "live" | "demo";
 };
 export type Validation = { economics: Economics };
+export type HouseModel = { id: string; url: string; panels: number | null; source: string };
 
 type Whole = { whole_design_within_tolerance: number } & Record<Target, { within_tolerance: number }>;
 export type Evaluation = {

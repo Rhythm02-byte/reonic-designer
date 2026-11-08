@@ -2,7 +2,7 @@
 // The homeowner's view of an offer: plain words, only the whole options the planner approved, no prices.
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { TARGETS, type Inputs, type Target, type Values } from "@/lib/api";
-import { decodeOffer, describe, eur, num, type Offer, panels, years } from "@/lib/copy";
+import { decodeOffer, describe, eur, num, type Offer, panels, pct, years } from "@/lib/copy";
 import { House } from "./House";
 import { OfferParts } from "./PartsList"; // ours:
 import { Avatar, Card, CheckDot, ErrorNote, Footer, Header, Icon, Logo, MinusDot, PersonaChip, pill, pillLook, Radio } from "./ui";
@@ -11,19 +11,26 @@ const WIDTH = "max-w-[1440px]";
 
 const NAME: Record<Target, string> = { pv_kwp: "Solar panels", battery_kwh: "Home battery", heat_pump_kw: "Heat pump", wallbox_kw: "Wallbox" };
 
+const PRODUCT_INFO: Record<Target, string> = {
+  pv_kwp: "Solar panels turn daylight into electricity for your home. Any electricity you do not use can be stored or fed into the grid.",
+  battery_kwh: "A home battery stores solar electricity made during the day so you can use more of it later, for example in the evening.",
+  heat_pump_kw: "A heat pump uses electricity to move heat from the air, ground or water into your home. It typically supplies several units of heat for each unit of electricity it uses.",
+  wallbox_kw: "A wallbox is a dedicated, safely installed home charger for an electric car. It can be coordinated with solar production when compatible equipment is chosen.",
+};
+
 function optionLabel(t: Target, v: number, wp?: number) { // ours: wp = the engine's module watts
   if (v === 0) return "Not included";
   return t === "pv_kwp" ? `${panels(v, wp)} panels` : `${num(v)} ${t === "battery_kwh" ? "kWh" : "kW"}`;
 }
 
 // These are explanations of the offered equipment and known inputs, not claims of a proven optimum.
-function recommendationReasons(inputs: Inputs, rec: Values, moduleWp?: number) {
+function recommendationReasons(inputs: Inputs, rec: Values, moduleWp?: number, solarShare?: number | null) {
   const reasons: { title: string; text: string }[] = [];
   const consumption = typeof inputs.annual_consumption_kwh === "number" && inputs.annual_consumption_kwh > 0 ? inputs.annual_consumption_kwh : null;
   if (rec.pv_kwp > 0) {
     reasons.push({
       title: "Power for your everyday needs",
-      text: `${panels(rec.pv_kwp, moduleWp)} solar panels are proposed${consumption ? ` for a home using about ${num(consumption, 0)} kWh of electricity per year` : " for your home"}. They can generate electricity for you to use at home.`,
+      text: `${panels(rec.pv_kwp, moduleWp)} solar panels are proposed${consumption ? ` for a home using about ${num(consumption, 0)} kWh of electricity per year` : " for your home"}. ${solarShare != null ? `The estimate suggests solar could cover about ${pct(solarShare)} of your total electricity demand, including any modelled car or heating use.` : "They can generate electricity for you to use at home."}`,
     });
   }
   if (rec.battery_kwh > 0) {
@@ -71,10 +78,11 @@ export default function OfferPage() {
 }
 
 function OfferView({ offer }: { offer: Offer }) {
-  const { inputs, options, customer, planner, economics } = offer;
+  const { inputs, options, customer, planner, economics, modelUrl } = offer;
   const [i, setI] = useState(0);
+  const [info, setInfo] = useState<Target | null>(null);
   const choice = options[i].values;
-  const reasons = recommendationReasons(inputs, options[0].values, offer.moduleWp);
+  const reasons = recommendationReasons(inputs, options[0].values, offer.moduleWp, economics?.solar_share_of_demand);
   const subject = `Question about my home energy proposal (${options[i].label})`;
   const body = `Hello ${planner},
 
@@ -103,7 +111,7 @@ This is a request, not an order.`;
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_390px] xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-4">
-          <Card className="overflow-hidden">
+          <Card className="relative overflow-hidden">
             <div className="h-[340px] bg-gradient-to-b from-sand-2 to-sand sm:h-[460px] xl:h-[550px]">
               <House
                 autoRotate
@@ -117,8 +125,14 @@ This is a request, not an order.`;
                 }}
                 description={describe(choice, panels(choice.pv_kwp, offer.moduleWp))} // ours: wp
                 labels={{ pv_kwp: `${panels(choice.pv_kwp, offer.moduleWp)} solar panels`, battery_kwh: `Battery ${num(choice.battery_kwh)} kWh`, heat_pump_kw: NAME.heat_pump_kw, wallbox_kw: NAME.wallbox_kw }}
+                modelUrl={modelUrl}
               />
             </div>
+            <div className="pointer-events-none absolute inset-x-5 top-5 flex items-start justify-between gap-3 sm:inset-x-7 sm:top-7">
+              <div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-quiet">Your home, imagined</p><p className="mt-1 text-sm text-quiet">{options[i].label}</p></div>
+              <span className="rounded-full bg-paper px-3 py-1.5 text-xs font-medium text-quiet">Interactive 3D</span>
+            </div>
+            <p className="pointer-events-none absolute bottom-5 left-5 rounded-full bg-paper px-3 py-1.5 text-xs text-quiet sm:left-7">Drag to explore your home</p>
           </Card>
 
           <ul aria-live="polite" aria-label={`In "${options[i].label}"`} className="divide-y divide-zinc-200 rounded-2xl border border-zinc-200 bg-white">
@@ -126,13 +140,32 @@ This is a request, not an order.`;
               <li key={t} className={`flex items-center gap-3 px-4 py-3 ${choice[t] > 0 ? "text-ink" : "text-quiet"}`}>
                 {choice[t] > 0 ? <CheckDot className="size-5" /> : <MinusDot className="size-5" />}
                 <span className="font-medium">{NAME[t]}</span>
+                <span className="relative">
+                  <button
+                    type="button"
+                    aria-label={`Learn about ${NAME[t]}`}
+                    aria-expanded={info === t}
+                    onClick={() => setInfo((current) => current === t ? null : t)}
+                    onMouseEnter={() => setInfo(t)}
+                    onMouseLeave={() => setInfo((current) => current === t ? null : current)}
+                    onFocus={() => setInfo(t)}
+                    onBlur={() => setInfo((current) => current === t ? null : current)}
+                    className="grid size-5 place-items-center rounded-full border border-zinc-300 text-xs font-semibold text-quiet hover:bg-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  >
+                    i
+                  </button>
+                  {info === t && (
+                    <span role="tooltip" className="absolute top-7 left-0 z-10 w-64 rounded-lg bg-ink p-3 text-xs leading-relaxed text-paper shadow-sm">
+                      {PRODUCT_INFO[t]}
+                    </span>
+                  )}
+                </span>
                 <span className="ml-auto text-right text-sm tabular-nums">
                   {choice[t] > 0 ? optionLabel(t, choice[t], offer.moduleWp) : "Not included"}
                 </span>
               </li>
             ))}
           </ul>
-
           <details className="group rounded-2xl border border-zinc-200 px-4 py-3 text-sm">
             <summary className="cursor-pointer font-medium text-ink focus-visible:outline-2 focus-visible:outline-blue-600">What do these mean?</summary>
             <p className="mt-2 text-quiet">

@@ -6,7 +6,7 @@ import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 import { useEffect, useId, useRef, useState } from "react";
 import { num } from "@/lib/copy";
 import { fetchRoof, type RoofInfo } from "@/lib/roof";
-import { Card, ErrorNote, Icon } from "./ui";
+import { Card, ErrorNote, Icon, Skeleton, Spinner } from "./ui";
 
 export type GeoLocation = { address: string; lat: number; lng: number };
 type SolarInfo = RoofInfo;
@@ -34,13 +34,15 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   const [solar, setSolar] = useState<SolarInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
+  const [solarLoading, setSolarLoading] = useState(false);
 
   // Load the map once; a missing/placeholder key fails here with a message instead of a blank div.
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (!key) return; // ours: lint fix, the message is derived below instead of set in the effect
     let cancelled = false;
     let cleanupMap: (() => void) | undefined;
+    const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!key) return; // ours: lint fix, the message is derived below instead of set in the effect
     if (!optionsSet) {
       setOptions({ key });
       optionsSet = true;
@@ -98,6 +100,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
       });
       mapRef.current = map;
       markerRef.current = marker;
+      setMapReady(true);
       if (value) fetchSolar(value.lat, value.lng);
     }, (e: Error) => setError(e.message));
     return () => {
@@ -109,6 +112,7 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
 
   async function fetchSolar(lat: number, lng: number) {
     const id = ++solarId.current;
+    setSolarLoading(true);
     try {
       const info = await fetchRoof(lat, lng);
       if (id === solarId.current) setSolar(info);
@@ -117,6 +121,8 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
         setSolar(null);
         setError((e as Error).message);
       }
+    } finally {
+      if (id === solarId.current) setSolarLoading(false);
     }
   }
 
@@ -178,12 +184,20 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
         }}
         className="w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-600 focus:outline-none"
       />
-      <div ref={mapDiv} className="h-56 w-full rounded-xl bg-sand" />
+      <div className="relative h-56 w-full">
+        <div ref={mapDiv} className="h-56 w-full rounded-xl bg-sand" />
+        {!mapReady && process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && <Skeleton className="absolute inset-0 rounded-xl" />}
+      </div>
       <p className="text-xs text-muted">Drag the pin or press and hold a spot on the map to place it.</p>
       <ErrorNote error={error} />
       {!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && <p className="text-xs text-quiet">Map preview is off: no Google Maps key is set on this machine.</p>} {/* ours: not an error */}
-      {loading && <p className="text-xs text-quiet">Looking up the address…</p>}
-      {solar && <SolarFacts solar={solar} />}
+      {loading && (
+        <p className="flex items-center gap-1.5 text-xs text-quiet">
+          <Spinner className="size-3.5 text-ink/40" />
+          Looking up the address…
+        </p>
+      )}
+      {solarLoading ? <Skeleton className="h-14" /> : solar && <SolarFacts solar={solar} />}
     </Card>
   );
 }

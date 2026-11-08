@@ -3,13 +3,13 @@ import Link from "next/link";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
 import { altLabel, CHOICE_LABEL, describe, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
-import { type Customer, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace"; // ours:
+import { type Customer, removeCustomer, setCustomerStatus, STATUS_LABEL, STATUS_ORDER, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace"; // ours:
 import { House } from "./House";
 import { RealHouse } from "./RealHouse";
 import { locationKey } from "@/lib/real-house";
 import { Location } from "./Location"; // ours:
 import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { Share } from "./Share"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
-import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Avatar, Stat, Checkbox } from "./ui";
+import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Skeleton, Spinner, Avatar, Stat, Checkbox } from "./ui";
 import { Select } from "./Select";
 
 const WIDTH = "max-w-[1500px]";
@@ -32,6 +32,7 @@ function flash(id: string) {
 export default function Planner() {
   const ws = useWorkspace();
   const [scope, setScope] = useState<"mine" | "team">("mine");
+  const [collapsed, setCollapsed] = useState(false);
   // A held-out project opens as an unsaved preview so it never overwrites a customer.
   const [preview, setPreview] = useState<{ id: string; inputs: Inputs } | null>(null);
   const [query, setQuery] = useState("");
@@ -190,8 +191,8 @@ export default function Planner() {
       : null;
 
   return (
-    <div className="xl:grid xl:grid-cols-[248px_minmax(0,1fr)]">
-      <Sidebar ws={ws} list={list} scope={scope} setScope={setScope} activeId={preview ? null : customer.id} onOpen={open} onSwitchMe={switchMe} query={query} setQuery={setQuery} />
+    <div className={`xl:grid ${collapsed ? "xl:grid-cols-[72px_minmax(0,1fr)]" : "xl:grid-cols-[248px_minmax(0,1fr)]"}`}>
+      <Sidebar ws={ws} list={list} scope={scope} setScope={setScope} activeId={preview ? null : customer.id} onOpen={open} onSwitchMe={switchMe} query={query} setQuery={setQuery} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((c) => !c)} />
       <div className="flex min-h-dvh min-w-0 flex-col">
         <Header width={WIDTH}>
           <span className="xl:hidden">
@@ -392,7 +393,8 @@ const general = (flags: string[]) => flags.filter((f) => !TARGETS.some((t) => PA
 function SaveState({ preview, dirty, busy, onSave }: { preview: boolean; dirty: boolean; busy: boolean; onSave: () => void }) {
   return (
     <>
-      <span aria-live="polite" className="text-xs text-quiet">
+      <span aria-live="polite" className="flex items-center gap-1.5 text-xs text-quiet">
+        {busy && <Spinner className="size-3.5 text-ink/40" />}
         {busy ? "Updating design…" : preview ? "Preview, not saved" : dirty ? "Unsaved changes" : "All changes saved"}
       </span>
       {dirty && (
@@ -564,7 +566,9 @@ function OfferOptions({ design, offered, setOffered }: {
   );
 }
 
-function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, query, setQuery }: {
+const toggleClass = "rounded-full p-1.5 text-quiet transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600";
+
+function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, query, setQuery, collapsed, onToggleCollapsed }: {
   ws: Workspace;
   list: Customer[];
   scope: "mine" | "team";
@@ -574,13 +578,66 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
   onSwitchMe: (me: string) => void; // ours:
   query: string;
   setQuery: (q: string) => void;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
 }) {
+  const remove = (c: Customer) => {
+    if (ws.customers.length > 1 && confirm(`Delete ${c.name || "this customer"}? This can't be undone.`)) removeCustomer(c.id);
+  };
+  const cycleStatus = (c: Customer) => {
+    const at = STATUS_ORDER.indexOf(c.status ?? "lead");
+    setCustomerStatus(c.id, STATUS_ORDER[(at + 1) % STATUS_ORDER.length]);
+  };
+  const statusTone = { lead: "neutral", quoted: "neutral", won: "good", lost: "warn" } as const;
+
+  if (collapsed) {
+    return (
+      <div className="hidden border-r border-zinc-200 bg-sand xl:block">
+        <aside aria-label="Workspace" className="sticky top-0 flex h-dvh flex-col items-center gap-4 p-3">
+          <div className="py-1.5">
+            <Logo product={false} iconOnly />
+          </div>
+          <button type="button" onClick={onToggleCollapsed} aria-label="Expand sidebar" className={toggleClass}>
+            <Icon name="chevron" className="size-4 rotate-180" />
+          </button>
+          <Link
+            href="/new-customer"
+            aria-label="New customer"
+            className="flex size-8 items-center justify-center rounded-full bg-white text-ink ring-1 ring-zinc-200 transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600"
+          >
+            +
+          </Link>
+          <nav aria-label="Customers" className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
+            <ul className="space-y-1">
+              {list.map((c) => (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    aria-current={c.id === activeId ? "page" : undefined}
+                    onClick={() => onOpen(c.id)}
+                    title={c.name || "Unnamed customer"}
+                    className="rounded-full focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:ring-2 aria-[current=page]:ring-blue-600"
+                  >
+                    <Avatar name={c.name || "Unnamed customer"} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      </div>
+    );
+  }
+
   return (
     // The outer cell carries the sand down the whole page; the aside itself stays in view.
     <div className="hidden border-r border-zinc-200 bg-sand xl:block">
     <aside aria-label="Workspace" className="sticky top-0 flex h-dvh flex-col gap-4 p-4">
-      <div className="px-1 py-1.5">
+      <div className="flex items-center justify-between px-1 py-1.5">
         <Logo product={false} />
+        <button type="button" onClick={onToggleCollapsed} aria-label="Collapse sidebar" className={toggleClass}>
+          <Icon name="chevron" className="size-4" />
+        </button>
       </div>
       <div className="relative">
         <Icon name="search" className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-quiet" />
@@ -611,12 +668,12 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
       <nav aria-label="Customers" className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
         <ul className="space-y-0.5">
           {list.map((c) => (
-            <li key={c.id}>
+            <li key={c.id} className="group relative">
               <button
                 type="button"
                 aria-current={c.id === activeId ? "page" : undefined}
                 onClick={() => onOpen(c.id)}
-                className="w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:bg-white aria-[current=page]:ring-1 aria-[current=page]:ring-zinc-200"
+                className="w-full rounded-lg px-2.5 py-2 pr-20 text-left transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-blue-600 aria-[current=page]:bg-white aria-[current=page]:ring-1 aria-[current=page]:ring-zinc-200"
               >
                 <span className="flex items-center gap-2.5">
                 <Avatar name={c.name || "Unnamed customer"} />
@@ -631,6 +688,21 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
                 </span>
                 </span>
               </button>
+              <span className="absolute top-2 right-2 flex items-center gap-1">
+                <button type="button" onClick={() => cycleStatus(c)} aria-label={`Status: ${STATUS_LABEL[c.status ?? "lead"]}. Click to change.`} className="focus-visible:outline-2 focus-visible:outline-blue-600">
+                  <Badge tone={statusTone[c.status ?? "lead"]}>{STATUS_LABEL[c.status ?? "lead"]}</Badge>
+                </button>
+                {ws.customers.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => remove(c)}
+                    aria-label={`Delete ${c.name || "customer"}`}
+                    className="rounded p-1 text-zinc-400 opacity-0 transition-opacity hover:bg-rose-50 hover:text-rose-700 focus-visible:opacity-100 pointer-coarse:opacity-100 group-hover:opacity-100 focus-visible:outline-2 focus-visible:outline-blue-600"
+                  >
+                    <Icon name="trash" className="size-3.5" />
+                  </button>
+                )}
+              </span>
             </li>
           ))}
         </ul>
@@ -652,10 +724,6 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, onSwitchMe, quer
     </aside>
     </div>
   );
-}
-
-function Skeleton({ className }: { className: string }) {
-  return <div className={`animate-pulse rounded-2xl bg-sand ${className}`} />;
 }
 
 const inputClass =

@@ -24,6 +24,9 @@ class NoWebGL extends Component<{ fallback: ReactNode; children: ReactNode }, { 
 export function House(props: ComponentProps<typeof Scene>) {
   return (
     <NoWebGL
+      // A corrected/generated model deserves a fresh error boundary. Without
+      // this, one transient GLB error leaves the fallback stuck on screen.
+      key={props.modelUrl ?? "demo-house"}
       fallback={
         <div className="grid h-full place-items-center p-6 text-sm text-body">
           <div className="w-full max-w-xs space-y-3">
@@ -35,7 +38,7 @@ export function House(props: ComponentProps<typeof Scene>) {
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-muted">The 3D view needs WebGL, which this browser has turned off.</p>
+            <p className="text-xs text-muted">The 3D view could not load. Check WebGL or try reloading this house model.</p>
           </div>
         </div>
       }

@@ -129,7 +129,7 @@ async function call<T>(path: string, body?: unknown): Promise<T> {
   try {
     res = await fetch(
       `${BASE}/${path}`,
-      body === undefined ? undefined : { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) },
+      { signal: AbortSignal.timeout(20_000), ...(body === undefined ? {} : { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }) },
     );
   } catch {
     downAt = Date.now();
@@ -139,7 +139,7 @@ async function call<T>(path: string, body?: unknown): Promise<T> {
     if (res.status !== 404) downAt = Date.now();
     throw new Down(); // not there (yet): the caller falls back to the fixture
   }
-  const data = await res.json().catch(() => null);
+  const data = await res.json().catch(() => { downAt = Date.now(); throw new Down(); });
   if (!res.ok) throw new Error(`The engine rejected this request (${res.status}). ${typeof data?.detail === "string" ? data.detail : ""}`.trim());
   downAt = 0;
   return data as T;

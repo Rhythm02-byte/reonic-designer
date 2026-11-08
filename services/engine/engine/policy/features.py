@@ -88,7 +88,9 @@ def features(df: pd.DataFrame, installers: tuple[str, ...] | list[str] = (), phy
 
 
 def _base_features(df: pd.DataFrame, installers: tuple[str, ...] | list[str] = ()) -> pd.DataFrame:
-    X = pd.DataFrame(index=df.index)
+    # Columns are collected in a dict and assembled once: a DataFrame.__setitem__ per column costs ~0.4 ms each, which
+    # dominated single-home /design calls (~40 columns, called several times per request).
+    X: dict[str, pd.Series] = {}
     d = _num(df, "demand_kwh")
     X["demand_kwh"] = d
     X["demand_is_default"] = ((d - DEFAULT_DEMAND_KWH).abs() < 1e-6).astype(float).where(d.notna())
@@ -120,7 +122,7 @@ def _base_features(df: pd.DataFrame, installers: tuple[str, ...] | list[str] = (
     inst = df["installer_id"].astype("object") if "installer_id" in df else pd.Series(None, index=df.index, dtype="object")
     for i in installers:
         X[f"installer_{i}"] = (inst == i).astype(float)  # all zeros = unseen installer
-    return X.astype(float)
+    return pd.DataFrame(X, index=df.index).astype(float)
 
 
 def heat_demand_from_inputs(i: HomeInputs) -> float | None:

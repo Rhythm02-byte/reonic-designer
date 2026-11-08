@@ -11,6 +11,7 @@ export type Run = {
   git: { branch: string; commit: string | null; dirty: boolean };
   durationSec?: number;
   testScored: boolean;
+  comparisonKey?: string;
   validation?: Block;
   test?: Block;
   repeated?: { ours: MeanSd; b0: MeanSd; gap: MeanSd };
@@ -42,7 +43,16 @@ export const MODELS = [
 ] as const;
 
 /** Runs that score the validation window: the comparable series for the timeline. */
-export const scored = (runs: Run[]) => runs.filter((r) => r.validation?.models.ours);
+export const scored = (runs: Run[]) => runs.filter((r) => r.kind !== "research" && r.validation?.models.ours);
+/** Never derive a comparison key for legacy runs or join unlike evaluation populations. */
+export const comparable = (a: Run, b: Run) =>
+  typeof a.comparisonKey === "string" && a.comparisonKey.trim().length > 0 &&
+  a.comparisonKey === b.comparisonKey && a.kind !== "research" && b.kind !== "research" &&
+  a.validation?.n === b.validation?.n;
+
+export function researchPair(run: Run): [string, Scores][] {
+  return Object.entries(run.validation?.models ?? {});
+}
 export const latestWith = <K extends keyof Run>(runs: Run[], key: K) => [...runs].reverse().find((r) => r[key] != null);
 
 export const pts = (v: number | null | undefined, rate: boolean) =>
@@ -50,4 +60,4 @@ export const pts = (v: number | null | undefined, rate: boolean) =>
 export const fmt = (v: number | null | undefined, rate = false, digits = 1) =>
   v == null ? "–" : `${(rate ? v * 100 : v).toFixed(digits)}${rate ? "%" : ""}`;
 export const when = (iso: string) =>
-  new Date(iso).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+  new Date(iso).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }); // fixed zone: server and browser render the same text (no hydration mismatch)

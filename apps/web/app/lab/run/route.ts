@@ -1,33 +1,22 @@
-import { spawn } from "node:child_process";
-import { existsSync } from "node:fs";
-import path from "node:path";
-import { isLocalRequest, repoRoot } from "@/lib/lab-server";
+import { historyFile, isLocalMutation, isLocalRequest, repoRoot } from "@/lib/lab-server"; // ours: merged duplicate import
+import { checkStatus, startChecks } from "@/lib/lab-jobs";
+import { stat } from "node:fs/promises";
 
-// Local-only: runs all tests (`eval/run.py`, the same as `pnpm eval`). The run records itself in eval/history.
-let running = false;
-
+export async function GET(req: Request) {
+  if (!isLocalRequest(req.headers)) return Response.json({ error: "Checks are local-only." }, { status: 403 });
+  const root=repoRoot();
+  const historyVersion=root?await stat(historyFile(root)).then(s=>s.mtimeMs).catch(()=>null):null;
+  return Response.json({ job: await checkStatus(), historyVersion }, { headers: { "Cache-Control": "no-store" } });
+}
 export async function POST(req: Request) {
-  if (!isLocalRequest(req.headers)) return Response.json({ error: "Runs start only on a local dev server, opened as localhost." }, { status: 403 });
-  if (running) return Response.json({ error: "A run is already in progress." }, { status: 409 });
-  const root = repoRoot();
-  const py = root && ["Scripts/python.exe", "bin/python"].map((p) => path.join(root, "services/engine/.venv", p)).find(existsSync);
-  if (!root || !py) return Response.json({ error: "services/engine/.venv not found. Run pnpm bootstrap first." }, { status: 500 });
-
-  const { label = "" } = (await req.json().catch(() => ({}))) as { label?: string };
-  const args = ["eval/run.py", "--data", "dataset", "--offline", ...(label ? ["--label", label.slice(0, 80)] : [])];
-  running = true;
+  if (!isLocalMutation(req)) return Response.json({ error: "Checks are local-only and must start from this app." }, { status: 403 });
+  const body = await req.json().catch(() => null);
+  if (!body || !["checks", "exam"].includes(body.mode)) return Response.json({ error: "Choose checks or exam." }, { status: 400 });
+  if (body.mode === "exam" && body.confirmTestScoring !== true) return Response.json({ error: "Explicit confirmation is required to score 2026." }, { status: 400 });
   try {
-    const { code, out } = await new Promise<{ code: number | null; out: string }>((resolve) => {
-      let out = "";
-      const p = spawn(py, args, { cwd: root, env: { ...process.env, OFFLINE: "1", PYTHONIOENCODING: "utf-8" } });
-      p.stdout.on("data", (d) => (out += d));
-      p.stderr.on("data", (d) => (out += d));
-      p.on("close", (code) => resolve({ code, out }));
-      p.on("error", (e) => resolve({ code: 1, out: String(e) }));
-    });
-    const tail = out.trim().split(/\r?\n/).slice(-12).join("\n");
-    return code === 0 ? Response.json({ ok: true, tail }) : Response.json({ error: "The run failed.", tail }, { status: 500 });
-  } finally {
-    running = false;
+    return Response.json({ job: await startChecks(body.mode, typeof body.label === "string" ? body.label : "") }, { status: 202 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not start checks.";
+    return Response.json({ error: message }, { status: message.includes("already") ? 409 : 500 });
   }
 }

@@ -5,12 +5,11 @@
 import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 import { useEffect, useId, useRef, useState } from "react";
 import { num } from "@/lib/copy";
+import { fetchRoof, type RoofInfo } from "@/lib/roof";
 import { Card, ErrorNote, Icon } from "./ui";
 
 export type GeoLocation = { address: string; lat: number; lng: number };
-type SolarInfo =
-  | { covered: true; maxArrayPanelsCount: number | null; maxArrayAreaMeters2: number | null; maxSunshineHoursPerYear: number | null; panelCapacityWatts: number | null }
-  | { covered: false };
+type SolarInfo = RoofInfo;
 
 const DEFAULT_CENTER = { lat: 48.1351, lng: 11.582 }; // Munich: thinc! München 2026
 
@@ -18,7 +17,7 @@ const DEFAULT_CENTER = { lat: 48.1351, lng: 11.582 }; // Munich: thinc! München
 let optionsSet = false;
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`/api/${path}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const res = await fetch(`/api/${path}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(20_000) });
   const data = await res.json();
   if (!res.ok) throw new Error(data?.error ?? `Request failed (${res.status})`);
   return data as T;
@@ -29,6 +28,8 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   const mapDiv = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
+  const requestId = useRef(0);
+  const solarId = useRef(0);
   const [addressText, setAddressText] = useState(value?.address ?? "");
   const [solar, setSolar] = useState<SolarInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -64,26 +65,33 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   }, []);
 
   async function fetchSolar(lat: number, lng: number) {
+    const id = ++solarId.current;
     try {
-      setSolar(await postJson<SolarInfo>("solar", { lat, lng }));
+      const info = await fetchRoof(lat, lng);
+      if (id === solarId.current) setSolar(info);
     } catch (e) {
-      setSolar(null);
-      setError((e as Error).message);
+      if (id === solarId.current) {
+        setSolar(null);
+        setError((e as Error).message);
+      }
     }
   }
 
   // The one place that moves the pin, whichever side triggered it (typed address or drag).
   async function placeAt(lat: number, lng: number, fromDrag: boolean) {
+    const id = ++requestId.current;
+    solarId.current++;
     setError(null);
     markerRef.current?.setPosition({ lat, lng });
     mapRef.current?.panTo({ lat, lng });
     try {
       const address = fromDrag ? (await postJson<{ formatted_address: string }>("geocode", { lat, lng })).formatted_address : addressText.trim();
+      if (id !== requestId.current) return;
       setAddressText(address);
       onChange({ address, lat, lng });
       fetchSolar(lat, lng);
     } catch (e) {
-      setError((e as Error).message);
+      if (id === requestId.current) setError((e as Error).message);
     }
   }
 
@@ -91,17 +99,19 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
   useEffect(() => {
     const trimmed = addressText.trim();
     if (!trimmed || trimmed === value?.address) return;
+    const id = requestId.current;
     const t = setTimeout(() => {
       setLoading(true); // ours: lint fix (not synchronously in the effect)
       postJson<{ lat: number; lng: number; formatted_address: string }>("geocode", { address: trimmed })
         .then((r) => {
+          if (id !== requestId.current) return;
           onChange({ address: r.formatted_address, lat: r.lat, lng: r.lng });
           markerRef.current?.setPosition({ lat: r.lat, lng: r.lng });
           mapRef.current?.panTo({ lat: r.lat, lng: r.lng });
           fetchSolar(r.lat, r.lng);
           setError(null);
-        }, (e: Error) => setError(e.message))
-        .finally(() => setLoading(false));
+        }, (e: Error) => { if (id === requestId.current) setError(e.message); })
+        .finally(() => { if (id === requestId.current) setLoading(false); });
     }, 600);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only the typed text should re-trigger this.
@@ -118,12 +128,17 @@ export function Location({ value, onChange }: { value: GeoLocation | null; onCha
         type="text"
         placeholder="Enter the address"
         value={addressText}
-        onChange={(e) => setAddressText(e.target.value)}
+        onChange={(e) => {
+          requestId.current++; solarId.current++; setLoading(false); setSolar(null);
+          setAddressText(e.target.value);
+          if (!e.target.value.trim()) onChange(null);
+        }}
         className="w-full rounded-lg bg-white px-2.5 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-600 focus:outline-none"
       />
       <div ref={mapDiv} className="h-56 w-full rounded-xl bg-sand" />
       <p className="text-xs text-muted">Drag the pin onto the roof.</p>
-      <ErrorNote error={error ?? (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? null : "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set")} />
+      <ErrorNote error={error} />
+      {!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && <p className="text-xs text-quiet">Map preview is off: no Google Maps key is set on this machine.</p>} {/* ours: not an error */}
       {loading && <p className="text-xs text-quiet">Looking up the address…</p>}
       {solar && <SolarFacts solar={solar} />}
     </Card>

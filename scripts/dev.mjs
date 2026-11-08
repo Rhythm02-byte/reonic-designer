@@ -9,7 +9,7 @@ if (!py) {
 }
 
 const procs = [
-  ["engine", py, ["-m", "uvicorn", "engine.api.main:app", "--reload", "--port", "8000"], { cwd: root }],
+  ["engine", py, ["-m", "uvicorn", "scripts.runtime_app:app", "--reload", "--port", "8000"], { cwd: root }],
   ["web", "pnpm", ["--dir", "apps/web", "dev"], { cwd: root, shell: true }],
 ].map(([name, cmd, args, opts]) => {
   const p = spawn(cmd, args, { ...opts, env: process.env });

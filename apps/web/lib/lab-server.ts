@@ -23,3 +23,10 @@ export function isLocalRequest(h: Headers): boolean {
   const local = (v: string | null) => ["localhost", "127.0.0.1", "[::1]"].includes((v ?? "").replace(/:\d+$/, ""));
   return local(h.get("host")) && (!h.get("x-forwarded-host") || local(h.get("x-forwarded-host")));
 }
+
+/** A browser on another site must not be able to start local jobs or spend a map API key. */
+export function isLocalMutation(req: Request): boolean {
+  if (!isLocalRequest(req.headers)) return false;
+  const origin = req.headers.get("origin");
+  return origin === null || origin === new URL(req.url).origin;
+}

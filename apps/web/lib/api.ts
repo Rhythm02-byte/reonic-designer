@@ -22,7 +22,7 @@ export type Meta = {
 };
 
 export type Economics = { cost_eur: number; savings_eur: number | null; payback_years: number | null };
-export type Alternative = { value: number; values: Values; flags: string[] };
+export type Alternative = { value: number; values: Values; flags: string[]; validated: boolean };
 export type Design = {
   values: Values;
   probability: Values;
@@ -213,11 +213,15 @@ async function toDesign(d: EngineDesign, h: HomeInputs, locked: Partial<Values>,
     await Promise.all(
       flips.map(async ([t, v]) => {
         const alt = { ...values, [t]: v };
+        let validated = false;
         const flags = await engine
           .validate(h, toSizes(alt) as Sizes)
-          .then((r) => r.data.filter((f) => f.severity !== "info").map((f) => f.message))
-          .catch(() => []);
-        return [t, { value: v, values: alt, flags }] as const;
+          .then((r) => {
+            validated = r.source === "live" || source === "demo";
+            return validated ? r.data.filter((f) => f.severity !== "info").map((f) => f.message) : ["Not validated: the engine is unavailable."];
+          })
+          .catch(() => ["Not validated: the check failed. Retry before sharing this option."]);
+        return [t, { value: v, values: alt, flags, validated }] as const;
       }),
     ),
   ) as Design["alternatives"];

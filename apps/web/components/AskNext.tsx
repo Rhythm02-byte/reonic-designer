@@ -20,7 +20,7 @@ export function AskNext({ design, set }: { design: Design | null; set: (name: st
       </h2>
       <Card className="divide-y divide-zinc-200">
         {items.map((q) => (
-          <div key={q.field} className="space-y-2 p-4 text-sm">
+          <div key={q.field} className="fade-in space-y-2 p-4 text-sm"> {/* ours: new questions fade in */}
             <div className="space-y-0.5">
               <p className="font-medium text-ink">{q.question}</p>
               <p className="text-xs text-muted">

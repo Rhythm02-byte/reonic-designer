@@ -45,9 +45,77 @@ h1, h2 {
   text-wrap: balance;
 }
 
+/* ours: Tailwind 4 dropped the pointer cursor on buttons; every clickable control shows it again */
+button:not(:disabled), [role="button"]:not([aria-disabled="true"]), summary, label[for], select:not(:disabled) {
+  cursor: pointer;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ours: smooth in-page anchors (Design / Inputs / Evidence) and a brief highlight where the jump landed */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+  .anchor-flash {
+    animation: anchor-flash 600ms ease-out;
+  }
+  /* ours: short fade-ins for content that appears or updates in place (opacity + 4px rise, never changes layout) */
+  .fade-in {
+    animation: fade-in 200ms ease-out both;
+  }
+  details[open].details-fade > :not(summary) {
+    animation: fade-in 180ms ease-out both;
+  }
+  /* ours: dialog open/close fade and scale; the display/overlay transitions keep the close animation too */
+  dialog[aria-labelledby="share-h"] {
+    transition: opacity 180ms ease-out, scale 180ms ease-out, overlay 180ms allow-discrete, display 180ms allow-discrete;
+    opacity: 0;
+    scale: 0.97;
+  }
+  dialog[aria-labelledby="share-h"][open] {
+    opacity: 1;
+    scale: 1;
+  }
+  dialog[aria-labelledby="share-h"]::backdrop {
+    transition: opacity 180ms ease-out, overlay 180ms allow-discrete, display 180ms allow-discrete;
+    opacity: 0;
+  }
+  dialog[aria-labelledby="share-h"][open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    dialog[aria-labelledby="share-h"][open] {
+      opacity: 0;
+      scale: 0.97;
+    }
+    dialog[aria-labelledby="share-h"][open]::backdrop {
+      opacity: 0;
+    }
+  }
+}
+@keyframes anchor-flash {
+  from {
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 0.45);
+    background-color: rgb(37 99 235 / 0.07);
+  }
+  to {
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 0);
+    background-color: rgb(37 99 235 / 0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

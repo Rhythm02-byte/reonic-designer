@@ -5,8 +5,9 @@ import { useSyncExternalStore } from "react";
 import type { Inputs, Values } from "./api";
 import { DEMO_INPUTS } from "./copy";
 import type { GeoLocation } from "@/components/Location";
+import type { HouseAsset, HouseLayout } from "./real-house";
 
-export type Customer = { id: string; name: string; owner: string; inputs: Inputs; locked?: Partial<Values>; location?: GeoLocation };
+export type Customer = { id: string; name: string; owner: string; inputs: Inputs; locked?: Partial<Values>; location?: GeoLocation; realHouse?: HouseAsset; roofLayout?: HouseLayout; roofCapacityConfirmed?: boolean };
 export type Workspace = { me: string; active: string; customers: Customer[] };
 export const TEAM = ["Anna Weber", "Jonas Keller", "Lea Brandt"];
 const SEED: Workspace = {

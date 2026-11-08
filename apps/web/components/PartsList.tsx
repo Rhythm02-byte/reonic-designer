@@ -16,15 +16,14 @@ const kind = (p: Part) => (p.type ? (TYPE[p.type] ?? p.type.replace(/([a-z])([A-
 const qty = (p: Part) => `${num(p.quantity, 2)}${p.units ? ` ${p.units}` : "×"}`;
 
 export function PartsList({ parts, title = "Parts list", note }: { parts: Part[] | undefined; title?: string; note?: string }) {
-  if (!parts) return null;
   return (
     <Card className="p-4 text-sm">
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="text-sm font-semibold text-ink">{title}</h2>
-        <span className="text-xs text-quiet">{parts.length} {parts.length === 1 ? "line" : "lines"}</span>
+        {parts && <span className="text-xs text-quiet">{parts.length} {parts.length === 1 ? "line" : "lines"}</span>}
       </div>
-      {parts.length === 0 ? (
-        <p className="text-xs text-quiet">No parts: this setup adds no new equipment.</p>
+      {!parts?.length ? (
+        <p className="text-xs text-quiet">Product list unavailable. Your installer must confirm the equipment and catalogue; this does not mean no equipment is needed.</p>
       ) : (
         <table className="w-full">
           <caption className="sr-only">{title}</caption>
@@ -49,7 +48,7 @@ export function PartsList({ parts, title = "Parts list", note }: { parts: Part[]
           </tbody>
         </table>
       )}
-      {parts.length > 0 && (
+      {!!parts?.length && (
         <p className="mt-3 text-xs text-muted">Preliminary: products picked from the installer&apos;s catalogue by size. Compatibility and string layout are not checked yet.</p>
       )}
       {note && <p className="mt-1 text-xs text-muted">{note}</p>}

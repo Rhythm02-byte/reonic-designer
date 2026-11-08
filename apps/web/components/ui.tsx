@@ -5,7 +5,7 @@ import type { ComponentProps, ReactNode } from "react";
 export function Logo({ product = true }: { product?: boolean }) {
   return (
     <span className="flex items-center gap-3 text-ink">
-      <span className="flex items-center gap-2" role="img" aria-label="Rhythm">
+      <span className="flex cursor-default items-center gap-2 select-none" role="img" aria-label="Rhythm"> {/* ours: no text selection on the triple-tap menu gesture */}
         <svg viewBox="0 0 24 24" className="size-6" aria-hidden>
           <rect width="24" height="24" rx="7" fill="currentColor" />
           <g stroke="var(--color-paper)" strokeWidth={2.5} strokeLinecap="round">
@@ -176,25 +176,13 @@ export const pillLook = {
   ghost: "text-body hover:bg-sand",
 };
 
-// A pointed pill for the planner's share action pair only, a deliberate DESIGN.md exception (see Decisions Log)
-// inspired by greptile.com. clip-path crops a ring/border at the tips (confirmed in-browser), so secondary is a
-// flat sand fill instead. ponytail: a true border needs a layered inset clip-path; add if this reads as unclickable.
-const chevronClip = "[clip-path:polygon(8px_0,calc(100%-8px)_0,100%_50%,calc(100%-8px)_100%,8px_100%,0_50%)]";
-export const chevron = `inline-flex items-center justify-center gap-1.5 px-5 py-1.5 text-sm font-medium transition-colors ${chevronClip} ${focus}`;
-export const chevronLook = {
-  primary: "bg-ink text-paper hover:bg-ink/85",
-  secondary: "bg-sand text-ink hover:bg-white",
-  ghost: pillLook.ghost,
-};
-
 export function Button({
   variant = "primary",
-  shape = "pill",
   className = "",
   ...props
-}: ComponentProps<"button"> & { variant?: keyof typeof pillLook; shape?: "pill" | "chevron" }) {
-  const look = shape === "chevron" ? chevronLook[variant] : pillLook[variant];
-  return <button type="button" className={`${shape === "chevron" ? chevron : pill} disabled:opacity-40 ${look} ${className}`} {...props} />;
+}: ComponentProps<"button"> & { variant?: keyof typeof pillLook }) {
+  // ours: the pointed "chevron" shape is gone (one rounded pill style everywhere)
+  return <button type="button" className={`${pill} disabled:cursor-not-allowed disabled:opacity-40 ${pillLook[variant]} ${className}`} {...props} />;
 }
 
 export function Card({ className = "", ...props }: ComponentProps<"div">) {

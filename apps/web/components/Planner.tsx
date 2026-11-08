@@ -1,13 +1,15 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useEffectEvent, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { api, TARGETS, type Design, type Evaluation, type Field, type HoldoutRow, type Inputs, type InputValue, type Meta, type Target, type Values } from "@/lib/api";
-import { altLabel, CHOICE_LABEL, describe, encodeOffer, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
+import { altLabel, CHOICE_LABEL, describe, eur, FIELD_COPY, FIELD_GROUPS, LABEL, NOT_SUPPLIED, num, type Offer, pct, size, UNIT, years } from "@/lib/copy";
 import { type Customer, TEAM, update, useWorkspace, type Workspace } from "@/lib/workspace"; // ours:
 import { House } from "./House";
+import { RealHouse } from "./RealHouse";
+import { locationKey } from "@/lib/real-house";
 import { Location } from "./Location"; // ours:
-import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { OfferQr } from "./OfferQr"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
-import { Badge, Button, Card, CheckDot, CheckList, chevron, chevronLook, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
+import { AskNext } from "./AskNext"; import { PartRange } from "./PartRange"; import { PartsList } from "./PartsList"; import { Share } from "./Share"; import { Evidence } from "./Evidence"; import { isPitchPlan, type PitchPlan } from "@/lib/pitch"; // ours:
+import { Badge, Button, Card, CheckDot, CheckList, ErrorNote, Footer, Header, Icon, type IconName, Logo, MinusDot, pill, pillLook, Segmented, Stat } from "./ui";
 
 const WIDTH = "max-w-[1500px]";
 
@@ -15,6 +17,16 @@ const WIDTH = "max-w-[1500px]";
 type Draft = { inputs: Inputs; locked: Partial<Values> };
 type Step = { id: string; draft: Draft; label: string; before: Values | null };
 const NO_LOCKS: Partial<Values> = {}; // ours: fix (stable identity for the design effect)
+
+// ours: restart the short highlight on the section a header link jumped to (CSS drops it for reduced motion)
+function flash(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove("anchor-flash");
+  void el.offsetWidth;
+  el.classList.add("anchor-flash");
+  el.addEventListener("animationend", () => el.classList.remove("anchor-flash"), { once: true });
+}
 
 export default function Planner() {
   const ws = useWorkspace();
@@ -33,6 +45,8 @@ export default function Planner() {
   const [state, setState] = useState<{ key: string | null; design: Design | null; error: string | null }>({
     key: null, design: null, error: null,
   });
+  const [recommendation, setRecommendation] = useState<{ inputKey: string | null; values: Values | null }>({ inputKey: null, values: null });
+  const recommendationRef = useRef(recommendation);
 
   useEffect(() => {
     api.meta().then(setMeta, (e: Error) => setMetaError(e.message));
@@ -50,12 +64,28 @@ export default function Planner() {
   // Without an electric car the distance means nothing; sent anyway, the model reads it as one and adds a wallbox.
   // The value stays in state so switching back to "Yes" restores it.
   const sent = useMemo(() => (inputs.has_ev === false ? { ...inputs, ev_km_per_year: null } : inputs), [inputs]);
+  const inputKey = JSON.stringify(sent);
   const key = JSON.stringify([sent, locked]);
   useEffect(() => {
     let live = true;
     const t = setTimeout(() => {
       api.design(sent, locked).then(
-        (design) => live && setState({ key, design, error: null }),
+        (design) => {
+          if (!live) return;
+          setState({ key, design, error: null });
+          if (Object.keys(locked).length === 0) {
+            const next = { inputKey, values: design.values };
+            recommendationRef.current = next;
+            setRecommendation(next);
+          } else if (recommendationRef.current.inputKey !== inputKey) {
+            api.design(sent, NO_LOCKS).then((baseline) => {
+              if (!live) return;
+              const next = { inputKey, values: baseline.values };
+              recommendationRef.current = next;
+              setRecommendation(next);
+            }).catch(() => {});
+          }
+        },
         (e: Error) => live && setState((s) => ({ ...s, key, error: e.message })),
       );
     }, 250);
@@ -63,7 +93,7 @@ export default function Planner() {
       live = false;
       clearTimeout(t);
     };
-  }, [sent, locked, key]);
+  }, [sent, locked, key, inputKey]);
 
   const { design } = state;
   const busy = state.key !== key;
@@ -86,14 +116,16 @@ export default function Planner() {
     setHistory((h) => h.filter((x) => x.id !== id));
   };
   const setInput = (name: string, v: InputValue) => {
+    if (name === "roof_max_modules") editCustomer({ roofCapacityConfirmed: false });
     const was = inputs[name] ?? null;
     edit(`${FIELD_COPY[name]?.label ?? name}: ${show(name, was)} → ${show(name, v)}`, { inputs: { ...inputs, [name]: v }, locked });
   };
   const setSize = (t: Target, v: number | null) => {
     const rest = Object.fromEntries(Object.entries(locked).filter(([k]) => k !== t));
-    edit(v === null ? `${LABEL[t]} back to the recommendation` : `${LABEL[t]} set to ${size(v, UNIT[t])}`, {
+    const backToRecommendation = v === null || (recommendation.inputKey === inputKey && recommendation.values?.[t] === v);
+    edit(backToRecommendation ? `${LABEL[t]} back to the recommendation` : `${LABEL[t]} set to ${size(v!, UNIT[t])}`, {
       inputs,
-      locked: v === null ? rest : { ...rest, [t]: v },
+      locked: backToRecommendation ? rest : { ...rest, [t]: v! },
     });
   };
   // ours: pitch mode (iemko). /pitch drives this page from outside (same origin only). With `because` it is a
@@ -125,7 +157,7 @@ export default function Planner() {
 
   const name = preview ? "Real project" : customer.name || "Unnamed customer";
   const offer: Offer | null =
-    design && !busy
+    design && !busy && !state.error
       ? {
           v: 2,
           customer: name,
@@ -135,7 +167,7 @@ export default function Planner() {
             { label: "Recommended", values: design.values },
             ...TARGETS.flatMap((t) => {
               const a = design.alternatives[t];
-              return a && (offered[t] ?? a.flags.length === 0) ? [{ label: altLabel(t, a.value), values: a.values }] : [];
+              return a?.validated && (offered[t] ?? a.flags.length === 0) ? [{ label: altLabel(t, a.value), values: a.values }] : [];
             }),
           ],
           ...(design.modules && design.values.pv_kwp > 0 && { moduleWp: Math.round((design.values.pv_kwp * 1000) / design.modules) }), // ours:
@@ -167,15 +199,14 @@ export default function Planner() {
           </select>
           <nav aria-label="Project" className="hidden gap-1 text-sm md:flex">
             {[["design", "Design"], ["inputs", "Inputs"], ["evidence", "Evidence"]].map(([href, label]) => (
-              <a key={href} href={`#${href}`} className={`${pill} ${pillLook.ghost}`}>
+              <a key={href} href={`#${href}`} onClick={() => flash(href)} className={`${pill} ${pillLook.ghost}`}>
                 {label}
               </a>
             ))}
           </nav>
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <SaveState preview={!!preview} dirty={dirty} busy={busy} onSave={save} />
-            <OfferLinks offer={offer} />
-            <OfferQr offer={offer} /> {/* ours: */}
+            <Share offer={offer} /> {/* ours: one share entry (QR + copy + open) replaces his preview/share chevron pair and our QR button */}
           </div>
         </Header>
 
@@ -207,13 +238,14 @@ export default function Planner() {
             </p>
           </div>
           <ErrorNote error={metaError ?? state.error} />
-          {meta?.synthetic && (
+          {state.error && design && <p className="text-sm text-amber-900">The last successful proposal is shown for reference. It has not updated to the current inputs and cannot be shared.</p>}
+          {(meta?.synthetic || design?.source === "demo") && (
             <p className="text-sm text-amber-800">Running on synthetic data: numbers are for the demo only.</p>
           )}
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
             <div className="space-y-6">
-              <section id="inputs" className="scroll-mt-20 space-y-2" aria-labelledby="inputs-h">
+              <section id="inputs" className="scroll-mt-20 space-y-2 rounded-2xl" aria-labelledby="inputs-h">
                 <h2 id="inputs-h" className="text-sm font-semibold text-ink">
                   Project inputs
                 </h2>
@@ -225,17 +257,33 @@ export default function Planner() {
                 <p className="text-xs text-muted">Empty fields are unknown; the model does not guess them.</p>
               </section>
               <AskNext design={design} set={setInput} /> {/* ours: */}
-              <Location value={customer.location ?? null} onChange={(location) => editCustomer({ location: location ?? undefined })} /> {/* ours: */}
-              <div id="evidence" className="scroll-mt-20">
+              {!preview && <Location key={customer.id} value={customer.location ?? null} onChange={(location) => {
+                const changed = customer.location && (!location || locationKey(customer.location.lat, customer.location.lng) !== locationKey(location.lat, location.lng));
+                if (changed && customer.roofCapacityConfirmed) setInput("roof_max_modules", null);
+                editCustomer({ location: location ?? undefined, ...(changed ? { realHouse: undefined, roofLayout: undefined, roofCapacityConfirmed: false } : {}) });
+              }} />}
+              <div id="evidence" className="scroll-mt-20 rounded-2xl">
                 <Evidence onLoad={load} /> {/* ours: replaces his <Reality onLoad={load} /> (compares with the installer's usual design) */}
               </div>
             </div>
 
-            <section id="design" className="min-w-0 scroll-mt-20 space-y-4" aria-labelledby="design-h">
+            <section id="design" className="min-w-0 scroll-mt-20 space-y-4 rounded-2xl" aria-labelledby="design-h">
               <h2 id="design-h" className="sr-only">Design</h2>
               <Card className="overflow-hidden">
-                <div className="relative h-[320px] bg-gradient-to-b from-sand-2 to-sand sm:h-[480px]">
-                  {design ? (
+                <RealHouse
+                  key={`${id}-${customer.location ? locationKey(customer.location.lat, customer.location.lng) : "none"}`}
+                  location={preview ? null : customer.location ?? null}
+                  asset={preview ? undefined : customer.realHouse}
+                  layout={preview ? undefined : customer.roofLayout}
+                  proposedPanels={design?.modules ?? 0}
+                  existingPv={Number(inputs.existing_pv_kwp ?? 0) > 0}
+                  onAsset={(realHouse) => editCustomer({ realHouse })}
+                  onLayout={(roofLayout) => {
+                    if (customer.roofCapacityConfirmed) setInput("roof_max_modules", null);
+                    editCustomer({ roofLayout, roofCapacityConfirmed: false });
+                  }}
+                  onCapacity={(n) => { setInput("roof_max_modules", n); editCustomer({ roofCapacityConfirmed: true }); }}
+                  fallback={design ? (
                     <House
                       values={design.values}
                       modules={design.modules} // ours:
@@ -248,8 +296,7 @@ export default function Planner() {
                   ) : (
                     !state.error && <Skeleton className="h-full rounded-none" />
                   )}
-                  <p className="pointer-events-none absolute top-3 left-4 text-xs text-quiet">Drag to turn · click a part for details</p>
-                </div>
+                />
                 {design && <Economics design={design} />}
               </Card>
 
@@ -270,6 +317,7 @@ export default function Planner() {
                         t={t}
                         design={design}
                         locked={locked[t]}
+                        recommendation={recommendation.inputKey === inputKey ? recommendation.values?.[t] : undefined}
                         selected={selected === t}
                         onSelect={() => setSelected(selected === t ? null : t)}
                         onSet={(v) => setSize(t, v)}
@@ -348,53 +396,10 @@ function SaveState({ preview, dirty, busy, onSave }: { preview: boolean; dirty: 
   );
 }
 
-function OfferLinks({ offer }: { offer: Offer | null }) {
-  const [copied, setCopied] = useState<"yes" | "failed" | null>(null);
-  if (!offer) {
-    return (
-      <div className="inline-flex items-center gap-2">
-        <Button variant="secondary" shape="chevron" disabled>Preview homeowner view</Button>
-        <Button shape="chevron" disabled>Share offer</Button>
-      </div>
-    );
-  }
-  // The link carries this home's data in its hash: send it only to this customer.
-  const href = `/offer#${encodeOffer(offer)}`;
-  const share = () =>
-    navigator.clipboard.writeText(new URL(href, location.href).href).then(
-      () => setCopied("yes"),
-      () => setCopied("failed"),
-    );
-  return (
-    <>
-      {/* Chevron pair: a deliberate DESIGN.md exception (see Decisions Log), paired buttons that pull apart on hover.
-          The transform lives on a wrapper, not the button itself, so it doesn't fight the button's own transition-colors. */}
-      <div className="group inline-flex items-center gap-2">
-        {/* clip-path crops any outline drawn on the chevron itself, so the focus ring lives on this
-            unclipped wrapper instead (same has-focus-visible trick Segmented uses for its hidden radio). */}
-        <div className="transition-transform duration-200 group-hover:-translate-x-1 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600">
-          <a href={href} target="_blank" rel="noopener" className={`${chevron} ${chevronLook.secondary}`}>
-            Preview homeowner view
-            <span className="sr-only">(opens in a new tab)</span>
-          </a>
-        </div>
-        <div className="transition-transform duration-200 group-hover:translate-x-1 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600">
-          <Button shape="chevron" onClick={share}>
-            Share offer <Icon name="arrow" className="size-4" />
-          </Button>
-        </div>
-      </div>
-      <span aria-live="polite" className="text-xs text-quiet">
-        {copied === "yes" ? "Link copied" : copied === "failed" ? "Copy failed: open the preview and copy its address" : ""}
-      </span>
-    </>
-  );
-}
-
 function Changed({ step, now, onUndo }: { step: Step; now: Values | null; onUndo: () => void }) {
   const diff = now && step.before ? TARGETS.filter((t) => now[t] !== step.before![t]) : [];
   return (
-    <div role="status" className="flex flex-wrap items-start gap-x-4 gap-y-2 rounded-2xl border border-zinc-200 bg-sand-2 p-4 text-sm">
+    <div role="status" className="fade-in flex flex-wrap items-start gap-x-4 gap-y-2 rounded-2xl border border-zinc-200 bg-sand-2 p-4 text-sm">
       <div className="min-w-0 flex-1 space-y-1">
         <p className="font-medium text-ink">What changed? {step.label}</p>
         <p>
@@ -416,17 +421,31 @@ const sized = (t: Target, v: number) => (v > 0 ? size(v, UNIT[t]) : "not include
 
 const STEP: Record<Target, number> = { pv_kwp: 0.45, battery_kwh: 0.5, heat_pump_kw: 1, wallbox_kw: 0.1 };
 
-function SystemCard({ t, design, locked, selected, onSelect, onSet }: {
+// Keep partial numeric typing local; reset it when Undo, a pitch step or a customer change supplies a new value.
+// ours: review fix. A typed draft is only shown while the value it was typed against is still current; once it is
+// committed (blur/Enter) it is dropped, so "Reset to recommendation" (1 -> back to 0) shows 0, not the stale "1".
+const COMMITTED = Symbol("committed");
+function useNumericDraft(value: number | null, scale = 1) {
+  const text = value === null ? "" : String(+(value * scale).toFixed(6));
+  const [draft, setDraft] = useState<{ source: number | null | typeof COMMITTED; scale: number; text: string }>({ source: value, scale, text });
+  return [Object.is(draft.source, value) && draft.scale === scale ? draft.text : text,
+    (next: string) => setDraft({ source: value, scale, text: next }),
+    () => setDraft({ source: COMMITTED, scale, text: "" })] as const;
+}
+
+function SystemCard({ t, design, locked, recommendation, selected, onSelect, onSet }: {
   t: Target;
   design: Design;
   locked: number | undefined;
+  recommendation: number | undefined;
   selected: boolean;
   onSelect: () => void;
   onSet: (v: number | null) => void;
 }) {
   const v = design.values[t];
+  const [sizeDraft, setSizeDraft, commitSizeDraft] = useNumericDraft(v);
   const p = design.probability[t];
-  const edited = locked !== undefined;
+  const edited = locked !== undefined && (recommendation === undefined || locked !== recommendation);
   const warnings = flagsFor(t, design.flags);
   // Similar homes split on this part: worth a planner's second look. Not shown as a number on purpose.
   const unsure = !edited && p > 0.3 && p < 0.7;
@@ -451,7 +470,7 @@ function SystemCard({ t, design, locked, selected, onSelect, onSet }: {
           {review && <Status warn>Needs review</Status>}
         </div>
       </div>
-      <p className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{v > 0 ? `${num(v)} ${UNIT[t]}` : "Not included"}</p>
+      <p key={v} className="fade-in text-2xl font-semibold tracking-tight text-ink tabular-nums">{v > 0 ? `${num(v)} ${UNIT[t]}` : "Not included"}</p>
       {/* ours: review fix, the count comes from the engine (its module watts), not an assumed 450 W / 5 kWh product */}
       {t === "pv_kwp" && v > 0 && design.modules ? <p className="text-sm text-quiet">{design.modules}× solar module</p> : null}
       <PartRange t={t} design={design} /> {/* ours: */}
@@ -465,8 +484,14 @@ function SystemCard({ t, design, locked, selected, onSelect, onSet }: {
           inputMode="decimal"
           min={0}
           step={STEP[t]}
-          value={v}
-          onChange={(e) => Number.isFinite(e.target.valueAsNumber) && e.target.valueAsNumber >= 0 && onSet(e.target.valueAsNumber)}
+          value={sizeDraft}
+          onChange={(e) => setSizeDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+          onBlur={() => {
+            const next = Number(sizeDraft);
+            if (sizeDraft !== "" && Number.isFinite(next) && next >= 0 && next !== v) onSet(next);
+            commitSizeDraft();
+          }}
           className={`${inputClass} w-24`}
         />
         <span className="text-xs text-muted">{UNIT[t]} · 0 = not included</span>
@@ -516,7 +541,8 @@ function OfferOptions({ design, offered, setOffered }: {
             <input
               type="checkbox"
               className="mt-0.5 size-4 accent-blue-600"
-              checked={offered[t] ?? a.flags.length === 0}
+              disabled={!a.validated}
+              checked={a.validated && (offered[t] ?? a.flags.length === 0)}
               onChange={(e) => setOffered({ ...offered, [t]: e.target.checked })}
             />
             <span>
@@ -559,8 +585,10 @@ function Sidebar({ ws, list, scope, setScope, activeId, onOpen, query, setQuery 
           className={`${inputClass} pl-8`}
         />
       </div>
-      <Link href="/new-customer" className={`${pill} ${pillLook.secondary} w-full justify-center`}>
-        + New customer
+      <Link href="/new-customer" className="group flex items-center gap-3 rounded-xl bg-white p-3 text-left ring-1 ring-zinc-200 transition-colors hover:bg-sand-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+        <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-xl leading-none text-paper transition-transform duration-200 group-hover:rotate-90">+</span>
+        <span className="min-w-0"><span className="block text-sm font-semibold text-ink">Add a customer</span><span className="mt-0.5 block text-xs text-quiet">Create a project and pick its home</span></span>
+        <span aria-hidden className="ml-auto text-lg text-quiet transition-transform duration-200 group-hover:translate-x-0.5">›</span>
       </Link>
       <Segmented
         name="scope"
@@ -647,7 +675,7 @@ function InputsPanel({ meta, inputs, saved, set }: {
         if (fields.length === 0) return null;
         const edited = fields.filter((f) => (inputs[f.name] ?? null) !== (saved[f.name] ?? null)).length;
         return (
-          <details key={g.title} open={i < 2} className="group p-4">
+          <details key={g.title} open={i < 2} className="group details-fade p-4"> {/* ours: fade the body in on expand */}
             <summary className="flex cursor-pointer items-center justify-between gap-2 text-sm font-medium text-ink">
               <span>
                 {g.title}
@@ -678,6 +706,7 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
   // Some fields read better scaled (a 0.03 price increase shows as 3 % per yr); the API keeps the raw value.
   const scale = copy.scale ?? 1;
   const id = `field-${field.name}`;
+  const [numberDraft, setNumberDraft, commitNumberDraft] = useNumericDraft(typeof value === "number" ? value : null, scale);
   if (field.kind === "bool") {
     return (
       <div className="space-y-1">
@@ -723,10 +752,14 @@ function FieldInput({ field, value, edited, set }: { field: Field; value: InputV
           step={copy.step ?? "any"}
           placeholder="Unknown"
           className={inputClass}
-          value={typeof value === "number" ? +(value * scale).toFixed(6) : ""}
-          onChange={(e) => {
-            if (e.target.value === "") set(null);
-            else if (Number.isFinite(e.target.valueAsNumber)) set(e.target.valueAsNumber / scale);
+          value={numberDraft}
+          onChange={(e) => setNumberDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+          onBlur={() => {
+            // ours: review fix, only a real change becomes an edit (tabbing through a field no longer adds "4500 -> 4500")
+            const next = numberDraft === "" ? null : Number(numberDraft) / scale;
+            if (next === null ? value !== null : Number.isFinite(next) && next !== value) set(next);
+            commitNumberDraft();
           }}
         />
         {copy.unit && <span className="w-14 shrink-0 text-xs text-muted">{copy.unit}</span>}
@@ -739,7 +772,7 @@ function Economics({ design }: { design: Design }) {
   const e = design.economics;
   return (
     <div className="border-t border-zinc-200 p-4">
-      <div className="grid grid-cols-3 gap-4">
+      <div key={`${e.cost_eur}-${e.savings_eur}`} className="fade-in grid grid-cols-3 gap-4"> {/* ours: numbers fade in when the design updates */}
         <Stat icon="wallet" label="Investment (estimate)" value={eur(e.cost_eur)} />
         <Stat icon="trend" label="Savings per year (estimate)" value={e.savings_eur === null ? "n/a" : eur(e.savings_eur)} />
         <Stat icon="clock" label="Payback (estimate)" value={years(e.payback_years)} sub="PV + battery" />

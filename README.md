@@ -63,7 +63,7 @@ docker compose down
 ```
 
 - The Reonic export is **not** in any image. `./data` is mounted read-only, so put the export in `data/raw/` first. Without it the containers fall back to synthetic data and say so; never record a demo in that mode.
-- The first start trains the model (about 40 seconds). It is then saved in a volume and reused (about 1 second) until the code or the data change, when it is rebuilt automatically.
+- The first start trains the model (about 10 seconds when run directly, longer inside Docker: under two minutes the first time we ran it). It is then saved in a volume and reused (about 1 second) until the code or the data change, when it is rebuilt automatically.
 - Every port is published on `127.0.0.1` only. Keep it that way: the API serves designs built on confidential data.
 - The web planner's Evidence panel reads `reports/eval.json`; run the `eval` command above once if it is empty.
 

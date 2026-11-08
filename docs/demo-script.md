@@ -8,7 +8,7 @@ Follows the four-step demo Reonic describes (brief, p. 7): a home is described, 
 - [ ] `python -m reonic eval` has been run, so the Evaluation tab has numbers.
 - [ ] `streamlit run app.py`, browser at full width, sidebar open.
 - [ ] Have `docs/figures/deviation_chart.png` and `docs/business-case.md` open in other tabs.
-- [ ] Using the web planner instead (`docker compose up --build`, then http://localhost:3000; or see `web/README.md`)? The steps are the same; only the buttons differ. Its "Checked against reality" panel is covered at the end of step 4. The saved model makes later starts take a few seconds; the first start takes about 40 seconds, so start it before the demo.
+- [ ] Using the web planner instead (`docker compose up --build`, then http://localhost:3000; or see `web/README.md`)? The steps are the same; only the buttons differ. Its "Checked against reality" panel is covered at the end of step 4. The saved model makes later starts take a few seconds; the first start trains the model (about 10 seconds directly, up to a couple of minutes inside Docker), so start it before the demo.
 
 ## The story
 

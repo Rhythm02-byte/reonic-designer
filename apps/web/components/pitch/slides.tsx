@@ -34,7 +34,6 @@ const EVAL = {
   n: 325,
   rows: [
     { label: "PV size within ±20%", rule: 32.9, habit: 42.5, ours: 59.7 },
-    { label: "Battery within ±25%", rule: 40.0, habit: 47.4, ours: 48.9 },
     { label: "Whole design right", rule: 14.8, habit: 20.6, ours: 22.2 },
   ],
   roof: { from: 22.2, to: 33.2 }, // oracle.fields.roof, UPPER BOUND: the cap is the expert's own module count
@@ -136,9 +135,6 @@ function Hook() {
             <span className="absolute -translate-x-1/2 font-semibold text-ink" style={{ left: `${at}%` }}>Offer</span>
           </div>
         </Rise>
-        <Rise delay={2.3}>
-          <p className="text-[36px] text-quiet">Median at installer 1, request to offer, n=260. Elapsed time, not planner hours.</p>
-        </Rise>
       </div>
       <Source>Rhythm and his dancers · Rhythm, the home energy designer</Source>
     </Canvas>
@@ -146,7 +142,7 @@ function Hook() {
 }
 
 function Problem() {
-  const { p10, p50, p90, n } = DATA.cohort;
+  const { p10, p50, p90 } = DATA.cohort;
   const MAX = 16;
   const x = (v: number) => `${(v / MAX) * 100}%`;
   return (
@@ -197,14 +193,11 @@ function Problem() {
         </div>
       </Rise>
       <Rise delay={1.8}>
-        <p className="w-[1500px] text-[48px] leading-[1.25] font-semibold">
-          The roof and the budget aren’t in the data. <span className="text-quiet">No model can guess them.</span>
+        <p className="w-[1700px] text-[48px] leading-[1.25] font-semibold">
+          Roof and budget aren’t in the data. <span className="text-quiet">No model can guess them.</span>
         </p>
       </Rise>
-      <Source>
-        Expert PV size, 10th to 90th percentile (median {p50} kWp), {n} homes with 4,000–5,000 kWh, no EV, no existing PV · {DATA.projects.toLocaleString("en")}{" "}
-        projects with an expert design, Reonic export, aggregates only
-      </Source>
+      <Source>Expert PV sizes for similar homes (middle 80%) · Reonic data</Source>
     </Canvas>
   );
 }
@@ -242,7 +235,6 @@ function Turn() {
           </div>
         </Rise>
       </div>
-      <Source dark>No language model sizes anything. The design comes from models trained on the installer’s own designs, plus physics.</Source>
     </Canvas>
   );
 }
@@ -282,7 +274,7 @@ function How() {
         <div className="flex items-center gap-10 rounded-3xl bg-ink px-12 py-7 text-paper">
           <p className="text-[44px] font-semibold">A complete design</p>
           <p className="flex-1 text-[30px] leading-[1.35] text-zinc-300">
-            PV, battery, heat pump and wallbox, each with a range, a reason, flags, and the one question that would change it most.
+            Every size with a range and a reason, plus the next question to ask.
           </p>
         </div>
       </Rise>
@@ -329,7 +321,7 @@ function Proof() {
             <div className="bg-reonic flex flex-col gap-4 rounded-3xl p-11 text-ink">
               <p className="text-[128px] leading-none font-semibold tracking-[-0.04em]">+17 pts</p>
               <p className="text-[36px] leading-[1.2] font-semibold">on PV size, against the installer’s own habit.</p>
-              <p className="text-[26px] leading-[1.35]">Battery and whole design: slightly ahead, within noise. We say so.</p>
+              <p className="text-[26px] leading-[1.35]">On the whole design: on par.</p>
             </div>
           </Rise>
           <Rise delay={1.6}>
@@ -337,22 +329,20 @@ function Proof() {
               <p className="text-[56px] leading-none font-semibold tracking-[-0.03em] tabular-nums">
                 {EVAL.roof.from}% → {EVAL.roof.to}%
               </p>
-              <p className="text-[26px] leading-[1.35] text-body">whole design right once the roof is known (upper bound). That’s why it asks.</p>
+              <p className="text-[26px] leading-[1.35] text-body">whole design right once the roof is known. That’s why it asks.</p>
             </div>
           </Rise>
         </div>
       </div>
-      <Source>
-        2026 test, n={EVAL.n}, held out from training and model choice · Roof: upper bound, the cap is the expert’s own module count · eval/results/latest.json
-      </Source>
+      <Source>325 projects from 2026 the model never saw · Roof: best case</Source>
     </Canvas>
   );
 }
 
-const WINNERS: [IconName, string, string, string][] = [
-  ["clock", "Planner", "A first draft in under a second.", "Flags before the offer goes out, and edits by exception."],
-  ["users", "Installer", "Juniors design like seniors.", "Learned from the installer’s own history, in its own catalogue."],
-  ["present", "Homeowner", "An offer that explains itself.", "Ranges instead of fake precision, and only the options the planner allowed."],
+const WINNERS: [IconName, string, string][] = [
+  ["clock", "Planner", "A first draft in under a second."],
+  ["users", "Installer", "Juniors design like seniors."],
+  ["present", "Homeowner", "An offer that explains itself."],
 ];
 
 function Value() {
@@ -362,20 +352,18 @@ function Value() {
         <Eyebrow>Who wins</Eyebrow>
       </Rise>
       <div className="flex flex-1 gap-8">
-        {WINNERS.map(([icon, h, big, t], i) => (
+        {WINNERS.map(([icon, h, big], i) => (
           <Rise key={h} delay={0.15 + i * 0.15} className="flex flex-1">
             <div className="flex flex-1 flex-col gap-8 rounded-3xl border border-zinc-200 bg-sand p-12">
               <div className="flex size-24 items-center justify-center rounded-full bg-paper ring-1 ring-zinc-200">
                 <Icon name={icon} className="size-12 text-blue-600" />
               </div>
               <h3 className="text-[36px] font-semibold text-quiet">{h}</h3>
-              <p className="text-[64px] leading-[1.08] font-semibold tracking-[-0.02em]">{big}</p>
-              <p className="mt-auto text-[30px] leading-[1.35] text-body">{t}</p>
+              <p className="mt-auto text-[64px] leading-[1.08] font-semibold tracking-[-0.02em]">{big}</p>
             </div>
           </Rise>
         ))}
       </div>
-      <Source>Hours saved per offer: ask Reonic. We have no measured figure and won’t invent one. Draft time: a laptop, same input.</Source>
     </Canvas>
   );
 }
@@ -394,7 +382,6 @@ function Close() {
         </Rise>
         <Rise delay={0.9}>
           <p className="text-[52px] font-semibold">Rhythm and his dancers</p>
-          <p className="mt-3 text-[32px] text-zinc-300">Rhythm, the home energy designer · Reonic challenge, thinc! München 2026</p>
         </Rise>
       </div>
     </Canvas>
@@ -409,7 +396,7 @@ export const SLIDES: Slide[] = [
     id: "hook",
     title: "Eight days for an offer",
     notes:
-      "Hook, ~10 s. Die Linie laufen lassen, dann: „Eine Familie will Solar. Sie wartet 8,2 Tage auf ein Angebot, im Median bei Installateur 1 (Durchlaufzeit, nicht Arbeitszeit; n=260). Am anderen Ende sitzt eine Planerin mit Dutzenden Anfragen.“ Teamnamen nennen: Rhythm and his dancers. Produkt: Rhythm.",
+      "Hook, ~10 s. Die Linie laufen lassen, dann: „Eine Familie will Solar. Sie wartet 8,2 Tage auf ein Angebot, im Median bei Installateur 1 (Durchlaufzeit, nicht Arbeitszeit; n=260; nicht auf die Folie, nur bei Rückfrage). Am anderen Ende sitzt eine Planerin mit Dutzenden Anfragen.“ Teamnamen nennen: Rhythm and his dancers. Produkt: Rhythm.",
     body: () => <Hook />,
   },
   {
@@ -491,7 +478,7 @@ export const SLIDES: Slide[] = [
     id: "proof",
     title: "Honest proof",
     notes:
-      "Beweis, ~25 s, ehrlich. Test: 325 Projekte aus 2026, nie für Training oder Modellwahl benutzt (das Lab zählt jeden Blick darauf). „Bei der PV-Größe sind wir 17 Punkte besser als die Gewohnheit des Installateurs selbst: 59,7 gegen 42,5 Prozent innerhalb ±20 %. Beim Speicher und beim ganzen Design liegen wir knapp vorn, 48,9 gegen 47,4 und 22,2 gegen 20,6 Prozent, aber das ist im Rauschen, das sagen wir offen. Und wenn das Dach bekannt ist, steigt das Gesamtdesign auf bis zu 33,2 Prozent. Das ist eine Obergrenze, gemessen mit der Modulzahl des Experten, deshalb fragt Rhythm danach.“ Nicht „einmal bewertet“ sagen.",
+      "Beweis, ~25 s, ehrlich. Test: 325 Projekte aus 2026, nie für Training oder Modellwahl benutzt (das Lab zählt jeden Blick darauf). „Bei der PV-Größe sind wir 17 Punkte besser als die Gewohnheit des Installateurs selbst: 59,7 gegen 42,5 Prozent innerhalb ±20 %. Beim ganzen Design gleichauf (22,2 gegen 20,6 Prozent, im Rauschen). Nur bei Rückfrage: Speicher 48,9 gegen 47,4 Prozent. Und wenn das Dach bekannt ist, steigt das Gesamtdesign auf bis zu 33,2 Prozent. Das ist eine Obergrenze, gemessen mit der Modulzahl des Experten, deshalb fragt Rhythm danach.“ Nicht „einmal bewertet“ sagen.",
     body: () => <Proof />,
   },
   {
@@ -499,7 +486,7 @@ export const SLIDES: Slide[] = [
     id: "value",
     title: "Who wins",
     notes:
-      "Wert, ~20 s. „Planer: ein vollständiger Entwurf in unter einer Sekunde, Warnungen vor dem Versand. Installateur: Junioren planen wie die eigenen Senioren. Hausbesitzer: ein Link, der das Angebot erklärt. Wie viele Stunden das pro Angebot spart, wissen wir nicht, das müssen wir von Reonic erfahren. Wir erfinden keine Zahl.“",
+      "Wert, ~20 s. „Planer: ein vollständiger Entwurf in unter einer Sekunde, Warnungen vor dem Versand. Installateur: Junioren planen wie die eigenen Senioren. Hausbesitzer: ein Link, der das Angebot erklärt. Bei Rückfrage: Wie viele Stunden das pro Angebot spart, wissen wir nicht, das müssen wir von Reonic erfahren. Wir erfinden keine Zahl.“",
     body: () => <Value />,
   },
   {

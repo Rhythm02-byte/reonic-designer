@@ -1,4 +1,4 @@
-# Codex: night shift as an independent teammate (2 workstreams)
+# Codex: night shift as an independent teammate (3 workstreams)
 
 Paste everything below the line into a **new** Codex session opened on `C:\Users\karim\Documents\Coding\thinc` (branch `next`). Start with `/plan`. Claude (the engine/eval lead's agent) reviews your work in the morning, re-runs your commands and checks your sources. You are trusted to choose methods. The goals, hard rules and deliverables are fixed.
 
@@ -54,8 +54,15 @@ Use methods that are known to make LLMs less generic:
 - **Questions** the jury will likely ask, and our best honest answers.
 - **Appendix:** raw idea pool with lens, probability and Elo, so we can audit the process.
 
+## Workstream C: "why does everyone tie?" (literature + ceiling check, 1 agent, ~1 h)
+Rumour: other teams report whole-design scores at least as high as ours (~21% on the 2026 test, tied with copying the installer's usual design). Find out whether a known method or paper beats that, or whether it's a data ceiling.
+- **Search (verified sources only, link every claim):** papers or industry write-ups on predicting PV / battery / heat-pump sizes from installer or CRM data; recommending configurations from past bundles (configurator recommenders, "next basket" methods); learning with label noise / ambiguous labels when key features (roof, budget) are missing; tabular foundation models (TabPFN v2) on small data; anything Reonic or competitors published about auto-design.
+- **Ceiling check on our repo (aggregates only, `pnpm eval`-style splits, never tune on 2026):** how well can *any* function of our inputs do? E.g. near-duplicate homes (same inputs) with different expert designs give an upper bound; report it.
+- **Scoring sanity:** our metrics are self-defined (`eval/metrics.py`). Check whether other plausible definitions (any-option match, ±1 module tolerance) would change the ranking vs the baseline, and say which is fairest to report.
+- **Deliverable:** a section in `research/creative/blindspots.md`: "Ceiling and literature" with the 3 most promising methods, each with source, expected gain, and how we'd test it under `research/experiments.md`.
+
 ## How to work and communicate
-- **Order:** start A's downloads → do B while they run → finish A. B's first full draft by **05:00**, A by **08:00**.
+- **Order:** start A's downloads → do B and C while they run (C first: it's short) → finish A. C by **04:30**, B's first full draft by **05:30**, A by **08:00**.
 - **Progress:** append timestamped lines to `docs/tasks/CODEX-STATUS.md` (what's done, what's next, blockers).
-- **Slack:** if `SLACK_BOT_TOKEN` is set, also post milestones to `#board` with `python tools/slack.py post board "[Codex] <what> · <need>"`, and read `#board` (`python tools/slack.py read board --since 2h`) at each milestone, because Claude may leave you instructions there.
+- **Slack (token is in `.env`):** run `python tools/slack.py start` first and at every milestone (Claude may leave you instructions; act on mentions of Codex). Post only milestones and blockers, 1–2 lines: `SLACK_AGENT=Codex python tools/slack.py post board "<what> · <need> @owner" --kind done|blocked|ask`. When a deliverable lands: `SLACK_AGENT=Codex python tools/slack.py done "<area>: <change>"`. Claim a folder before multi-file edits (`claim data/external/`, `release` after). Aggregates only, never rows or secrets.
 - **Final report (≤300 words, in CODEX-STATUS.md):** the top 5 from B; A's key numbers; what you could not verify; requests for other owners.

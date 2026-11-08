@@ -37,7 +37,7 @@ function askNext(i: HomeInputs): AskNext[] {
     out.push({
       field: "demandKwh",
       question: "What does the home really use per year?",
-      why: "4,500 kWh is the usual placeholder. Real use nearly doubled whole-design agreement on 2026 projects (11% to 21%).",
+      why: "4,500 kWh is the usual placeholder. Real use nearly doubled whole-design agreement on 2026 projects (11% to 22%).",
       impact: { components: ["pvKwp", "batteryKwh"], priceSwingEur: priceSwing({ ...i, demandKwh: 3500 }, { ...i, demandKwh: 6500 }) },
       answers: [
         { label: "3,500 kWh", value: 3500 },
@@ -51,7 +51,7 @@ function askNext(i: HomeInputs): AskNext[] {
 
 /**
  * Evaluation scores for ?demo=1: the REAL aggregates of the frozen 2026 test (eval/results/latest.json, generated
- * 2026-11-07 21:17 UTC, temporal split, n=325, scored once). Only the example projects stay made up.
+ * 2026-11-08 06:35 UTC, temporal split, n=325). Only the example projects stay made up.
  */
 export const PITCH_EVAL: EvalSummary = {
   split: "time",
@@ -64,7 +64,7 @@ export const PITCH_EVAL: EvalSummary = {
   },
   selection: "Chosen per component on the Q4 2025 validation window.",
   tolerances: { pv: 0.2, battery: 0.25, heatPump: 0.25 },
-  generatedAt: "2026-11-07T21:17:25+00:00",
+  generatedAt: "2026-11-08T06:35:05+00:00",
 };
 
 /** The demo designer behind ?demo=1: the toy proposal, capped to the roof, with "ask next". */

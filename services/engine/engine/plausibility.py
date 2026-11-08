@@ -17,6 +17,16 @@ EXISTING_STORAGE_HIGH_KWH = 100.0
 MAX_KWP_PER_ROOF_MODULE = 0.5  # 500 Wp, above any module in the catalogue
 
 
+def default_demand_flag(i: HomeInputs) -> Flag | None:
+    """4,500 kWh that the planner did not enter. The learned policy has a feature for "demand left at the default", so
+    exactly 4,500 can get a different proposal (even no PV) than 4,499 or 4,501. Warn loudly; the numbers stay as they are."""
+    if abs(i.demand_kwh - 4500.0) < 1e-6 and "demandKwh" not in i.provenance:  # an entered 4,500 is real
+        return Flag(severity="warn", code="DEMAND_DEFAULT_LIKE", message=(
+            "Consumption is still the 4,500 kWh default. The model treats exactly 4,500 as 'not entered', so this proposal "
+            "(PV in particular) can differ from the one for 4,499 or 4,501 kWh. Enter the real figure from the electricity bill."))
+    return None
+
+
 def input_flags(i: HomeInputs) -> list[Flag]:
     out: list[Flag] = []
     if 0 < i.demand_kwh < DEMAND_LOW_KWH:

@@ -64,3 +64,12 @@ def test_design_endpoint_returns_the_warning_and_the_numbers_are_unchanged(clien
     assert client.post("/design", json={"inputs": {"installerId": "synthB", "demandKwh": 60}}).json()["flags"] is not None
     low = client.post("/design", json={"inputs": {"installerId": "synthB", "demandKwh": 60}}).json()
     assert "INPUT_DEMAND_LOW" in {f["code"] for f in low["flags"]}
+
+
+def test_default_demand_is_a_warning_not_a_note():
+    from engine.plausibility import default_demand_flag
+    f = default_demand_flag(HomeInputs.model_validate({"installerId": "x"}))  # demand left at the 4,500 default
+    assert f is not None and f.code == "DEMAND_DEFAULT_LIKE" and f.severity == "warn"
+    assert default_demand_flag(HomeInputs.model_validate({"installerId": "x", "demandKwh": 4501})) is None
+    entered = HomeInputs.model_validate({"installerId": "x", "demandKwh": 4500, "provenance": {"demandKwh": {"source": "entered"}}})
+    assert default_demand_flag(entered) is None  # a bill that really says 4,500 is not a default

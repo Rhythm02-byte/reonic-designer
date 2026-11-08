@@ -20,7 +20,7 @@ from engine.models.schemas import (
     ValidateResponse, WallboxDesign,
 )
 from engine.ask_next import ask_next
-from engine.plausibility import input_flags
+from engine.plausibility import default_demand_flag, input_flags
 from engine.etl.normalize import DEFAULT_DEMAND_KWH
 from engine.policy import rules
 from engine.policy.designer import hit_to_flag
@@ -131,10 +131,17 @@ def _bom(cat: dict | None, d: SystemDesign) -> list[BomLine]:
         prods = [p for p in prods if p.get("size")]
         return min(prods, key=lambda p: (abs(p["size"] - size), -p["count"])) if prods else None
 
+    bat = nearest(cat.get("batteries") or [], d.battery.kwh) if d.battery is not None else None
     if d.pv is not None and d.pv.modules:
         out.append(BomLine(technology="pv", component_type="Module", component_name=f"PV module {d.pv.module_wp:g} Wp",
                            quantity=d.pv.modules, quantity_units="pcs"))
-        inv = nearest(cat.get("inverters") or [], d.pv.kwp)  # inverter AC size ~ array kWp: the installer's closest model
+        invs = cat.get("inverters") or []
+        inv = nearest(invs, d.pv.kwp)  # inverter AC size ~ array kWp: the installer's closest model
+        # A battery and an inverter from different makers do not work together (jury review bug 1): when the installer
+        # sells an inverter of the battery's brand within 25% of the closest one's size error, use that one.
+        same = nearest([x for x in invs if bat and x.get("brand") == bat["brand"]], d.pv.kwp)
+        if inv and same and abs(same["size"] - d.pv.kwp) <= abs(inv["size"] - d.pv.kwp) + 0.25 * d.pv.kwp:
+            inv = same
         if inv:
             out.append(BomLine(technology="pv", component_type="Inverter", component_name=inv["name"], component_brand=inv["brand"]))
     for key, comp, tech, ctype in (("battery", d.battery, "ses", "BatteryStorage"),
@@ -280,7 +287,7 @@ def attach_metrics(response: DesignResponse, home: HomeInputs, battery_sizes=Non
     max-independence variant, the 'why this size' curve and the metrics of every battery variant; one PV sweep gives
     the kWp curve. With `replace_alternatives` the alternatives become: without battery, economic battery, max
     independence (battery variants are skipped when the battery is locked). Amber flag R06 when the proposed battery is
-    >= 2 sizes above the economic optimum. Results are cached by input hash; a simulator failure never breaks /design."""
+    >= 2 sizes above the economic optimum and its 20-year NPV is lower. Results are cached by input hash; a simulator failure never breaks /design."""
     try:
         _attach_metrics(response, home, battery_sizes, locks, replace_alternatives)
     except Exception:  # noqa: BLE001 - physics is an add-on to the policy
@@ -328,16 +335,28 @@ def _attach_metrics(response, home, battery_sizes, locks, replace_alternatives) 
                     pv_yield_kwh=r["pvYieldKwh"]) for r in pv_rows])
     response.physics = Physics(economic_kwh=eco, max_autarky_kwh=mx, night_load_kwh=night)
 
+    flag = _r06(pb, eco, steps, by_kwh)
+    if flag is not None:
+        response.flags.append(flag)
+
+
+def _r06(pb: float, eco: float, steps, by_kwh: dict) -> Flag | None:
+    """R06: the proposed battery is >= 2 sizes above the economic one AND earns less 20-year NPV. The "economic" size is
+    limited by night load, 1.5 x kWp and the cycle band, so a larger battery can still win on NPV; that is not a caution
+    (jury review bug 2)."""
     ladder = sorted({*steps, eco, pb})
     n_above = ladder.index(pb) - ladder.index(eco)
-    if pb > 0 and n_above >= 2 and round(pb, 3) in by_kwh:
-        a, e = by_kwh[round(pb, 3)], by_kwh[round(eco, 3)]
-        d_aut, d_sav, d_npv = (a["autarky"] - e["autarky"]) * 100, a["savingsEurYear"] - e["savingsEurYear"], a["npv20"] - e["npv20"]
-        what = f"the economic optimum ({eco:g} kWh)" if eco > 0 else "no battery (no size pays back within the guard rails)"
-        response.flags.append(Flag(
-            severity="warn", code="R06", component="battery",
-            message=(f"R06: the proposed {pb:g} kWh battery is {n_above} sizes above {what}. The extra storage adds "
-                     f"{d_aut:+.1f} pp autarky and {d_sav:+,.0f} EUR/yr savings, but changes the 20-year NPV by {d_npv:+,.0f} EUR.")))
+    if not (pb > 0 and n_above >= 2 and round(pb, 3) in by_kwh):
+        return None
+    a, e = by_kwh[round(pb, 3)], by_kwh[round(eco, 3)]
+    d_aut, d_sav, d_npv = (a["autarky"] - e["autarky"]) * 100, a["savingsEurYear"] - e["savingsEurYear"], a["npv20"] - e["npv20"]
+    if d_npv >= 0:
+        return None
+    what = f"the economic optimum ({eco:g} kWh)" if eco > 0 else "no battery (no size pays back within the guard rails)"
+    return Flag(
+        severity="warn", code="R06", component="battery",
+        message=(f"R06: the proposed {pb:g} kWh battery is {n_above} sizes above {what}. The extra storage adds "
+                 f"{d_aut:+.1f} pp autarky and {d_sav:+,.0f} EUR/yr savings, but changes the 20-year NPV by {d_npv:+,.0f} EUR."))
 
 
 def design(req: DesignRequest, store: Store) -> DesignResponse:
@@ -379,8 +398,8 @@ def design(req: DesignRequest, store: Store) -> DesignResponse:
         reasons.append(ReasonCode(code="HP_HEAT_DEMAND", component="heatPump", value=proposal.heat_pump.kw,
                                   evidence={"heat_demand_kwh": home["heat_demand_kwh"], "full_load_hours": bl.HP_FULL_LOAD_HOURS}))
     flags: list[Flag] = []
-    if abs(i.demand_kwh - 4500) < 1e-6 and "demandKwh" not in i.provenance:
-        flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
+    if (f := default_demand_flag(i)) is not None:
+        flags.append(f)
     if not known:
         flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; using pooled statistics."))
     if i.existing_pv and not i.existing_pv.trusted:
@@ -450,8 +469,8 @@ def design_policy(req: DesignRequest, store: Store) -> DesignResponse:
         bom=_bom(store.catalogs.get(i.installer_id), proposal),
         provenance=input_provenance(i),
         engine_version=POLICY_VERSION, latency_ms=0.0)
-    if abs(i.demand_kwh - DEFAULT_DEMAND_KWH) < 1e-6 and "demandKwh" not in i.provenance:  # an entered 4,500 is real
-        resp.flags.append(Flag(severity="info", code="DEMAND_DEFAULT_LIKE", message="4,500 kWh is a common tool default; confirm the real consumption."))
+    if (f := default_demand_flag(i)) is not None:  # an entered 4,500 is real
+        resp.flags.append(f)
     if i.installer_id not in dz.installers:
         resp.flags.append(Flag(severity="warn", code="INSTALLER_UNKNOWN", message="No history for this installer; the policy falls back to pooled behaviour."))
     if i.existing_pv and not i.existing_pv.trusted:

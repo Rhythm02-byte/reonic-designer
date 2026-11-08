@@ -8,7 +8,7 @@ Follows the four-step demo Reonic describes (brief, p. 7): a home is described, 
 - [ ] `python -m reonic eval` has been run, so the Evaluation tab has numbers.
 - [ ] `streamlit run app.py`, browser at full width, sidebar open.
 - [ ] Have `docs/figures/deviation_chart.png` and `docs/business-case.md` open in other tabs.
-- [ ] If the web frontend has been merged (`web/`), the steps are the same; only the buttons differ.
+- [ ] Using the web planner instead (`docker compose up --build`, then http://localhost:3000; or see `web/README.md`)? The steps are the same; only the buttons differ. Its "Checked against reality" panel is covered at the end of step 4. The saved model makes later starts take a few seconds; the first start takes about 40 seconds, so start it before the demo.
 
 ## The story
 
@@ -27,7 +27,8 @@ Follows the four-step demo Reonic describes (brief, p. 7): a home is described, 
 **2:30 Step 4: check against reality (1 min).**
 - Compare tab, same typical home: expert PV 9.45 vs ours 8.9, battery 10 vs 9, all four components agree.
 - Switch to **Home with an EV and a wallbox**: expert PV 13.5 vs ours 10.8, battery 9 vs 9.6, wallbox 11 vs 11, all agree.
-- Evaluation tab, said plainly: PV size matches the installer for **45.8%** of unseen homes against **36.1%** for a "typical design" that ignores the home, and battery size for **47.3%** against **34.8%**. On the whole design the model (15.4%) is level with the typical design (15.0%) on this one split; across 1,593 projects it is 18.0% vs 16.1%, a gain whose interval touches zero. Our measurable edge is PV and battery size. Do not quote the 3.8% rule-of-thumb figure on its own: it is an easy reference.
+- Evaluation tab, said plainly: PV size matches the installer for **45.8%** of unseen homes against **36.1%** for a "typical design" that ignores the home, and battery size for **47.3%** against **34.8%**. On the whole design the model (15.4%) is level with the typical design (15.0%) on this one split; across 1,593 projects it is 18.0% vs 16.1%, a gain whose interval touches zero. Our measurable edge is PV and battery size.
+- If you are in the web planner, the "Checked against reality" panel says the same thing: on the 319 held-out projects the model reproduces the installer's whole design for about 15%, a typical design that ignores the home for about 15%, and a rule of thumb for about 4%. The bars underneath show solar 46% vs 36% typical and battery 47% vs 35% typical. Read it as: equal on the whole design, ahead on solar and battery. "Try a real project" loads a held-out home next to the expert's design. Do not quote the 3.8% rule-of-thumb figure on its own: it is an easy reference.
 
 **3:30 Where we are wrong, and why (1 min).** Honest part, do not skip.
 - Choose **Home that already has PV** (6.7 kWp already): the installer added only a 5 kWh battery; we also propose 9.4 kWp of new PV. Only 18 homes in the data already have PV, too few to learn from.

@@ -26,14 +26,17 @@ From a few facts about a home, it proposes PV, battery, heat pump and wallbox th
 ## 5. Proof (fill from `eval/results/latest.json`; selection on validation, test scored once)
 **Protocol:** train offers ≤ 2025-09-30, choose on validation (Q4 2025, n=232), refit ≤ 2025-12-31, score 2026 test **once**.
 
-| Test 2026 (n=325, scored once) | EMS | Whole design | PV ±20% | Battery ±25% |
+| Test 2026 (n=325) | EMS | Whole design | PV ±20% | Battery ±25% |
 |---|---|---|---|---|
 | Rule of thumb (B1) | 55.0 | 14.8% | 32.9% | 40.0% |
 | Installer median (B0) | 61.1 | 20.6% | 42.5% | 47.4% |
-| **Ours (composite, chosen per component on validation)** | 60.4 | **20.9%** | **59.7%** | **49.2%** |
+| **Ours (composite + battery coverage sizing, chosen on validation)** | 61.0 | **20.9%** | **59.7%** | 47.4% |
+
+Source: `pnpm eval` run of 2026-11-08 (eval/history, kind "all"). Previous config (before battery coverage sizing): 60.4 / 20.9% / 59.7% / 49.2%; the swap was chosen on validation (+0.4 pt, noise-level) and is reported as such.
+Honesty (same run): shuffled labels 21.7% vs real 24.1% whole design (validation); 20 random splits ours − B0 = +0.6 ± 2.0 pts (not distinguishable from zero); fuzz 0 / 2,000 broken.
 
 - Validation (n=232) chose: learned PV, battery and heat pump; installer-conditioned wallbox. Physics features and installer PV prior help, and shallow trees (depth 3, leaf ≥40) win, so the data is small and noisy.
-- **Claim we can defend:** +17 pts PV within tolerance vs the installer's own median, equal on whole design. Not better on EMS (60.4 vs 61.1): the median gets battery/wallbox habits right by construction. 1–2 pt differences are noise at this n.
+- **Claim we can defend:** +17 pts PV within tolerance vs the installer's own median, equal on whole design. Equal on EMS (61.0 vs 61.1): the median gets battery/wallbox habits right by construction. 1–2 pt differences are noise at this n.
 - The simulator's economic battery matches experts worst (23% on validation). So it is an *explanation and second opinion*, not the sizing source. That is evidence that experts size batteries by habit, not economics.
 - Size ranges after conformal calibration: PV 10–90% range covers 85.5% of 2026 experts (target 80%), battery 83.6%.
 - /design latency: p50 92 ms / p95 133 ms (cached simulator), p95 345 ms uncached.
@@ -46,7 +49,7 @@ Three faces of one idea, all from the same engine (no extra features):
 
 | Question answered | Whole design: unknown → answered | PV ±20% |
 |---|---|---|
-| Real annual kWh (instead of the 4,500 placeholder) | 12.3% → **20.9%** | 46.5% → 59.7% |
+| Real annual kWh (instead of the 4,500 placeholder) | **+9.8 pts** (current config; was 12.3% → 20.9% with the previous one) | 46.5% → 59.7% (previous config) |
 | Roof capacity in modules (**upper bound**: cap = expert's module count) | 20.9% → **32.9%** | 59.7% → **82.5%** |
 | EV yes/no | 20.3% → 20.9% | ~equal |
 

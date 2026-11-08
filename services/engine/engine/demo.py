@@ -86,6 +86,13 @@ def eval_summary(path: Path | None = None) -> EvalSummary | None:
         return None
     sel = r.get("selection")
     chosen = (sel or {}).get("chosen", {}).get("model")
+    served = (r.get("served") or {}).get("test")  # `pnpm eval`: baselines + the SERVED config on the 2026 test (the pitch numbers)
+    if served:
+        models = {("ours" if m == "ours" else m): EvalModelScores(
+            ems=s.get("ems"), whole_design=s.get("wholeDesign"), pv=s.get("pv"), battery=s.get("battery"),
+            heat_pump=s.get("heatPump"), wallbox=s.get("wallbox")) for m, s in served["models"].items()}
+        return EvalSummary(split="temporal", n_test=int(served["n"]), chosen="ours", models=models, selection=sel,
+                           generated_at=r.get("generatedAt"), tolerances=TOLERANCES)
     if chosen is None:
         learned = {m: s.ems or 0 for m, s in models.items() if m in ("M1", "H1")}
         chosen = max(learned, key=learned.get) if learned else next(iter(models), "")

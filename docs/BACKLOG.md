@@ -1,81 +1,71 @@
 # Backlog (everything asked for, with status)
 
-Status: ✅ done · 🟡 in progress · ⬜ open · ✂️ cut (with reason). Owners per AGENTS.md. Update when you finish something.
+Status: ✅ done · 🟡 in progress · ⬜ open · ✂️ cut (reason). Owner in brackets. Freeze **Sun 11:00**, submission **15:00**. Update when you finish something.
 
-## Research & understanding
-| Item | Status | Where |
-|---|---|---|
-| Read the challenge, roadmap | ✅ | PLAN.md |
-| Dataset structure, traps, hidden signals, correlations | ✅ | PLAN §2, research/data-correlations.md |
-| Reonic product + docs analysis (no public code found) | ✅ | PLAN §5.1 |
-| Competitors (Aurora, OpenSolar, autarc, Zolar, Otovo…) | ✅ (deeper UX teardown = external R1) | PLAN §5.2, research/external |
-| Installer daily workflow, pains | ✅ | research/installer-workflow.md |
-| Battery sizing state of the art, EV, tariffs, aging | ✅ | research/battery-and-simulations.md |
-| Stakeholder wants/needs/fears | ✅ | PLAN §4 |
-| Source fact-check (no hallucinated studies) | ✅ | research/source-check.md |
-| External model tasks R1–R9 + orchestrator prompt | ✅ prompts, R1–R6 results in / ⬜ reconcile into PLAN/PITCH | research/external/PROMPTS.md |
-| Teammate findings preserved | ✅ | research/rhythm-findings.md |
-
-## Engine
+## A. Before freeze: demo-critical (in this order)
 | Item | Status |
 |---|---|
-| ETL with unit fixes, column swap, roof type, trusted existing PV/storage | ✅ |
-| Baselines B0/B0c/B1 | ✅ |
-| Learned chain M1 (ported from Rhythm) + kNN + rules R01–R05 | ✅ |
-| Engine default = validation-selected composite model | ✅ |
-| Validation-based model selection (no test peeking) | ✅ research/model-selection.md |
-| Hourly simulator S1–S5 (PV, load, battery, EV, HP, 20y €) | ✅ |
-| Simulator metrics + "why this size" curves + R06 physics flag in /design | ✅ |
-| /meta, /simulate, /validate, /eval/summary, /holdout | ✅ |
-| **Ask-next (value of information)** + oracle experiment in eval | ✅ (EV planned-year question open) |
-| BOM generator (installer line-item templates, Reonic CSV export) | ⬜ |
-| Simulator upgrades U1 load variety, U2 forecast dispatch / negative prices | ⬜ |
-| Conformal calibration of size ranges | ✅ |
-| Simulator features inside M1 | ✅ |
-| Claude Haiku: explanation phrasing + ⌘K intent → JSON patch (grounded, fallback) | ⬜ |
-| Homeowner Q&A assistant with tools (stretch) | ⬜ |
-| Product library with market price ranges (seeded from history + config/market.json) | ⬜ (data in config, UI open) |
+| Faris's frontend = source of truth in `apps/web` (sidebar, drafts, grouped inputs, system cards, whole-option offers) wired to our engine via an adapter `lib/api.ts`; our extras mounted with `// ours:` lines [Claude session] | 🟡 |
+| Faris pushes his unpushed work → re-copy his files (his components stay verbatim, so this takes minutes) [Faris] | ⬜ |
+| iemko pushes the pitch mode as route `/pitch` → it appears in the presenter menu (tap logo 3×) [iemko] | ⬜ |
+| Parts list visible in planner (+ offer): engine `bom` now has modules ×N, inverter, battery, wallbox, heat pump, service lines [engine ✅, web 🟡] | 🟡 |
+| QR code for the homeowner link (Faris's package dropped `qrcode`) [web] | 🟡 |
+| Make `next` the team's main: Faris + iemko pushed, team agrees, rename on GitHub (needs repo admin: Rhythm) [Kian] | ⬜ |
+| Deploy: Cloudflare quick tunnel to `pnpm dev` (one URL, no account) **or** Vercel + hosted engine; decide by 09:00 [Kian] | ⬜ |
+| Deck: Rhythm's 7-slide draft (`docs/pitch/`) with numbers from `docs/PITCH.md` (his use his older engine) [Kian/Rhythm] | ⬜ |
+| Fallback screen recording of the demo [iemko] | ⬜ |
 
-## Frontend (Next.js, Faris's base, Reonic-style DESIGN.md)
+## B. Before freeze: if time (each needs a demo reason)
 | Item | Status |
 |---|---|
-| Port planner + offer + 3D house onto our engine | ✅ live end-to-end |
-| Lock pins, diff bar + undo, range hints, provenance hints, flags | ✅ |
-| Offer page: variants within planner limits, battery curve, QR share | ✅ (verify 'Your choice' card updates) |
-| Reality check card (expert vs ours, held-out) | ✅ |
-| `/eval` page | ✂️ replaced by hidden `/lab` (docs/tasks/GPT-TESTLAB.md, Codex); delete `/eval` + EvalReport once `/lab` lands |
-| Mobile layout, ≥44 px targets, haptics (web-haptics) | 🟡 / ⬜ |
-| House types (gable/hip/flat/shed) | ✂️ for now: one Blender house; roof type shown in text. Revisit if time |
-| Product library UI | ⬜ |
+| Haiku: bill photo → annual kWh (strict JSON); the measured +9.8 pts lever. Separate `/plan` [Claude] | ⬜ |
+| Haiku: grounded co-pilot (intent "EV next year" → input patch; homeowner Q&A with tool calls to our endpoints), template fallback without key [Claude] | ⬜ |
+| Metric research phase under `research/experiments.md` protocol (bundle classification, catalogue-as-classes, TabPFN, recency, …) [Claude agents] | ⬜ |
+| Codex night shift: external data pack + blind-spot sweep (`docs/tasks/CODEX-ORCHESTRATOR.md`) [Codex] | ⬜ hand to Codex |
+| Slack board live: paste the `thinc-board` bot token into `.env` [Kian] | 🟡 |
+| Reconcile ChatGPT research R1–R6 + `COMPATIBILITY.md` (verified pairings vs implemented, keep UNVERIFIED) into PLAN/PITCH [Kian] | ⬜ |
+| Mobile haptics (web-haptics; Faris's UI dropped it) [web] | ⬜ |
+| Ask Reonic mentors on site: signed option, build-year meaning, hours per design (PLAN §17) [Kian] | ⬜ |
+| E2E smoke (Playwright: intake → design → set size → share → offer on mobile) [iemko] | ⬜ |
 
-## Testing & quality
+## C. Known bugs / polish (re-check after the Faris integration)
 | Item | Status |
 |---|---|
-| Unit tests (ETL, rules, policy, simulator) | ✅ 103 passing (port agent adding more) |
-| Eval harness: temporal, random, leave-one-installer-out, sensitivity, robustness | ✅ |
-| Validation split for selection | ✅ |
-| API smoke + latency tests | 🟡 |
-| E2E (Playwright: intake → design → change → share link on mobile) | ⬜ (iemko) |
-| External UX review / bug hunt / chat red-team (R7–R9) | ⬜ after app runs |
+| Reason text rounding (16.5 vs 16.7 kWp) | ⬜ recheck |
+| Duplicate Share button on mobile | ⬜ recheck (may be gone with Faris's UI) |
+| Offer "Your choice" card updates when the homeowner changes an option | ⬜ recheck |
+| Typical-day chart + alternatives (engine returns them; no UI in Faris's design yet) | ⬜ |
+| Engine `/design` p50 ~0.35–0.5 s under load (was 92 ms before battery coverage sizing; per-row pandas features ~60 ms) | ⬜ optimise if time |
 
-## Delivery
-| Item | Status |
-|---|---|
-| Pitch notes | 🟡 docs/PITCH.md |
-| Deck | ⬜ |
-| README (setup, approach, limitations) | 🟡 |
-| Deployment for QR demo (Vercel + engine host or tunnel) | ⬜ |
-| Fallback demo recording | ⬜ |
-| Ask Reonic the §17 questions (signed option, build-year meaning, hours per design) | ⬜ |
-| Agent board (pinned issue + tools/board) | ⬜ |
-| Delete `_incoming/` after port is verified | ⬜ |
-| Polish: reason text rounding (16.5 vs 16.7 kWp), duplicate Share button on mobile, UI for alternatives + typical day | ⬜ |
+## D. Done (highlights)
+- **Research:** data structure, unit traps, correlations, installer workflow, battery and simulation state of the art, competitors, source fact-check, ChatGPT R1–R6 reports in `research/external/`.
+- **Engine:**
+  - ETL with unit fixes
+  - baselines
+  - learned chain + kNN + rules R01–R07
+  - validation-selected composite (+ battery coverage sizing)
+  - conformal ranges
+  - hourly simulator
+  - Ask next
+  - API
+  - parts list (modules, inverter, storage, wallbox, heat pump, services)
+- **Quality:**
+  - 111 engine tests
+  - honesty checks (shuffled labels, 20 splits, 2,000-home fuzz, which fixed 194 rule bugs)
+  - `pnpm eval` = all checks, recorded per branch
+  - `/lab` with one button and a presenter menu
+- **Repo:**
+  - `next` pushed
+  - pnpm, with four commands (`bootstrap`, `dev`, `test`, `eval`)
+  - cross-platform scripts
+  - README for evaluators
+  - CLAUDE.md → AGENTS.md
+  - Slack script
+  - Rhythm's deck, demo script, business case, work log and specs in `docs/`
+  - unused `lightgbm` dropped
 
-## Cleanup (after the port agent finishes; nobody edits designer.py meanwhile)
-| Item | Status |
-|---|---|
-| Port Rhythm's coverage sizing + full battery catalogue + honesty checks behind the validation gate | 🟡 agent running |
-| Collapse policy modes: keep `composite` as the only served mode; `learned`/`hybrid`/H1 stay only as eval candidates | ⬜ |
-| Delete stale `docs/HANDOFF-CODEX.md`, `_incoming/`, `/eval` (after `/lab`) | ⬜ |
-| Check unused schemas (`SharePolicy`, `BomLine` until BOM exists) | ⬜ |
-| Make thinc a git repo → push as branch `next` to the team repo → rename to `main` once the team agrees | ⬜ your OK |
+## E. Cut (and why)
+- House types gable/hip/flat/shed: one Blender house; roof type shown in text.
+- Simulator upgrades U1 (load variety), U2 (forecast dispatch / negative prices): no demo impact before freeze.
+- Product library UI: price data stays in `services/engine/config/market.json`.
+- Haiku choosing sizes / scoring Haiku on the private dataset: breaks hard rule 3 (LLM never sizes), and would send project data to a third-party API.

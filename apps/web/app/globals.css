@@ -16,14 +16,14 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Ink text only on this: white fails AA on the orange end. */
+/* Calm sage to mint; ink text only (white fails AA on light greens). */
 @utility bg-reonic {
-  background-image: linear-gradient(120deg, #f59a0f 0%, #f2784a 55%, #ef6aa8 100%);
+  background-image: linear-gradient(120deg, #d3e6c4 0%, #a9dcc0 55%, #8fd2c8 100%);
 }
 
 /* Darker stops than bg-reonic so it reaches 3:1 on paper; large text (24px+) only. */
 @utility text-reonic {
-  background-image: linear-gradient(90deg, #e06d00, #e0458a);
+  background-image: linear-gradient(90deg, #2e7d4f, #17766f);
   background-clip: text;
   color: transparent;
   @media (forced-colors: active) {

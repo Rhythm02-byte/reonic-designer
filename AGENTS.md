@@ -21,7 +21,7 @@ Shared read-only: `research/`. Nobody edits another owner's folder. To get a cha
 4. **Eval is offline and deterministic.** `OFFLINE=1` disables live PVGIS/LLM calls. Never tune on the test split.
 5. **Units:** the CSV labels lie (`*_kwh` columns hold Wh, `*_kw` hold W; battery and inverter columns are swapped in parts). Only `services/engine/etl` reads raw CSVs. Everything downstream uses kWh, kW, kWp and €/kWh.
 6. **Anti-clutter:** a new UI control needs a demo-story reason or goes behind "More". See PLAN §9.1 kill list.
-7. Small PRs, run `make test` (and `make eval` if you touched the engine) before pushing.
+7. Small PRs. Run `pnpm test` (and `pnpm eval` if you touched the engine or eval) before pushing. Use pnpm, never npm.
 
 ## Docs lookup (no hallucinated APIs)
 
@@ -30,9 +30,14 @@ Before using a library API you are not sure about, fetch current docs from Conte
 - docs: `https://context7.com/api/v1/<id>?type=txt&topic=<topic>&tokens=5000`
 UI work follows [docs/DESIGN.md](docs/DESIGN.md) strictly.
 
-## Board protocol (from the hackathon-agent-board template)
+## Code search (CodeGraph)
 
-- One pinned GitHub issue is the board. Post format: `[Name's Claude] <what changed> · <what I need> @owner`.
-- Keep `tools/board wait` running. Act on posts that tag you or touch your folders. Otherwise read and continue.
-- Post when you finish something another owner depends on, when you are blocked, or when you change the contract.
-- `@all` only for contract changes, feature freeze, and demo-critical breakage.
+Before Grep/Read, use `codegraph_explore` (projectPath = repo root) or `codegraph explore "<symbols>"`; don't re-read files it showed you.
+
+## Board protocol (Slack, via `tools/slack.py`; setup in [tools/README.md](tools/README.md))
+
+- **Channels:** `#board` (status only), `#engine`, `#web`, `#eval`, `#pitch`, `#runs` (automatic eval results).
+- **Post format:** `[Who's agent] what changed · what I need @owner` — `python tools/slack.py post board "<text>"`.
+- **When to post:** when you finish something another owner depends on, when you're blocked, or when the contract changes.
+- **Reading:** read `#board` at the start of a task: `python tools/slack.py read board --since 2h`.
+- `@all` only for contract changes, feature freeze, and demo-critical breakage. Never post secrets or raw data rows.

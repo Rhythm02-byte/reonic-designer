@@ -1,115 +1,113 @@
-"""Append allowlisted, aggregate-only evaluation history. No engine imports."""
-import argparse
-from datetime import datetime, timezone
+"""Run history for the Test Lab: one compact JSON line per eval run in eval/history/runs.jsonl.
+
+Aggregates only (scores, n, git, config); never project ids, inputs or installer ids.
+`append()` is called by eval/run.py at the end of every run. `python eval/record.py` re-records eval/results/latest.json.
+"""
+from __future__ import annotations
+
 import json
 import math
-from pathlib import Path
 import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
-METRICS = ("ems", "wholeDesign", "pv", "battery", "heatPump", "wallbox", "latencyP50ms", "latencyP95ms")
+HISTORY = ROOT / "eval" / "history" / "runs.jsonl"
+CONFIG = ROOT / "services" / "engine" / "config" / "policy.json"
+KEYS = ("ems", "wholeDesign", "pv", "battery", "heatPump", "wallbox", "latencyP50ms")
 
 
-def obj(value):
-    return value if isinstance(value, dict) else {}
+def _num(v):
+    return round(float(v), 4) if isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) else None
 
 
-def number(value):
-    return value if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) else None
+def _clean(scores: dict | None) -> dict:
+    return {k: _num((scores or {}).get(k)) for k in KEYS if _num((scores or {}).get(k)) is not None}
 
 
-def scores(value):
-    value = obj(value)
-    overall = obj(value.get("overall", value))
-    policy = obj(overall.get("policy"))
-    runtime = obj(overall.get("runtimeMs"))
-    out = {key: number(value.get(key)) for key in METRICS}
-    aliases = {"ems": overall.get("expertMatchPrimary"), "wholeDesign": policy.get("wholeDesignWithinTolerance"),
-               "latencyP50ms": runtime.get("p50"), "latencyP95ms": runtime.get("p95")}
-    for key, source in (("pv", "pv_kwp"), ("battery", "battery_kwh"), ("heatPump", "heat_pump_kw"), ("wallbox", "wallbox_kw")):
-        aliases[key] = obj(policy.get(source)).get("withinTolerance")
-    for key, value in aliases.items():
-        if out[key] is None:
-            out[key] = number(value)
-    return out
+def _ms(mean_sd: dict | None) -> dict | None:
+    return {"mean": _num(mean_sd.get("mean")), "sd": _num(mean_sd.get("sd")), "n": mean_sd.get("n")} if mean_sd else None
 
 
-def git_info(root):
+def git_info(root: Path = ROOT) -> dict:
     def git(*args):
         return subprocess.check_output(["git", *args], cwd=root, stderr=subprocess.DEVNULL, text=True).strip()
     try:
-        return {"branch": git("rev-parse", "--abbrev-ref", "HEAD"), "commit": git("rev-parse", "HEAD"),
-                "dirty": bool(git("status", "--porcelain"))}
+        return {"branch": git("rev-parse", "--abbrev-ref", "HEAD"), "commit": git("rev-parse", "--short", "HEAD"),
+                "dirty": bool(git("status", "--porcelain", "--untracked-files=no"))}
     except (OSError, subprocess.CalledProcessError):
         return {"branch": "local", "commit": None, "dirty": False}
 
 
-def build_record(latest, policy_config=None, git=None):
-    """Project only known aggregate fields; never copy report blocks wholesale."""
-    latest = obj(latest)
-    splits = {}
-    for name, raw in obj(latest.get("splits")).items():
-        # LOIO split names in this report contain installer identifiers.
-        safe_name = name if name in ("temporal", "random", "random80_20", "validation") else None
-        if safe_name is None:
-            continue
-        raw = obj(raw)
-        models = {key: scores(value) for key, value in obj(raw.get("models", raw.get("baselines"))).items()
-                  if key in ("B0", "B1", "B0c", "M1", "M1+", "H1", "composite")}
-        splits[safe_name] = {"nTest": number(raw.get("nTest")), "models": models}
-    selection = obj(latest.get("selection"))
-    test = obj(selection.get("test"))
-    if test:
-        temporal = splits.setdefault("temporal", {"nTest": None, "models": {}})
-        temporal["nTest"] = number(selection.get("nTest")) or temporal["nTest"]
-        for model in ("B0", "B1", "M1", "composite"):
-            if model in test:
-                old = temporal["models"].get(model, {})
-                # Do not borrow latency from a different model/configuration.
-                temporal["models"][model] = {**scores(test[model])}
-                if model in ("B0", "B1"):
-                    for key in ("latencyP50ms", "latencyP95ms"):
-                        temporal["models"][model][key] = old.get(key)
-    chosen = obj(selection.get("chosen"))
-    record = {"id": str(uuid4()), "timestamp": latest.get("generatedAt") or datetime.now(timezone.utc).isoformat(),
-              "git": git or {"branch": "local", "commit": None, "dirty": False},
-              "engineVersion": latest.get("engineVersion") if isinstance(latest.get("engineVersion"), str) else None,
-              "policyConfig": policy_config or {}, "durationSec": number(latest.get("durationSec")), "splits": splits}
-    if selection:
-        record["selection"] = {"model": chosen.get("model") if chosen.get("model") in ("composite", "M1", "H1", "B0", "B1") else None,
-                               "nValidation": number(selection.get("nValidation")),
-                               "config": obj(chosen.get("config"))}
-    fields = obj(obj(latest.get("oracle")).get("fields"))
-    if fields:
-        record["oracle"] = {key: {"n": number(obj(value).get("n")), "upperBound": key == "roof",
-                                  **{part: scores(obj(value).get(part)) for part in ("unknown", "answered", "gain")}}
-                            for key, value in fields.items() if key in ("demand", "ev", "evAssumedNo", "heat", "roof")}
-    honesty = obj(latest.get("honesty"))
+def policy_summary() -> dict:
+    try:
+        c = json.loads(CONFIG.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError):
+        return {}
+    return {k: c[k] for k in ("mode", "sources", "sizing", "features", "model") if k in c}
+
+
+def build(kind: str, *, duration_sec: float | None = None, label: str | None = None, validation: dict | None = None,
+          test: dict | None = None, repeated: dict | None = None, honesty: dict | None = None, oracle: dict | None = None,
+          git: dict | None = None, policy: dict | None = None) -> dict:
+    """validation/test: {"n": int, "models": {name: scores}}; repeated: honesty.repeated_splits() output;
+    honesty: the honesty block of latest.json; oracle: the oracle block of latest.json."""
+    rec: dict = {"id": uuid4().hex[:12], "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"), "kind": kind,
+                 "label": label, "git": git or git_info(), "policy": policy if policy is not None else policy_summary(),
+                 "durationSec": _num(duration_sec), "testScored": test is not None}
+    for name, block in (("validation", validation), ("test", test)):
+        if block:
+            rec[name] = {"n": block.get("n"), "models": {m: _clean(s) for m, s in block["models"].items()}}
+    if repeated:
+        rec["repeated"] = {"ours": _ms(repeated["ours"]["whole"]), "b0": _ms(repeated["b0"]["whole"]),
+                           "gap": _ms(repeated["oursMinusB0"]["whole"])}
     if honesty:
-        repeated = obj(honesty.get("repeatedSplit"))
-        fuzz = obj(honesty.get("fuzz"))
-        shuffled = obj(honesty.get("shuffledLabel"))
-        record["honesty"] = {"shuffledLabel": {"ems": number(shuffled.get("ems")), "passed": shuffled.get("passed") if isinstance(shuffled.get("passed"), bool) else None},
-                             "repeatedSplit": {key: number(repeated.get(key)) for key in ("mean", "sd", "n")},
-                             "fuzz": {key: number(fuzz.get(key)) for key in ("passed", "total")}}
-    return record
+        sh, fz = honesty.get("shuffledLabels") or {}, honesty.get("fuzz") or {}
+        rec["honesty"] = {"realWhole": _num((sh.get("real") or {}).get("whole")),
+                          "shuffledWhole": _num(((sh.get("shuffled") or {}).get("whole") or {}).get("mean")),
+                          "fuzzBroken": fz.get("broken"), "fuzzN": fz.get("n")}
+        if "repeated" not in rec and honesty.get("repeatedSplits"):
+            rec["repeated"] = build("x", repeated=honesty["repeatedSplits"], git={}, policy={})["repeated"]
+    if oracle and oracle.get("fields"):
+        rec["oracle"] = {k: {"gainWhole": _num((v.get("gain") or {}).get("wholeDesign")), "upperBound": v.get("kind") == "upperBound"}
+                         for k, v in oracle["fields"].items() if k in ("demand", "ev", "heat", "roof")}
+    return {k: v for k, v in rec.items() if v is not None}
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--latest", type=Path, default=ROOT / "eval/results/latest.json")
-    parser.add_argument("--output", type=Path, default=ROOT / "eval/history/runs.jsonl")
-    args = parser.parse_args()
-    latest = json.loads(args.latest.read_text(encoding="utf-8-sig"))
-    config = ROOT / "services/engine/config/policy.json"
-    policy = json.loads(config.read_text(encoding="utf-8-sig")) if config.exists() else {}
-    record = build_record(latest, policy, git_info(ROOT))
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open("a", encoding="utf-8", newline="\n") as stream:
-        stream.write(json.dumps(record, separators=(",", ":"), allow_nan=False) + "\n")
-    print(f"Recorded {record['id']} ({record['git']['branch']})")
+def append(rec: dict, path: Path = HISTORY) -> dict:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8", newline="\n") as f:
+        f.write(json.dumps(rec, separators=(",", ":"), allow_nan=False) + "\n")
+    print(f"recorded run {rec['id']} ({rec['kind']}, {rec['git'].get('branch')}) -> {path.relative_to(ROOT)}")
+    try:  # optional Slack #runs post; a no-op until tools/slack.py and a token exist
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        from slack import notify_run  # type: ignore
+        notify_run(rec)
+    except Exception:
+        pass
+    return rec
+
+
+def from_latest(latest: dict) -> dict:
+    """Re-record a full eval report (eval/results/latest.json)."""
+    sel = latest.get("selection") or {}
+    test = {"n": sel.get("nTest"), "models": {m: sel["test"][m] for m in ("B0", "B1", "composite") if m in sel.get("test", {})}} if sel else None
+    t = (latest.get("splits") or {}).get("temporal")
+    if t and not test:
+        test = {"n": t.get("nTest"), "models": {m: _overall(v) for m, v in t["baselines"].items() if m in ("B0", "B1", "M1", "ours")}}
+    if test and "composite" in test["models"]:
+        test["models"]["ours"] = test["models"].pop("composite")
+    return build("full", test=test, honesty=latest.get("honesty"), oracle=latest.get("oracle"), duration_sec=latest.get("durationSec"))
+
+
+def _overall(v: dict) -> dict:
+    o = v["overall"]
+    p = o["policy"]
+    return {"ems": o["expertMatchPrimary"], "wholeDesign": p["wholeDesignWithinTolerance"], "pv": p["pv_kwp"]["withinTolerance"],
+            "battery": p["battery_kwh"]["withinTolerance"], "latencyP50ms": o["runtimeMs"]["p50"]}
 
 
 if __name__ == "__main__":
-    main()
+    append(from_latest(json.loads((ROOT / "eval" / "results" / "latest.json").read_text(encoding="utf-8"))))

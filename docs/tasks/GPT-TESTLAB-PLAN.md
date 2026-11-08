@@ -14,3 +14,13 @@
 - No Git repository is present in this checkout, so Git metadata falls back to `local` / null. Board coordination is unavailable here.
 - The current report has no duration, engine version or honesty block. Show missing values honestly; never substitute inference latency for evaluation duration.
 - Snapshot the current policy file as requested, and separately retain the report's chosen config: concurrent engine work can make those differ.
+
+## Completed validation
+
+- Implemented recorder, synthetic pytest coverage, aggregate-only seeded history, and server/client `/lab` view with scoped CSS and no added dependencies.
+- `services/engine/.venv/Scripts/python -m pytest -q eval/test_record.py`: 2 passed. The system Python has no pytest; use the engine virtual environment.
+- `pnpm lint` and `pnpm build` in `apps/web`: passed. Cache Components requires `connection()` rather than route-level dynamic/runtime options; the loading boundary streams the history at request time.
+- Direct TypeScript parser checks: valid history accepted, malformed lines skipped, malformed oracle values rejected, sub-millisecond latency preserved.
+- Browser verified the real page, metric toggle, accessible chart table, empty state, two-run positive/negative deltas, within-noise text, malformed-line status, and p95 >400 ms warning. Temporary synthetic history was removed and the original real record restored.
+- The engine report changed during implementation. The seeded report is 2026-11-07 21:17:25 UTC, with selected EMS 61.0 versus B0 61.1. The earlier 60.4 example is not hard-coded.
+- History retains temporal, random and anonymized LOIO aggregates. No project/installer identifiers, raw rows or inputs are retained.

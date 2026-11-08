@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-# tests must not depend on the repo's config/policy.json (written by eval --select): use the built-in defaults (hybrid, gate 0.5)
+# tests must not depend on the repo's config/policy.json (written by eval --select): use the built-in defaults (composite, gate 0.5)
 os.environ["ENGINE_POLICY_CONFIG"] = str(Path(__file__).parent / "no-such-policy.json")
 
 SQ_COLS = ["project_id", "customer_contact_id", "request_created_at", "offer_created_at", "first_signed_at", "country",

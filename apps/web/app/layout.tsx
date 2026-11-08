@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
+import HiddenMenu from "@/components/HiddenMenu"; // ours:
 
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full font-sans">{children}</body>
+      <body className="min-h-full font-sans">
+        {children}
+        <HiddenMenu /> {/* ours: triple-tap the logo for pitch mode / lab results */}
+      </body>
     </html>
   );
 }

@@ -1,93 +1,277 @@
 "use client";
 
-import { useState } from "react";
-import { format, selectedModel, selectedScores, type Run, type Scores } from "@/lib/lab";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button, Card, ErrorNote, Header, Logo, Segmented } from "@/components/ui";
+import { MODELS, fmt, latestWith, pts, scored, when, type Run, type Scores } from "@/lib/lab";
 
-const columns: { key: keyof Scores; label: string; help: string; rate?: boolean }[] = [
-  { key: "ems", label: "EMS", help: "Average closeness to the expert design (100 = identical)." },
-  { key: "wholeDesign", label: "Whole design", help: "Share of homes where PV, battery, heat pump and wallbox are all within tolerance.", rate: true },
-  { key: "pv", label: "PV", help: "PV within ±20% of the expert design.", rate: true },
-  { key: "battery", label: "Battery", help: "Battery within ±25% of the expert design.", rate: true },
-  { key: "latencyP50ms", label: "Latency p50 (ms)", help: "Median inference time in milliseconds; lower is better. This is not the full evaluation duration." },
-];
-const time = (run: Run) => new Date(run.timestamp).toISOString().replace("T", " ").slice(0, 19) + " UTC";
-const label = (run: Run) => `${run.git.branch} · ${time(run)} · ${run.id.slice(0, 8)}`;
-const duration = (run: Run) => typeof run.durationSec === "number" ? `${format(run.durationSec)} s` : "Not recorded";
-const warning = (run: Run) => Object.values(run.splits.temporal?.models ?? {}).some((m) => typeof m.latencyP95ms === "number" && m.latencyP95ms > 400);
+const WIDTH = "max-w-5xl";
+const NOISE = 2; // points; one validation project is ~0.4 pt, repeated-split sd ~2 pt
+const BRANCH_COLOURS = ["#2563eb", "#059669", "#d97706", "#7c3aed", "#db2777"];
+type Metric = "ems" | "wholeDesign";
+const RATE: Record<Metric, boolean> = { ems: false, wholeDesign: true };
 
-function Timeline({ runs, metric, onSelect }: { runs: Run[]; metric: "ems" | "wholeDesign"; onSelect: (id: string) => void }) {
-  const branches = [...new Set(runs.map((r) => r.git.branch))];
-  const start = Date.parse(runs[0].timestamp), end = Date.parse(runs[runs.length - 1].timestamp);
-  const x = (r: Run) => end === start ? 460 : 64 + (Date.parse(r.timestamp) - start) / (end - start) * 792;
-  const y = (v: number) => 248 - v * 2;
-  const value = (r: Run) => { const v = selectedScores(r)[metric]; return typeof v === "number" ? v * (metric === "wholeDesign" ? 100 : 1) : null; };
-  const baseline = (r: Run) => { const v = r.splits.temporal?.models.B0?.[metric]; return typeof v === "number" ? v * (metric === "wholeDesign" ? 100 : 1) : null; };
-  return <>
-    <svg className="lab-chart" viewBox="0 0 920 310" role="img" aria-labelledby="timeline-title timeline-desc">
-      <title id="timeline-title">{metric === "ems" ? "EMS" : "Whole-design percentage"} over run time</title>
-      <desc id="timeline-desc">Each numbered line is a branch. Dashed B0 references use the same branch number. Run buttons and the table below provide every point.</desc>
-      {[0, 25, 50, 75, 100].map((v) => <g key={v}><line x1="64" x2="856" y1={y(v)} y2={y(v)} stroke="#e4e4e7" /><text x="52" y={y(v) + 4} textAnchor="end">{v}</text></g>)}
-      {branches.map((branch, index) => { const group = runs.filter((r) => r.git.branch === branch); return <g key={branch}>
-        <polyline points={group.filter((r) => baseline(r) !== null).map((r) => `${x(r)},${y(baseline(r)!)}`).join(" ")} fill="none" stroke="#71717a" strokeDasharray="6 5" />
-        {group.filter((r) => baseline(r) !== null).map((r) => <text key={`baseline-${r.id}`} x={x(r) + 7} y={y(baseline(r)!) + 14}>B0·{index + 1}</text>)}
-        <polyline points={group.filter((r) => value(r) !== null).map((r) => `${x(r)},${y(value(r)!)}`).join(" ")} fill="none" stroke="#1B1D20" strokeWidth="2" strokeDasharray={index ? `${12 + index * 2} ${3 + index}` : undefined} />
-        {group.filter((r) => value(r) !== null).map((r) => <g key={r.id}>
-          <circle cx={x(r)} cy={y(value(r)!)} r="6" fill="#FDFDFB" stroke="#1B1D20" strokeWidth="2" />
-          <text x={x(r) + 8} y={y(value(r)!) - 9}>{index + 1}</text>
-          <circle className="lab-point" cx={x(r)} cy={y(value(r)!)} r="12" fill="transparent" tabIndex={0} role="button" aria-label={`Inspect ${label(r)}: ${format(value(r))}`} onClick={() => onSelect(r.id)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(r.id); } }}><title>{label(r)}</title></circle>
-        </g>)}
-      </g>; })}
-      <text x="64" y="282">{time(runs[0])}</text><text x="856" y="302" textAnchor="end">{time(runs[runs.length - 1])}</text>
-    </svg>
-    <p>{branches.map((branch, i) => `${i + 1}: ${branch}`).join(" · ")} · Dashed: installer median (B0), measured per run.</p>
-  </>;
+export default function Lab({ runs, invalid, canRun }: { runs: Run[]; invalid: number; canRun: boolean }) {
+  const [metric, setMetric] = useState<Metric>("wholeDesign");
+  const series = scored(runs);
+  const last = series.at(-1);
+  const lastAll = [...runs].reverse().find((r) => r.kind === "all");
+
+  return (
+    <div className="flex min-h-dvh flex-col">
+      <Header width={WIDTH}>
+        <Link href="/" className="rounded-lg">
+          <Logo />
+        </Link>
+        <span className="rounded-full bg-sand px-2.5 py-0.5 text-xs font-medium text-quiet ring-1 ring-zinc-200">Test Lab</span>
+      </Header>
+      <main className={`mx-auto w-full flex-1 space-y-6 px-4 py-8 sm:px-6 ${WIDTH}`}>
+        {invalid > 0 && <p className="text-sm text-amber-900">{invalid} unreadable line(s) in the run history were skipped.</p>}
+        <Headline series={series} />
+        {canRun && <RunAll minutes={lastAll?.durationSec ? Math.max(1, Math.round(lastAll.durationSec / 60)) : null} />}
+        {series.length > 0 && (
+          <Card className="p-5">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold tracking-tight text-ink">Over time, per branch</h2>
+              <Segmented name="metric" label="Measure" value={metric} onChange={setMetric}
+                options={[{ value: "wholeDesign", label: "Whole design" }, { value: "ems", label: "Closeness" }]} />
+            </div>
+            <Timeline runs={series} metric={metric} />
+          </Card>
+        )}
+        {last && (
+          <details className="group rounded-2xl border border-zinc-200 bg-white">
+            <summary className="cursor-pointer list-none px-5 py-4 text-sm font-medium text-ink">
+              Details: all numbers, honesty checks, 2026 exam <span className="text-muted group-open:hidden">▸</span>
+            </summary>
+            <div className="space-y-6 px-1 pb-1">
+              <Compare run={last} />
+              <Honesty runs={runs} />
+              <History runs={runs} />
+            </div>
+          </details>
+        )}
+      </main>
+    </div>
+  );
 }
 
-export default function Lab({ runs }: { runs: Run[] }) {
-  const [metric, setMetric] = useState<"ems" | "wholeDesign">("ems");
-  const [activeId, setActive] = useState(runs.at(-1)?.id ?? "");
-  const [fromId, setFrom] = useState(runs.at(-2)?.id ?? runs[0]?.id ?? "");
-  const [toId, setTo] = useState(runs.at(-1)?.id ?? "");
-  if (!runs.length) return <section className="lab-section"><h1>No evaluation runs yet</h1><p>Record the current evaluation with <code>npm run lab:seed</code>, then reload this page.</p></section>;
-  const latest = runs[runs.length - 1], active = runs.find((r) => r.id === activeId) ?? latest;
-  const ours = selectedScores(latest), baseline = latest.splits.temporal?.models.B0 ?? {};
-  const models = latest.splits.temporal?.models ?? {};
-  const chosen = selectedModel(latest);
-  const rows = [{ key: "B1", name: "Rule of thumb" }, { key: "B0", name: "Installer median" }, ...(chosen ? [{ key: chosen, name: `Ours (${chosen})` }] : [])];
-  const from = runs.find((r) => r.id === fromId) ?? runs[0], to = runs.find((r) => r.id === toId) ?? latest;
-  const a = selectedScores(from), b = selectedScores(to);
-  const honesty = latest.honesty;
-  return <>
-    <header className="lab-intro"><h1>Expert match on unseen 2026 projects: <span>{format(ours.ems)}</span>/100</h1><p>vs {format(baseline.ems)} for &quot;copy the installer&apos;s usual design&quot; · {latest.splits.temporal?.nTest ?? "Unknown number of"} test projects · {label(latest)}</p>
-      <dl className="lab-help"><div><dt>EMS</dt><dd>Average closeness to the expert design (100 = identical).</dd></div><div><dt>Whole design</dt><dd>Share of homes where PV, battery, heat pump and wallbox are all within tolerance.</dd></div><div><dt>PV/Battery within tolerance</dt><dd>PV within ±20%, battery within ±25%.</dd></div></dl>
-    </header>
-    <section className="lab-section" aria-labelledby="timeline-heading"><h2 id="timeline-heading">Run timeline</h2>
-      <fieldset className="lab-toggle"><legend>Timeline measure</legend>{(["ems", "wholeDesign"] as const).map((key) => <label key={key}><input type="radio" name="metric" checked={metric === key} onChange={() => setMetric(key)} />{key === "ems" ? "EMS" : "Whole design %"}</label>)}</fieldset>
-      <Timeline runs={runs} metric={metric} onSelect={setActive} />
-      <details><summary>Show chart data as a table</summary><div className="lab-scroll"><table><caption>Temporal test scores by run, in time order</caption><thead><tr><th scope="col">Run</th><th scope="col">EMS</th><th scope="col">Whole design</th><th scope="col">B0 EMS</th><th scope="col">B0 whole design</th></tr></thead><tbody>{runs.map((r) => <tr key={r.id}><th scope="row"><button onClick={() => setActive(r.id)}>{label(r)}</button></th><td>{format(selectedScores(r).ems)}</td><td>{format(selectedScores(r).wholeDesign, true)}</td><td>{format(r.splits.temporal?.models.B0?.ems)}</td><td>{format(r.splits.temporal?.models.B0?.wholeDesign, true)}</td></tr>)}</tbody></table></div></details>
-      <div className="lab-detail" aria-live="polite"><h3>Selected run: {label(active)}</h3><p>Commit: {active.git.commit ?? "Local checkout, no commit"}{active.git.dirty ? " (uncommitted changes)" : ""} · Duration: {duration(active)} · Engine: {active.engineVersion ?? "Not recorded"}</p><details><summary>Policy configuration at recording time</summary><pre>{JSON.stringify(active.policyConfig ?? {}, null, 2)}</pre></details><details><summary>Configuration selected in this evaluation</summary><pre>{JSON.stringify(active.selection?.config ?? {}, null, 2)}</pre></details></div>
+function Headline({ series }: { series: Run[] }) {
+  const last = series.at(-1), prev = series.at(-2);
+  const ours = last?.validation?.models.ours, b0 = last?.validation?.models.B0;
+  if (!ours) return <h1 className="text-3xl font-semibold tracking-tight text-ink">No test runs yet</h1>;
+  const d = prev?.validation?.models.ours?.wholeDesign != null && ours.wholeDesign != null
+    ? (ours.wholeDesign - prev.validation!.models.ours.wholeDesign!) * 100 : null;
+  return (
+    <section>
+      <p className="text-sm text-muted" title="PV within ±20%, battery and heat pump within ±25%, wallbox yes/no: all four must match the expert">
+        Homes where all four parts match the expert
+      </p>
+      <h1 className="mt-1 text-5xl font-semibold tracking-tight text-ink tabular-nums">
+        <span className="text-reonic">{fmt(ours.wholeDesign, true)}</span>
+      </h1>
+      <p className="mt-2 text-base">
+        {d == null ? "First run." : Math.abs(d) < NOISE ? `Same as the last run (${d >= 0 ? "+" : ""}${d.toFixed(1)}, within noise).`
+          : d > 0 ? `▲ ${d.toFixed(1)} points better than the last run.` : `▼ ${(-d).toFixed(1)} points worse than the last run.`}{" "}
+        <span className="text-muted">Copying the installer&apos;s usual design: {fmt(b0?.wholeDesign, true)}.</span>
+      </p>
     </section>
-    <section className="lab-section"><h2>Latest run comparison</h2><p>Temporal test, n = {latest.splits.temporal?.nTest ?? "not recorded"}. Bold marks the best recorded value; lower latency is better.</p><div className="lab-scroll"><table><caption>{label(latest)}</caption><thead><tr><th scope="col">Model</th>{columns.map((c) => <th scope="col" key={c.key}><abbr title={c.help} tabIndex={0}>{c.label}</abbr></th>)}</tr></thead><tbody>{rows.map((row) => <tr key={row.key}><th scope="row">{row.name}</th>{columns.map((c) => {
-      const v = models[row.key]?.[c.key];
-      const values = rows.flatMap((r) => typeof models[r.key]?.[c.key] === "number" ? [models[r.key][c.key] as number] : []);
-      const best = typeof v === "number" && v === (c.key === "latencyP50ms" ? Math.min(...values) : Math.max(...values));
-      return <td key={c.key}>{best ? <strong>{format(v, c.rate)}</strong> : format(v, c.rate)}</td>;
-    })}</tr>)}</tbody></table></div></section>
-    {(honesty || latest.oracle || latest.selection) && <section className="lab-section"><h2>Honesty checks</h2>
-      {latest.selection && <p>Protocol: selection on validation ({latest.selection.nValidation ?? "unrecorded"} projects); the frozen choice is refit through 2025 and evaluated on the 2026 temporal test.</p>}
-      <p>Shuffled-label check: {honesty?.shuffledLabel?.passed === true ? "passed" : honesty?.shuffledLabel?.passed === false ? "failed" : "not recorded"}{typeof honesty?.shuffledLabel?.ems === "number" && ` (EMS ${format(honesty.shuffledLabel.ems)})`}.</p>
-      <p>Repeated-split EMS: {format(honesty?.repeatedSplit?.mean)} ± {format(honesty?.repeatedSplit?.sd)}{typeof honesty?.repeatedSplit?.n === "number" && ` (${honesty.repeatedSplit.n} splits)`}. Fuzz passes: {honesty?.fuzz?.passed ?? "not recorded"} / {honesty?.fuzz?.total ?? "not recorded"}.</p>
-      {latest.oracle && <div className="lab-scroll"><table><caption>Value of answering a question, measured on the temporal test. Roof uses expert capacity and is an upper bound.</caption><thead><tr><th scope="col">Question</th><th scope="col">n</th><th scope="col">Whole design: unknown → answered</th><th scope="col">Value in whole-design points</th></tr></thead><tbody>{Object.entries(latest.oracle).map(([key, o]) => <tr key={key}><th scope="row">{({ demand: "Real annual consumption", ev: "EV planned?", evAssumedNo: "EV vs assumed no", heat: "Heat demand", roof: "Roof capacity" } as Record<string, string>)[key] ?? key}{(o.upperBound || key === "roof") && " (UPPER BOUND)"}</th><td>{o.n ?? "Not recorded"}</td><td>{format(o.unknown.wholeDesign, true)} → {format(o.answered.wholeDesign, true)}</td><td>{typeof o.gain.wholeDesign === "number" ? `Answering this question is worth ${o.gain.wholeDesign >= 0 ? "+" : ""}${format(o.gain.wholeDesign * 100)} points` : "Not recorded"}</td></tr>)}</tbody></table></div>}
-    </section>}
-    <section className="lab-section"><h2>Run diff</h2>{runs.length < 2 ? <p>Record another evaluation to compare progress over time.</p> : <>
-      <div className="lab-pickers"><label>From<select value={from.id} onChange={(e) => setFrom(e.target.value)}>{runs.map((r) => <option key={r.id} value={r.id}>{label(r)}</option>)}</select></label><label>To<select value={to.id} onChange={(e) => setTo(e.target.value)}>{runs.map((r) => <option key={r.id} value={r.id}>{label(r)}</option>)}</select></label></div>
-      <p>Selected temporal model in each run: {selectedModel(from) ?? "unrecorded"} → {selectedModel(to) ?? "unrecorded"}. Differences under 2 points are marked within noise (n≈325); this is a heuristic, not a significance test.</p>
-      {(from.splits.temporal?.nTest !== to.splits.temporal?.nTest) && <p role="status">Test sample sizes differ; these runs may not be directly comparable.</p>}
-      <div className="lab-scroll"><table><caption>Change from the first selected run to the second</caption><thead><tr><th scope="col">Metric</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Delta</th></tr></thead><tbody>{[...columns, { key: "heatPump", label: "Heat pump", rate: true }, { key: "wallbox", label: "Wallbox", rate: true }] .map((c) => {
-        const av = a[c.key as keyof Scores], bv = b[c.key as keyof Scores];
-        const delta = typeof av === "number" && typeof bv === "number" ? (bv - av) * (c.rate ? 100 : 1) : null;
-        return <tr key={c.key}><th scope="row">{c.label}</th><td>{format(av, c.rate)}</td><td>{format(bv, c.rate)}</td><td>{delta === null ? "Not recorded" : `${delta > 0 ? "▲ increased" : delta < 0 ? "▼ decreased" : "= unchanged"} ${format(Math.abs(delta))} ${c.key === "latencyP50ms" ? "ms" : "points"}${c.key !== "latencyP50ms" && Math.abs(delta) < 2 ? " · within noise" : ""}`}</td></tr>;
-      })}</tbody></table></div></>}</section>
-    <section className="lab-section"><h2>Run durations</h2><p>Total evaluation duration and inference p95 are separate measurements. Warning threshold: p95 above 400 ms for any recorded model.</p><div className="lab-scroll"><table><caption>Timing for every recorded run</caption><thead><tr><th scope="col">Run</th><th scope="col">Evaluation duration</th><th scope="col">Selected model p95</th><th scope="col">Latency check</th></tr></thead><tbody>{runs.map((r) => <tr key={r.id}><th scope="row">{label(r)}</th><td>{duration(r)}</td><td>{format(selectedScores(r).latencyP95ms)}{typeof selectedScores(r).latencyP95ms === "number" ? " ms" : ""}</td><td>{warning(r) ? <span className="lab-warning">Warning: model p95 &gt; 400 ms</span> : Object.values(r.splits.temporal?.models ?? {}).some((m) => typeof m.latencyP95ms === "number") ? "Recorded models ≤ 400 ms; missing values unknown" : "Not recorded"}</td></tr>)}</tbody></table></div></section>
-  </>;
+  );
+}
+
+function RunAll({ minutes }: { minutes: number | null }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const [sec, setSec] = useState(0);
+  const [label, setLabel] = useState("");
+  const [msg, setMsg] = useState<{ error?: string; tail?: string } | null>(null);
+  useEffect(() => {
+    if (!busy) return;
+    const t = setInterval(() => setSec((s) => s + 1), 1000);
+    return () => clearInterval(t);
+  }, [busy]);
+
+  async function run() {
+    setBusy(true);
+    setSec(0);
+    setMsg(null);
+    const r = await fetch("/lab/run", { method: "POST", body: JSON.stringify({ label }) })
+      .then((x) => x.json())
+      .catch((e: Error) => ({ error: e.message }));
+    setBusy(false);
+    setMsg(r.error ? r : null);
+    if (!r.error) {
+      setLabel("");
+      router.refresh();
+    }
+  }
+  const clock = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+
+  return (
+    <Card className="flex flex-wrap items-center gap-3 p-4">
+      <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="What changed? (optional)" maxLength={80}
+        aria-label="What changed in this run"
+        className="min-w-0 flex-1 rounded-full bg-sand px-4 py-1.5 text-sm text-ink ring-1 ring-zinc-200 placeholder:text-muted focus-visible:outline-2 focus-visible:outline-blue-600 pointer-coarse:min-h-11" />
+      <Button disabled={busy} onClick={run}>{busy ? `Running all tests… ${clock}` : `Run all tests${minutes ? ` (~${minutes} min)` : ""}`}</Button>
+      {msg?.error && (
+        <div className="w-full space-y-2">
+          <ErrorNote error={msg.error} />
+          {msg.tail && <pre className="overflow-x-auto rounded-xl bg-sand p-3 text-xs">{msg.tail}</pre>}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function Timeline({ runs, metric }: { runs: Run[]; metric: Metric }) {
+  const rate = RATE[metric];
+  const branches = [...new Set(runs.map((r) => r.git.branch))];
+  const values = runs.flatMap((r) => [r.validation!.models.ours?.[metric], r.validation!.models.B0?.[metric]]).map((v) => pts(v, rate) ?? NaN).filter(Number.isFinite);
+  const lo = Math.floor((Math.min(...values) - 3) / 5) * 5, hi = Math.ceil((Math.max(...values) + 3) / 5) * 5;
+  const W = 720, H = 220, L = 40, R = 12, T = 10, B = 24;
+  const x = (i: number) => (runs.length === 1 ? (L + W - R) / 2 : L + (i / (runs.length - 1)) * (W - L - R));
+  const y = (v: number) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  const ticks = Array.from({ length: (hi - lo) / 5 + 1 }, (_, i) => lo + i * 5).filter((_, i, a) => a.length <= 7 || i % 2 === 0);
+  const line = (pick: (r: Run) => number | undefined, branch?: string) =>
+    runs.map((r, i) => ({ r, i, v: pts(pick(r), rate) })).filter((p) => p.v != null && (!branch || p.r.git.branch === branch));
+
+  return (
+    <figure>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full text-xs" role="img" aria-label={`${metric === "ems" ? "Expert match" : "Whole design %"} per run, by branch; dashed line is the installer's usual design`}>
+        {ticks.map((t) => (
+          <g key={t}>
+            <line x1={L} x2={W - R} y1={y(t)} y2={y(t)} className="stroke-zinc-200" />
+            <text x={L - 6} y={y(t) + 4} textAnchor="end" className="fill-zinc-500">{t}</text>
+          </g>
+        ))}
+        <polyline fill="none" className="stroke-zinc-400" strokeDasharray="5 5" strokeWidth={1.5}
+          points={line((r) => r.validation!.models.B0?.[metric]).map((p) => `${x(p.i)},${y(p.v!)}`).join(" ")} />
+        {line((r) => r.validation!.models.B0?.[metric]).map((p) => (
+          <line key={p.r.id} x1={x(p.i) - 5} x2={x(p.i) + 5} y1={y(p.v!)} y2={y(p.v!)} className="stroke-zinc-400" strokeWidth={2}>
+            <title>{`installer's usual design · ${p.v!.toFixed(1)}`}</title>
+          </line>
+        ))}
+        {branches.map((b, bi) => {
+          const pts_ = line((r) => r.validation!.models.ours?.[metric], b);
+          const c = BRANCH_COLOURS[bi % BRANCH_COLOURS.length];
+          return (
+            <g key={b}>
+              <polyline fill="none" stroke={c} strokeWidth={2} points={pts_.map((p) => `${x(p.i)},${y(p.v!)}`).join(" ")} />
+              {pts_.map((p) => (
+                <circle key={p.r.id} cx={x(p.i)} cy={y(p.v!)} r={4} fill="white" stroke={c} strokeWidth={2}>
+                  <title>{`${b} · ${when(p.r.timestamp)} · ${p.v!.toFixed(1)}${p.r.label ? ` · ${p.r.label}` : ""}`}</title>
+                </circle>
+              ))}
+            </g>
+          );
+        })}
+      </svg>
+      <figcaption className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+        {branches.map((b, bi) => (
+          <span key={b} className="flex items-center gap-1.5">
+            <span className="h-0.5 w-4" style={{ background: BRANCH_COLOURS[bi % BRANCH_COLOURS.length] }} /> {b}
+          </span>
+        ))}
+        <span className="flex items-center gap-1.5"><span className="w-4 border-t-2 border-dashed border-zinc-400" /> installer&apos;s usual design</span>
+        <span>Validation window, one point per run.</span>
+      </figcaption>
+    </figure>
+  );
+}
+
+const COLS: { key: keyof Scores; label: string; rate: boolean; low?: boolean }[] = [
+  { key: "wholeDesign", label: "Whole design", rate: true },
+  { key: "ems", label: "Expert match", rate: false },
+  { key: "pv", label: "PV ±20%", rate: true },
+  { key: "battery", label: "Battery ±25%", rate: true },
+  { key: "latencyP50ms", label: "ms / home", rate: false, low: true },
+];
+
+function Compare({ run }: { run: Run }) {
+  const blocks = [["Validation (Q4 2025)", run.validation], ["2026 test", run.test]] as const;
+  return (
+    <Card className="overflow-x-auto">
+      <table className="w-full text-left text-sm tabular-nums">
+        <caption className="px-4 pt-4 text-left text-lg font-semibold tracking-tight text-ink">Latest run, {when(run.timestamp)}</caption>
+        <thead className="text-xs text-muted">
+          <tr>
+            <th scope="col" className="px-4 py-2 font-medium">Model</th>
+            {COLS.map((c) => <th key={c.key} scope="col" className="px-4 py-2 font-medium">{c.label}</th>)}
+          </tr>
+        </thead>
+        {blocks.map(([title, b]) => b && (
+          <tbody key={title} className="divide-y divide-zinc-200 border-t border-zinc-200">
+            <tr><th colSpan={COLS.length + 1} scope="colgroup" className="bg-sand-2 px-4 py-1.5 text-xs font-medium text-quiet">{title}, n={b.n}</th></tr>
+            {MODELS.map((m) => (
+              <tr key={m.key}>
+                <th scope="row" className={`px-4 py-2 font-medium ${m.key === "ours" ? "text-ink" : ""}`}>{m.name}</th>
+                {COLS.map((c) => {
+                  const vals = MODELS.map((o) => b.models[o.key]?.[c.key]).filter((v): v is number => v != null);
+                  const v = b.models[m.key]?.[c.key];
+                  const best = v != null && v === (c.low ? Math.min(...vals) : Math.max(...vals));
+                  return <td key={c.key} className={`px-4 py-2 ${best ? "font-semibold text-ink" : ""}`}>{fmt(v, c.rate, c.low ? 2 : 1)}</td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        ))}
+      </table>
+    </Card>
+  );
+}
+
+function Honesty({ runs }: { runs: Run[] }) {
+  const honest = latestWith(runs, "honesty"), oracle = latestWith(runs, "oracle");
+  const tests = runs.filter((r) => r.testScored).length;
+  const h = honest?.honesty, gap = (honest ?? oracle)?.repeated?.gap, roof = oracle?.oracle?.roof, demand = oracle?.oracle?.demand;
+  const items = [
+    h?.shuffledWhole != null && `Shuffled answers drop whole design from ${fmt(h.realWhole, true)} to ${fmt(h.shuffledWhole, true)}, so the model learns real signal.`,
+    gap?.mean != null && `Over ${gap.n} random splits ours beats the usual design by ${fmt(gap.mean, true)} ± ${fmt(gap.sd, true)}${Math.abs(gap.mean) < (gap.sd ?? 0) ? " (not distinguishable from zero)" : ""}.`,
+    h?.fuzzN != null && `${h.fuzzBroken} of ${h.fuzzN} random and extreme homes broke a rule.`,
+    demand?.gainWhole != null && `Answering the real annual kWh is worth +${fmt(demand.gainWhole, true)} whole design.`,
+    roof?.gainWhole != null && `Answering the roof size is worth +${fmt(roof.gainWhole, true)} (upper bound).`,
+    `The 2026 exam has been scored ${tests} time${tests === 1 ? "" : "s"}. We decide on the 2025 numbers, not on it.`,
+  ].filter(Boolean) as string[];
+  return (
+    <Card className="p-5">
+      <h2 className="text-lg font-semibold tracking-tight text-ink">Honesty checks</h2>
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{items.map((t) => <li key={t}>{t}</li>)}</ul>
+    </Card>
+  );
+}
+
+function History({ runs }: { runs: Run[] }) {
+  const rows = [...runs].reverse();
+  return (
+    <Card className="overflow-x-auto">
+      <table className="w-full text-left text-sm tabular-nums">
+        <caption className="px-4 pt-4 text-left text-lg font-semibold tracking-tight text-ink">All runs</caption>
+        <thead className="text-xs text-muted">
+          <tr>{["When", "Branch", "Kind", "Whole design", "Δ vs previous", "Expert match", "Took", "Note"].map((h) => (
+            <th key={h} scope="col" className="px-4 py-2 font-medium whitespace-nowrap">{h}</th>
+          ))}</tr>
+        </thead>
+        <tbody className="divide-y divide-zinc-200">
+          {rows.map((r) => {
+            const v = r.validation?.models.ours;
+            const prev = rows.slice(rows.indexOf(r) + 1).find((p) => p.validation?.models.ours);
+            const d = v?.wholeDesign != null && prev ? (v.wholeDesign - (prev.validation!.models.ours.wholeDesign ?? 0)) * 100 : null;
+            return (
+              <tr key={r.id}>
+                <td className="px-4 py-2 whitespace-nowrap">{when(r.timestamp)}</td>
+                <td className="px-4 py-2 whitespace-nowrap">{r.git.branch}{r.git.commit && <span className="text-muted"> @{r.git.commit}{r.git.dirty ? "*" : ""}</span>}</td>
+                <td className="px-4 py-2">{r.kind}{r.testScored && <span className="ml-1.5 rounded-full bg-amber-100 px-1.5 text-xs text-amber-900">2026 test</span>}</td>
+                <td className="px-4 py-2">{fmt(v?.wholeDesign, true)}</td>
+                <td className="px-4 py-2 whitespace-nowrap">{d == null ? "–" : Math.abs(d) < NOISE ? `${d >= 0 ? "+" : ""}${d.toFixed(1)} (noise)` : `${d > 0 ? "▲ +" : "▼ "}${d.toFixed(1)}`}</td>
+                <td className="px-4 py-2">{fmt(v?.ems)}</td>
+                <td className="px-4 py-2">{r.durationSec != null ? `${Math.round(r.durationSec)} s` : "–"}</td>
+                <td className="px-4 py-2 text-muted">{r.label}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </Card>
+  );
 }

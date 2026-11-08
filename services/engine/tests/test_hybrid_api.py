@@ -97,7 +97,7 @@ def test_policy_config_file_roundtrip(tmp_path):
     p = tmp_path / "policy.json"
     p.write_text(json.dumps({"mode": "learned", "pvGate": 0.4, "chosen": "M1"}), encoding="utf-8")
     assert load_config(p) == {"mode": "learned", "pvGate": 0.4}
-    assert load_config(tmp_path / "missing.json")["mode"] == "hybrid"
+    assert load_config(tmp_path / "missing.json")["mode"] == "composite"
 
 
 # -- /design with simulator metrics -----------------------------------------------------------------------------

@@ -15,10 +15,11 @@ dependencies = [
   "numpy",
   "pyarrow",
   "scikit-learn",
-  "lightgbm",
-  "pytest",
-  "httpx",
+  "threadpoolctl",  # imported by the API (single-thread inference); also a scikit-learn dependency
 ]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx"]
 
 [tool.setuptools.packages.find]
 include = ["engine*"]

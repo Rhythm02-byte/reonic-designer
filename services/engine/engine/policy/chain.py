@@ -51,6 +51,15 @@ def has_ev(X: pd.DataFrame) -> np.ndarray:
     return X["has_ev"].fillna(0).astype(float).clip(0, 1).to_numpy()
 
 
+class _Cols:
+    """A model fitted on a column subset (columns constant among the rows it was fitted on break the tree binning)."""
+    def __init__(self, model, cols):
+        self.model, self.cols = model, list(cols)
+
+    def predict(self, X):
+        return self.model.predict(X[self.cols])
+
+
 class _Const:
     def __init__(self, v: float):
         self.v = float(v)
@@ -96,17 +105,19 @@ class DesignModel:
             else:
                 clf = _Const(present.mean() if len(present) else 0.0)
             mask = (present == 1) & ~np.isnan(y)
-            if mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
-                reg = HistGradientBoostingRegressor(max_iter=it_r or 300, learning_rate=0.06, random_state=0, **kw).fit(Xc.loc[mask, use], y[mask])
-                lo, hi = (HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=200, learning_rate=0.06,
-                                                        random_state=0, **kw).fit(Xc.loc[mask, use], y[mask]) for q in QUANTILES)
+            ur = [c for c in use if Xc.loc[mask, c].nunique(dropna=True) > 1] if mask.any() else use  # non-constant among sized rows
+            wrap = (lambda m: m) if ur == use else (lambda m: _Cols(m, ur))
+            if mask.sum() >= MIN_ROWS_FOR_REGRESSOR and ur:
+                reg = wrap(HistGradientBoostingRegressor(max_iter=it_r or 300, learning_rate=0.06, random_state=0, **kw).fit(Xc.loc[mask, ur], y[mask]))
+                lo, hi = (wrap(HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=200, learning_rate=0.06,
+                                                             random_state=0, **kw).fit(Xc.loc[mask, ur], y[mask])) for q in QUANTILES)
             else:
                 med = np.median(y[mask]) if mask.any() else 0.0
                 reg = _Const(med)
                 lo, hi = (_Const(np.quantile(y[mask], q) if mask.any() else 0.0) for q in QUANTILES)
-            if t in coverage and mask.sum() >= MIN_ROWS_FOR_REGRESSOR:
-                self.quants[t] = [HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=120, learning_rate=0.08,
-                                                                random_state=0, **kw).fit(Xc.loc[mask, use], y[mask])
+            if t in coverage and mask.sum() >= MIN_ROWS_FOR_REGRESSOR and ur:
+                self.quants[t] = [wrap(HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=120, learning_rate=0.08,
+                                                                     random_state=0, **kw).fit(Xc.loc[mask, ur], y[mask]))
                                   for q in COVERAGE_QUANTILES]
             self.steps[t] = (clf, reg, lo, hi, use)
             Xc[t] = y  # teacher forcing: downstream steps learn from the expert's upstream choice

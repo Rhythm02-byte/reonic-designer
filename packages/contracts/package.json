@@ -5,9 +5,9 @@
   "description": "OpenAPI schema, generated TS types and JSON fixtures for the engine API",
   "types": "src/api.d.ts",
   "scripts": {
-    "dump": "..\\..\\services\\engine\\.venv\\Scripts\\python dump_openapi.py",
+    "dump": "node ../../scripts/py.mjs dump_openapi.py",
     "generate": "openapi-typescript openapi.json -o src/api.d.ts",
-    "build": "npm run dump && npm run generate"
+    "build": "pnpm run dump && pnpm run generate"
   },
   "devDependencies": {
     "openapi-typescript": "^7.4.0"

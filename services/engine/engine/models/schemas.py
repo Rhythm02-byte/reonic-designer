@@ -191,14 +191,6 @@ class BomLine(CamelModel):
     quantity_units: str | None = None
 
 
-class SharePolicy(CamelModel):
-    variants_visible: list[str] = Field(default_factory=list)
-    homeowner_knobs: dict[Literal["battery", "wallbox", "heatPump"], Literal["off", "toggle", "steps"]] = Field(default_factory=dict)
-    house_style: Literal["gable", "hip", "flat", "shed"] = "gable"
-    show_prices: bool = True
-    expires_at: str | None = None
-
-
 class AskAnswer(CamelModel):
     label: str = Field(description="Button text, e.g. '12 modules' or 'Yes'.")
     value: bool | float | None = Field(

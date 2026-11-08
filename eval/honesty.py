@@ -244,7 +244,8 @@ def fuzz_batch(designer: Designer, n: int = 2000, seed: int = 0) -> dict:
     for i, row in enumerate(rows):
         values = {t: float(sizes[t].iat[i]) for t in TARGETS}
         p = {t: float(extra[f"p_{t}"].iat[i]) for t in TARGETS}
-        iv = {t: (float(extra[f"lo_{t}"].iat[i]), values[t], float(extra[f"hi_{t}"].iat[i])) for t in TARGETS}
+        lo = {t: float(extra[f"lo_{t}"].iat[i]) for t in TARGETS}  # p10 <= p90 (the median is not in the batch output)
+        iv = {t: (lo[t], lo[t], float(extra[f"hi_{t}"].iat[i])) for t in TARGETS}
         problems = check_design(values, p, iv, row, {})
         if problems:
             bad.append({"i": i, "problems": problems})

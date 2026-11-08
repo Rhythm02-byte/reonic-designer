@@ -130,6 +130,12 @@ def _bom(cat: dict | None, d: SystemDesign) -> list[BomLine]:
         prods = [p for p in prods if p.get("size")]
         return min(prods, key=lambda p: (abs(p["size"] - size), -p["count"])) if prods else None
 
+    if d.pv is not None and d.pv.modules:
+        out.append(BomLine(technology="pv", component_type="Module", component_name=f"PV module {d.pv.module_wp:g} Wp",
+                           quantity=d.pv.modules, quantity_units="pcs"))
+        inv = nearest(cat.get("inverters") or [], d.pv.kwp)  # inverter AC size ~ array kWp: the installer's closest model
+        if inv:
+            out.append(BomLine(technology="pv", component_type="Inverter", component_name=inv["name"], component_brand=inv["brand"]))
     for key, comp, tech, ctype in (("battery", d.battery, "ses", "BatteryStorage"),
                                    ("wallbox", d.wallbox, "wallbox", "Wallbox"),
                                    ("heatpump", d.heat_pump, "heatpump", "Heatpump")):

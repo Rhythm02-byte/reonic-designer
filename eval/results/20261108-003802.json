@@ -1,0 +1,5168 @@
+{
+  "generatedAt": "2026-11-07T23:28:52+00:00",
+  "offline": true,
+  "cutoff": "2025-12-31",
+  "installers": [
+    "23c108b7",
+    "2a8ba8e2"
+  ],
+  "nProjects": 1593,
+  "headline": {
+    "split": "temporal",
+    "baseline": "H1",
+    "expertMatchScore": 63.264429369231365,
+    "expertMatchScoreAnyOption": 63.51864808498855,
+    "nTestProjects": 325,
+    "runtimeMsP50": 0.6380789997638203,
+    "m1ExpertMatchScore": 60.386989960419406,
+    "m1WholeDesign": 0.20923076923076922
+  },
+  "splits": {
+    "temporal": {
+      "nTest": 325,
+      "nTrain": {
+        "pooled": 1268
+      },
+      "baselines": {
+        "B0": {
+          "overall": {
+            "nProjects": 325,
+            "expertMatchPrimary": 61.13551749908371,
+            "expertMatchAny": 61.71671408028028,
+            "bundleExactMatch": 0.7353846153846154,
+            "battery": {
+              "accuracy": 0.9353846153846154,
+              "f1": 0.9666136724960255,
+              "nPositive": 304,
+              "nPredicted": 325
+            },
+            "wallbox": {
+              "accuracy": 0.76,
+              "f1": 0.0,
+              "nPositive": 78,
+              "nPredicted": 0
+            },
+            "heatPump": {
+              "accuracy": 0.9907692307692307,
+              "f1": 0.0,
+              "nPositive": 3,
+              "nPredicted": 0
+            },
+            "kwp": {
+              "n": 256,
+              "mae": 2.78890625,
+              "medianAbsError": 2.25,
+              "within10pctOr2Modules": 0.3359375
+            },
+            "batteryKwh": {
+              "n": 304,
+              "mae": 2.8210526315789473,
+              "withinOneStep": 0.4934210526315789
+            },
+            "heatPumpKw": {
+              "n": 3,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.007499998901039362,
+              "p95": 0.008800008799880743
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.803076923076923,
+                "includePrecision": 0.803076923076923,
+                "includeRecall": 1.0,
+                "includeF1": 0.8907849829351536,
+                "includeF2": 0.9532505478451424,
+                "sizeMae": 2.78890625,
+                "expertIncludeRate": 0.803076923076923,
+                "withinTolerance": 0.4246153846153846
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9353846153846154,
+                "includePrecision": 0.9353846153846154,
+                "includeRecall": 1.0,
+                "includeF1": 0.9666136724960255,
+                "includeF2": 0.9863724853990915,
+                "sizeMae": 2.8210526315789473,
+                "expertIncludeRate": 0.9353846153846154,
+                "withinTolerance": 0.47384615384615386
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9907692307692307,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.009230769230769232,
+                "withinTolerance": 0.9907692307692307
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.76,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.24,
+                "withinTolerance": 0.76
+              },
+              "wholeDesignWithinTolerance": 0.20615384615384616
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 200,
+              "expertMatchPrimary": 67.18621339351981,
+              "expertMatchAny": 67.43621339351981,
+              "bundleExactMatch": 0.78,
+              "battery": {
+                "accuracy": 0.99,
+                "f1": 0.9949748743718593,
+                "nPositive": 198,
+                "nPredicted": 200
+              },
+              "wallbox": {
+                "accuracy": 0.79,
+                "f1": 0.0,
+                "nPositive": 42,
+                "nPredicted": 0
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 194,
+                "mae": 2.819664948453609,
+                "medianAbsError": 2.6999999999999993,
+                "within10pctOr2Modules": 0.3917525773195876
+              },
+              "batteryKwh": {
+                "n": 198,
+                "mae": 2.622222222222222,
+                "withinOneStep": 0.5606060606060606
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.00790000194683671,
+                "p95": 0.009310012683272358
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.985,
+                  "includePrecision": 0.985,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9924433249370277,
+                  "includeF2": 0.9969635627530364,
+                  "sizeMae": 2.819664948453609,
+                  "expertIncludeRate": 0.985,
+                  "withinTolerance": 0.52
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.99,
+                  "includePrecision": 0.99,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9949748743718593,
+                  "includeF2": 0.9979838709677419,
+                  "sizeMae": 2.622222222222222,
+                  "expertIncludeRate": 0.99,
+                  "withinTolerance": 0.575
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.79,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.21,
+                  "withinTolerance": 0.79
+                },
+                "wholeDesignWithinTolerance": 0.26
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 125,
+              "expertMatchPrimary": 51.454404067985976,
+              "expertMatchAny": 52.56551517909708,
+              "bundleExactMatch": 0.664,
+              "battery": {
+                "accuracy": 0.848,
+                "f1": 0.9177489177489178,
+                "nPositive": 106,
+                "nPredicted": 125
+              },
+              "wallbox": {
+                "accuracy": 0.712,
+                "f1": 0.0,
+                "nPositive": 36,
+                "nPredicted": 0
+              },
+              "heatPump": {
+                "accuracy": 0.976,
+                "f1": 0.0,
+                "nPositive": 3,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 62,
+                "mae": 2.69266129032258,
+                "medianAbsError": 1.8000000000000007,
+                "within10pctOr2Modules": 0.16129032258064516
+              },
+              "batteryKwh": {
+                "n": 106,
+                "mae": 3.192452830188679,
+                "withinOneStep": 0.36792452830188677
+              },
+              "heatPumpKw": {
+                "n": 3,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.0030999653972685337,
+                "p95": 0.005499983672052622
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.512,
+                  "includePrecision": 0.512,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.6772486772486772,
+                  "includeF2": 0.8398950131233596,
+                  "sizeMae": 2.69266129032258,
+                  "expertIncludeRate": 0.512,
+                  "withinTolerance": 0.272
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.848,
+                  "includePrecision": 0.848,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9177489177489178,
+                  "includeF2": 0.9653916211293261,
+                  "sizeMae": 3.192452830188679,
+                  "expertIncludeRate": 0.848,
+                  "withinTolerance": 0.312
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.976,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.024,
+                  "withinTolerance": 0.976
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.712,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.288,
+                  "withinTolerance": 0.712
+                },
+                "wholeDesignWithinTolerance": 0.12
+              }
+            }
+          }
+        },
+        "B0c": {
+          "overall": {
+            "nProjects": 325,
+            "expertMatchPrimary": 58.965555760317436,
+            "expertMatchAny": 59.192051486813156,
+            "bundleExactMatch": 0.7569230769230769,
+            "battery": {
+              "accuracy": 0.9353846153846154,
+              "f1": 0.9666136724960255,
+              "nPositive": 304,
+              "nPredicted": 325
+            },
+            "wallbox": {
+              "accuracy": 0.7815384615384615,
+              "f1": 0.297029702970297,
+              "nPositive": 78,
+              "nPredicted": 23
+            },
+            "heatPump": {
+              "accuracy": 0.9938461538461538,
+              "f1": 0.6666666666666666,
+              "nPositive": 3,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 256,
+              "mae": 2.725337890625,
+              "medianAbsError": 1.8000000000000007,
+              "within10pctOr2Modules": 0.3515625
+            },
+            "batteryKwh": {
+              "n": 304,
+              "mae": 2.751973684210526,
+              "withinOneStep": 0.5394736842105263
+            },
+            "heatPumpKw": {
+              "n": 3,
+              "withinOneSize": 0.6666666666666666
+            },
+            "runtimeMs": {
+              "p50": 0.016400008462369442,
+              "p95": 0.027159985620528466
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.803076923076923,
+                "includePrecision": 0.803076923076923,
+                "includeRecall": 1.0,
+                "includeF1": 0.8907849829351536,
+                "includeF2": 0.9532505478451424,
+                "sizeMae": 2.725337890625,
+                "expertIncludeRate": 0.803076923076923,
+                "withinTolerance": 0.4307692307692308
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9353846153846154,
+                "includePrecision": 0.9353846153846154,
+                "includeRecall": 1.0,
+                "includeF1": 0.9666136724960255,
+                "includeF2": 0.9863724853990915,
+                "sizeMae": 2.751973684210526,
+                "expertIncludeRate": 0.9353846153846154,
+                "withinTolerance": 0.39384615384615385
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9938461538461538,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.6666666666666666,
+                "includeF1": 0.6666666666666666,
+                "includeF2": 0.6666666666666666,
+                "sizeMae": 1.0,
+                "expertIncludeRate": 0.009230769230769232,
+                "withinTolerance": 0.9938461538461538
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7815384615384615,
+                "includePrecision": 0.6521739130434783,
+                "includeRecall": 0.19230769230769232,
+                "includeF1": 0.297029702970297,
+                "includeF2": 0.22388059701492538,
+                "sizeMae": 2.2,
+                "expertIncludeRate": 0.24,
+                "withinTolerance": 0.7815384615384615
+              },
+              "wholeDesignWithinTolerance": 0.19076923076923077
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 200,
+              "expertMatchPrimary": 66.88506910463933,
+              "expertMatchAny": 67.13506910463933,
+              "bundleExactMatch": 0.81,
+              "battery": {
+                "accuracy": 0.99,
+                "f1": 0.9949748743718593,
+                "nPositive": 198,
+                "nPredicted": 200
+              },
+              "wallbox": {
+                "accuracy": 0.82,
+                "f1": 0.3793103448275862,
+                "nPositive": 42,
+                "nPredicted": 16
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 194,
+                "mae": 2.765935567010309,
+                "medianAbsError": 1.8000000000000007,
+                "within10pctOr2Modules": 0.37628865979381443
+              },
+              "batteryKwh": {
+                "n": 198,
+                "mae": 2.5919191919191915,
+                "withinOneStep": 0.5454545454545454
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.016349978977814317,
+                "p95": 0.02583996683824806
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.985,
+                  "includePrecision": 0.985,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9924433249370277,
+                  "includeF2": 0.9969635627530364,
+                  "sizeMae": 2.765935567010309,
+                  "expertIncludeRate": 0.985,
+                  "withinTolerance": 0.53
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.99,
+                  "includePrecision": 0.99,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9949748743718593,
+                  "includeF2": 0.9979838709677419,
+                  "sizeMae": 2.5919191919191915,
+                  "expertIncludeRate": 0.99,
+                  "withinTolerance": 0.59
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.82,
+                  "includePrecision": 0.6875,
+                  "includeRecall": 0.2619047619047619,
+                  "includeF1": 0.3793103448275862,
+                  "includeF2": 0.29891304347826086,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.21,
+                  "withinTolerance": 0.82
+                },
+                "wholeDesignWithinTolerance": 0.295
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 125,
+              "expertMatchPrimary": 46.29433440940239,
+              "expertMatchAny": 46.48322329829128,
+              "bundleExactMatch": 0.672,
+              "battery": {
+                "accuracy": 0.848,
+                "f1": 0.9177489177489178,
+                "nPositive": 106,
+                "nPredicted": 125
+              },
+              "wallbox": {
+                "accuracy": 0.72,
+                "f1": 0.18604651162790697,
+                "nPositive": 36,
+                "nPredicted": 7
+              },
+              "heatPump": {
+                "accuracy": 0.984,
+                "f1": 0.6666666666666666,
+                "nPositive": 3,
+                "nPredicted": 3
+              },
+              "kwp": {
+                "n": 62,
+                "mae": 2.5983064516129026,
+                "medianAbsError": 1.8000000000000003,
+                "within10pctOr2Modules": 0.27419354838709675
+              },
+              "batteryKwh": {
+                "n": 106,
+                "mae": 3.050943396226415,
+                "withinOneStep": 0.5283018867924528
+              },
+              "heatPumpKw": {
+                "n": 3,
+                "withinOneSize": 0.6666666666666666
+              },
+              "runtimeMs": {
+                "p50": 0.016900012269616127,
+                "p95": 0.03037999849766493
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.512,
+                  "includePrecision": 0.512,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.6772486772486772,
+                  "includeF2": 0.8398950131233596,
+                  "sizeMae": 2.5983064516129026,
+                  "expertIncludeRate": 0.512,
+                  "withinTolerance": 0.272
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.848,
+                  "includePrecision": 0.848,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9177489177489178,
+                  "includeF2": 0.9653916211293261,
+                  "sizeMae": 3.050943396226415,
+                  "expertIncludeRate": 0.848,
+                  "withinTolerance": 0.08
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.984,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.6666666666666666,
+                  "includeF1": 0.6666666666666666,
+                  "includeF2": 0.6666666666666666,
+                  "sizeMae": 1.0,
+                  "expertIncludeRate": 0.024,
+                  "withinTolerance": 0.984
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.72,
+                  "includePrecision": 0.5714285714285714,
+                  "includeRecall": 0.1111111111111111,
+                  "includeF1": 0.18604651162790697,
+                  "includeF2": 0.13245033112582782,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.288,
+                  "withinTolerance": 0.72
+                },
+                "wholeDesignWithinTolerance": 0.024
+              }
+            }
+          }
+        },
+        "B1": {
+          "overall": {
+            "nProjects": 325,
+            "expertMatchPrimary": 54.995188646344914,
+            "expertMatchAny": 55.45420683613233,
+            "bundleExactMatch": 0.7569230769230769,
+            "battery": {
+              "accuracy": 0.9353846153846154,
+              "f1": 0.9666136724960255,
+              "nPositive": 304,
+              "nPredicted": 325
+            },
+            "wallbox": {
+              "accuracy": 0.7815384615384615,
+              "f1": 0.297029702970297,
+              "nPositive": 78,
+              "nPredicted": 23
+            },
+            "heatPump": {
+              "accuracy": 0.9938461538461538,
+              "f1": 0.6666666666666666,
+              "nPositive": 3,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 256,
+              "mae": 3.1437734375,
+              "medianAbsError": 2.2,
+              "within10pctOr2Modules": 0.2421875
+            },
+            "batteryKwh": {
+              "n": 304,
+              "mae": 3.335526315789474,
+              "withinOneStep": 0.3848684210526316
+            },
+            "heatPumpKw": {
+              "n": 3,
+              "withinOneSize": 0.6666666666666666
+            },
+            "runtimeMs": {
+              "p50": 0.016400008462369442,
+              "p95": 0.022739998530596498
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.803076923076923,
+                "includePrecision": 0.803076923076923,
+                "includeRecall": 1.0,
+                "includeF1": 0.8907849829351536,
+                "includeF2": 0.9532505478451424,
+                "sizeMae": 3.1437734375,
+                "expertIncludeRate": 0.803076923076923,
+                "withinTolerance": 0.3292307692307692
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9353846153846154,
+                "includePrecision": 0.9353846153846154,
+                "includeRecall": 1.0,
+                "includeF1": 0.9666136724960255,
+                "includeF2": 0.9863724853990915,
+                "sizeMae": 3.335526315789474,
+                "expertIncludeRate": 0.9353846153846154,
+                "withinTolerance": 0.4
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9938461538461538,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.6666666666666666,
+                "includeF1": 0.6666666666666666,
+                "includeF2": 0.6666666666666666,
+                "sizeMae": 1.0,
+                "expertIncludeRate": 0.009230769230769232,
+                "withinTolerance": 0.9938461538461538
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7815384615384615,
+                "includePrecision": 0.6521739130434783,
+                "includeRecall": 0.19230769230769232,
+                "includeF1": 0.297029702970297,
+                "includeF2": 0.22388059701492538,
+                "sizeMae": 2.2,
+                "expertIncludeRate": 0.24,
+                "withinTolerance": 0.7815384615384615
+              },
+              "wholeDesignWithinTolerance": 0.1476923076923077
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 200,
+              "expertMatchPrimary": 59.178748065303935,
+              "expertMatchAny": 59.32458139863727,
+              "bundleExactMatch": 0.81,
+              "battery": {
+                "accuracy": 0.99,
+                "f1": 0.9949748743718593,
+                "nPositive": 198,
+                "nPredicted": 200
+              },
+              "wallbox": {
+                "accuracy": 0.82,
+                "f1": 0.3793103448275862,
+                "nPositive": 42,
+                "nPredicted": 16
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 194,
+                "mae": 3.088458762886598,
+                "medianAbsError": 2.2,
+                "within10pctOr2Modules": 0.23711340206185566
+              },
+              "batteryKwh": {
+                "n": 198,
+                "mae": 3.0131313131313133,
+                "withinOneStep": 0.4595959595959596
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.0185999961104244,
+                "p95": 0.023815006716176864
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.985,
+                  "includePrecision": 0.985,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9924433249370277,
+                  "includeF2": 0.9969635627530364,
+                  "sizeMae": 3.088458762886598,
+                  "expertIncludeRate": 0.985,
+                  "withinTolerance": 0.395
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.99,
+                  "includePrecision": 0.99,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9949748743718593,
+                  "includeF2": 0.9979838709677419,
+                  "sizeMae": 3.0131313131313133,
+                  "expertIncludeRate": 0.99,
+                  "withinTolerance": 0.54
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.82,
+                  "includePrecision": 0.6875,
+                  "includeRecall": 0.2619047619047619,
+                  "includeF1": 0.3793103448275862,
+                  "includeF2": 0.29891304347826086,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.21,
+                  "withinTolerance": 0.82
+                },
+                "wholeDesignWithinTolerance": 0.21
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 125,
+              "expertMatchPrimary": 48.301493576010486,
+              "expertMatchAny": 49.261607536124444,
+              "bundleExactMatch": 0.672,
+              "battery": {
+                "accuracy": 0.848,
+                "f1": 0.9177489177489178,
+                "nPositive": 106,
+                "nPredicted": 125
+              },
+              "wallbox": {
+                "accuracy": 0.72,
+                "f1": 0.18604651162790697,
+                "nPositive": 36,
+                "nPredicted": 7
+              },
+              "heatPump": {
+                "accuracy": 0.984,
+                "f1": 0.6666666666666666,
+                "nPositive": 3,
+                "nPredicted": 3
+              },
+              "kwp": {
+                "n": 62,
+                "mae": 3.3168548387096766,
+                "medianAbsError": 2.125,
+                "within10pctOr2Modules": 0.25806451612903225
+              },
+              "batteryKwh": {
+                "n": 106,
+                "mae": 3.9377358490566037,
+                "withinOneStep": 0.24528301886792453
+              },
+              "heatPumpKw": {
+                "n": 3,
+                "withinOneSize": 0.6666666666666666
+              },
+              "runtimeMs": {
+                "p50": 0.01599994720891118,
+                "p95": 0.020680029410868883
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.512,
+                  "includePrecision": 0.512,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.6772486772486772,
+                  "includeF2": 0.8398950131233596,
+                  "sizeMae": 3.3168548387096766,
+                  "expertIncludeRate": 0.512,
+                  "withinTolerance": 0.224
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.848,
+                  "includePrecision": 0.848,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9177489177489178,
+                  "includeF2": 0.9653916211293261,
+                  "sizeMae": 3.9377358490566037,
+                  "expertIncludeRate": 0.848,
+                  "withinTolerance": 0.176
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.984,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.6666666666666666,
+                  "includeF1": 0.6666666666666666,
+                  "includeF2": 0.6666666666666666,
+                  "sizeMae": 1.0,
+                  "expertIncludeRate": 0.024,
+                  "withinTolerance": 0.984
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.72,
+                  "includePrecision": 0.5714285714285714,
+                  "includeRecall": 0.1111111111111111,
+                  "includeF1": 0.18604651162790697,
+                  "includeF2": 0.13245033112582782,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.288,
+                  "withinTolerance": 0.72
+                },
+                "wholeDesignWithinTolerance": 0.048
+              }
+            }
+          }
+        },
+        "M1": {
+          "overall": {
+            "nProjects": 325,
+            "expertMatchPrimary": 60.386989960419406,
+            "expertMatchAny": 60.63266166762957,
+            "bundleExactMatch": 0.6307692307692307,
+            "battery": {
+              "accuracy": 0.8276923076923077,
+              "f1": 0.899641577060932,
+              "nPositive": 304,
+              "nPredicted": 254
+            },
+            "wallbox": {
+              "accuracy": 0.7815384615384615,
+              "f1": 0.297029702970297,
+              "nPositive": 78,
+              "nPredicted": 23
+            },
+            "heatPump": {
+              "accuracy": 0.9938461538461538,
+              "f1": 0.6666666666666666,
+              "nPositive": 3,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 256,
+              "mae": 2.7589453125,
+              "medianAbsError": 1.8999999999999986,
+              "within10pctOr2Modules": 0.3203125
+            },
+            "batteryKwh": {
+              "n": 304,
+              "mae": 3.4532894736842112,
+              "withinOneStep": 0.4144736842105263
+            },
+            "heatPumpKw": {
+              "n": 3,
+              "withinOneSize": 0.3333333333333333
+            },
+            "runtimeMs": {
+              "p50": 108.02915949985618,
+              "p95": 108.02915949985618
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9476923076923077,
+                "includePrecision": 0.9803149606299213,
+                "includeRecall": 0.9540229885057471,
+                "includeF1": 0.9669902912621359,
+                "includeF2": 0.9591679506933745,
+                "sizeMae": 2.512540650406504,
+                "expertIncludeRate": 0.803076923076923,
+                "withinTolerance": 0.5969230769230769,
+                "p10p90Coverage": 0.80078125,
+                "nCoverage": 256
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8276923076923077,
+                "includePrecision": 0.9881889763779528,
+                "includeRecall": 0.8256578947368421,
+                "includeF1": 0.899641577060932,
+                "includeF2": 0.8537414965986394,
+                "sizeMae": 2.801593625498008,
+                "expertIncludeRate": 0.9353846153846154,
+                "withinTolerance": 0.49230769230769234,
+                "p10p90Coverage": 0.8355263157894737,
+                "nCoverage": 304
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9938461538461538,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.6666666666666666,
+                "includeF1": 0.6666666666666666,
+                "includeF2": 0.6666666666666666,
+                "sizeMae": 3.5,
+                "expertIncludeRate": 0.009230769230769232,
+                "withinTolerance": 0.9907692307692307,
+                "p10p90Coverage": 0.6666666666666666,
+                "nCoverage": 3
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7815384615384615,
+                "includePrecision": 0.6521739130434783,
+                "includeRecall": 0.19230769230769232,
+                "includeF1": 0.297029702970297,
+                "includeF2": 0.22388059701492538,
+                "sizeMae": 2.2,
+                "expertIncludeRate": 0.24,
+                "withinTolerance": 0.7815384615384615
+              },
+              "wholeDesignWithinTolerance": 0.20923076923076922
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 200,
+              "expertMatchPrimary": 64.22482095724342,
+              "expertMatchAny": 64.29426540168787,
+              "bundleExactMatch": 0.815,
+              "battery": {
+                "accuracy": 0.995,
+                "f1": 0.9974811083123426,
+                "nPositive": 198,
+                "nPredicted": 199
+              },
+              "wallbox": {
+                "accuracy": 0.82,
+                "f1": 0.3793103448275862,
+                "nPositive": 42,
+                "nPredicted": 16
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 194,
+                "mae": 2.5367783505154637,
+                "medianAbsError": 1.6500000000000004,
+                "within10pctOr2Modules": 0.3402061855670103
+              },
+              "batteryKwh": {
+                "n": 198,
+                "mae": 2.7373737373737375,
+                "withinOneStep": 0.5151515151515151
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 108.02915949985618,
+                "p95": 108.02915949985618
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.98,
+                  "includePrecision": 0.9849246231155779,
+                  "includeRecall": 0.9949238578680203,
+                  "includeF1": 0.98989898989899,
+                  "includeF2": 0.9929078014184397,
+                  "sizeMae": 2.5266062176165804,
+                  "expertIncludeRate": 0.985,
+                  "withinTolerance": 0.54,
+                  "p10p90Coverage": 0.7989690721649485,
+                  "nCoverage": 194
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.995,
+                  "includePrecision": 0.9949748743718593,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9974811083123426,
+                  "includeF2": 0.9989909182643795,
+                  "sizeMae": 2.7373737373737375,
+                  "expertIncludeRate": 0.99,
+                  "withinTolerance": 0.615,
+                  "p10p90Coverage": 0.8383838383838383,
+                  "nCoverage": 198
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0,
+                  "p10p90Coverage": null,
+                  "nCoverage": 0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.82,
+                  "includePrecision": 0.6875,
+                  "includeRecall": 0.2619047619047619,
+                  "includeF1": 0.3793103448275862,
+                  "includeF2": 0.29891304347826086,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.21,
+                  "withinTolerance": 0.82
+                },
+                "wholeDesignWithinTolerance": 0.3
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 125,
+              "expertMatchPrimary": 54.246460365500994,
+              "expertMatchAny": 54.77409569313632,
+              "bundleExactMatch": 0.336,
+              "battery": {
+                "accuracy": 0.56,
+                "f1": 0.6583850931677019,
+                "nPositive": 106,
+                "nPredicted": 55
+              },
+              "wallbox": {
+                "accuracy": 0.72,
+                "f1": 0.18604651162790697,
+                "nPositive": 36,
+                "nPredicted": 7
+              },
+              "heatPump": {
+                "accuracy": 0.984,
+                "f1": 0.6666666666666666,
+                "nPositive": 3,
+                "nPredicted": 3
+              },
+              "kwp": {
+                "n": 62,
+                "mae": 3.4541129032258064,
+                "medianAbsError": 2.1999999999999997,
+                "within10pctOr2Modules": 0.25806451612903225
+              },
+              "batteryKwh": {
+                "n": 106,
+                "mae": 4.790566037735849,
+                "withinOneStep": 0.22641509433962265
+              },
+              "heatPumpKw": {
+                "n": 3,
+                "withinOneSize": 0.3333333333333333
+              },
+              "runtimeMs": {
+                "p50": 37.155230400152504,
+                "p95": 37.155230400152504
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.896,
+                  "includePrecision": 0.9636363636363636,
+                  "includeRecall": 0.828125,
+                  "includeF1": 0.8907563025210085,
+                  "includeF2": 0.8520900321543409,
+                  "sizeMae": 2.461320754716981,
+                  "expertIncludeRate": 0.512,
+                  "withinTolerance": 0.688,
+                  "p10p90Coverage": 0.8064516129032258,
+                  "nCoverage": 62
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.56,
+                  "includePrecision": 0.9636363636363636,
+                  "includeRecall": 0.5,
+                  "includeF1": 0.6583850931677019,
+                  "includeF2": 0.5532359081419624,
+                  "sizeMae": 3.041509433962264,
+                  "expertIncludeRate": 0.848,
+                  "withinTolerance": 0.296,
+                  "p10p90Coverage": 0.8301886792452831,
+                  "nCoverage": 106
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.984,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.6666666666666666,
+                  "includeF1": 0.6666666666666666,
+                  "includeF2": 0.6666666666666666,
+                  "sizeMae": 3.5,
+                  "expertIncludeRate": 0.024,
+                  "withinTolerance": 0.976,
+                  "p10p90Coverage": 0.6666666666666666,
+                  "nCoverage": 3
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.72,
+                  "includePrecision": 0.5714285714285714,
+                  "includeRecall": 0.1111111111111111,
+                  "includeF1": 0.18604651162790697,
+                  "includeF2": 0.13245033112582782,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.288,
+                  "withinTolerance": 0.72
+                },
+                "wholeDesignWithinTolerance": 0.064
+              }
+            }
+          }
+        },
+        "H1": {
+          "overall": {
+            "nProjects": 325,
+            "expertMatchPrimary": 63.264429369231365,
+            "expertMatchAny": 63.51864808498855,
+            "bundleExactMatch": 0.6307692307692307,
+            "battery": {
+              "accuracy": 0.8276923076923077,
+              "f1": 0.899641577060932,
+              "nPositive": 304,
+              "nPredicted": 254
+            },
+            "wallbox": {
+              "accuracy": 0.7815384615384615,
+              "f1": 0.297029702970297,
+              "nPositive": 78,
+              "nPredicted": 23
+            },
+            "heatPump": {
+              "accuracy": 0.9938461538461538,
+              "f1": 0.6666666666666666,
+              "nPositive": 3,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 256,
+              "mae": 2.7589453125,
+              "medianAbsError": 1.8999999999999986,
+              "within10pctOr2Modules": 0.3203125
+            },
+            "batteryKwh": {
+              "n": 304,
+              "mae": 3.1605263157894736,
+              "withinOneStep": 0.4769736842105263
+            },
+            "heatPumpKw": {
+              "n": 3,
+              "withinOneSize": 0.6666666666666666
+            },
+            "runtimeMs": {
+              "p50": 0.6380789997638203,
+              "p95": 0.9721055999398232
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9476923076923077,
+                "includePrecision": 0.9803149606299213,
+                "includeRecall": 0.9540229885057471,
+                "includeF1": 0.9669902912621359,
+                "includeF2": 0.9591679506933745,
+                "sizeMae": 2.512540650406504,
+                "expertIncludeRate": 0.803076923076923,
+                "withinTolerance": 0.5969230769230769,
+                "p10p90Coverage": 0.80078125,
+                "nCoverage": 256
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8276923076923077,
+                "includePrecision": 0.9881889763779528,
+                "includeRecall": 0.8256578947368421,
+                "includeF1": 0.899641577060932,
+                "includeF2": 0.8537414965986394,
+                "sizeMae": 2.4470119521912355,
+                "expertIncludeRate": 0.9353846153846154,
+                "withinTolerance": 0.5138461538461538,
+                "p10p90Coverage": 0.8322368421052632,
+                "nCoverage": 304
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9938461538461538,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.6666666666666666,
+                "includeF1": 0.6666666666666666,
+                "includeF2": 0.6666666666666666,
+                "sizeMae": 1.0,
+                "expertIncludeRate": 0.009230769230769232,
+                "withinTolerance": 0.9938461538461538,
+                "p10p90Coverage": 0.0,
+                "nCoverage": 3
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7815384615384615,
+                "includePrecision": 0.6521739130434783,
+                "includeRecall": 0.19230769230769232,
+                "includeF1": 0.297029702970297,
+                "includeF2": 0.22388059701492538,
+                "sizeMae": 2.2,
+                "expertIncludeRate": 0.24,
+                "withinTolerance": 0.7815384615384615
+              },
+              "wholeDesignWithinTolerance": 0.22153846153846155
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 200,
+              "expertMatchPrimary": 66.50264412354699,
+              "expertMatchAny": 66.62764412354699,
+              "bundleExactMatch": 0.815,
+              "battery": {
+                "accuracy": 0.995,
+                "f1": 0.9974811083123426,
+                "nPositive": 198,
+                "nPredicted": 199
+              },
+              "wallbox": {
+                "accuracy": 0.82,
+                "f1": 0.3793103448275862,
+                "nPositive": 42,
+                "nPredicted": 16
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 194,
+                "mae": 2.5367783505154637,
+                "medianAbsError": 1.6500000000000004,
+                "within10pctOr2Modules": 0.3402061855670103
+              },
+              "batteryKwh": {
+                "n": 198,
+                "mae": 2.622222222222222,
+                "withinOneStep": 0.5606060606060606
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.6380789997638203,
+                "p95": 0.6380789997638203
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.98,
+                  "includePrecision": 0.9849246231155779,
+                  "includeRecall": 0.9949238578680203,
+                  "includeF1": 0.98989898989899,
+                  "includeF2": 0.9929078014184397,
+                  "sizeMae": 2.5266062176165804,
+                  "expertIncludeRate": 0.985,
+                  "withinTolerance": 0.54,
+                  "p10p90Coverage": 0.7989690721649485,
+                  "nCoverage": 194
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.995,
+                  "includePrecision": 0.9949748743718593,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9974811083123426,
+                  "includeF2": 0.9989909182643795,
+                  "sizeMae": 2.622222222222222,
+                  "expertIncludeRate": 0.99,
+                  "withinTolerance": 0.58,
+                  "p10p90Coverage": 0.8383838383838383,
+                  "nCoverage": 198
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0,
+                  "p10p90Coverage": null,
+                  "nCoverage": 0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.82,
+                  "includePrecision": 0.6875,
+                  "includeRecall": 0.2619047619047619,
+                  "includeF1": 0.3793103448275862,
+                  "includeF2": 0.29891304347826086,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.21,
+                  "withinTolerance": 0.82
+                },
+                "wholeDesignWithinTolerance": 0.285
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 125,
+              "expertMatchPrimary": 58.08328576232639,
+              "expertMatchAny": 58.544254423295044,
+              "bundleExactMatch": 0.336,
+              "battery": {
+                "accuracy": 0.56,
+                "f1": 0.6583850931677019,
+                "nPositive": 106,
+                "nPredicted": 55
+              },
+              "wallbox": {
+                "accuracy": 0.72,
+                "f1": 0.18604651162790697,
+                "nPositive": 36,
+                "nPredicted": 7
+              },
+              "heatPump": {
+                "accuracy": 0.984,
+                "f1": 0.6666666666666666,
+                "nPositive": 3,
+                "nPredicted": 3
+              },
+              "kwp": {
+                "n": 62,
+                "mae": 3.4541129032258064,
+                "medianAbsError": 2.1999999999999997,
+                "within10pctOr2Modules": 0.25806451612903225
+              },
+              "batteryKwh": {
+                "n": 106,
+                "mae": 4.166037735849057,
+                "withinOneStep": 0.32075471698113206
+              },
+              "heatPumpKw": {
+                "n": 3,
+                "withinOneSize": 0.6666666666666666
+              },
+              "runtimeMs": {
+                "p50": 0.9721055999398232,
+                "p95": 0.9721055999398232
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.896,
+                  "includePrecision": 0.9636363636363636,
+                  "includeRecall": 0.828125,
+                  "includeF1": 0.8907563025210085,
+                  "includeF2": 0.8520900321543409,
+                  "sizeMae": 2.461320754716981,
+                  "expertIncludeRate": 0.512,
+                  "withinTolerance": 0.688,
+                  "p10p90Coverage": 0.8064516129032258,
+                  "nCoverage": 62
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.56,
+                  "includePrecision": 0.9636363636363636,
+                  "includeRecall": 0.5,
+                  "includeF1": 0.6583850931677019,
+                  "includeF2": 0.5532359081419624,
+                  "sizeMae": 1.7924528301886793,
+                  "expertIncludeRate": 0.848,
+                  "withinTolerance": 0.408,
+                  "p10p90Coverage": 0.8207547169811321,
+                  "nCoverage": 106
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.984,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.6666666666666666,
+                  "includeF1": 0.6666666666666666,
+                  "includeF2": 0.6666666666666666,
+                  "sizeMae": 1.0,
+                  "expertIncludeRate": 0.024,
+                  "withinTolerance": 0.984,
+                  "p10p90Coverage": 0.0,
+                  "nCoverage": 3
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.72,
+                  "includePrecision": 0.5714285714285714,
+                  "includeRecall": 0.1111111111111111,
+                  "includeF1": 0.18604651162790697,
+                  "includeF2": 0.13245033112582782,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.288,
+                  "withinTolerance": 0.72
+                },
+                "wholeDesignWithinTolerance": 0.12
+              }
+            }
+          }
+        }
+      },
+      "pvGate": {
+        "M1": 0.5,
+        "H1": 0.5
+      }
+    },
+    "random80_20": {
+      "nTest": 319,
+      "nTrain": {
+        "pooled": 1274
+      },
+      "baselines": {
+        "B0": {
+          "overall": {
+            "nProjects": 319,
+            "expertMatchPrimary": 55.346685815733075,
+            "expertMatchAny": 56.67216839338087,
+            "bundleExactMatch": 0.6865203761755486,
+            "battery": {
+              "accuracy": 0.8934169278996865,
+              "f1": 0.9437086092715232,
+              "nPositive": 285,
+              "nPredicted": 319
+            },
+            "wallbox": {
+              "accuracy": 0.7398119122257053,
+              "f1": 0.0,
+              "nPositive": 83,
+              "nPredicted": 0
+            },
+            "heatPump": {
+              "accuracy": 0.9968652037617555,
+              "f1": 0.0,
+              "nPositive": 1,
+              "nPredicted": 0
+            },
+            "kwp": {
+              "n": 259,
+              "mae": 3.2585791505791506,
+              "medianAbsError": 2.25,
+              "within10pctOr2Modules": 0.23552123552123552
+            },
+            "batteryKwh": {
+              "n": 285,
+              "mae": 3.0705263157894733,
+              "withinOneStep": 0.3824561403508772
+            },
+            "heatPumpKw": {
+              "n": 1,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.005299982149153948,
+              "p95": 0.008800008799880743
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8589341692789969,
+                "includePrecision": 0.8589341692789969,
+                "includeRecall": 1.0,
+                "includeF1": 0.924114671163575,
+                "includeF2": 0.9681978798586572,
+                "sizeMae": 3.2585791505791506,
+                "expertIncludeRate": 0.8589341692789969,
+                "withinTolerance": 0.3887147335423197
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8934169278996865,
+                "includePrecision": 0.8934169278996865,
+                "includeRecall": 1.0,
+                "includeF1": 0.9437086092715232,
+                "includeF2": 0.9766963673749143,
+                "sizeMae": 3.0705263157894733,
+                "expertIncludeRate": 0.8934169278996865,
+                "withinTolerance": 0.34796238244514105
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9968652037617555,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.003134796238244514,
+                "withinTolerance": 0.9968652037617555
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7398119122257053,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.2601880877742947,
+                "withinTolerance": 0.7398119122257053
+              },
+              "wholeDesignWithinTolerance": 0.14106583072100312
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 69,
+              "expertMatchPrimary": 66.67549445675532,
+              "expertMatchAny": 67.40013213791474,
+              "bundleExactMatch": 0.8840579710144928,
+              "battery": {
+                "accuracy": 1.0,
+                "f1": 1.0,
+                "nPositive": 69,
+                "nPredicted": 69
+              },
+              "wallbox": {
+                "accuracy": 0.8840579710144928,
+                "f1": 0.0,
+                "nPositive": 8,
+                "nPredicted": 0
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 67,
+                "mae": 3.361522388059702,
+                "medianAbsError": 3.6000000000000005,
+                "within10pctOr2Modules": 0.2835820895522388
+              },
+              "batteryKwh": {
+                "n": 69,
+                "mae": 2.505797101449275,
+                "withinOneStep": 0.5217391304347826
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.008400005754083395,
+                "p95": 0.010740000288933514
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.9855072463768116,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9927007299270073,
+                  "includeF2": 0.9970674486803519,
+                  "sizeMae": 3.361522388059702,
+                  "expertIncludeRate": 0.9855072463768116,
+                  "withinTolerance": 0.37681159420289856
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 1.0,
+                  "includeRecall": 1.0,
+                  "includeF1": 1.0,
+                  "includeF2": 1.0,
+                  "sizeMae": 2.505797101449275,
+                  "expertIncludeRate": 1.0,
+                  "withinTolerance": 0.5507246376811594
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8840579710144928,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.11594202898550725,
+                  "withinTolerance": 0.8840579710144928
+                },
+                "wholeDesignWithinTolerance": 0.2463768115942029
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 250,
+              "expertMatchPrimary": 52.219934630810926,
+              "expertMatchAny": 53.71125039988952,
+              "bundleExactMatch": 0.632,
+              "battery": {
+                "accuracy": 0.864,
+                "f1": 0.927038626609442,
+                "nPositive": 216,
+                "nPredicted": 250
+              },
+              "wallbox": {
+                "accuracy": 0.7,
+                "f1": 0.0,
+                "nPositive": 75,
+                "nPredicted": 0
+              },
+              "heatPump": {
+                "accuracy": 0.996,
+                "f1": 0.0,
+                "nPositive": 1,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 192,
+                "mae": 3.22265625,
+                "medianAbsError": 2.25,
+                "within10pctOr2Modules": 0.21875
+              },
+              "batteryKwh": {
+                "n": 216,
+                "mae": 3.250925925925926,
+                "withinOneStep": 0.33796296296296297
+              },
+              "heatPumpKw": {
+                "n": 1,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.005199981387704611,
+                "p95": 0.005800017970614135
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.824,
+                  "includePrecision": 0.824,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9035087719298246,
+                  "includeF2": 0.9590316573556797,
+                  "sizeMae": 3.22265625,
+                  "expertIncludeRate": 0.824,
+                  "withinTolerance": 0.392
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.864,
+                  "includePrecision": 0.864,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.927038626609442,
+                  "includeF2": 0.9694793536804309,
+                  "sizeMae": 3.250925925925926,
+                  "expertIncludeRate": 0.864,
+                  "withinTolerance": 0.292
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.996,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.004,
+                  "withinTolerance": 0.996
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.3,
+                  "withinTolerance": 0.7
+                },
+                "wholeDesignWithinTolerance": 0.112
+              }
+            }
+          }
+        },
+        "B0c": {
+          "overall": {
+            "nProjects": 319,
+            "expertMatchPrimary": 53.41183729094029,
+            "expertMatchAny": 54.040071597288744,
+            "bundleExactMatch": 0.6833855799373041,
+            "battery": {
+              "accuracy": 0.8934169278996865,
+              "f1": 0.9437086092715232,
+              "nPositive": 285,
+              "nPredicted": 319
+            },
+            "wallbox": {
+              "accuracy": 0.7429467084639498,
+              "f1": 0.1276595744680851,
+              "nPositive": 83,
+              "nPredicted": 11
+            },
+            "heatPump": {
+              "accuracy": 0.987460815047022,
+              "f1": 0.0,
+              "nPositive": 1,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 259,
+              "mae": 3.0527722007722002,
+              "medianAbsError": 2.25,
+              "within10pctOr2Modules": 0.25096525096525096
+            },
+            "batteryKwh": {
+              "n": 285,
+              "mae": 2.9224561403508775,
+              "withinOneStep": 0.49122807017543857
+            },
+            "heatPumpKw": {
+              "n": 1,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.007399998139590025,
+              "p95": 0.016900012269616127
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8589341692789969,
+                "includePrecision": 0.8589341692789969,
+                "includeRecall": 1.0,
+                "includeF1": 0.924114671163575,
+                "includeF2": 0.9681978798586572,
+                "sizeMae": 3.0527722007722002,
+                "expertIncludeRate": 0.8589341692789969,
+                "withinTolerance": 0.41379310344827586
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8934169278996865,
+                "includePrecision": 0.8934169278996865,
+                "includeRecall": 1.0,
+                "includeF1": 0.9437086092715232,
+                "includeF2": 0.9766963673749143,
+                "sizeMae": 2.9224561403508775,
+                "expertIncludeRate": 0.8934169278996865,
+                "withinTolerance": 0.2884012539184953
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.987460815047022,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.003134796238244514,
+                "withinTolerance": 0.987460815047022
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7429467084639498,
+                "includePrecision": 0.5454545454545454,
+                "includeRecall": 0.07228915662650602,
+                "includeF1": 0.1276595744680851,
+                "includeF2": 0.08746355685131195,
+                "sizeMae": 1.8333333333333333,
+                "expertIncludeRate": 0.2601880877742947,
+                "withinTolerance": 0.7429467084639498
+              },
+              "wholeDesignWithinTolerance": 0.12225705329153605
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 69,
+              "expertMatchPrimary": 62.35080754898966,
+              "expertMatchAny": 63.07544523014908,
+              "bundleExactMatch": 0.8695652173913043,
+              "battery": {
+                "accuracy": 1.0,
+                "f1": 1.0,
+                "nPositive": 69,
+                "nPredicted": 69
+              },
+              "wallbox": {
+                "accuracy": 0.8840579710144928,
+                "f1": 0.3333333333333333,
+                "nPositive": 8,
+                "nPredicted": 4
+              },
+              "heatPump": {
+                "accuracy": 0.9855072463768116,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 1
+              },
+              "kwp": {
+                "n": 67,
+                "mae": 3.3383283582089556,
+                "medianAbsError": 2.8,
+                "within10pctOr2Modules": 0.1791044776119403
+              },
+              "batteryKwh": {
+                "n": 69,
+                "mae": 2.679710144927536,
+                "withinOneStep": 0.4492753623188406
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.015500001609325409,
+                "p95": 0.019019970204681144
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.9855072463768116,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9927007299270073,
+                  "includeF2": 0.9970674486803519,
+                  "sizeMae": 3.3383283582089556,
+                  "expertIncludeRate": 0.9855072463768116,
+                  "withinTolerance": 0.37681159420289856
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 1.0,
+                  "includeRecall": 1.0,
+                  "includeF1": 1.0,
+                  "includeF2": 1.0,
+                  "sizeMae": 2.679710144927536,
+                  "expertIncludeRate": 1.0,
+                  "withinTolerance": 0.5072463768115942
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 0.9855072463768116
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8840579710144928,
+                  "includePrecision": 0.5,
+                  "includeRecall": 0.25,
+                  "includeF1": 0.3333333333333333,
+                  "includeF2": 0.2777777777777778,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.11594202898550725,
+                  "withinTolerance": 0.8840579710144928
+                },
+                "wholeDesignWithinTolerance": 0.2608695652173913
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 250,
+              "expertMatchPrimary": 50.944681499718676,
+              "expertMatchAny": 51.5463084746193,
+              "bundleExactMatch": 0.632,
+              "battery": {
+                "accuracy": 0.864,
+                "f1": 0.927038626609442,
+                "nPositive": 216,
+                "nPredicted": 250
+              },
+              "wallbox": {
+                "accuracy": 0.704,
+                "f1": 0.0975609756097561,
+                "nPositive": 75,
+                "nPredicted": 7
+              },
+              "heatPump": {
+                "accuracy": 0.988,
+                "f1": 0.0,
+                "nPositive": 1,
+                "nPredicted": 2
+              },
+              "kwp": {
+                "n": 192,
+                "mae": 2.953125,
+                "medianAbsError": 1.8000000000000007,
+                "within10pctOr2Modules": 0.2760416666666667
+              },
+              "batteryKwh": {
+                "n": 216,
+                "mae": 3.0,
+                "withinOneStep": 0.5046296296296297
+              },
+              "heatPumpKw": {
+                "n": 1,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.006699992809444666,
+                "p95": 0.013894989388063534
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.824,
+                  "includePrecision": 0.824,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9035087719298246,
+                  "includeF2": 0.9590316573556797,
+                  "sizeMae": 2.953125,
+                  "expertIncludeRate": 0.824,
+                  "withinTolerance": 0.424
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.864,
+                  "includePrecision": 0.864,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.927038626609442,
+                  "includeF2": 0.9694793536804309,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.864,
+                  "withinTolerance": 0.228
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.988,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.004,
+                  "withinTolerance": 0.988
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.704,
+                  "includePrecision": 0.5714285714285714,
+                  "includeRecall": 0.05333333333333334,
+                  "includeF1": 0.0975609756097561,
+                  "includeF2": 0.06514657980456026,
+                  "sizeMae": 2.75,
+                  "expertIncludeRate": 0.3,
+                  "withinTolerance": 0.704
+                },
+                "wholeDesignWithinTolerance": 0.084
+              }
+            }
+          }
+        },
+        "B1": {
+          "overall": {
+            "nProjects": 319,
+            "expertMatchPrimary": 53.0774253213517,
+            "expertMatchAny": 53.958792085922695,
+            "bundleExactMatch": 0.6833855799373041,
+            "battery": {
+              "accuracy": 0.8934169278996865,
+              "f1": 0.9437086092715232,
+              "nPositive": 285,
+              "nPredicted": 319
+            },
+            "wallbox": {
+              "accuracy": 0.7429467084639498,
+              "f1": 0.1276595744680851,
+              "nPositive": 83,
+              "nPredicted": 11
+            },
+            "heatPump": {
+              "accuracy": 0.987460815047022,
+              "f1": 0.0,
+              "nPositive": 1,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 259,
+              "mae": 3.265057915057915,
+              "medianAbsError": 2.0500000000000007,
+              "within10pctOr2Modules": 0.23166023166023167
+            },
+            "batteryKwh": {
+              "n": 285,
+              "mae": 3.2761403508771934,
+              "withinOneStep": 0.43157894736842106
+            },
+            "heatPumpKw": {
+              "n": 1,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.012999982573091984,
+              "p95": 0.016600009985268116
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8589341692789969,
+                "includePrecision": 0.8589341692789969,
+                "includeRecall": 1.0,
+                "includeF1": 0.924114671163575,
+                "includeF2": 0.9681978798586572,
+                "sizeMae": 3.265057915057915,
+                "expertIncludeRate": 0.8589341692789969,
+                "withinTolerance": 0.3949843260188088
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8934169278996865,
+                "includePrecision": 0.8934169278996865,
+                "includeRecall": 1.0,
+                "includeF1": 0.9437086092715232,
+                "includeF2": 0.9766963673749143,
+                "sizeMae": 3.2761403508771934,
+                "expertIncludeRate": 0.8934169278996865,
+                "withinTolerance": 0.31974921630094044
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.987460815047022,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.003134796238244514,
+                "withinTolerance": 0.987460815047022
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7429467084639498,
+                "includePrecision": 0.5454545454545454,
+                "includeRecall": 0.07228915662650602,
+                "includeF1": 0.1276595744680851,
+                "includeF2": 0.08746355685131195,
+                "sizeMae": 1.8333333333333333,
+                "expertIncludeRate": 0.2601880877742947,
+                "withinTolerance": 0.7429467084639498
+              },
+              "wholeDesignWithinTolerance": 0.11598746081504702
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 69,
+              "expertMatchPrimary": 61.92827837724858,
+              "expertMatchAny": 62.519203152955974,
+              "bundleExactMatch": 0.8695652173913043,
+              "battery": {
+                "accuracy": 1.0,
+                "f1": 1.0,
+                "nPositive": 69,
+                "nPredicted": 69
+              },
+              "wallbox": {
+                "accuracy": 0.8840579710144928,
+                "f1": 0.3333333333333333,
+                "nPositive": 8,
+                "nPredicted": 4
+              },
+              "heatPump": {
+                "accuracy": 0.9855072463768116,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 1
+              },
+              "kwp": {
+                "n": 67,
+                "mae": 3.116417910447762,
+                "medianAbsError": 1.8000000000000007,
+                "within10pctOr2Modules": 0.26865671641791045
+              },
+              "batteryKwh": {
+                "n": 69,
+                "mae": 2.6971014492753618,
+                "withinOneStep": 0.5362318840579711
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.009899958968162537,
+                "p95": 0.01220001140609383
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.9855072463768116,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9927007299270073,
+                  "includeF2": 0.9970674486803519,
+                  "sizeMae": 3.116417910447762,
+                  "expertIncludeRate": 0.9855072463768116,
+                  "withinTolerance": 0.4057971014492754
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 1.0,
+                  "includeRecall": 1.0,
+                  "includeF1": 1.0,
+                  "includeF2": 1.0,
+                  "sizeMae": 2.6971014492753618,
+                  "expertIncludeRate": 1.0,
+                  "withinTolerance": 0.5652173913043478
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 0.9855072463768116
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8840579710144928,
+                  "includePrecision": 0.5,
+                  "includeRecall": 0.25,
+                  "includeF1": 0.3333333333333333,
+                  "includeF2": 0.2777777777777778,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.11594202898550725,
+                  "withinTolerance": 0.8840579710144928
+                },
+                "wholeDesignWithinTolerance": 0.2753623188405797
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 250,
+              "expertMatchPrimary": 50.63458987792416,
+              "expertMatchAny": 51.596118631421504,
+              "bundleExactMatch": 0.632,
+              "battery": {
+                "accuracy": 0.864,
+                "f1": 0.927038626609442,
+                "nPositive": 216,
+                "nPredicted": 250
+              },
+              "wallbox": {
+                "accuracy": 0.704,
+                "f1": 0.0975609756097561,
+                "nPositive": 75,
+                "nPredicted": 7
+              },
+              "heatPump": {
+                "accuracy": 0.988,
+                "f1": 0.0,
+                "nPositive": 1,
+                "nPredicted": 2
+              },
+              "kwp": {
+                "n": 192,
+                "mae": 3.3169270833333333,
+                "medianAbsError": 2.125,
+                "within10pctOr2Modules": 0.21875
+              },
+              "batteryKwh": {
+                "n": 216,
+                "mae": 3.4611111111111112,
+                "withinOneStep": 0.39814814814814814
+              },
+              "heatPumpKw": {
+                "n": 1,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.01409999094903469,
+                "p95": 0.01681001158431172
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.824,
+                  "includePrecision": 0.824,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9035087719298246,
+                  "includeF2": 0.9590316573556797,
+                  "sizeMae": 3.3169270833333333,
+                  "expertIncludeRate": 0.824,
+                  "withinTolerance": 0.392
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.864,
+                  "includePrecision": 0.864,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.927038626609442,
+                  "includeF2": 0.9694793536804309,
+                  "sizeMae": 3.4611111111111112,
+                  "expertIncludeRate": 0.864,
+                  "withinTolerance": 0.252
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.988,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.004,
+                  "withinTolerance": 0.988
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.704,
+                  "includePrecision": 0.5714285714285714,
+                  "includeRecall": 0.05333333333333334,
+                  "includeF1": 0.0975609756097561,
+                  "includeF2": 0.06514657980456026,
+                  "sizeMae": 2.75,
+                  "expertIncludeRate": 0.3,
+                  "withinTolerance": 0.704
+                },
+                "wholeDesignWithinTolerance": 0.072
+              }
+            }
+          }
+        },
+        "M1": {
+          "overall": {
+            "nProjects": 319,
+            "expertMatchPrimary": 55.11435349891381,
+            "expertMatchAny": 55.87804455397878,
+            "bundleExactMatch": 0.6018808777429467,
+            "battery": {
+              "accuracy": 0.8307210031347962,
+              "f1": 0.9018181818181819,
+              "nPositive": 285,
+              "nPredicted": 265
+            },
+            "wallbox": {
+              "accuracy": 0.7398119122257053,
+              "f1": 0.12631578947368421,
+              "nPositive": 83,
+              "nPredicted": 12
+            },
+            "heatPump": {
+              "accuracy": 0.9905956112852664,
+              "f1": 0.0,
+              "nPositive": 1,
+              "nPredicted": 2
+            },
+            "kwp": {
+              "n": 259,
+              "mae": 3.4075752895752895,
+              "medianAbsError": 2.3999999999999986,
+              "within10pctOr2Modules": 0.21621621621621623
+            },
+            "batteryKwh": {
+              "n": 285,
+              "mae": 3.3540350877192986,
+              "withinOneStep": 0.48771929824561405
+            },
+            "heatPumpKw": {
+              "n": 1,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.7632276001386344,
+              "p95": 2.3106260873053386
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9247648902821317,
+                "includePrecision": 0.9734848484848485,
+                "includeRecall": 0.9379562043795621,
+                "includeF1": 0.9553903345724907,
+                "includeF2": 0.9448529411764706,
+                "sizeMae": 3.0714775510204078,
+                "expertIncludeRate": 0.8589341692789969,
+                "withinTolerance": 0.4702194357366771,
+                "p10p90Coverage": 0.7258687258687259,
+                "nCoverage": 259
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8307210031347962,
+                "includePrecision": 0.9358490566037736,
+                "includeRecall": 0.8701754385964913,
+                "includeF1": 0.9018181818181819,
+                "includeF2": 0.8825622775800712,
+                "sizeMae": 2.768951612903226,
+                "expertIncludeRate": 0.8934169278996865,
+                "withinTolerance": 0.38557993730407525,
+                "p10p90Coverage": 0.7684210526315789,
+                "nCoverage": 285
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9905956112852664,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.003134796238244514,
+                "withinTolerance": 0.9905956112852664,
+                "p10p90Coverage": 1.0,
+                "nCoverage": 1
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7398119122257053,
+                "includePrecision": 0.5,
+                "includeRecall": 0.07228915662650602,
+                "includeF1": 0.12631578947368421,
+                "includeF2": 0.0872093023255814,
+                "sizeMae": 1.8333333333333333,
+                "expertIncludeRate": 0.2601880877742947,
+                "withinTolerance": 0.7398119122257053
+              },
+              "wholeDesignWithinTolerance": 0.12539184952978055
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 69,
+              "expertMatchPrimary": 62.5333564984858,
+              "expertMatchAny": 62.761483175887825,
+              "bundleExactMatch": 0.8840579710144928,
+              "battery": {
+                "accuracy": 1.0,
+                "f1": 1.0,
+                "nPositive": 69,
+                "nPredicted": 69
+              },
+              "wallbox": {
+                "accuracy": 0.8840579710144928,
+                "f1": 0.3333333333333333,
+                "nPositive": 8,
+                "nPredicted": 4
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 67,
+                "mae": 3.4016716417910446,
+                "medianAbsError": 2.6999999999999993,
+                "within10pctOr2Modules": 0.19402985074626866
+              },
+              "batteryKwh": {
+                "n": 69,
+                "mae": 2.465217391304348,
+                "withinOneStep": 0.5797101449275363
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 2.3106260873053386,
+                "p95": 2.3106260873053386
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.9855072463768116,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9927007299270073,
+                  "includeF2": 0.9970674486803519,
+                  "sizeMae": 3.4016716417910446,
+                  "expertIncludeRate": 0.9855072463768116,
+                  "withinTolerance": 0.391304347826087,
+                  "p10p90Coverage": 0.7313432835820896,
+                  "nCoverage": 67
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 1.0,
+                  "includeRecall": 1.0,
+                  "includeF1": 1.0,
+                  "includeF2": 1.0,
+                  "sizeMae": 2.465217391304348,
+                  "expertIncludeRate": 1.0,
+                  "withinTolerance": 0.5942028985507246,
+                  "p10p90Coverage": 0.8695652173913043,
+                  "nCoverage": 69
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0,
+                  "p10p90Coverage": null,
+                  "nCoverage": 0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8840579710144928,
+                  "includePrecision": 0.5,
+                  "includeRecall": 0.25,
+                  "includeF1": 0.3333333333333333,
+                  "includeF2": 0.2777777777777778,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.11594202898550725,
+                  "withinTolerance": 0.8840579710144928
+                },
+                "wholeDesignWithinTolerance": 0.2318840579710145
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 250,
+              "expertMatchPrimary": 53.066708671031954,
+              "expertMatchAny": 53.978215494331906,
+              "bundleExactMatch": 0.524,
+              "battery": {
+                "accuracy": 0.784,
+                "f1": 0.8689320388349514,
+                "nPositive": 216,
+                "nPredicted": 196
+              },
+              "wallbox": {
+                "accuracy": 0.7,
+                "f1": 0.0963855421686747,
+                "nPositive": 75,
+                "nPredicted": 8
+              },
+              "heatPump": {
+                "accuracy": 0.988,
+                "f1": 0.0,
+                "nPositive": 1,
+                "nPredicted": 2
+              },
+              "kwp": {
+                "n": 192,
+                "mae": 3.4096354166666667,
+                "medianAbsError": 2.275,
+                "within10pctOr2Modules": 0.22395833333333334
+              },
+              "batteryKwh": {
+                "n": 216,
+                "mae": 3.6379629629629626,
+                "withinOneStep": 0.4583333333333333
+              },
+              "heatPumpKw": {
+                "n": 1,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.7632276001386344,
+                "p95": 0.7632276001386344
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.908,
+                  "includePrecision": 0.9692307692307692,
+                  "includeRecall": 0.9174757281553398,
+                  "includeF1": 0.942643391521197,
+                  "includeF2": 0.9273797841020608,
+                  "sizeMae": 2.9471910112359545,
+                  "expertIncludeRate": 0.824,
+                  "withinTolerance": 0.492,
+                  "p10p90Coverage": 0.7239583333333334,
+                  "nCoverage": 192
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.784,
+                  "includePrecision": 0.9132653061224489,
+                  "includeRecall": 0.8287037037037037,
+                  "includeF1": 0.8689320388349514,
+                  "includeF2": 0.8443396226415094,
+                  "sizeMae": 2.886033519553073,
+                  "expertIncludeRate": 0.864,
+                  "withinTolerance": 0.328,
+                  "p10p90Coverage": 0.7361111111111112,
+                  "nCoverage": 216
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.988,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.004,
+                  "withinTolerance": 0.988,
+                  "p10p90Coverage": 1.0,
+                  "nCoverage": 1
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7,
+                  "includePrecision": 0.5,
+                  "includeRecall": 0.05333333333333334,
+                  "includeF1": 0.0963855421686747,
+                  "includeF2": 0.06493506493506493,
+                  "sizeMae": 2.75,
+                  "expertIncludeRate": 0.3,
+                  "withinTolerance": 0.7
+                },
+                "wholeDesignWithinTolerance": 0.096
+              }
+            }
+          }
+        },
+        "H1": {
+          "overall": {
+            "nProjects": 319,
+            "expertMatchPrimary": 56.38044473391765,
+            "expertMatchAny": 57.261224558068925,
+            "bundleExactMatch": 0.5987460815047022,
+            "battery": {
+              "accuracy": 0.8338557993730408,
+              "f1": 0.9034608378870674,
+              "nPositive": 285,
+              "nPredicted": 264
+            },
+            "wallbox": {
+              "accuracy": 0.7398119122257053,
+              "f1": 0.12631578947368421,
+              "nPositive": 83,
+              "nPredicted": 12
+            },
+            "heatPump": {
+              "accuracy": 0.987460815047022,
+              "f1": 0.0,
+              "nPositive": 1,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 259,
+              "mae": 3.4075752895752895,
+              "medianAbsError": 2.3999999999999986,
+              "within10pctOr2Modules": 0.21621621621621623
+            },
+            "batteryKwh": {
+              "n": 285,
+              "mae": 3.4859649122807017,
+              "withinOneStep": 0.36140350877192984
+            },
+            "heatPumpKw": {
+              "n": 1,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.508758399868384,
+              "p95": 1.2327115940591455
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9247648902821317,
+                "includePrecision": 0.9734848484848485,
+                "includeRecall": 0.9379562043795621,
+                "includeF1": 0.9553903345724907,
+                "includeF2": 0.9448529411764706,
+                "sizeMae": 3.0714775510204078,
+                "expertIncludeRate": 0.8589341692789969,
+                "withinTolerance": 0.4702194357366771,
+                "p10p90Coverage": 0.7258687258687259,
+                "nCoverage": 259
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8338557993730408,
+                "includePrecision": 0.9393939393939394,
+                "includeRecall": 0.8701754385964913,
+                "includeF1": 0.9034608378870674,
+                "includeF2": 0.8831908831908832,
+                "sizeMae": 2.920564516129032,
+                "expertIncludeRate": 0.8934169278996865,
+                "withinTolerance": 0.38557993730407525,
+                "p10p90Coverage": 0.8701754385964913,
+                "nCoverage": 285
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.987460815047022,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.003134796238244514,
+                "withinTolerance": 0.987460815047022,
+                "p10p90Coverage": 0.0,
+                "nCoverage": 1
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7398119122257053,
+                "includePrecision": 0.5,
+                "includeRecall": 0.07228915662650602,
+                "includeF1": 0.12631578947368421,
+                "includeF2": 0.0872093023255814,
+                "sizeMae": 1.8333333333333333,
+                "expertIncludeRate": 0.2601880877742947,
+                "withinTolerance": 0.7398119122257053
+              },
+              "wholeDesignWithinTolerance": 0.13166144200626959
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 69,
+              "expertMatchPrimary": 63.70769579942355,
+              "expertMatchAny": 64.0968530726388,
+              "bundleExactMatch": 0.8695652173913043,
+              "battery": {
+                "accuracy": 1.0,
+                "f1": 1.0,
+                "nPositive": 69,
+                "nPredicted": 69
+              },
+              "wallbox": {
+                "accuracy": 0.8840579710144928,
+                "f1": 0.3333333333333333,
+                "nPositive": 8,
+                "nPredicted": 4
+              },
+              "heatPump": {
+                "accuracy": 0.9855072463768116,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 1
+              },
+              "kwp": {
+                "n": 67,
+                "mae": 3.4016716417910446,
+                "medianAbsError": 2.6999999999999993,
+                "within10pctOr2Modules": 0.19402985074626866
+              },
+              "batteryKwh": {
+                "n": 69,
+                "mae": 2.505797101449275,
+                "withinOneStep": 0.5217391304347826
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 1.2327115940591455,
+                "p95": 1.2327115940591455
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.9855072463768116,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9927007299270073,
+                  "includeF2": 0.9970674486803519,
+                  "sizeMae": 3.4016716417910446,
+                  "expertIncludeRate": 0.9855072463768116,
+                  "withinTolerance": 0.391304347826087,
+                  "p10p90Coverage": 0.7313432835820896,
+                  "nCoverage": 67
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 1.0,
+                  "includeRecall": 1.0,
+                  "includeF1": 1.0,
+                  "includeF2": 1.0,
+                  "sizeMae": 2.505797101449275,
+                  "expertIncludeRate": 1.0,
+                  "withinTolerance": 0.5507246376811594,
+                  "p10p90Coverage": 0.927536231884058,
+                  "nCoverage": 69
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9855072463768116,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 0.9855072463768116,
+                  "p10p90Coverage": null,
+                  "nCoverage": 0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8840579710144928,
+                  "includePrecision": 0.5,
+                  "includeRecall": 0.25,
+                  "includeF1": 0.3333333333333333,
+                  "includeF2": 0.2777777777777778,
+                  "sizeMae": 0.0,
+                  "expertIncludeRate": 0.11594202898550725,
+                  "withinTolerance": 0.8840579710144928
+                },
+                "wholeDesignWithinTolerance": 0.21739130434782608
+              }
+            },
+            "2a8ba8e2": {
+              "nProjects": 250,
+              "expertMatchPrimary": 54.358123439838025,
+              "expertMatchAny": 55.374591088047644,
+              "bundleExactMatch": 0.524,
+              "battery": {
+                "accuracy": 0.788,
+                "f1": 0.8710462287104623,
+                "nPositive": 216,
+                "nPredicted": 195
+              },
+              "wallbox": {
+                "accuracy": 0.7,
+                "f1": 0.0963855421686747,
+                "nPositive": 75,
+                "nPredicted": 8
+              },
+              "heatPump": {
+                "accuracy": 0.988,
+                "f1": 0.0,
+                "nPositive": 1,
+                "nPredicted": 2
+              },
+              "kwp": {
+                "n": 192,
+                "mae": 3.4096354166666667,
+                "medianAbsError": 2.275,
+                "within10pctOr2Modules": 0.22395833333333334
+              },
+              "batteryKwh": {
+                "n": 216,
+                "mae": 3.799074074074074,
+                "withinOneStep": 0.3101851851851852
+              },
+              "heatPumpKw": {
+                "n": 1,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.508758399868384,
+                "p95": 0.508758399868384
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.908,
+                  "includePrecision": 0.9692307692307692,
+                  "includeRecall": 0.9174757281553398,
+                  "includeF1": 0.942643391521197,
+                  "includeF2": 0.9273797841020608,
+                  "sizeMae": 2.9471910112359545,
+                  "expertIncludeRate": 0.824,
+                  "withinTolerance": 0.492,
+                  "p10p90Coverage": 0.7239583333333334,
+                  "nCoverage": 192
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.788,
+                  "includePrecision": 0.9179487179487179,
+                  "includeRecall": 0.8287037037037037,
+                  "includeF1": 0.8710462287104623,
+                  "includeF2": 0.8451369216241738,
+                  "sizeMae": 3.080446927374302,
+                  "expertIncludeRate": 0.864,
+                  "withinTolerance": 0.34,
+                  "p10p90Coverage": 0.8518518518518519,
+                  "nCoverage": 216
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.988,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.004,
+                  "withinTolerance": 0.988,
+                  "p10p90Coverage": 0.0,
+                  "nCoverage": 1
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7,
+                  "includePrecision": 0.5,
+                  "includeRecall": 0.05333333333333334,
+                  "includeF1": 0.0963855421686747,
+                  "includeF2": 0.06493506493506493,
+                  "sizeMae": 2.75,
+                  "expertIncludeRate": 0.3,
+                  "withinTolerance": 0.7
+                },
+                "wholeDesignWithinTolerance": 0.108
+              }
+            }
+          }
+        }
+      },
+      "pvGate": {
+        "M1": 0.5,
+        "H1": 0.5
+      }
+    },
+    "loio_test_23c108b7": {
+      "nTest": 336,
+      "nTrain": {
+        "23c108b7": 1257
+      },
+      "baselines": {
+        "B0": {
+          "overall": {
+            "nProjects": 336,
+            "expertMatchPrimary": 57.43626156363761,
+            "expertMatchAny": 57.49550979996917,
+            "bundleExactMatch": 0.7708333333333334,
+            "battery": {
+              "accuracy": 0.9880952380952381,
+              "f1": 0.9940119760479041,
+              "nPositive": 332,
+              "nPredicted": 336
+            },
+            "wallbox": {
+              "accuracy": 0.7827380952380952,
+              "f1": 0.0,
+              "nPositive": 73,
+              "nPredicted": 0
+            },
+            "heatPump": {
+              "accuracy": 1.0,
+              "f1": 0.0,
+              "nPositive": 0,
+              "nPredicted": 0
+            },
+            "kwp": {
+              "n": 324,
+              "mae": 3.7270925925925926,
+              "medianAbsError": 2.25,
+              "within10pctOr2Modules": 0.06790123456790123
+            },
+            "batteryKwh": {
+              "n": 332,
+              "mae": 3.318072289156626,
+              "withinOneStep": 0.6054216867469879
+            },
+            "heatPumpKw": {
+              "n": 0,
+              "withinOneSize": null
+            },
+            "runtimeMs": {
+              "p50": 0.0029999646358191967,
+              "p95": 0.0072500406531617045
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9821428571428571,
+                "includePrecision": 0.9821428571428571,
+                "includeRecall": 1.0,
+                "includeF1": 0.990990990990991,
+                "includeF2": 0.9963768115942029,
+                "sizeMae": 3.7270925925925926,
+                "expertIncludeRate": 0.9821428571428571,
+                "withinTolerance": 0.4642857142857143
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9880952380952381,
+                "includePrecision": 0.9880952380952381,
+                "includeRecall": 1.0,
+                "includeF1": 0.9940119760479041,
+                "includeF2": 0.9975961538461539,
+                "sizeMae": 3.318072289156626,
+                "expertIncludeRate": 0.9880952380952381,
+                "withinTolerance": 0.5982142857142857
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 1.0,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.0,
+                "withinTolerance": 1.0
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7827380952380952,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.21726190476190477,
+                "withinTolerance": 0.7827380952380952
+              },
+              "wholeDesignWithinTolerance": 0.2976190476190476
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 336,
+              "expertMatchPrimary": 57.43626156363761,
+              "expertMatchAny": 57.49550979996917,
+              "bundleExactMatch": 0.7708333333333334,
+              "battery": {
+                "accuracy": 0.9880952380952381,
+                "f1": 0.9940119760479041,
+                "nPositive": 332,
+                "nPredicted": 336
+              },
+              "wallbox": {
+                "accuracy": 0.7827380952380952,
+                "f1": 0.0,
+                "nPositive": 73,
+                "nPredicted": 0
+              },
+              "heatPump": {
+                "accuracy": 1.0,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 324,
+                "mae": 3.7270925925925926,
+                "medianAbsError": 2.25,
+                "within10pctOr2Modules": 0.06790123456790123
+              },
+              "batteryKwh": {
+                "n": 332,
+                "mae": 3.318072289156626,
+                "withinOneStep": 0.6054216867469879
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.0029999646358191967,
+                "p95": 0.0072500406531617045
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9821428571428571,
+                  "includePrecision": 0.9821428571428571,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.990990990990991,
+                  "includeF2": 0.9963768115942029,
+                  "sizeMae": 3.7270925925925926,
+                  "expertIncludeRate": 0.9821428571428571,
+                  "withinTolerance": 0.4642857142857143
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.9880952380952381,
+                  "includePrecision": 0.9880952380952381,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9940119760479041,
+                  "includeF2": 0.9975961538461539,
+                  "sizeMae": 3.318072289156626,
+                  "expertIncludeRate": 0.9880952380952381,
+                  "withinTolerance": 0.5982142857142857
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 1.0,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 1.0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7827380952380952,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.21726190476190477,
+                  "withinTolerance": 0.7827380952380952
+                },
+                "wholeDesignWithinTolerance": 0.2976190476190476
+              }
+            }
+          }
+        },
+        "B0c": {
+          "overall": {
+            "nProjects": 336,
+            "expertMatchPrimary": 55.11455420721528,
+            "expertMatchAny": 55.1261497545251,
+            "bundleExactMatch": 0.7827380952380952,
+            "battery": {
+              "accuracy": 0.9880952380952381,
+              "f1": 0.9940119760479041,
+              "nPositive": 332,
+              "nPredicted": 336
+            },
+            "wallbox": {
+              "accuracy": 0.8035714285714286,
+              "f1": 0.2978723404255319,
+              "nPositive": 73,
+              "nPredicted": 21
+            },
+            "heatPump": {
+              "accuracy": 0.9910714285714286,
+              "f1": 0.0,
+              "nPositive": 0,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 324,
+              "mae": 3.517851851851852,
+              "medianAbsError": 2.25,
+              "within10pctOr2Modules": 0.13271604938271606
+            },
+            "batteryKwh": {
+              "n": 332,
+              "mae": 3.5801204819277106,
+              "withinOneStep": 0.6746987951807228
+            },
+            "heatPumpKw": {
+              "n": 0,
+              "withinOneSize": null
+            },
+            "runtimeMs": {
+              "p50": 0.017699989257380366,
+              "p95": 0.02405000850558281
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9821428571428571,
+                "includePrecision": 0.9821428571428571,
+                "includeRecall": 1.0,
+                "includeF1": 0.990990990990991,
+                "includeF2": 0.9963768115942029,
+                "sizeMae": 3.517851851851852,
+                "expertIncludeRate": 0.9821428571428571,
+                "withinTolerance": 0.4851190476190476
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9880952380952381,
+                "includePrecision": 0.9880952380952381,
+                "includeRecall": 1.0,
+                "includeF1": 0.9940119760479041,
+                "includeF2": 0.9975961538461539,
+                "sizeMae": 3.5801204819277106,
+                "expertIncludeRate": 0.9880952380952381,
+                "withinTolerance": 0.6130952380952381
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9910714285714286,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.0,
+                "withinTolerance": 0.9910714285714286
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.8035714285714286,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.1917808219178082,
+                "includeF1": 0.2978723404255319,
+                "includeF2": 0.22364217252396165,
+                "sizeMae": 2.357142857142857,
+                "expertIncludeRate": 0.21726190476190477,
+                "withinTolerance": 0.8035714285714286
+              },
+              "wholeDesignWithinTolerance": 0.23809523809523808
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 336,
+              "expertMatchPrimary": 55.11455420721528,
+              "expertMatchAny": 55.1261497545251,
+              "bundleExactMatch": 0.7827380952380952,
+              "battery": {
+                "accuracy": 0.9880952380952381,
+                "f1": 0.9940119760479041,
+                "nPositive": 332,
+                "nPredicted": 336
+              },
+              "wallbox": {
+                "accuracy": 0.8035714285714286,
+                "f1": 0.2978723404255319,
+                "nPositive": 73,
+                "nPredicted": 21
+              },
+              "heatPump": {
+                "accuracy": 0.9910714285714286,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 3
+              },
+              "kwp": {
+                "n": 324,
+                "mae": 3.517851851851852,
+                "medianAbsError": 2.25,
+                "within10pctOr2Modules": 0.13271604938271606
+              },
+              "batteryKwh": {
+                "n": 332,
+                "mae": 3.5801204819277106,
+                "withinOneStep": 0.6746987951807228
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.017699989257380366,
+                "p95": 0.02405000850558281
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9821428571428571,
+                  "includePrecision": 0.9821428571428571,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.990990990990991,
+                  "includeF2": 0.9963768115942029,
+                  "sizeMae": 3.517851851851852,
+                  "expertIncludeRate": 0.9821428571428571,
+                  "withinTolerance": 0.4851190476190476
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.9880952380952381,
+                  "includePrecision": 0.9880952380952381,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9940119760479041,
+                  "includeF2": 0.9975961538461539,
+                  "sizeMae": 3.5801204819277106,
+                  "expertIncludeRate": 0.9880952380952381,
+                  "withinTolerance": 0.6130952380952381
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9910714285714286,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 0.9910714285714286
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8035714285714286,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.1917808219178082,
+                  "includeF1": 0.2978723404255319,
+                  "includeF2": 0.22364217252396165,
+                  "sizeMae": 2.357142857142857,
+                  "expertIncludeRate": 0.21726190476190477,
+                  "withinTolerance": 0.8035714285714286
+                },
+                "wholeDesignWithinTolerance": 0.23809523809523808
+              }
+            }
+          }
+        },
+        "B1": {
+          "overall": {
+            "nProjects": 336,
+            "expertMatchPrimary": 57.205927982705646,
+            "expertMatchAny": 57.3230332895431,
+            "bundleExactMatch": 0.7827380952380952,
+            "battery": {
+              "accuracy": 0.9880952380952381,
+              "f1": 0.9940119760479041,
+              "nPositive": 332,
+              "nPredicted": 336
+            },
+            "wallbox": {
+              "accuracy": 0.8035714285714286,
+              "f1": 0.2978723404255319,
+              "nPositive": 73,
+              "nPredicted": 21
+            },
+            "heatPump": {
+              "accuracy": 0.9910714285714286,
+              "f1": 0.0,
+              "nPositive": 0,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 324,
+              "mae": 3.7072530864197533,
+              "medianAbsError": 2.3000000000000007,
+              "within10pctOr2Modules": 0.20987654320987653
+            },
+            "batteryKwh": {
+              "n": 332,
+              "mae": 3.309036144578313,
+              "withinOneStep": 0.6265060240963856
+            },
+            "heatPumpKw": {
+              "n": 0,
+              "withinOneSize": null
+            },
+            "runtimeMs": {
+              "p50": 0.014999997802078724,
+              "p95": 0.021175030269660056
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9821428571428571,
+                "includePrecision": 0.9821428571428571,
+                "includeRecall": 1.0,
+                "includeF1": 0.990990990990991,
+                "includeF2": 0.9963768115942029,
+                "sizeMae": 3.7072530864197533,
+                "expertIncludeRate": 0.9821428571428571,
+                "withinTolerance": 0.38095238095238093
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9880952380952381,
+                "includePrecision": 0.9880952380952381,
+                "includeRecall": 1.0,
+                "includeF1": 0.9940119760479041,
+                "includeF2": 0.9975961538461539,
+                "sizeMae": 3.309036144578313,
+                "expertIncludeRate": 0.9880952380952381,
+                "withinTolerance": 0.6160714285714286
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9910714285714286,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.0,
+                "withinTolerance": 0.9910714285714286
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.8035714285714286,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.1917808219178082,
+                "includeF1": 0.2978723404255319,
+                "includeF2": 0.22364217252396165,
+                "sizeMae": 2.357142857142857,
+                "expertIncludeRate": 0.21726190476190477,
+                "withinTolerance": 0.8035714285714286
+              },
+              "wholeDesignWithinTolerance": 0.23214285714285715
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 336,
+              "expertMatchPrimary": 57.205927982705646,
+              "expertMatchAny": 57.3230332895431,
+              "bundleExactMatch": 0.7827380952380952,
+              "battery": {
+                "accuracy": 0.9880952380952381,
+                "f1": 0.9940119760479041,
+                "nPositive": 332,
+                "nPredicted": 336
+              },
+              "wallbox": {
+                "accuracy": 0.8035714285714286,
+                "f1": 0.2978723404255319,
+                "nPositive": 73,
+                "nPredicted": 21
+              },
+              "heatPump": {
+                "accuracy": 0.9910714285714286,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 3
+              },
+              "kwp": {
+                "n": 324,
+                "mae": 3.7072530864197533,
+                "medianAbsError": 2.3000000000000007,
+                "within10pctOr2Modules": 0.20987654320987653
+              },
+              "batteryKwh": {
+                "n": 332,
+                "mae": 3.309036144578313,
+                "withinOneStep": 0.6265060240963856
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.014999997802078724,
+                "p95": 0.021175030269660056
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9821428571428571,
+                  "includePrecision": 0.9821428571428571,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.990990990990991,
+                  "includeF2": 0.9963768115942029,
+                  "sizeMae": 3.7072530864197533,
+                  "expertIncludeRate": 0.9821428571428571,
+                  "withinTolerance": 0.38095238095238093
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.9880952380952381,
+                  "includePrecision": 0.9880952380952381,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9940119760479041,
+                  "includeF2": 0.9975961538461539,
+                  "sizeMae": 3.309036144578313,
+                  "expertIncludeRate": 0.9880952380952381,
+                  "withinTolerance": 0.6160714285714286
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9910714285714286,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 0.9910714285714286
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8035714285714286,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.1917808219178082,
+                  "includeF1": 0.2978723404255319,
+                  "includeF2": 0.22364217252396165,
+                  "sizeMae": 2.357142857142857,
+                  "expertIncludeRate": 0.21726190476190477,
+                  "withinTolerance": 0.8035714285714286
+                },
+                "wholeDesignWithinTolerance": 0.23214285714285715
+              }
+            }
+          }
+        },
+        "M1": {
+          "overall": {
+            "nProjects": 336,
+            "expertMatchPrimary": 61.51245816767031,
+            "expertMatchAny": 61.64923929403477,
+            "bundleExactMatch": 0.7946428571428571,
+            "battery": {
+              "accuracy": 0.9880952380952381,
+              "f1": 0.993993993993994,
+              "nPositive": 332,
+              "nPredicted": 334
+            },
+            "wallbox": {
+              "accuracy": 0.8035714285714286,
+              "f1": 0.2978723404255319,
+              "nPositive": 73,
+              "nPredicted": 21
+            },
+            "heatPump": {
+              "accuracy": 0.9970238095238095,
+              "f1": 0.0,
+              "nPositive": 0,
+              "nPredicted": 1
+            },
+            "kwp": {
+              "n": 324,
+              "mae": 3.3181604938271607,
+              "medianAbsError": 2.1000000000000014,
+              "within10pctOr2Modules": 0.22530864197530864
+            },
+            "batteryKwh": {
+              "n": 332,
+              "mae": 2.886746987951807,
+              "withinOneStep": 0.6325301204819277
+            },
+            "heatPumpKw": {
+              "n": 0,
+              "withinOneSize": null
+            },
+            "runtimeMs": {
+              "p50": 0.6955175596799347,
+              "p95": 0.6955175596799347
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9761904761904762,
+                "includePrecision": 0.9820359281437125,
+                "includeRecall": 0.9939393939393939,
+                "includeF1": 0.9879518072289156,
+                "includeF2": 0.9915356711003628,
+                "sizeMae": 3.3024347826086955,
+                "expertIncludeRate": 0.9821428571428571,
+                "withinTolerance": 0.44047619047619047,
+                "p10p90Coverage": 0.7376543209876543,
+                "nCoverage": 324
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9880952380952381,
+                "includePrecision": 0.9910179640718563,
+                "includeRecall": 0.9969879518072289,
+                "includeF1": 0.993993993993994,
+                "includeF2": 0.9957882069795427,
+                "sizeMae": 2.8682779456193352,
+                "expertIncludeRate": 0.9880952380952381,
+                "withinTolerance": 0.6577380952380952,
+                "p10p90Coverage": 0.8403614457831325,
+                "nCoverage": 332
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9970238095238095,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.0,
+                "withinTolerance": 0.9970238095238095,
+                "p10p90Coverage": null,
+                "nCoverage": 0
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.8035714285714286,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.1917808219178082,
+                "includeF1": 0.2978723404255319,
+                "includeF2": 0.22364217252396165,
+                "sizeMae": 2.357142857142857,
+                "expertIncludeRate": 0.21726190476190477,
+                "withinTolerance": 0.8035714285714286
+              },
+              "wholeDesignWithinTolerance": 0.23809523809523808
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 336,
+              "expertMatchPrimary": 61.51245816767031,
+              "expertMatchAny": 61.64923929403477,
+              "bundleExactMatch": 0.7946428571428571,
+              "battery": {
+                "accuracy": 0.9880952380952381,
+                "f1": 0.993993993993994,
+                "nPositive": 332,
+                "nPredicted": 334
+              },
+              "wallbox": {
+                "accuracy": 0.8035714285714286,
+                "f1": 0.2978723404255319,
+                "nPositive": 73,
+                "nPredicted": 21
+              },
+              "heatPump": {
+                "accuracy": 0.9970238095238095,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 1
+              },
+              "kwp": {
+                "n": 324,
+                "mae": 3.3181604938271607,
+                "medianAbsError": 2.1000000000000014,
+                "within10pctOr2Modules": 0.22530864197530864
+              },
+              "batteryKwh": {
+                "n": 332,
+                "mae": 2.886746987951807,
+                "withinOneStep": 0.6325301204819277
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.6955175596799347,
+                "p95": 0.6955175596799347
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9761904761904762,
+                  "includePrecision": 0.9820359281437125,
+                  "includeRecall": 0.9939393939393939,
+                  "includeF1": 0.9879518072289156,
+                  "includeF2": 0.9915356711003628,
+                  "sizeMae": 3.3024347826086955,
+                  "expertIncludeRate": 0.9821428571428571,
+                  "withinTolerance": 0.44047619047619047,
+                  "p10p90Coverage": 0.7376543209876543,
+                  "nCoverage": 324
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.9880952380952381,
+                  "includePrecision": 0.9910179640718563,
+                  "includeRecall": 0.9969879518072289,
+                  "includeF1": 0.993993993993994,
+                  "includeF2": 0.9957882069795427,
+                  "sizeMae": 2.8682779456193352,
+                  "expertIncludeRate": 0.9880952380952381,
+                  "withinTolerance": 0.6577380952380952,
+                  "p10p90Coverage": 0.8403614457831325,
+                  "nCoverage": 332
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9970238095238095,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 0.9970238095238095,
+                  "p10p90Coverage": null,
+                  "nCoverage": 0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8035714285714286,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.1917808219178082,
+                  "includeF1": 0.2978723404255319,
+                  "includeF2": 0.22364217252396165,
+                  "sizeMae": 2.357142857142857,
+                  "expertIncludeRate": 0.21726190476190477,
+                  "withinTolerance": 0.8035714285714286
+                },
+                "wholeDesignWithinTolerance": 0.23809523809523808
+              }
+            }
+          }
+        },
+        "H1": {
+          "overall": {
+            "nProjects": 336,
+            "expertMatchPrimary": 59.662051724228746,
+            "expertMatchAny": 59.771025010285356,
+            "bundleExactMatch": 0.7857142857142857,
+            "battery": {
+              "accuracy": 0.9880952380952381,
+              "f1": 0.993993993993994,
+              "nPositive": 332,
+              "nPredicted": 334
+            },
+            "wallbox": {
+              "accuracy": 0.8035714285714286,
+              "f1": 0.2978723404255319,
+              "nPositive": 73,
+              "nPredicted": 21
+            },
+            "heatPump": {
+              "accuracy": 0.9910714285714286,
+              "f1": 0.0,
+              "nPositive": 0,
+              "nPredicted": 3
+            },
+            "kwp": {
+              "n": 324,
+              "mae": 3.3181604938271607,
+              "medianAbsError": 2.1000000000000014,
+              "within10pctOr2Modules": 0.22530864197530864
+            },
+            "batteryKwh": {
+              "n": 332,
+              "mae": 3.342168674698795,
+              "withinOneStep": 0.6024096385542169
+            },
+            "heatPumpKw": {
+              "n": 0,
+              "withinOneSize": null
+            },
+            "runtimeMs": {
+              "p50": 0.44819702383219484,
+              "p95": 0.44819702383219484
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.9761904761904762,
+                "includePrecision": 0.9820359281437125,
+                "includeRecall": 0.9939393939393939,
+                "includeF1": 0.9879518072289156,
+                "includeF2": 0.9915356711003628,
+                "sizeMae": 3.3024347826086955,
+                "expertIncludeRate": 0.9821428571428571,
+                "withinTolerance": 0.44047619047619047,
+                "p10p90Coverage": 0.7376543209876543,
+                "nCoverage": 324
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.9880952380952381,
+                "includePrecision": 0.9910179640718563,
+                "includeRecall": 0.9969879518072289,
+                "includeF1": 0.993993993993994,
+                "includeF2": 0.9957882069795427,
+                "sizeMae": 3.3250755287009066,
+                "expertIncludeRate": 0.9880952380952381,
+                "withinTolerance": 0.5982142857142857,
+                "p10p90Coverage": 0.8524096385542169,
+                "nCoverage": 332
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9910714285714286,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.0,
+                "withinTolerance": 0.9910714285714286,
+                "p10p90Coverage": null,
+                "nCoverage": 0
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.8035714285714286,
+                "includePrecision": 0.6666666666666666,
+                "includeRecall": 0.1917808219178082,
+                "includeF1": 0.2978723404255319,
+                "includeF2": 0.22364217252396165,
+                "sizeMae": 2.357142857142857,
+                "expertIncludeRate": 0.21726190476190477,
+                "withinTolerance": 0.8035714285714286
+              },
+              "wholeDesignWithinTolerance": 0.22023809523809523
+            }
+          },
+          "byInstaller": {
+            "23c108b7": {
+              "nProjects": 336,
+              "expertMatchPrimary": 59.662051724228746,
+              "expertMatchAny": 59.771025010285356,
+              "bundleExactMatch": 0.7857142857142857,
+              "battery": {
+                "accuracy": 0.9880952380952381,
+                "f1": 0.993993993993994,
+                "nPositive": 332,
+                "nPredicted": 334
+              },
+              "wallbox": {
+                "accuracy": 0.8035714285714286,
+                "f1": 0.2978723404255319,
+                "nPositive": 73,
+                "nPredicted": 21
+              },
+              "heatPump": {
+                "accuracy": 0.9910714285714286,
+                "f1": 0.0,
+                "nPositive": 0,
+                "nPredicted": 3
+              },
+              "kwp": {
+                "n": 324,
+                "mae": 3.3181604938271607,
+                "medianAbsError": 2.1000000000000014,
+                "within10pctOr2Modules": 0.22530864197530864
+              },
+              "batteryKwh": {
+                "n": 332,
+                "mae": 3.342168674698795,
+                "withinOneStep": 0.6024096385542169
+              },
+              "heatPumpKw": {
+                "n": 0,
+                "withinOneSize": null
+              },
+              "runtimeMs": {
+                "p50": 0.44819702383219484,
+                "p95": 0.44819702383219484
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.9761904761904762,
+                  "includePrecision": 0.9820359281437125,
+                  "includeRecall": 0.9939393939393939,
+                  "includeF1": 0.9879518072289156,
+                  "includeF2": 0.9915356711003628,
+                  "sizeMae": 3.3024347826086955,
+                  "expertIncludeRate": 0.9821428571428571,
+                  "withinTolerance": 0.44047619047619047,
+                  "p10p90Coverage": 0.7376543209876543,
+                  "nCoverage": 324
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.9880952380952381,
+                  "includePrecision": 0.9910179640718563,
+                  "includeRecall": 0.9969879518072289,
+                  "includeF1": 0.993993993993994,
+                  "includeF2": 0.9957882069795427,
+                  "sizeMae": 3.3250755287009066,
+                  "expertIncludeRate": 0.9880952380952381,
+                  "withinTolerance": 0.5982142857142857,
+                  "p10p90Coverage": 0.8524096385542169,
+                  "nCoverage": 332
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9910714285714286,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.0,
+                  "withinTolerance": 0.9910714285714286,
+                  "p10p90Coverage": null,
+                  "nCoverage": 0
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.8035714285714286,
+                  "includePrecision": 0.6666666666666666,
+                  "includeRecall": 0.1917808219178082,
+                  "includeF1": 0.2978723404255319,
+                  "includeF2": 0.22364217252396165,
+                  "sizeMae": 2.357142857142857,
+                  "expertIncludeRate": 0.21726190476190477,
+                  "withinTolerance": 0.8035714285714286
+                },
+                "wholeDesignWithinTolerance": 0.22023809523809523
+              }
+            }
+          }
+        }
+      },
+      "pvGate": {
+        "M1": 0.5,
+        "H1": 0.5
+      }
+    },
+    "loio_test_2a8ba8e2": {
+      "nTest": 1257,
+      "nTrain": {
+        "2a8ba8e2": 336
+      },
+      "baselines": {
+        "B0": {
+          "overall": {
+            "nProjects": 1257,
+            "expertMatchPrimary": 51.179581329649494,
+            "expertMatchAny": 52.327213312102735,
+            "bundleExactMatch": 0.6770087509944311,
+            "battery": {
+              "accuracy": 0.8854415274463007,
+              "f1": 0.9392405063291139,
+              "nPositive": 1113,
+              "nPredicted": 1257
+            },
+            "wallbox": {
+              "accuracy": 0.7462211614956245,
+              "f1": 0.0,
+              "nPositive": 319,
+              "nPredicted": 0
+            },
+            "heatPump": {
+              "accuracy": 0.9896579156722355,
+              "f1": 0.0,
+              "nPositive": 13,
+              "nPredicted": 0
+            },
+            "kwp": {
+              "n": 937,
+              "mae": 3.1796104589114194,
+              "medianAbsError": 2.700000000000001,
+              "within10pctOr2Modules": 0.23479188900747064
+            },
+            "batteryKwh": {
+              "n": 1113,
+              "mae": 3.073674752920036,
+              "withinOneStep": 0.5247079964061097
+            },
+            "heatPumpKw": {
+              "n": 13,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.005400041118264198,
+              "p95": 0.007499998901039362
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8138424821002387,
+                "includePrecision": 0.8138424821002387,
+                "includeRecall": 1.0,
+                "includeF1": 0.8973684210526316,
+                "includeF2": 0.9562535053280987,
+                "sizeMae": 3.1796104589114194,
+                "expertIncludeRate": 0.8138424821002387,
+                "withinTolerance": 0.3333333333333333
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8854415274463007,
+                "includePrecision": 0.8854415274463007,
+                "includeRecall": 1.0,
+                "includeF1": 0.9392405063291139,
+                "includeF2": 0.9747766684182869,
+                "sizeMae": 3.073674752920036,
+                "expertIncludeRate": 0.8854415274463007,
+                "withinTolerance": 0.32537788385043753
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9896579156722355,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.010342084327764518,
+                "withinTolerance": 0.9896579156722355
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7462211614956245,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.2537788385043755,
+                "withinTolerance": 0.7462211614956245
+              },
+              "wholeDesignWithinTolerance": 0.10342084327764518
+            }
+          },
+          "byInstaller": {
+            "2a8ba8e2": {
+              "nProjects": 1257,
+              "expertMatchPrimary": 51.179581329649494,
+              "expertMatchAny": 52.327213312102735,
+              "bundleExactMatch": 0.6770087509944311,
+              "battery": {
+                "accuracy": 0.8854415274463007,
+                "f1": 0.9392405063291139,
+                "nPositive": 1113,
+                "nPredicted": 1257
+              },
+              "wallbox": {
+                "accuracy": 0.7462211614956245,
+                "f1": 0.0,
+                "nPositive": 319,
+                "nPredicted": 0
+              },
+              "heatPump": {
+                "accuracy": 0.9896579156722355,
+                "f1": 0.0,
+                "nPositive": 13,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 937,
+                "mae": 3.1796104589114194,
+                "medianAbsError": 2.700000000000001,
+                "within10pctOr2Modules": 0.23479188900747064
+              },
+              "batteryKwh": {
+                "n": 1113,
+                "mae": 3.073674752920036,
+                "withinOneStep": 0.5247079964061097
+              },
+              "heatPumpKw": {
+                "n": 13,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.005400041118264198,
+                "p95": 0.007499998901039362
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.8138424821002387,
+                  "includePrecision": 0.8138424821002387,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.8973684210526316,
+                  "includeF2": 0.9562535053280987,
+                  "sizeMae": 3.1796104589114194,
+                  "expertIncludeRate": 0.8138424821002387,
+                  "withinTolerance": 0.3333333333333333
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.8854415274463007,
+                  "includePrecision": 0.8854415274463007,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9392405063291139,
+                  "includeF2": 0.9747766684182869,
+                  "sizeMae": 3.073674752920036,
+                  "expertIncludeRate": 0.8854415274463007,
+                  "withinTolerance": 0.32537788385043753
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9896579156722355,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.010342084327764518,
+                  "withinTolerance": 0.9896579156722355
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7462211614956245,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.2537788385043755,
+                  "withinTolerance": 0.7462211614956245
+                },
+                "wholeDesignWithinTolerance": 0.10342084327764518
+              }
+            }
+          }
+        },
+        "B0c": {
+          "overall": {
+            "nProjects": 1257,
+            "expertMatchPrimary": 50.80665287224417,
+            "expertMatchAny": 51.8672925212622,
+            "bundleExactMatch": 0.6778042959427207,
+            "battery": {
+              "accuracy": 0.8854415274463007,
+              "f1": 0.9392405063291139,
+              "nPositive": 1113,
+              "nPredicted": 1257
+            },
+            "wallbox": {
+              "accuracy": 0.7494033412887828,
+              "f1": 0.12256267409470752,
+              "nPositive": 319,
+              "nPredicted": 40
+            },
+            "heatPump": {
+              "accuracy": 0.9880668257756563,
+              "f1": 0.5945945945945946,
+              "nPositive": 13,
+              "nPredicted": 24
+            },
+            "kwp": {
+              "n": 937,
+              "mae": 2.9385218783351124,
+              "medianAbsError": 2.4749999999999996,
+              "within10pctOr2Modules": 0.24653148345784417
+            },
+            "batteryKwh": {
+              "n": 1113,
+              "mae": 3.336388140161725,
+              "withinOneStep": 0.4591194968553459
+            },
+            "heatPumpKw": {
+              "n": 13,
+              "withinOneSize": 0.7692307692307693
+            },
+            "runtimeMs": {
+              "p50": 0.015900004655122757,
+              "p95": 0.0219999928958714
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8138424821002387,
+                "includePrecision": 0.8138424821002387,
+                "includeRecall": 1.0,
+                "includeF1": 0.8973684210526316,
+                "includeF2": 0.9562535053280987,
+                "sizeMae": 2.9385218783351124,
+                "expertIncludeRate": 0.8138424821002387,
+                "withinTolerance": 0.3627684964200477
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8854415274463007,
+                "includePrecision": 0.8854415274463007,
+                "includeRecall": 1.0,
+                "includeF1": 0.9392405063291139,
+                "includeF2": 0.9747766684182869,
+                "sizeMae": 3.336388140161725,
+                "expertIncludeRate": 0.8854415274463007,
+                "withinTolerance": 0.2911694510739857
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9880668257756563,
+                "includePrecision": 0.4583333333333333,
+                "includeRecall": 0.8461538461538461,
+                "includeF1": 0.5945945945945946,
+                "includeF2": 0.7236842105263158,
+                "sizeMae": 1.2272727272727273,
+                "expertIncludeRate": 0.010342084327764518,
+                "withinTolerance": 0.9872712808273667
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7494033412887828,
+                "includePrecision": 0.55,
+                "includeRecall": 0.06896551724137931,
+                "includeF1": 0.12256267409470752,
+                "includeF2": 0.08358662613981763,
+                "sizeMae": 3.0,
+                "expertIncludeRate": 0.2537788385043755,
+                "withinTolerance": 0.7494033412887828
+              },
+              "wholeDesignWithinTolerance": 0.09466984884645982
+            }
+          },
+          "byInstaller": {
+            "2a8ba8e2": {
+              "nProjects": 1257,
+              "expertMatchPrimary": 50.80665287224417,
+              "expertMatchAny": 51.8672925212622,
+              "bundleExactMatch": 0.6778042959427207,
+              "battery": {
+                "accuracy": 0.8854415274463007,
+                "f1": 0.9392405063291139,
+                "nPositive": 1113,
+                "nPredicted": 1257
+              },
+              "wallbox": {
+                "accuracy": 0.7494033412887828,
+                "f1": 0.12256267409470752,
+                "nPositive": 319,
+                "nPredicted": 40
+              },
+              "heatPump": {
+                "accuracy": 0.9880668257756563,
+                "f1": 0.5945945945945946,
+                "nPositive": 13,
+                "nPredicted": 24
+              },
+              "kwp": {
+                "n": 937,
+                "mae": 2.9385218783351124,
+                "medianAbsError": 2.4749999999999996,
+                "within10pctOr2Modules": 0.24653148345784417
+              },
+              "batteryKwh": {
+                "n": 1113,
+                "mae": 3.336388140161725,
+                "withinOneStep": 0.4591194968553459
+              },
+              "heatPumpKw": {
+                "n": 13,
+                "withinOneSize": 0.7692307692307693
+              },
+              "runtimeMs": {
+                "p50": 0.015900004655122757,
+                "p95": 0.0219999928958714
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.8138424821002387,
+                  "includePrecision": 0.8138424821002387,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.8973684210526316,
+                  "includeF2": 0.9562535053280987,
+                  "sizeMae": 2.9385218783351124,
+                  "expertIncludeRate": 0.8138424821002387,
+                  "withinTolerance": 0.3627684964200477
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.8854415274463007,
+                  "includePrecision": 0.8854415274463007,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9392405063291139,
+                  "includeF2": 0.9747766684182869,
+                  "sizeMae": 3.336388140161725,
+                  "expertIncludeRate": 0.8854415274463007,
+                  "withinTolerance": 0.2911694510739857
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9880668257756563,
+                  "includePrecision": 0.4583333333333333,
+                  "includeRecall": 0.8461538461538461,
+                  "includeF1": 0.5945945945945946,
+                  "includeF2": 0.7236842105263158,
+                  "sizeMae": 1.2272727272727273,
+                  "expertIncludeRate": 0.010342084327764518,
+                  "withinTolerance": 0.9872712808273667
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7494033412887828,
+                  "includePrecision": 0.55,
+                  "includeRecall": 0.06896551724137931,
+                  "includeF1": 0.12256267409470752,
+                  "includeF2": 0.08358662613981763,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.2537788385043755,
+                  "withinTolerance": 0.7494033412887828
+                },
+                "wholeDesignWithinTolerance": 0.09466984884645982
+              }
+            }
+          }
+        },
+        "B1": {
+          "overall": {
+            "nProjects": 1257,
+            "expertMatchPrimary": 51.837066343494854,
+            "expertMatchAny": 52.73267577443081,
+            "bundleExactMatch": 0.6778042959427207,
+            "battery": {
+              "accuracy": 0.8854415274463007,
+              "f1": 0.9392405063291139,
+              "nPositive": 1113,
+              "nPredicted": 1257
+            },
+            "wallbox": {
+              "accuracy": 0.7494033412887828,
+              "f1": 0.12256267409470752,
+              "nPositive": 319,
+              "nPredicted": 40
+            },
+            "heatPump": {
+              "accuracy": 0.9880668257756563,
+              "f1": 0.5945945945945946,
+              "nPositive": 13,
+              "nPredicted": 24
+            },
+            "kwp": {
+              "n": 937,
+              "mae": 3.0552774813233725,
+              "medianAbsError": 2.25,
+              "within10pctOr2Modules": 0.24653148345784417
+            },
+            "batteryKwh": {
+              "n": 1113,
+              "mae": 3.3613656783468104,
+              "withinOneStep": 0.42677448337825696
+            },
+            "heatPumpKw": {
+              "n": 13,
+              "withinOneSize": 0.7692307692307693
+            },
+            "runtimeMs": {
+              "p50": 0.018000020645558834,
+              "p95": 0.026340014301240455
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8138424821002387,
+                "includePrecision": 0.8138424821002387,
+                "includeRecall": 1.0,
+                "includeF1": 0.8973684210526316,
+                "includeF2": 0.9562535053280987,
+                "sizeMae": 3.0552774813233725,
+                "expertIncludeRate": 0.8138424821002387,
+                "withinTolerance": 0.3818615751789976
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8854415274463007,
+                "includePrecision": 0.8854415274463007,
+                "includeRecall": 1.0,
+                "includeF1": 0.9392405063291139,
+                "includeF2": 0.9747766684182869,
+                "sizeMae": 3.3613656783468104,
+                "expertIncludeRate": 0.8854415274463007,
+                "withinTolerance": 0.3317422434367542
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9880668257756563,
+                "includePrecision": 0.4583333333333333,
+                "includeRecall": 0.8461538461538461,
+                "includeF1": 0.5945945945945946,
+                "includeF2": 0.7236842105263158,
+                "sizeMae": 1.2272727272727273,
+                "expertIncludeRate": 0.010342084327764518,
+                "withinTolerance": 0.9872712808273667
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7494033412887828,
+                "includePrecision": 0.55,
+                "includeRecall": 0.06896551724137931,
+                "includeF1": 0.12256267409470752,
+                "includeF2": 0.08358662613981763,
+                "sizeMae": 3.0,
+                "expertIncludeRate": 0.2537788385043755,
+                "withinTolerance": 0.7494033412887828
+              },
+              "wholeDesignWithinTolerance": 0.11853619729514718
+            }
+          },
+          "byInstaller": {
+            "2a8ba8e2": {
+              "nProjects": 1257,
+              "expertMatchPrimary": 51.837066343494854,
+              "expertMatchAny": 52.73267577443081,
+              "bundleExactMatch": 0.6778042959427207,
+              "battery": {
+                "accuracy": 0.8854415274463007,
+                "f1": 0.9392405063291139,
+                "nPositive": 1113,
+                "nPredicted": 1257
+              },
+              "wallbox": {
+                "accuracy": 0.7494033412887828,
+                "f1": 0.12256267409470752,
+                "nPositive": 319,
+                "nPredicted": 40
+              },
+              "heatPump": {
+                "accuracy": 0.9880668257756563,
+                "f1": 0.5945945945945946,
+                "nPositive": 13,
+                "nPredicted": 24
+              },
+              "kwp": {
+                "n": 937,
+                "mae": 3.0552774813233725,
+                "medianAbsError": 2.25,
+                "within10pctOr2Modules": 0.24653148345784417
+              },
+              "batteryKwh": {
+                "n": 1113,
+                "mae": 3.3613656783468104,
+                "withinOneStep": 0.42677448337825696
+              },
+              "heatPumpKw": {
+                "n": 13,
+                "withinOneSize": 0.7692307692307693
+              },
+              "runtimeMs": {
+                "p50": 0.018000020645558834,
+                "p95": 0.026340014301240455
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.8138424821002387,
+                  "includePrecision": 0.8138424821002387,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.8973684210526316,
+                  "includeF2": 0.9562535053280987,
+                  "sizeMae": 3.0552774813233725,
+                  "expertIncludeRate": 0.8138424821002387,
+                  "withinTolerance": 0.3818615751789976
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.8854415274463007,
+                  "includePrecision": 0.8854415274463007,
+                  "includeRecall": 1.0,
+                  "includeF1": 0.9392405063291139,
+                  "includeF2": 0.9747766684182869,
+                  "sizeMae": 3.3613656783468104,
+                  "expertIncludeRate": 0.8854415274463007,
+                  "withinTolerance": 0.3317422434367542
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9880668257756563,
+                  "includePrecision": 0.4583333333333333,
+                  "includeRecall": 0.8461538461538461,
+                  "includeF1": 0.5945945945945946,
+                  "includeF2": 0.7236842105263158,
+                  "sizeMae": 1.2272727272727273,
+                  "expertIncludeRate": 0.010342084327764518,
+                  "withinTolerance": 0.9872712808273667
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7494033412887828,
+                  "includePrecision": 0.55,
+                  "includeRecall": 0.06896551724137931,
+                  "includeF1": 0.12256267409470752,
+                  "includeF2": 0.08358662613981763,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.2537788385043755,
+                  "withinTolerance": 0.7494033412887828
+                },
+                "wholeDesignWithinTolerance": 0.11853619729514718
+              }
+            }
+          }
+        },
+        "M1": {
+          "overall": {
+            "nProjects": 1257,
+            "expertMatchPrimary": 51.21909728150963,
+            "expertMatchAny": 52.29929336263756,
+            "bundleExactMatch": 0.6754176610978521,
+            "battery": {
+              "accuracy": 0.8798727128082736,
+              "f1": 0.9360981802793059,
+              "nPositive": 1113,
+              "nPredicted": 1250
+            },
+            "wallbox": {
+              "accuracy": 0.7486077963404932,
+              "f1": 0.12222222222222222,
+              "nPositive": 319,
+              "nPredicted": 41
+            },
+            "heatPump": {
+              "accuracy": 0.9896579156722355,
+              "f1": 0.0,
+              "nPositive": 13,
+              "nPredicted": 0
+            },
+            "kwp": {
+              "n": 937,
+              "mae": 2.9417235859124866,
+              "medianAbsError": 2.3,
+              "within10pctOr2Modules": 0.21878335112059766
+            },
+            "batteryKwh": {
+              "n": 1113,
+              "mae": 3.2350404312668464,
+              "withinOneStep": 0.472596585804133
+            },
+            "heatPumpKw": {
+              "n": 13,
+              "withinOneSize": 0.0
+            },
+            "runtimeMs": {
+              "p50": 0.30663810661484914,
+              "p95": 0.30663810661484914
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8082736674622116,
+                "includePrecision": 0.8128,
+                "includeRecall": 0.9931573802541545,
+                "includeF1": 0.8939727232732072,
+                "includeF2": 0.950954698614751,
+                "sizeMae": 2.8874139784946236,
+                "expertIncludeRate": 0.8138424821002387,
+                "withinTolerance": 0.3715194908512331,
+                "p10p90Coverage": 0.6926360725720384,
+                "nCoverage": 937
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8798727128082736,
+                "includePrecision": 0.8848,
+                "includeRecall": 0.9937106918238994,
+                "includeF1": 0.9360981802793059,
+                "includeF2": 0.9698351455629604,
+                "sizeMae": 3.1922242314647375,
+                "expertIncludeRate": 0.8854415274463007,
+                "withinTolerance": 0.3715194908512331,
+                "p10p90Coverage": 0.6181491464510332,
+                "nCoverage": 1113
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9896579156722355,
+                "includePrecision": 0.0,
+                "includeRecall": 0.0,
+                "includeF1": 0.0,
+                "includeF2": 0.0,
+                "sizeMae": null,
+                "expertIncludeRate": 0.010342084327764518,
+                "withinTolerance": 0.9896579156722355,
+                "p10p90Coverage": 0.0,
+                "nCoverage": 13
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7486077963404932,
+                "includePrecision": 0.5365853658536586,
+                "includeRecall": 0.06896551724137931,
+                "includeF1": 0.12222222222222222,
+                "includeF2": 0.08352315869400152,
+                "sizeMae": 3.0,
+                "expertIncludeRate": 0.2537788385043755,
+                "withinTolerance": 0.7486077963404932
+              },
+              "wholeDesignWithinTolerance": 0.11933174224343675
+            }
+          },
+          "byInstaller": {
+            "2a8ba8e2": {
+              "nProjects": 1257,
+              "expertMatchPrimary": 51.21909728150963,
+              "expertMatchAny": 52.29929336263756,
+              "bundleExactMatch": 0.6754176610978521,
+              "battery": {
+                "accuracy": 0.8798727128082736,
+                "f1": 0.9360981802793059,
+                "nPositive": 1113,
+                "nPredicted": 1250
+              },
+              "wallbox": {
+                "accuracy": 0.7486077963404932,
+                "f1": 0.12222222222222222,
+                "nPositive": 319,
+                "nPredicted": 41
+              },
+              "heatPump": {
+                "accuracy": 0.9896579156722355,
+                "f1": 0.0,
+                "nPositive": 13,
+                "nPredicted": 0
+              },
+              "kwp": {
+                "n": 937,
+                "mae": 2.9417235859124866,
+                "medianAbsError": 2.3,
+                "within10pctOr2Modules": 0.21878335112059766
+              },
+              "batteryKwh": {
+                "n": 1113,
+                "mae": 3.2350404312668464,
+                "withinOneStep": 0.472596585804133
+              },
+              "heatPumpKw": {
+                "n": 13,
+                "withinOneSize": 0.0
+              },
+              "runtimeMs": {
+                "p50": 0.30663810661484914,
+                "p95": 0.30663810661484914
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.8082736674622116,
+                  "includePrecision": 0.8128,
+                  "includeRecall": 0.9931573802541545,
+                  "includeF1": 0.8939727232732072,
+                  "includeF2": 0.950954698614751,
+                  "sizeMae": 2.8874139784946236,
+                  "expertIncludeRate": 0.8138424821002387,
+                  "withinTolerance": 0.3715194908512331,
+                  "p10p90Coverage": 0.6926360725720384,
+                  "nCoverage": 937
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.8798727128082736,
+                  "includePrecision": 0.8848,
+                  "includeRecall": 0.9937106918238994,
+                  "includeF1": 0.9360981802793059,
+                  "includeF2": 0.9698351455629604,
+                  "sizeMae": 3.1922242314647375,
+                  "expertIncludeRate": 0.8854415274463007,
+                  "withinTolerance": 0.3715194908512331,
+                  "p10p90Coverage": 0.6181491464510332,
+                  "nCoverage": 1113
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9896579156722355,
+                  "includePrecision": 0.0,
+                  "includeRecall": 0.0,
+                  "includeF1": 0.0,
+                  "includeF2": 0.0,
+                  "sizeMae": null,
+                  "expertIncludeRate": 0.010342084327764518,
+                  "withinTolerance": 0.9896579156722355,
+                  "p10p90Coverage": 0.0,
+                  "nCoverage": 13
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7486077963404932,
+                  "includePrecision": 0.5365853658536586,
+                  "includeRecall": 0.06896551724137931,
+                  "includeF1": 0.12222222222222222,
+                  "includeF2": 0.08352315869400152,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.2537788385043755,
+                  "withinTolerance": 0.7486077963404932
+                },
+                "wholeDesignWithinTolerance": 0.11933174224343675
+              }
+            }
+          }
+        },
+        "H1": {
+          "overall": {
+            "nProjects": 1257,
+            "expertMatchPrimary": 51.01287256778778,
+            "expertMatchAny": 51.980053265403114,
+            "bundleExactMatch": 0.6722354813046937,
+            "battery": {
+              "accuracy": 0.8798727128082736,
+              "f1": 0.9360981802793059,
+              "nPositive": 1113,
+              "nPredicted": 1250
+            },
+            "wallbox": {
+              "accuracy": 0.7486077963404932,
+              "f1": 0.12222222222222222,
+              "nPositive": 319,
+              "nPredicted": 41
+            },
+            "heatPump": {
+              "accuracy": 0.9880668257756563,
+              "f1": 0.5945945945945946,
+              "nPositive": 13,
+              "nPredicted": 24
+            },
+            "kwp": {
+              "n": 937,
+              "mae": 2.9417235859124866,
+              "medianAbsError": 2.3,
+              "within10pctOr2Modules": 0.21878335112059766
+            },
+            "batteryKwh": {
+              "n": 1113,
+              "mae": 3.119496855345912,
+              "withinOneStep": 0.5211141060197664
+            },
+            "heatPumpKw": {
+              "n": 13,
+              "withinOneSize": 0.7692307692307693
+            },
+            "runtimeMs": {
+              "p50": 0.2628922832084341,
+              "p95": 0.2628922832084341
+            },
+            "policy": {
+              "pv_kwp": {
+                "includeAccuracy": 0.8082736674622116,
+                "includePrecision": 0.8128,
+                "includeRecall": 0.9931573802541545,
+                "includeF1": 0.8939727232732072,
+                "includeF2": 0.950954698614751,
+                "sizeMae": 2.8874139784946236,
+                "expertIncludeRate": 0.8138424821002387,
+                "withinTolerance": 0.3715194908512331,
+                "p10p90Coverage": 0.6926360725720384,
+                "nCoverage": 937
+              },
+              "battery_kwh": {
+                "includeAccuracy": 0.8798727128082736,
+                "includePrecision": 0.8848,
+                "includeRecall": 0.9937106918238994,
+                "includeF1": 0.9360981802793059,
+                "includeF2": 0.9698351455629604,
+                "sizeMae": 3.0759493670886076,
+                "expertIncludeRate": 0.8854415274463007,
+                "withinTolerance": 0.3229912490055688,
+                "p10p90Coverage": 0.6495956873315364,
+                "nCoverage": 1113
+              },
+              "heat_pump_kw": {
+                "includeAccuracy": 0.9880668257756563,
+                "includePrecision": 0.4583333333333333,
+                "includeRecall": 0.8461538461538461,
+                "includeF1": 0.5945945945945946,
+                "includeF2": 0.7236842105263158,
+                "sizeMae": 1.2272727272727273,
+                "expertIncludeRate": 0.010342084327764518,
+                "withinTolerance": 0.9872712808273667,
+                "p10p90Coverage": 0.0,
+                "nCoverage": 13
+              },
+              "wallbox_kw": {
+                "includeAccuracy": 0.7486077963404932,
+                "includePrecision": 0.5365853658536586,
+                "includeRecall": 0.06896551724137931,
+                "includeF1": 0.12222222222222222,
+                "includeF2": 0.08352315869400152,
+                "sizeMae": 3.0,
+                "expertIncludeRate": 0.2537788385043755,
+                "withinTolerance": 0.7486077963404932
+              },
+              "wholeDesignWithinTolerance": 0.1026252983293556
+            }
+          },
+          "byInstaller": {
+            "2a8ba8e2": {
+              "nProjects": 1257,
+              "expertMatchPrimary": 51.01287256778778,
+              "expertMatchAny": 51.980053265403114,
+              "bundleExactMatch": 0.6722354813046937,
+              "battery": {
+                "accuracy": 0.8798727128082736,
+                "f1": 0.9360981802793059,
+                "nPositive": 1113,
+                "nPredicted": 1250
+              },
+              "wallbox": {
+                "accuracy": 0.7486077963404932,
+                "f1": 0.12222222222222222,
+                "nPositive": 319,
+                "nPredicted": 41
+              },
+              "heatPump": {
+                "accuracy": 0.9880668257756563,
+                "f1": 0.5945945945945946,
+                "nPositive": 13,
+                "nPredicted": 24
+              },
+              "kwp": {
+                "n": 937,
+                "mae": 2.9417235859124866,
+                "medianAbsError": 2.3,
+                "within10pctOr2Modules": 0.21878335112059766
+              },
+              "batteryKwh": {
+                "n": 1113,
+                "mae": 3.119496855345912,
+                "withinOneStep": 0.5211141060197664
+              },
+              "heatPumpKw": {
+                "n": 13,
+                "withinOneSize": 0.7692307692307693
+              },
+              "runtimeMs": {
+                "p50": 0.2628922832084341,
+                "p95": 0.2628922832084341
+              },
+              "policy": {
+                "pv_kwp": {
+                  "includeAccuracy": 0.8082736674622116,
+                  "includePrecision": 0.8128,
+                  "includeRecall": 0.9931573802541545,
+                  "includeF1": 0.8939727232732072,
+                  "includeF2": 0.950954698614751,
+                  "sizeMae": 2.8874139784946236,
+                  "expertIncludeRate": 0.8138424821002387,
+                  "withinTolerance": 0.3715194908512331,
+                  "p10p90Coverage": 0.6926360725720384,
+                  "nCoverage": 937
+                },
+                "battery_kwh": {
+                  "includeAccuracy": 0.8798727128082736,
+                  "includePrecision": 0.8848,
+                  "includeRecall": 0.9937106918238994,
+                  "includeF1": 0.9360981802793059,
+                  "includeF2": 0.9698351455629604,
+                  "sizeMae": 3.0759493670886076,
+                  "expertIncludeRate": 0.8854415274463007,
+                  "withinTolerance": 0.3229912490055688,
+                  "p10p90Coverage": 0.6495956873315364,
+                  "nCoverage": 1113
+                },
+                "heat_pump_kw": {
+                  "includeAccuracy": 0.9880668257756563,
+                  "includePrecision": 0.4583333333333333,
+                  "includeRecall": 0.8461538461538461,
+                  "includeF1": 0.5945945945945946,
+                  "includeF2": 0.7236842105263158,
+                  "sizeMae": 1.2272727272727273,
+                  "expertIncludeRate": 0.010342084327764518,
+                  "withinTolerance": 0.9872712808273667,
+                  "p10p90Coverage": 0.0,
+                  "nCoverage": 13
+                },
+                "wallbox_kw": {
+                  "includeAccuracy": 0.7486077963404932,
+                  "includePrecision": 0.5365853658536586,
+                  "includeRecall": 0.06896551724137931,
+                  "includeF1": 0.12222222222222222,
+                  "includeF2": 0.08352315869400152,
+                  "sizeMae": 3.0,
+                  "expertIncludeRate": 0.2537788385043755,
+                  "withinTolerance": 0.7486077963404932
+                },
+                "wholeDesignWithinTolerance": 0.1026252983293556
+              }
+            }
+          }
+        }
+      },
+      "pvGate": {
+        "M1": 0.5,
+        "H1": 0.5
+      }
+    }
+  },
+  "sensitivity": {
+    "split": "random80_20",
+    "wholeDesignRangeM1": [
+      0.11285266457680251,
+      0.12852664576802508
+    ],
+    "runs": {
+      "first_400W": {
+        "optionChoice": "first",
+        "moduleWp": 400.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 54.72449452290012,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.47648902821316613,
+          "batteryWithinTolerance": 0.3605015673981191
+        },
+        "B0c": {
+          "expertMatchPrimary": 53.37003439033843,
+          "wholeDesign": 0.11285266457680251,
+          "pvWithinTolerance": 0.3981191222570533,
+          "batteryWithinTolerance": 0.2884012539184953
+        }
+      },
+      "last_400W": {
+        "optionChoice": "last",
+        "moduleWp": 400.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 54.04493484514617,
+          "wholeDesign": 0.11285266457680251,
+          "pvWithinTolerance": 0.4702194357366771,
+          "batteryWithinTolerance": 0.3573667711598746
+        },
+        "B0c": {
+          "expertMatchPrimary": 52.44420950544476,
+          "wholeDesign": 0.11285266457680251,
+          "pvWithinTolerance": 0.38557993730407525,
+          "batteryWithinTolerance": 0.27586206896551724
+        }
+      },
+      "first_450W": {
+        "optionChoice": "first",
+        "moduleWp": 450.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 55.235192508979445,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.47335423197492166,
+          "batteryWithinTolerance": 0.38557993730407525
+        },
+        "B0c": {
+          "expertMatchPrimary": 53.41183729094029,
+          "wholeDesign": 0.12225705329153605,
+          "pvWithinTolerance": 0.41379310344827586,
+          "batteryWithinTolerance": 0.2884012539184953
+        }
+      },
+      "last_450W": {
+        "optionChoice": "last",
+        "moduleWp": 450.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 54.76794114340511,
+          "wholeDesign": 0.12852664576802508,
+          "pvWithinTolerance": 0.47335423197492166,
+          "batteryWithinTolerance": 0.3949843260188088
+        },
+        "B0c": {
+          "expertMatchPrimary": 52.48601240604662,
+          "wholeDesign": 0.12225705329153605,
+          "pvWithinTolerance": 0.4012539184952978,
+          "batteryWithinTolerance": 0.27586206896551724
+        }
+      },
+      "first_475W": {
+        "optionChoice": "first",
+        "moduleWp": 475.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 55.17470720052184,
+          "wholeDesign": 0.12852664576802508,
+          "pvWithinTolerance": 0.4890282131661442,
+          "batteryWithinTolerance": 0.3824451410658307
+        },
+        "B0c": {
+          "expertMatchPrimary": 53.45176842632566,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.4043887147335423,
+          "batteryWithinTolerance": 0.2884012539184953
+        }
+      },
+      "last_475W": {
+        "optionChoice": "last",
+        "moduleWp": 475.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 54.429970016057936,
+          "wholeDesign": 0.11912225705329153,
+          "pvWithinTolerance": 0.4670846394984326,
+          "batteryWithinTolerance": 0.38557993730407525
+        },
+        "B0c": {
+          "expertMatchPrimary": 52.52594354143197,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.4012539184952978,
+          "batteryWithinTolerance": 0.27586206896551724
+        }
+      },
+      "first_500W": {
+        "optionChoice": "first",
+        "moduleWp": 500.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 55.24636452298515,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.4827586206896552,
+          "batteryWithinTolerance": 0.3887147335423197
+        },
+        "B0c": {
+          "expertMatchPrimary": 53.534529508757764,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.40752351097178685,
+          "batteryWithinTolerance": 0.2884012539184953
+        }
+      },
+      "last_500W": {
+        "optionChoice": "last",
+        "moduleWp": 500.0,
+        "nTest": 319,
+        "M1": {
+          "expertMatchPrimary": 55.02498702816619,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.47335423197492166,
+          "batteryWithinTolerance": 0.3949843260188088
+        },
+        "B0c": {
+          "expertMatchPrimary": 52.60870462386409,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.3949843260188088,
+          "batteryWithinTolerance": 0.27586206896551724
+        }
+      }
+    }
+  },
+  "oracle": {
+    "split": "temporal (test = offers after 2025-12-31)",
+    "model": "composite (selected on validation), refit on train <= 2025-12-31",
+    "nTest": 325,
+    "fields": {
+      "demand": {
+        "note": "demand replaced by 4,500 kWh",
+        "kind": "answer",
+        "n": 325,
+        "unknown": {
+          "ems": 55.35116762457281,
+          "wholeDesign": 0.11076923076923077,
+          "pv": 0.4646153846153846,
+          "battery": 0.3569230769230769,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.7815384615384615,
+          "n": 325
+        },
+        "answered": {
+          "ems": 61.037274860704315,
+          "wholeDesign": 0.20923076923076922,
+          "pv": 0.5969230769230769,
+          "battery": 0.47384615384615386,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.7815384615384615,
+          "n": 325
+        },
+        "gain": {
+          "ems": 5.686107236131505,
+          "wholeDesign": 0.09846153846153845,
+          "pv": 0.1323076923076923,
+          "battery": 0.11692307692307696,
+          "heatPump": 0.0,
+          "wallbox": 0.0
+        }
+      },
+      "ev": {
+        "note": "EV flag and km blanked",
+        "kind": "answer",
+        "n": 325,
+        "unknown": {
+          "ems": 60.32207492507953,
+          "wholeDesign": 0.2,
+          "pv": 0.6061538461538462,
+          "battery": 0.4646153846153846,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.76,
+          "n": 325
+        },
+        "answered": {
+          "ems": 61.037274860704315,
+          "wholeDesign": 0.20923076923076922,
+          "pv": 0.5969230769230769,
+          "battery": 0.47384615384615386,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.7815384615384615,
+          "n": 325
+        },
+        "gain": {
+          "ems": 0.7151999356247885,
+          "wholeDesign": 0.009230769230769209,
+          "pv": -0.009230769230769265,
+          "battery": 0.009230769230769265,
+          "heatPump": 0.0,
+          "wallbox": 0.021538461538461506
+        }
+      },
+      "evAssumedNo": {
+        "note": "EV flag set to no",
+        "kind": "answer",
+        "n": 325,
+        "unknown": {
+          "ems": 60.32207492507953,
+          "wholeDesign": 0.2,
+          "pv": 0.6061538461538462,
+          "battery": 0.4646153846153846,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.76,
+          "n": 325
+        },
+        "answered": {
+          "ems": 61.037274860704315,
+          "wholeDesign": 0.20923076923076922,
+          "pv": 0.5969230769230769,
+          "battery": 0.47384615384615386,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.7815384615384615,
+          "n": 325
+        },
+        "gain": {
+          "ems": 0.7151999356247885,
+          "wholeDesign": 0.009230769230769209,
+          "pv": -0.009230769230769265,
+          "battery": 0.009230769230769265,
+          "heatPump": 0.0,
+          "wallbox": 0.021538461538461506
+        }
+      },
+      "heat": {
+        "note": "heat demand blanked (Gas/Oil homes)",
+        "kind": "answer",
+        "n": 3,
+        "unknown": {
+          "ems": 68.3862433862434,
+          "wholeDesign": 0.3333333333333333,
+          "pv": 1.0,
+          "battery": 1.0,
+          "heatPump": 0.3333333333333333,
+          "wallbox": 0.6666666666666666,
+          "n": 3
+        },
+        "answered": {
+          "ems": 68.3862433862434,
+          "wholeDesign": 0.3333333333333333,
+          "pv": 1.0,
+          "battery": 1.0,
+          "heatPump": 0.3333333333333333,
+          "wallbox": 0.6666666666666666,
+          "n": 3
+        },
+        "gain": {
+          "ems": 0.0,
+          "wholeDesign": 0.0,
+          "pv": 0.0,
+          "battery": 0.0,
+          "heatPump": 0.0,
+          "wallbox": 0.0
+        }
+      },
+      "roof": {
+        "note": "UPPER BOUND: cap = expert's module count; unknown = no cap",
+        "kind": "upperBound",
+        "n": 325,
+        "unknown": {
+          "ems": 61.037274860704315,
+          "wholeDesign": 0.20923076923076922,
+          "pv": 0.5969230769230769,
+          "battery": 0.47384615384615386,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.7815384615384615,
+          "n": 325
+        },
+        "answered": {
+          "ems": 68.6363532380922,
+          "wholeDesign": 0.3292307692307692,
+          "pv": 0.8246153846153846,
+          "battery": 0.5046153846153846,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.7815384615384615,
+          "n": 325
+        },
+        "gain": {
+          "ems": 7.599078377387883,
+          "wholeDesign": 0.12,
+          "pv": 0.22769230769230775,
+          "battery": 0.030769230769230715,
+          "heatPump": 0.0,
+          "wallbox": 0.0
+        }
+      }
+    }
+  },
+  "honesty": {
+    "metric": "whole design within tolerance (PV 20%, battery 25%, heat pump 25%, wallbox include)",
+    "model": "served config (config/policy.json), trained on the rows of each split",
+    "shuffledLabels": {
+      "setting": "train offers <= 2025-09-30, validate 2025-10-01..2025-12-31",
+      "nTrain": 1036,
+      "nTest": 232,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "real": {
+        "whole": 0.2413793103448276,
+        "pv": 0.521551724137931,
+        "battery": 0.5818965517241379
+      },
+      "b0": {
+        "whole": 0.17672413793103448,
+        "pv": 0.4482758620689655,
+        "battery": 0.3448275862068966
+      },
+      "shuffled": {
+        "whole": {
+          "mean": 0.21724137931034485,
+          "sd": 0.018936105721111037,
+          "n": 5
+        },
+        "pv": {
+          "mean": 0.40258620689655167,
+          "sd": 0.01686000622035167,
+          "n": 5
+        },
+        "battery": {
+          "mean": 0.5362068965517242,
+          "sd": 0.022930062203914456,
+          "n": 5
+        }
+      },
+      "shuffledWholeMinusB0": 0.04051724137931037,
+      "realWholeMinusShuffled": 0.02413793103448275
+    },
+    "repeatedSplits": {
+      "setting": "random 80/20 of offers <= 2025-12-31 (test split never read)",
+      "n": 1268,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "ours": {
+        "whole": {
+          "mean": 0.14685039370078745,
+          "sd": 0.020078943304433758,
+          "n": 20
+        },
+        "pv": {
+          "mean": 0.4976377952755905,
+          "sd": 0.026127648131566327,
+          "n": 20
+        },
+        "battery": {
+          "mean": 0.3990157480314961,
+          "sd": 0.034257207920100695,
+          "n": 20
+        }
+      },
+      "b0": {
+        "whole": {
+          "mean": 0.14055118110236225,
+          "sd": 0.01128833781575547,
+          "n": 20
+        },
+        "pv": {
+          "mean": 0.4427165354330708,
+          "sd": 0.027380124838732513,
+          "n": 20
+        },
+        "battery": {
+          "mean": 0.35885826771653545,
+          "sd": 0.02577794880890959,
+          "n": 20
+        }
+      },
+      "oursMinusB0": {
+        "whole": {
+          "mean": 0.006299212598425197,
+          "sd": 0.019680894714938564,
+          "n": 20
+        },
+        "pv": {
+          "mean": 0.05492125984251965,
+          "sd": 0.03494565058814285,
+          "n": 20
+        },
+        "battery": {
+          "mean": 0.04015748031496063,
+          "sd": 0.03661294776679124,
+          "n": 20
+        }
+      },
+      "splitsOursBeatsB0Whole": 11,
+      "nSplits": 20
+    },
+    "fuzz": {
+      "setting": "served composite trained on offers <= 2025-12-31",
+      "n": 2000,
+      "seed": 0,
+      "broken": 0,
+      "crashes": 0,
+      "kinds": {},
+      "examples": [],
+      "passed": true
+    }
+  },
+  "robustness": {
+    "split": "random80_20",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "blankRate": {
+      "0": {
+        "B0": {
+          "expertMatchPrimary": 55.346685815733075,
+          "wholeDesign": 0.14106583072100312,
+          "pvWithinTolerance": 0.3887147335423197,
+          "batteryWithinTolerance": 0.34796238244514105
+        },
+        "B0c": {
+          "expertMatchPrimary": 53.41183729094029,
+          "wholeDesign": 0.12225705329153605,
+          "pvWithinTolerance": 0.41379310344827586,
+          "batteryWithinTolerance": 0.2884012539184953
+        },
+        "M1": {
+          "expertMatchPrimary": 55.235192508979445,
+          "wholeDesign": 0.12539184952978055,
+          "pvWithinTolerance": 0.47335423197492166,
+          "batteryWithinTolerance": 0.38557993730407525
+        }
+      },
+      "20": {
+        "B0": {
+          "expertMatchPrimary": 55.346685815733075,
+          "wholeDesign": 0.14106583072100312,
+          "pvWithinTolerance": 0.3887147335423197,
+          "batteryWithinTolerance": 0.34796238244514105
+        },
+        "B0c": {
+          "expertMatchPrimary": 53.217399690879226,
+          "wholeDesign": 0.1149425287356322,
+          "pvWithinTolerance": 0.4075235109717868,
+          "batteryWithinTolerance": 0.2727272727272727
+        },
+        "M1": {
+          "expertMatchPrimary": 54.31598204721954,
+          "wholeDesign": 0.12434691745036573,
+          "pvWithinTolerance": 0.45768025078369906,
+          "batteryWithinTolerance": 0.35841170323928945
+        }
+      },
+      "40": {
+        "B0": {
+          "expertMatchPrimary": 55.346685815733075,
+          "wholeDesign": 0.14106583072100312,
+          "pvWithinTolerance": 0.3887147335423197,
+          "batteryWithinTolerance": 0.34796238244514105
+        },
+        "B0c": {
+          "expertMatchPrimary": 52.82710801045739,
+          "wholeDesign": 0.11598746081504703,
+          "pvWithinTolerance": 0.40229885057471265,
+          "batteryWithinTolerance": 0.258098223615465
+        },
+        "M1": {
+          "expertMatchPrimary": 53.67828955445381,
+          "wholeDesign": 0.12852664576802508,
+          "pvWithinTolerance": 0.44096133751306166,
+          "batteryWithinTolerance": 0.35423197492163006
+        }
+      },
+      "60": {
+        "B0": {
+          "expertMatchPrimary": 55.346685815733075,
+          "wholeDesign": 0.14106583072100312,
+          "pvWithinTolerance": 0.3887147335423197,
+          "batteryWithinTolerance": 0.34796238244514105
+        },
+        "B0c": {
+          "expertMatchPrimary": 52.7203780770968,
+          "wholeDesign": 0.11389759665621735,
+          "pvWithinTolerance": 0.393939393939394,
+          "batteryWithinTolerance": 0.24973876698014627
+        },
+        "M1": {
+          "expertMatchPrimary": 52.94037320262183,
+          "wholeDesign": 0.1264367816091954,
+          "pvWithinTolerance": 0.4158829676071056,
+          "batteryWithinTolerance": 0.33542319749216304
+        }
+      }
+    }
+  },
+  "served": {
+    "validation": {
+      "n": 232,
+      "models": {
+        "B0": {
+          "ems": 55.92246755425665,
+          "wholeDesign": 0.17672413793103448,
+          "pv": 0.4482758620689655,
+          "battery": 0.3448275862068966,
+          "heatPump": 0.9655172413793104,
+          "wallbox": 0.75,
+          "latencyP50ms": 0.002749991836026311
+        },
+        "B1": {
+          "ems": 52.84506750918522,
+          "wholeDesign": 0.15517241379310345,
+          "pv": 0.36637931034482757,
+          "battery": 0.38362068965517243,
+          "heatPump": 0.9568965517241379,
+          "wallbox": 0.7672413793103449,
+          "latencyP50ms": 0.006099988240748644
+        },
+        "ours": {
+          "ems": 59.764896603050445,
+          "wholeDesign": 0.2413793103448276,
+          "pv": 0.521551724137931,
+          "battery": 0.5818965517241379,
+          "heatPump": 0.9655172413793104,
+          "wallbox": 0.7672413793103449,
+          "latencyP50ms": 0.9945794869349617
+        }
+      }
+    },
+    "test": {
+      "n": 325,
+      "models": {
+        "B0": {
+          "ems": 61.13551749908371,
+          "wholeDesign": 0.20615384615384616,
+          "pv": 0.4246153846153846,
+          "battery": 0.47384615384615386,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.76,
+          "latencyP50ms": 0.002700020559132099
+        },
+        "B1": {
+          "ems": 54.995188646344914,
+          "wholeDesign": 0.1476923076923077,
+          "pv": 0.3292307692307692,
+          "battery": 0.4,
+          "heatPump": 0.9938461538461538,
+          "wallbox": 0.7815384615384615,
+          "latencyP50ms": 0.006300047971308231
+        },
+        "ours": {
+          "ems": 61.037274860704315,
+          "wholeDesign": 0.20923076923076922,
+          "pv": 0.5969230769230769,
+          "battery": 0.47384615384615386,
+          "heatPump": 0.9907692307692307,
+          "wallbox": 0.7815384615384615,
+          "latencyP50ms": 0.5095379997510463
+        }
+      }
+    }
+  },
+  "durationSec": 777.4
+}

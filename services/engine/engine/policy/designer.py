@@ -3,14 +3,14 @@
 Decision order heat pump -> PV -> battery -> wallbox. After each step the hard rules (R01-R05, snapping) run and
 their result is fed to the next model, so rule adjustments and planner locks flow downstream.
 
-Three modes (config/policy.json, picked on the VALIDATION split by eval/run.py --select):
+Three modes (config/policy.json, picked on the VALIDATION split by eval/run.py --select; served: composite):
   "learned"  M1: every component from the learned chain.
   "composite" per-component source chosen on validation: config "sources" maps pv / battery / heatPump / wallbox to one of
              B0 (installer median), B0c (median conditioned on demand bucket / EV / heating), M1 (learned chain),
              H1 (hybrid rule: installer's usual battery, structural heat-pump rule, EV rule), SIM (battery = the simulator's
              economic optimum among the installer's sizes). Rules (R01-R05), snapping, locks and downstream propagation
              (the battery sees the FINAL PV) are identical for every source.
-  "hybrid"   H1 (default): learned PV gate + size, battery = the installer's usual (median) battery snapped to its sizes
+  "hybrid"   H1 (eval candidate only, not served): learned PV gate + size, battery = the installer's usual (median) battery snapped to its sizes
              (only when there is new or trusted existing PV and the installer usually includes one), heat pump =
              structural rule (baseline.hp_rule), wallbox = EV rule. Rationale: battery size follows kWp at ~0.93 kWh/kWp in
              every segment, and battery presence is not predictable from the inputs beyond the majority class.
@@ -45,7 +45,7 @@ UNIT = {"pv_kwp": "kWp", "battery_kwh": "kWh", "heat_pump_kw": "kW", "wallbox_kw
 CODE = {"pv_kwp": "PV", "battery_kwh": "BATTERY", "heat_pump_kw": "HEAT_PUMP", "wallbox_kw": "WALLBOX"}
 
 CONFIG_PATH = Path(__file__).resolve().parents[2] / "config" / "policy.json"
-DEFAULT_CONFIG = {"mode": "hybrid", "pvGate": 0.5}
+DEFAULT_CONFIG = {"mode": "composite", "pvGate": 0.5}
 MODES = ("hybrid", "learned", "composite")
 SOURCES = ("B0", "B0c", "M1", "H1", "SIM")
 EXTRA_KEYS = ("sources", "features", "model", "conformal", "sizing")  # optional blocks of config/policy.json
@@ -217,7 +217,7 @@ class Designer:
     installers: tuple[str, ...] = ()
     n_train: int = 0
     battery_stats: dict = field(default_factory=dict)   # installer (or "all") -> share / median / p10 / p90 / sizes / step
-    mode: str = "hybrid"                                # "hybrid" (H1) | "learned" (M1) | "composite"
+    mode: str = "composite"                             # served: "composite"; "learned" (M1) / "hybrid" (H1) are eval candidates
     pv_gate: float = 0.5                                # P(PV) needed to include PV
     synthetic: bool = False                             # trained on fake data (demo without the confidential dataset)
     baseline_stats: dict | None = None                  # installer (or "all") -> bl.Stats, for the B0 / B0c sources
@@ -298,9 +298,6 @@ class Designer:
 
     def _stats_for(self, installer) -> dict | None:
         return self.battery_stats.get(str(installer)) or self.battery_stats.get("all")
-
-    def hybrid_active(self) -> bool:
-        return self.mode == "hybrid" and bool(self.battery_stats)
 
     def effective_sources(self) -> dict[str, str]:
         """target -> source in force: M1 everywhere ("learned"), H1 battery + heat pump ("hybrid"), or the composite config."""
@@ -453,8 +450,7 @@ class Designer:
         intervals = {t: tuple(float(a[0]) for a in iv[t]) for t in TARGETS}
         nb = self.neighbours.query(X)[0]
         nb_flags, _, _, _ = self._neighbour_checks(X, values, nb)
-        reasons = self.explain(X, values, p, locked, applied[0], hybrid=self.hybrid_active(), nb=nb,
-                               sources=self.effective_sources())
+        reasons = self.explain(X, values, p, locked, applied[0], nb=nb, sources=self.effective_sources())
         return PolicyDesign(values, p, intervals, reasons, [hit_to_flag(h) for h in flags[0]] + nb_flags, applied[0])
 
     # -- validation ---------------------------------------------------------------------------------
@@ -496,7 +492,7 @@ class Designer:
 
     # -- explanation --------------------------------------------------------------------------------
     def explain(self, X: pd.DataFrame, values: Mapping[str, float], p: Mapping[str, float], locked: Mapping,
-                applied: list[rules.Hit] | None = None, hybrid: bool = False,
+                applied: list[rules.Hit] | None = None,
                 nb: pd.DataFrame | None = None, sources: Mapping[str, str] | None = None) -> list[ReasonCode]:
         """One reason per component (model/rule/lock decision + what similar homes got) plus every rule that fired.
         Physics / payback lines are deliberately absent: the hourly simulator attaches metrics (see design.attach_metrics)."""
@@ -515,9 +511,9 @@ class Designer:
                     who, kind = ("the simulator's economic-optimum battery" if v > 0 else "simulator: no battery pays back"), "SIM_OPTIMUM"
                 else:
                     who, kind = f"the installer's {'typical' if src == 'B0' else 'typical, demand-matched'} choice", "INSTALLER_USUAL"
-            elif hybrid and t == "heat_pump_kw":
+            elif t == "heat_pump_kw" and (sources or {}).get(t) == "H1":
                 who, kind = (f"rule: heat demand / {bl.HP_FULL_LOAD_HOURS:g} full-load hours", "RULE") if v > 0 else                     ("rule: no fossil heating or no known heat demand", "NO_RULE")
-            elif hybrid and t == "battery_kwh":
+            elif t == "battery_kwh" and (sources or {}).get(t) == "H1":
                 who, kind = ("the installer's usual battery", "INSTALLER_USUAL") if v > 0 else                     ("no PV, or this installer rarely includes one", "NONE_RULE")
             elif t == "wallbox_kw":
                 ev = p[t] >= 1.0

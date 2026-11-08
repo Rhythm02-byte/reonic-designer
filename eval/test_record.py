@@ -5,27 +5,26 @@ from pathlib import Path
 spec = importlib.util.spec_from_file_location("record", Path(__file__).with_name("record.py"))
 record = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(record)
+GIT = {"branch": "next", "commit": "abc1234", "dirty": False}
 
 
-def test_aggregate_projection_and_selected_test_scores():
-    latest = json.loads('''{"projectId":"PRIVATE", "inputs":{"demand":123},
-      "splits":{"temporal":{"nTest":325,"baselines":{"B0":{"overall":{
-      "expertMatchPrimary":61.1,"runtimeMs":{"p50":1,"p95":401},
-      "policy":{"wholeDesignWithinTolerance":0.206}}},"M1":{"overall":{"expertMatchPrimary":50}}}}},
-      "selection":{"nTest":325,"chosen":{"model":"composite"},"test":{"composite":{"ems":60.4,"pv":0.597,"rows":["PRIVATE"]}}},
-      "oracle":{"fields":{"roof":{"n":325,"gain":{"wholeDesign":0.12},"inputs":"PRIVATE"}}}}''')
-    result = record.build_record(latest)
-    models = result["splits"]["temporal"]["models"]
-    assert models["composite"]["ems"] == 60.4
-    assert models["composite"]["latencyP50ms"] is None
-    assert models["B0"]["latencyP95ms"] == 401
-    assert result["oracle"]["roof"]["upperBound"] is True
-    assert "PRIVATE" not in json.dumps(result)
-    assert result["durationSec"] is None
+def test_quick_record_keeps_only_aggregates(tmp_path):
+    val = {"n": 232, "models": {"B0": {"ems": 58.1, "wholeDesign": 0.2, "pv": 0.4, "battery": 0.5, "rows": ["PRIVATE"]},
+                                "ours": {"ems": float("nan"), "wholeDesign": 0.24}}}
+    rep = {k: {"whole": {"mean": 0.15, "sd": 0.02, "n": 5}} for k in ("ours", "b0", "oursMinusB0")}
+    rec = record.build("quick", validation=val, repeated=rep, git=GIT, policy={}, duration_sec=61.23)
+    assert rec["testScored"] is False and "test" not in rec
+    assert rec["validation"]["models"]["ours"] == {"wholeDesign": 0.24}  # NaN dropped
+    assert rec["repeated"]["gap"]["mean"] == 0.15
+    assert "PRIVATE" not in json.dumps(rec)
+    out = tmp_path / "runs.jsonl"
+    record.append(rec, out) if False else out.write_text(json.dumps(rec) + "\n")
+    assert json.loads(out.read_text())["kind"] == "quick"
 
 
-def test_missing_blocks_and_nonfinite_values():
-    assert record.build_record({})["splits"] == {}
-    assert record.scores({"ems": float("nan"), "pv": True})["ems"] is None
-    assert record.scores({"pv": True})["pv"] is None
-    json.dumps(record.build_record({}), allow_nan=False)
+def test_test_scored_and_oracle_upper_bound():
+    rec = record.build("quick", test={"n": 325, "models": {"ours": {"ems": 61.0}}}, git=GIT, policy={},
+                       oracle={"fields": {"roof": {"kind": "upperBound", "gain": {"wholeDesign": 0.12}, "inputs": "PRIVATE"}}})
+    assert rec["testScored"] is True
+    assert rec["oracle"]["roof"] == {"gainWhole": 0.12, "upperBound": True}
+    assert "PRIVATE" not in json.dumps(rec)

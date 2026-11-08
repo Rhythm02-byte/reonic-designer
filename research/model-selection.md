@@ -70,3 +70,48 @@ Same selected composite, refit on train <= 2025-12-31, test 2026 (n=325), scored
 | Heat demand | blanked for Gas/Oil homes | n=3 only: no reading | | | | |
 
 Reading: knowing the real demand is worth +4.4 EMS and +8.6 points of whole-design matches (PV +13 points): it is the one input whose absence the model cannot hide. The EV flag mostly moves the wallbox (+2.2 points) and little else. The roof row is an upper bound, not a forecast: the cap equals the expert's kWp, so PV can only match or undershoot; a measured roof is a looser cap and is worth less, but the direction (PV within tolerance 59.7% to 82.5%) shows why installers' unrecorded roof size is the data's ceiling. Heat demand has only 3 Gas/Oil homes in the test split, so it is reported but not interpretable. Existing PV / storage are not in the experiment (about 1% of homes).
+
+## Sizing options ported from the teammate prototype (opt-in, `sizing` block of config/policy.json)
+
+Options (engine/policy: `chain.coverage_size`, `Designer.with_config(sizing=...)`): **coverage sizing** (PV / battery size = the quantile-spread value within tolerance of the most plausible expert sizes, then rules + snap; nine quantile models, about 3x training time for that target), **full battery catalog** (`batteryCatalogTop: 0`: every installed battery size instead of the 15 most common), **neighbour blend 0.5** (half the median of the 25 most similar past homes, before rules + snapping). Chosen on validation only (train <= 2025-09-30, validate Q4 2025, n=232), on top of the validated composite. Rule: adopt only if whole design improves and EMS drops by at most 1 point.
+
+| Candidate (validation) | EMS | Whole design | PV | Battery |
+|---|---|---|---|---|
+| none (previous config) | 58.55 | 23.7% | 52.2% | 55.6% |
+| battery catalog = all sizes | 57.76 | 21.6% | 52.2% | 53.0% |
+| coverage PV | 57.69 | 20.7% | 50.4% | 57.8% |
+| **coverage battery** | **59.76** | **24.1%** | 52.2% | 58.2% |
+| coverage PV + battery | 57.36 | 20.3% | 50.4% | 54.7% |
+| coverage PV + battery (catalog candidates) | 57.10 | 21.6% | 50.4% | 58.2% |
+| neighbour blend 0.5 | 59.52 | 22.8% | 52.6% | 53.0% |
+| catalog + coverage | 56.97 | 20.3% | 50.4% | 53.4% |
+| catalog + coverage (catalog candidates) | 56.40 | 22.0% | 50.4% | 57.3% |
+| catalog + blend | 59.04 | 22.4% | 52.6% | 52.2% |
+| coverage + blend | 59.30 | 22.8% | 50.9% | 55.2% |
+| catalog + coverage + blend | 59.23 | 22.8% | 50.9% | 55.2% |
+
+Chosen: `sizing: {"coverage": ["battery"]}` (the only candidate that qualifies; +0.4 point whole design is one project of 232, i.e. noise). The prototype's combined winner (coverage + 40-size catalog, +3.6 points there) does not reproduce here: on our validation window the combination is worse (20.3-22.0% vs 23.7%). Plausible reasons: our battery snap is already per installer family via physics and prior features, installers' sizes differ, and the prototype picked its winner among 21 variants on the same folds. Not run: installer as a feature (already in our base features as one-hot), placeholder-demand down-weighting (the prototype found no gain; our features already carry a demand-is-default flag).
+
+Test 2026 (scored once, n=325), refit on train+validation:
+
+| Model | EMS | Whole design | PV | Battery |
+|---|---|---|---|---|
+| B0 installer median | 61.1 | 20.6% | 42.5% | 47.4% |
+| Composite, previous config | 60.4 | 20.9% | 59.7% | 49.2% |
+| **Composite, coverage battery (served)** | 61.0 | 20.9% | 59.7% | 47.4% |
+
+No test gain in whole design (identical), battery within tolerance down 1.8 points, EMS +0.6 (all inside noise). Runtime impact: training +9 quantile models for the battery only; per-design latency unchanged to first order. The oracle block of latest.json is carried over from the previous config.
+
+## Honesty checks (`python eval/run.py --honesty`, code `eval/honesty.py`, block `honesty` in latest.json; synthetic pytest in `services/engine/tests/test_honesty.py`)
+
+Served config, whole design = PV +-20%, battery +-25%, heat pump +-25%, wallbox include. The 2026 test split is never read.
+
+| Check | Result |
+|---|---|
+| Shuffled labels (5 permutations; train <= 2025-09-30, validate Q4 2025, n=232) | whole design: real 24.1%, shuffled 21.7% +- 1.9, B0 17.7%. PV: real 52.2%, shuffled 40.3%, B0 44.8%. Battery: real 58.2%, shuffled 53.6%, B0 34.5%. |
+| 20 repeated random 80/20 splits (offers <= 2025-12-31) | whole design: ours 14.7% +- 2.0 sd, B0 14.1% +- 1.1; paired difference +0.6 +- 2.0 points (ours ahead in 11 of 20). PV +5.5 +- 3.5, battery +4.0 +- 3.7. |
+| Fuzz, 2,000 random / extreme / nonsense homes with random planner locks (raw rows and HomeInputs) | first run 194 broken, all real rule bugs, now fixed (see below); re-run on the retrained artifact in latest.json. |
+
+Reading. PV collapses to below the installer median when answers are scrambled, so the PV edge is real signal, not leakage. Whole design and battery do not collapse: with no information the model still predicts the pooled typical battery, which lands inside +-25% about half the time, and the wallbox / heat-pump rules need no labels. The honest conclusion is that the whole-design gap over B0 on random splits (+0.6 points, sd 2.0) is not distinguishable from zero; the reliable gain is PV size. Splits share training rows, so the sd understates sampling uncertainty.
+
+Fuzz findings fixed in `engine/policy/rules.py`: (1) PV rounded to 0.1 kWp could exceed a roof cap (R07), e.g. a 0.45 kWp roof gave 0.5; (2) a negative existing-PV input made the R04 cap negative and produced negative batteries; (3) when the smallest catalog battery was above the R04 cap, snapping returned a size over the cap (now: no battery). Also `chain.DesignModel.fit` crashed when a feature was constant among the sized rows (surfaced by shuffled labels); such columns are now dropped for that regressor.

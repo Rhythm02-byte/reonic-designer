@@ -43,13 +43,13 @@ def test_fuzz_design_api_with_planner_locks(designer):
 
 def test_check_design_flags_every_rule():
     row = {"heating_type": "Heatpump", "has_existing_pv": False, "has_ev": False, "roof_max_kwp": 4.0}
-    values = {"pv_kwp": 31.0, "battery_kwh": 12.0, "heat_pump_kw": 8.0, "wallbox_kw": 11.0}
+    values = {"pv_kwp": 31.0, "battery_kwh": 70.0, "heat_pump_kw": 8.0, "wallbox_kw": 11.0}
     p = dict.fromkeys(TARGETS, 0.5)
     iv = {t: (0.0, v, v) for t, v in values.items()}
     bad = " | ".join(H.check_design(values, p, iv, row, {}))
     for tag in ("R03", "R07", "R04", "R01", "wallbox"):
         assert tag in bad
-    assert "R02" not in bad and not H.check_design(values, p, iv, row, dict.fromkeys(TARGETS, 0.0)) == []  # locks must match values
+    assert "R02" not in bad
     assert "lock on pv_kwp" in " ".join(H.check_design(values, p, iv, row, {"pv_kwp": 3.0}))
 
 

@@ -57,7 +57,10 @@ export type Design = {
   provenance: Record<string, Provenance>;
   engineVersion: string;
   latencyMs: number;
+  /** Parts list (Reonic's project_options_parts shape); absent in the offline fixtures. */
+  bom?: BomLine[];
 };
+export type BomLine = Schemas["BomLine"];
 
 export type Field = { name: string; kind: "number" | "bool" | "choice"; choices: string[]; label: string; unit?: string };
 export type Meta = {

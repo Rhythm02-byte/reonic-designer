@@ -2,7 +2,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
 // Rhythm: an ink rounded square with three rising bars (output over a day), plus the wordmark in Geist.
-export function Logo() {
+export function Logo({ product = true }: { product?: boolean }) {
   return (
     <span className="flex items-center gap-3 text-ink">
       <span className="flex items-center gap-2" role="img" aria-label="Rhythm">
@@ -18,8 +18,12 @@ export function Logo() {
           Rhythm
         </span>
       </span>
-      <span aria-hidden className="h-4 w-px bg-zinc-300" />
-      <span className="text-sm font-medium tracking-tight">Home Energy Designer</span>
+      {product && (
+        <>
+          <span aria-hidden className="h-4 w-px bg-zinc-300" />
+          <span className="text-sm font-medium tracking-tight">Home Energy Designer</span>
+        </>
+      )}
     </span>
   );
 }
@@ -59,12 +63,6 @@ const ICONS = {
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </>
   ),
-  home: (
-    <>
-      <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-      <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-    </>
-  ),
   flame: <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />,
   car: (
     <>
@@ -99,41 +97,10 @@ const ICONS = {
       <path d="M12 6v6l4 2" />
     </>
   ),
-  lock: (
+  search: (
     <>
-      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </>
-  ),
-  unlock: (
-    <>
-      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-    </>
-  ),
-  undo: (
-    <>
-      <path d="M9 14 4 9l5-5" />
-      <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11" />
-    </>
-  ),
-  plus: (
-    <>
-      <path d="M5 12h14" />
-      <path d="M12 5v14" />
-    </>
-  ),
-  minus: <path d="M5 12h14" />,
-  copy: (
-    <>
-      <rect width="14" height="14" x="8" y="8" rx="2" />
-      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-    </>
-  ),
-  x: (
-    <>
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
     </>
   ),
   arrow: (
@@ -182,15 +149,6 @@ export function MinusDot({ className = "size-4" }: { className?: string }) {
   );
 }
 
-/** Muted outlined disc: "still open" (a question to answer). */
-export function OpenDot({ className = "size-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" className={`shrink-0 text-zinc-400 ${className}`} aria-hidden>
-      <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth={1.5} />
-    </svg>
-  );
-}
-
 export function CheckList({ items }: { items: string[] }) {
   return (
     <ul className="space-y-2">
@@ -205,19 +163,32 @@ export function CheckList({ items }: { items: string[] }) {
 }
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
-export const pill = `inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors pointer-coarse:min-h-11 ${focus}`;
+export const pill = `inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${focus}`;
 export const pillLook = {
   primary: "bg-ink text-paper hover:bg-ink/85",
   secondary: "bg-white text-ink ring-1 ring-zinc-200 hover:bg-sand-2",
   ghost: "text-body hover:bg-sand",
 };
 
+// A pointed pill for the planner's share action pair only, a deliberate DESIGN.md exception (see Decisions Log)
+// inspired by greptile.com. clip-path crops a ring/border at the tips (confirmed in-browser), so secondary is a
+// flat sand fill instead. ponytail: a true border needs a layered inset clip-path; add if this reads as unclickable.
+const chevronClip = "[clip-path:polygon(8px_0,calc(100%-8px)_0,100%_50%,calc(100%-8px)_100%,8px_100%,0_50%)]";
+export const chevron = `inline-flex items-center justify-center gap-1.5 px-5 py-1.5 text-sm font-medium transition-colors ${chevronClip} ${focus}`;
+export const chevronLook = {
+  primary: "bg-ink text-paper hover:bg-ink/85",
+  secondary: "bg-sand text-ink hover:bg-white",
+  ghost: pillLook.ghost,
+};
+
 export function Button({
   variant = "primary",
+  shape = "pill",
   className = "",
   ...props
-}: ComponentProps<"button"> & { variant?: keyof typeof pillLook }) {
-  return <button type="button" className={`${pill} disabled:opacity-40 ${pillLook[variant]} ${className}`} {...props} />;
+}: ComponentProps<"button"> & { variant?: keyof typeof pillLook; shape?: "pill" | "chevron" }) {
+  const look = shape === "chevron" ? chevronLook[variant] : pillLook[variant];
+  return <button type="button" className={`${shape === "chevron" ? chevron : pill} disabled:opacity-40 ${look} ${className}`} {...props} />;
 }
 
 export function Card({ className = "", ...props }: ComponentProps<"div">) {
@@ -273,7 +244,7 @@ export function Segmented<T extends string | number>({
         {options.map((o) => (
           <label
             key={String(o.value)}
-            className="flex-1 cursor-pointer rounded-full px-3 py-1 text-center text-sm whitespace-nowrap text-quiet transition-colors pointer-coarse:py-3 has-checked:bg-white has-checked:font-medium has-checked:text-ink has-checked:shadow-sm has-focus-visible:outline-2 has-focus-visible:outline-blue-600"
+            className="flex-1 cursor-pointer rounded-full px-3 py-1 text-center text-sm whitespace-nowrap text-quiet transition-colors pointer-coarse:py-2.5 has-checked:bg-white has-checked:font-medium has-checked:text-ink has-checked:shadow-sm has-focus-visible:outline-2 has-focus-visible:outline-blue-600"
           >
             <input
               type="radio"
@@ -287,27 +258,5 @@ export function Segmented<T extends string | number>({
         ))}
       </div>
     </fieldset>
-  );
-}
-
-/** Round icon-only button; 44px on touch screens. `pressed` makes it a toggle. */
-export function IconButton({
-  icon,
-  label,
-  pressed,
-  className = "",
-  ...props
-}: Omit<ComponentProps<"button">, "children"> & { icon: IconName; label: string; pressed?: boolean }) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-pressed={pressed}
-      title={label}
-      className={`inline-flex size-8 shrink-0 items-center justify-center rounded-full text-quiet ring-1 ring-zinc-200 transition-colors pointer-coarse:size-11 hover:bg-sand-2 disabled:opacity-40 aria-pressed:bg-ink aria-pressed:text-paper aria-pressed:ring-ink ${focus} ${className}`}
-      {...props}
-    >
-      <Icon name={icon} className="size-4 text-current" />
-    </button>
   );
 }

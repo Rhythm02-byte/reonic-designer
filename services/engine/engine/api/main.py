@@ -11,6 +11,8 @@ GET  /holdout?n=12   real past 2026 homes: expert design vs ours (env DEMO_HOLDO
 from __future__ import annotations
 
 import os
+
+os.environ.setdefault("OMP_NUM_THREADS", "1")  # before sklearn loads: see threadpool_limits below
 import threading
 from contextlib import asynccontextmanager
 from functools import lru_cache
@@ -18,6 +20,11 @@ from functools import lru_cache
 import pandas as pd
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from threadpoolctl import threadpool_limits
+
+# One request designs one home: per-call OpenMP thread start-up in sklearn's boosted trees costs more than it saves
+# (cached /design ~450 ms -> under 150 ms). Training (eval/, train.py) runs in other processes and keeps all threads.
+threadpool_limits(1)
 
 from engine import demo
 from engine.design import ENGINE_VERSION, Store, _module_wp, design, simulate, start_physics_pool, validate

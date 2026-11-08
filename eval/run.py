@@ -37,9 +37,11 @@ from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, str(Path(__file__).parent))
 from metrics import evaluate, policy_metrics, pred_frame  # noqa: E402
+import record  # noqa: E402
 
 from engine import baseline as bl  # noqa: E402
 from engine.etl import normalize  # noqa: E402
+from engine.policy import physics  # noqa: E402
 from engine.policy.designer import CONFIG_PATH, Designer, load_config  # noqa: E402
 from engine.policy.features import TARGETS, mask_inputs, training_frame  # noqa: E402
 
@@ -196,6 +198,25 @@ def select(P, O, D) -> dict:
     return select_model.run(sys.modules[__name__], P, O, D)
 
 
+def served(jobs: list[Job], O: pd.DataFrame, models=("B0", "B1", "ours")) -> dict:
+    """Baselines + the SERVED config (config/policy.json, incl. sizing) trained on the jobs' pooled train rows."""
+    VARIANTS["ours"] = lambda d: d
+    r = run_split(jobs, O, models=models, designer=Designer.train(pd.concat([j.train for j in jobs])))
+    return {"n": r["nTest"], "models": {m: {**scores(r, m), "latencyP50ms": r["baselines"][m]["overall"]["runtimeMs"]["p50"]}
+                                        for m in models}}
+
+
+def print_served(q: dict) -> None:
+    for name in ("validation", "test"):
+        if name in q:
+            print(f"\n{name} (n={q[name]['n']}): EMS / whole / PV / battery %")
+            for m, v in q[name]["models"].items():
+                print(f"  {m:<6} {v['ems']:6.2f} / {100 * v['wholeDesign']:5.1f} / {100 * v['pv']:5.1f} / {100 * v['battery']:5.1f}")
+    if q.get("repeated"):
+        g = q["repeated"]["oursMinusB0"]["whole"]
+        print(f"repeated splits ({q['repeated']['nSplits']}): ours - B0 whole design {100 * g['mean']:+.1f} +- {100 * g['sd']:.1f} pts")
+
+
 # ---- sensitivity & robustness -----------------------------------------------------------------------------------------
 def brief(r: dict, model: str) -> dict:
     o = r["baselines"][model]["overall"]
@@ -255,9 +276,17 @@ def main() -> None:
     ap.add_argument("--oracle", action="store_true", help="value of answering one question: unknown vs answered (test split, scored once; writes only the oracle block)")
     ap.add_argument("--honesty", action="store_true", help="shuffled-label leakage check, 20 repeated random splits, 2,000-home engine fuzz "
                                                            "(eval/honesty.py; never reads the test split; writes only the honesty block)")
+    ap.add_argument("--label", default=None, help="short note stored with the run in eval/history/runs.jsonl")
+    ap.add_argument("--no-record", action="store_true", help="do not append this run to eval/history/runs.jsonl")
     ap.add_argument("--out", default=RESULTS, type=Path)
     a = ap.parse_args()
     os.environ["OFFLINE"] = "1" if a.offline else os.environ.get("OFFLINE", "")
+    t0 = time.perf_counter()
+    cache = a.processed / "physics_cache.pkl"
+
+    def save(rec: dict) -> None:
+        if not a.no_record:
+            record.append({**rec, "durationSec": round(time.perf_counter() - t0, 1)})
 
     if a.honesty:
         import honesty
@@ -266,17 +295,18 @@ def main() -> None:
         latest["honesty"] = res
         (a.out / "latest.json").write_text(json.dumps(latest, indent=2), encoding="utf-8")
         print("wrote honesty block to", a.out / "latest.json")
+        save(record.build("honesty", label=a.label, honesty=res))
         return
 
     if a.oracle:
         import oracle
-        from engine.policy import physics
         physics.load_cache(Path(__file__).resolve().parents[1] / "data" / "processed" / "physics_cache.pkl")
         res = oracle.run(sys.modules[__name__], *load(a.processed))
         latest = json.loads((a.out / "latest.json").read_text(encoding="utf-8"))
         latest["oracle"] = res
         (a.out / "latest.json").write_text(json.dumps(latest, indent=2), encoding="utf-8")
         print("wrote oracle block to", a.out / "latest.json")
+        save({**record.build("oracle", label=a.label, oracle=res), "testScored": True})
         return
 
     normalize.run(a.data, a.processed)
@@ -323,12 +353,25 @@ def main() -> None:
     elif "robustness" in prev:
         result["robustness"] = prev["robustness"]
 
+    # "Run all tests": every check in one pass (honesty + oracle are recomputed, never carried over).
+    import honesty
+    import oracle
+    physics.load_cache(cache)
+    result["honesty"] = honesty.run(sys.modules[__name__], P, O, D)
+    result["oracle"] = oracle.run(sys.modules[__name__], P, O, D)
+    val, test = served(splits_validation(P, O, D), O), served(splits_temporal(P, O, D), O)
+    physics.save_cache(cache)
+    result["served"] = {"validation": val, "test": test}
+    result["durationSec"] = round(time.perf_counter() - t0, 1)
+
     a.out.mkdir(parents=True, exist_ok=True)
     text = json.dumps(result, indent=2)
     (a.out / "latest.json").write_text(text, encoding="utf-8")
     (a.out / f"{datetime.now().strftime('%Y%m%d-%H%M%S')}.json").write_text(text, encoding="utf-8")
     print_table(result)
-
+    print_served({"validation": val, "test": test, "repeated": result["honesty"]["repeatedSplits"]})
+    save(record.build("all", label=a.label, validation=val, test=test, honesty=result["honesty"], oracle=result["oracle"]))
+    print(f"\nall tests done in {result['durationSec']:.0f} s")
 
 def print_table(r: dict) -> None:
     f = lambda v, d=1: "-" if v is None else f"{v:.{d}f}"

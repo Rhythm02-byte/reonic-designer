@@ -41,7 +41,7 @@ def _num(x) -> float | None:
 
 def ctx_from_row(row: Mapping) -> dict:
     """Rule context from a canonical input row. Existing PV counts even when 'ambiguous' (lenient: storage retrofits)."""
-    pv = _num(row.get("existing_pv_kwp")) or 0.0 if row.get("has_existing_pv") else 0.0
+    pv = max(0.0, _num(row.get("existing_pv_kwp")) or 0.0) if row.get("has_existing_pv") else 0.0  # a negative size is nonsense: 0
     return {"heating_type": row.get("heating_type"), "existing_pv_kwp": pv,
             "roof_max_kwp": _num(row.get("roof_max_kwp")), "roof_max_modules": _num(row.get("roof_max_modules"))}
 
@@ -95,6 +95,8 @@ def apply_one(target: str, value: float, current: dict[str, float], ctx: Mapping
             v = roof
         if not locked:
             v = round(v, 1)
+            if roof is not None and v > roof:  # rounding must never push PV back over the roof limit
+                v = max(0.0, np.floor(roof * 10 + 1e-9) / 10)
 
     elif target == "battery_kwh":
         pv = current.get("pv_kwp", 0.0) + (_num(ctx.get("existing_pv_kwp")) or 0.0)
@@ -108,7 +110,13 @@ def apply_one(target: str, value: float, current: dict[str, float], ctx: Mapping
                                {"max_kwh_per_kwp": BATTERY_MAX_KWH_PER_KWP, "pv_kwp": round(pv, 2), "cap_kwh": round(cap, 2)}))
             v = cap
         if v > 0 and not locked:
-            v = snap(v, catalog.get(target, []), upper=cap)
+            sizes = catalog.get(target, [])
+            if sizes and min(sizes) > cap + 1e-9:  # the smallest real product is above the R04 cap: no battery fits
+                applied.append(Hit("R04", target, f"R04: no battery size fits under {BATTERY_MAX_KWH_PER_KWP:g} kWh per kWp of PV, so none.",
+                                   "red", {"max_kwh_per_kwp": BATTERY_MAX_KWH_PER_KWP, "pv_kwp": round(pv, 2), "cap_kwh": round(cap, 2)}))
+                v = 0.0
+            else:
+                v = snap(v, sizes, upper=cap)
 
     elif target == "wallbox_kw" and v > 0 and not locked:
         v = snap(v, catalog.get(target, []) or [11.0, 22.0])

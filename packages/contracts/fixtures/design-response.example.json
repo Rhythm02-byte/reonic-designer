@@ -10,7 +10,7 @@
     },
     "inverter": null,
     "battery": {
-      "kwh": 10.2,
+      "kwh": 10.0,
       "productId": null
     },
     "wallbox": {
@@ -85,16 +85,16 @@
   "metrics": {
     "proposal": {
       "pvYieldKwh": 10208.049413736024,
-      "selfConsumption": 0.48403855104991655,
-      "autarky": 0.67800997036467,
-      "gridImportKwh": 2356.218566380438,
-      "feedInKwh": 5159.0794221460055,
-      "savingsEurYear": 1963.894802935894,
-      "paybackYears": 10.515989712658389,
-      "npv20": 9761.603579065093,
-      "priceEur": 20470.4,
+      "selfConsumption": 0.481490424245296,
+      "autarky": 0.6746070332483316,
+      "gridImportKwh": 2379.916620458619,
+      "feedInKwh": 5184.764460788836,
+      "savingsEurYear": 1957.8152125248107,
+      "paybackYears": 10.501807857145042,
+      "npv20": 9739.568365320782,
+      "priceEur": 20370.4,
       "co2T": null,
-      "fullCyclesPerYear": 251.61609487337736,
+      "fullCyclesPerYear": 253.94266525479395,
       "nightLoadKwh": 9.12315479701562,
       "hourlyTypicalDays": {
         "summer": {
@@ -153,80 +153,80 @@
           "batteryKwh": [
             -0.302,
             -0.226,
-            -0.199,
-            -0.185,
-            -0.185,
-            -0.21,
-            -0.299,
-            -0.179,
-            0.497,
+            -0.198,
+            -0.182,
+            -0.183,
+            -0.209,
+            -0.296,
+            -0.167,
+            0.499,
             1.611,
             2.195,
-            1.43,
-            0.593,
-            0.509,
-            0.291,
-            0.172,
-            0.136,
-            0.116,
-            -3.313,
+            1.42,
+            0.586,
+            0.501,
+            0.286,
+            0.168,
+            0.132,
+            0.113,
+            -3.304,
             0.231,
-            -0.357,
-            -0.578,
+            -0.353,
+            -0.579,
             -0.572,
             -0.446
           ],
           "gridKwh": [
             0.035,
             0.03,
-            0.027,
             0.028,
-            0.034,
-            0.041,
-            0.055,
-            0.059,
-            0.046,
+            0.031,
+            0.036,
+            0.042,
+            0.058,
+            0.071,
+            0.048,
             0.014,
             -0.598,
-            -2.223,
-            -3.007,
-            -3.702,
-            -3.781,
-            -3.283,
-            -3.169,
-            -2.597,
-            0.04,
+            -2.233,
+            -3.014,
+            -3.711,
+            -3.786,
+            -3.288,
+            -3.173,
+            -2.6,
+            0.049,
             0.015,
-            0.031,
+            0.035,
             0.048,
             0.046,
             0.041
           ],
           "socKwh": [
-            3.416,
-            3.178,
-            2.97,
-            2.775,
-            2.58,
-            2.36,
-            2.046,
-            1.856,
-            2.327,
-            3.868,
-            5.969,
-            7.338,
-            7.905,
-            8.392,
-            8.67,
-            8.834,
-            8.964,
-            9.075,
-            5.595,
-            5.81,
-            5.435,
-            4.827,
-            4.226,
-            3.758
+            3.253,
+            3.016,
+            2.808,
+            2.616,
+            2.424,
+            2.205,
+            1.894,
+            1.717,
+            2.19,
+            3.731,
+            5.832,
+            7.19,
+            7.751,
+            8.231,
+            8.504,
+            8.665,
+            8.791,
+            8.899,
+            5.429,
+            5.643,
+            5.272,
+            4.665,
+            4.063,
+            3.595
           ]
         },
         "winter": {
@@ -283,7 +283,7 @@
             0.567
           ],
           "batteryKwh": [
-            -0.0,
+            0.0,
             0.0,
             0.0,
             0.0,
@@ -294,19 +294,19 @@
             0.004,
             0.136,
             0.619,
-            0.78,
-            0.847,
-            0.307,
-            0.341,
-            0.18,
+            0.776,
+            0.836,
+            0.301,
+            0.332,
+            0.176,
             -0.17,
             -0.37,
-            -1.792,
-            -0.264,
-            -0.195,
-            -0.087,
+            -1.768,
+            -0.269,
+            -0.192,
+            -0.08,
             -0.014,
-            -0.0
+            0.0
           ],
           "gridKwh": [
             0.416,
@@ -320,19 +320,19 @@
             0.786,
             0.522,
             0.308,
-            0.321,
-            0.001,
-            -0.14,
-            -0.251,
-            -0.21,
+            0.316,
+            -0.01,
+            -0.146,
+            -0.261,
+            -0.214,
             0.153,
             0.439,
-            4.145,
-            0.954,
-            0.888,
-            0.815,
+            4.17,
+            0.949,
+            0.891,
+            0.822,
             0.748,
-            0.579
+            0.58
           ],
           "socKwh": [
             0.0,
@@ -346,17 +346,17 @@
             0.004,
             0.134,
             0.726,
-            1.469,
-            2.277,
-            2.564,
-            2.885,
-            3.048,
-            2.862,
-            2.472,
-            0.59,
-            0.312,
-            0.107,
-            0.016,
+            1.465,
+            2.263,
+            2.544,
+            2.856,
+            3.015,
+            2.829,
+            2.44,
+            0.583,
+            0.3,
+            0.099,
+            0.015,
             0.0,
             0.0
           ]
@@ -418,7 +418,7 @@
     },
     "battery": {
       "p10": 5.0,
-      "p50": 10.19,
+      "p50": 10.0,
       "p90": 12.69,
       "probIncluded": 0.978
     },
@@ -463,8 +463,8 @@
     {
       "code": "BATTERY_MODEL_INCLUDE",
       "component": "battery",
-      "value": 10.2,
-      "text": "Battery 10.2 kWh (model 98% sure to include); 84% of 25 similar homes got one, median 10 kWh.",
+      "value": 10.0,
+      "text": "Battery 10 kWh (model 98% sure to include); 84% of 25 similar homes got one, median 10 kWh.",
       "evidence": {
         "probability": 0.978,
         "similar_share": 0.84,
@@ -485,18 +485,27 @@
       }
     }
   ],
-  "flags": [
-    {
-      "severity": "warn",
-      "code": "R06",
-      "message": "R06: the proposed 10.2 kWh battery is 2 sizes above the economic optimum (7 kWh). The extra storage adds +7.3 pp autarky and +130 EUR/yr savings, but changes the 20-year NPV by +702 EUR.",
-      "component": "battery",
-      "percentile": null,
-      "similarIds": []
-    }
-  ],
+  "flags": [],
   "similar": [],
   "bom": [
+    {
+      "technology": "pv",
+      "lineItemFunction": null,
+      "componentType": "Module",
+      "componentName": "PV module 450 Wp",
+      "componentBrand": null,
+      "quantity": 24.0,
+      "quantityUnits": "pcs"
+    },
+    {
+      "technology": "pv",
+      "lineItemFunction": null,
+      "componentType": "Inverter",
+      "componentName": "Hybrid Inverter 12kW",
+      "componentBrand": "Huawei",
+      "quantity": 1.0,
+      "quantityUnits": null
+    },
     {
       "technology": "ses",
       "lineItemFunction": null,
@@ -589,15 +598,6 @@
         "fullCyclesPerYear": 253.94266525479364
       },
       {
-        "kwh": 10.2,
-        "autarky": 0.6780099703646694,
-        "selfConsumption": 0.4840385510499169,
-        "savingsEurYear": 1963.8948029358921,
-        "paybackYears": 10.515989712658396,
-        "npv20": 9761.603579065079,
-        "fullCyclesPerYear": 251.61609487337662
-      },
-      {
         "kwh": 14.0,
         "autarky": 0.7210396894149791,
         "selfConsumption": 0.5162592994090179,
@@ -619,65 +619,65 @@
     "pv": [
       {
         "kwp": 6.3,
-        "autarky": 0.5829858637390656,
-        "selfConsumption": 0.7139891240545053,
-        "savingsEurYear": 1471.6305689411638,
-        "paybackYears": 10.450186840741575,
-        "npv20": 7837.792599090559,
+        "autarky": 0.5796701996314353,
+        "selfConsumption": 0.7097329356255461,
+        "savingsEurYear": 1465.7153059567318,
+        "paybackYears": 10.427469427343048,
+        "npv20": 7832.710318685686,
         "pvYieldKwh": 5954.695491346011
       },
       {
         "kwp": 7.65,
-        "autarky": 0.620863571329866,
-        "selfConsumption": 0.6262800747755016,
-        "savingsEurYear": 1636.56130901681,
-        "paybackYears": 10.414648428697738,
-        "npv20": 8594.2974910593,
+        "autarky": 0.617388530160561,
+        "selfConsumption": 0.6226064957474169,
+        "savingsEurYear": 1630.3621280920115,
+        "paybackYears": 10.395746765963544,
+        "npv20": 8583.984371766164,
         "pvYieldKwh": 7230.701668063032
       },
       {
         "kwp": 9.45,
-        "autarky": 0.6568662490794044,
-        "selfConsumption": 0.536173229589641,
-        "savingsEurYear": 1829.82895263531,
-        "paybackYears": 10.452719576598332,
-        "npv20": 9351.179663013409,
+        "autarky": 0.6535791974242344,
+        "selfConsumption": 0.5333602564283103,
+        "savingsEurYear": 1823.9649476157783,
+        "paybackYears": 10.43538421789286,
+        "npv20": 9337.299202639075,
         "pvYieldKwh": 8932.043237019
       },
       {
         "kwp": 10.8,
-        "autarky": 0.6780099703646695,
-        "selfConsumption": 0.48403855104991766,
-        "savingsEurYear": 1963.8948029358921,
-        "paybackYears": 10.515989712658396,
-        "npv20": 9761.603579065079,
+        "autarky": 0.6746070332483313,
+        "selfConsumption": 0.4814904242452977,
+        "savingsEurYear": 1957.8152125248089,
+        "paybackYears": 10.50180785714505,
+        "npv20": 9739.56836532076,
         "pvYieldKwh": 10208.049413736038
       },
       {
         "kwp": 12.15,
-        "autarky": 0.6952013259813941,
-        "selfConsumption": 0.44093669110397665,
-        "savingsEurYear": 2090.7331140653478,
-        "paybackYears": 10.596996224133255,
-        "npv20": 10064.70771688455,
+        "autarky": 0.6917458733230638,
+        "selfConsumption": 0.4386367350523476,
+        "savingsEurYear": 2084.585218861803,
+        "paybackYears": 10.583801610149333,
+        "npv20": 10044.732044333025,
         "pvYieldKwh": 11484.055590453036
       },
       {
         "kwp": 13.95,
-        "autarky": 0.7134464937881096,
-        "selfConsumption": 0.3938063477113482,
-        "savingsEurYear": 2251.373839660867,
-        "paybackYears": 10.695678811219636,
-        "npv20": 10410.120055533862,
+        "autarky": 0.7100476672869263,
+        "selfConsumption": 0.39183598737565034,
+        "savingsEurYear": 2245.3195883618696,
+        "paybackYears": 10.682709451977646,
+        "npv20": 10395.525093019725,
         "pvYieldKwh": 13185.397159409013
       },
       {
         "kwp": 15.3,
-        "autarky": 0.7248075802339338,
-        "selfConsumption": 0.36455153985223243,
-        "savingsEurYear": 2367.601639916882,
-        "paybackYears": 10.755674048109489,
-        "npv20": 10653.911525297743,
+        "autarky": 0.7215270418646769,
+        "selfConsumption": 0.3628175579557619,
+        "savingsEurYear": 2361.764949879535,
+        "paybackYears": 10.743308824536792,
+        "npv20": 10636.649660105046,
         "pvYieldKwh": 14461.403336126064
       }
     ]
@@ -689,28 +689,6 @@
   },
   "askNext": [
     {
-      "field": "ev.has",
-      "question": "Is there, or will there be, an electric car?",
-      "why": "A car adds a wallbox and about 2,000 kWh of demand. 3% of this installer's homes have one.",
-      "impact": {
-        "components": [
-          "pv",
-          "wallbox"
-        ],
-        "priceSwingEur": 3700.0
-      },
-      "answers": [
-        {
-          "label": "Yes",
-          "value": true
-        },
-        {
-          "label": "No",
-          "value": false
-        }
-      ]
-    },
-    {
       "field": "building.roofMaxModules",
       "question": "How many modules fit on the roof?",
       "why": "PV size for homes like this ranges 7-11 kWp; the roof decides it.",
@@ -718,7 +696,7 @@
         "components": [
           "pv"
         ],
-        "priceSwingEur": 4550.0
+        "priceSwingEur": 4350.0
       },
       "answers": [
         {

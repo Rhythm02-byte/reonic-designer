@@ -1,7 +1,7 @@
 ---
 # gstack: design-md-format=spec
 name: Home Energy Designer
-description: Reonic's calm product paper, ink and hairlines, with one warm orange to pink gradient reserved for the proof.
+description: Reonic's calm product paper, ink and hairlines, with one calm sage to mint gradient reserved for the proof.
 colors:
   surface: "#FDFDFB"
   surface-sunken: "#F7F5EF"
@@ -15,11 +15,11 @@ colors:
   primary: "#1B1D20"
   on-primary: "#FDFDFB"
   accent: "#2563EB"
-  gradient-start: "#F59A0F"
-  gradient-mid: "#F2784A"
-  gradient-end: "#EF6AA8"
-  gradient-text-start: "#E06D00"
-  gradient-text-end: "#E0458A"
+  gradient-start: "#D3E6C4"
+  gradient-mid: "#A9DCC0"
+  gradient-end: "#8FD2C8"
+  gradient-text-start: "#2E7D4F"
+  gradient-text-end: "#17766F"
   band: "#292025"
   band-end: "#4B4247"
   success: "#34D399"
@@ -91,7 +91,7 @@ components:
 ## Overview
 
 **Creative North Star:** Reonic's own product voice, warm paper and ink with hairline cards, so the tool feels like
-part of the installer's Reonic software; the one orange to pink moment marks the proof that the AI works.
+part of the installer's Reonic software; the one sage to mint moment marks the proof that the AI works.
 **Product context:** Planner tool (`/`) and homeowner offer page (`/offer#…`) for the Reonic challenge, thinc! München
 2026. Users and principles live in PRODUCT.md.
 **Mode per surface:** Planner: Operate (dense inputs, live design, evidence). Offer: Read (one idea per card, plain
@@ -107,13 +107,13 @@ words, a few choices).
 ## Colors
 
 **Strategy:** Restrained. Tinted neutrals carry 90% of the surface; blue-600 (`accent`) marks icons, focus and
-selection; the gradient appears exactly twice per view (reality card, headline word) and the aubergine band once at the
+selection; the gradient appears on the reality card and, on the offer, one headline word and the aubergine band once at the
 end of the offer.
 **Light or dark:** Light. A planner works at an office laptop in daylight next to a customer call; a homeowner reads
 the offer on a phone in a lit living room. Both match reonic.com, which is light.
 
-- Text on the gradient is always `text` (ink): 7.6:1 on orange, 5.9:1 on pink. White and `text-body` fail (3.8:1).
-- Gradient text uses the darker `gradient-text-*` stops (3.2:1 and 3.8:1 on paper), so it is allowed only at 24px and
+- Text on the gradient is always `text` (ink): 9.8:1 or more on every stop. White fails on the light greens.
+- Gradient text uses the darker `gradient-text-*` stops (4.9:1 and 5.3:1 on paper), so it is allowed only at 24px and
   up (WCAG large text). Under `forced-colors` it falls back to plain text.
 - `text-muted` passes on `surface` (4.75:1) but not on `surface-sunken` (4.43:1); text on sand uses `text-quiet`.
 - On the dark panel (`text` background) secondary text is zinc-400 (6.6:1); on the band it is zinc-300 (6.5:1).
@@ -145,6 +145,9 @@ full pills. Icons are 16px line icons at 1.75 stroke; check circles are filled 1
 
 ## Components
 
+- **Sidebar (planner, from xl):** sand column, 248px, right hairline: Rhythm logo, a customer search field, Mine/Team
+  segmented control, customer list (active item white with a ring), "Signed in as" select at the bottom. Below xl a
+  customer select sits in the header instead.
 - **Header:** solid `surface`, bottom border, no blur. Rhythm logo (ink rounded square with three rising paper bars,
   "Rhythm" wordmark in Geist 600), a hairline divider,
   "Home Energy Designer", a neutral persona chip; on the planner the share CTA sits right.
@@ -185,11 +188,13 @@ full pills. Icons are 16px line icons at 1.75 stroke; check circles are filled 1
 ## Decisions Log
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-11-07 | Initial design system created | Created by /design-consultation from tokens measured on reonic.com/de-de and the approved plan (2 views, real logo, calm product + 1 wow) |
+| 2026-11-07 | Initial design system created | Created by /design-consultation from tokens measured on reonic.com/de-de and the approved plan (2 views, calm product + 1 wow; logo later replaced by Rhythm) |
 | 2026-11-07 | Gradient text allowed once per view | User-approved exception to impeccable's ban; darkened stops, large text only, forced-colors fallback |
 | 2026-11-07 | Ink text on the gradient card | reonic.com uses white text there, which fails AA (2.2:1 on orange) |
 | 2026-11-07 | Own logo "Rhythm" instead of the Reonic logo | User request: a similar mark (rounded ink square) with its own name and glyph; no Reonic artwork in the product |
+| 2026-11-07 | Planner becomes a workspace with a customer sidebar | Operating software for several planners and customers; the planner h1 is the customer name, so its gradient word is gone |
 | 2026-11-07 | Noto Serif removed | Only reonic.com's testimonials use it; the gradient sans word replaces the italic serif |
+| 2026-11-07 | Orange to pink gradient replaced by sage to mint | User request; calmer, energy without the cliché, ink text keeps AA |
 
 ## Additions (from the planner spec)
 

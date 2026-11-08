@@ -231,11 +231,9 @@ def pv_panels() -> int:
     return len(slots)
 
 
-def heat_pump():
-    # outdoor unit on the windowless stretch of the east facade, blowing away from the house
-    y = 2.75
-    x = wall((12, y, 1.2), (-1, 0, 0)).x + 0.3
-    hp = bevel(box("HeatPump", (1.3, 0.55, 1.0), (x + 0.05, y, PAVING + 0.6), "device", rot=(0, 0, math.pi / 2)), 0.04, 2)
+def heat_pump(loc, rot=(0, 0, math.pi / 2)):
+    # outdoor unit flush against a wall, blowing away from the house
+    hp = bevel(box("HeatPump", (1.3, 0.55, 1.0), loc, "device", rot=rot), 0.04, 2)
     box("HeatPump_Feet", (1.1, 0.45, 0.1), (0, 0, -0.55), "dark", parent=hp)
     box("HeatPump_Pad", (1.6, 0.9, 0.1), (0, 0.05, -0.62), "terrace", parent=hp)
     cylinder("HeatPump_Grille", 0.38, 0.03, (-0.2, -0.285, 0.02), "dark", rot=(math.pi / 2, 0, 0), parent=hp)
@@ -254,18 +252,17 @@ def heat_pump():
         box(f"HeatPump_Pipe{k}", (0.06, 0.5, 0.06), (dx, 0.5, -0.2 + k * 0.08), "frame", parent=hp)
 
 
-def batteries_and_wallbox():
-    # battery modules stacked on the main block's front wall under the balcony
-    bx = 5.75
-    by = wall((bx, -12, 1.2), (0, 1, 0)).y - 0.12
+def batteries_and_wallbox(battery_base, wallbox_loc, wallbox_rot=(0, 0, 0)):
+    # battery modules stacked at battery_base, one per ~5 kWh
+    bx, by, bz0 = battery_base
     for i in range(BATTERIES):
-        b = bevel(box(f"Battery_{i + 1}", (0.62, 0.2, 0.36), (bx, by, PAVING + 0.45 + i * 0.4), "device"), 0.02, 2)
+        b = bevel(box(f"Battery_{i + 1}", (0.62, 0.2, 0.36), (bx, by, bz0 + i * 0.4), "device"), 0.02, 2)
         box(f"Battery_{i + 1}_LED", (0.36, 0.01, 0.025), (0, -0.105, 0.1), "led", parent=b)
         box(f"Battery_{i + 1}_Seam", (0.64, 0.205, 0.02), (0, 0, -0.19), "metal", parent=b)
         if i == 0:  # the base unit carries the plinth
             box("Battery_1_Plinth", (0.66, 0.24, 0.24), (0, 0, -0.3), "dark", parent=b)
-    # the wallbox on a charging post beside the car's nose, out of the garage's shadow
-    wb = bevel(box("Wallbox", (0.4, 0.16, 0.56), (-3.6, -4.9, PAVING + 1.3), "device"), 0.03, 2)
+    # the wallbox on a charging post beside the car
+    wb = bevel(box("Wallbox", (0.4, 0.16, 0.56), wallbox_loc, "device", rot=wallbox_rot), 0.03, 2)
     box("Wallbox_Post", (0.14, 0.14, 1.3), (0, 0.12, -0.65), "dark", parent=wb)
     box("Wallbox_Face", (0.3, 0.01, 0.4), (0, -0.085, 0), "dark", parent=wb)
     box("Wallbox_LED", (0.18, 0.01, 0.03), (0, -0.092, 0.13), "led", parent=wb)
@@ -292,11 +289,11 @@ def extrude(name: str, profile, half_width: float, mat: str) -> bpy.types.Mesh:
     return me
 
 
-def car():
+def car(loc, rot=(0, 0, 0)):
     # on the driveway in front of the garage door
     # body: a side profile (y forward is -y, z up) extruded across the width, nose sloping into the bonnet
     c = obj("Car", extrude("Car", [(-2.15, -0.3), (2.15, -0.3), (2.18, 0.12), (2.05, 0.3), (-1.55, 0.3),
-                                    (-2.12, 0.12)], 0.91, "car"), (-5.14, -3.6, PAVING + 0.66))
+                                    (-2.12, 0.12)], 0.91, "car"), loc, rot)
     bevel(c, 0.1, 3)
     cabin = extrude("Car_Cabin", [(-1.15, 0.28), (1.6, 0.28), (1.35, 0.82), (-0.25, 0.82)], 0.78, "glass")
     bevel(obj("Car_Cabin", cabin, parent=c), 0.06, 2)
@@ -379,9 +376,13 @@ def build() -> int:
     strip()
     ground()
     panels = pv_panels()
-    heat_pump()
-    batteries_and_wallbox()
-    car()
+    y = 2.75
+    hp_x = wall((12, y, 1.2), (-1, 0, 0)).x + 0.3
+    heat_pump((hp_x + 0.05, y, PAVING + 0.6))
+    bx = 5.75
+    by = wall((bx, -12, 1.2), (0, 1, 0)).y - 0.12
+    batteries_and_wallbox((bx, by, PAVING + 0.45), (-3.6, -4.9, PAVING + 1.3))
+    car((-5.14, -3.6, PAVING + 0.66))
     trees()
     garden()
     roof_tiles()  # last, so the facade ray casts never hit a tile

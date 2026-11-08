@@ -8,8 +8,10 @@ import { fetchRoof, type RoofInfo } from "@/lib/roof";
 import { surfaceFrame } from "@/lib/roof-layout";
 
 const Scene=dynamic(()=>import("./RealHouseScene"),{ssr:false,loading:()=> <p className="p-6 text-sm">Loading the real building…</p>});
+const Lod2=dynamic(()=>import("./Lod2House"),{ssr:false,loading:()=> <p className="p-6 text-sm">Loading the LoD2 house…</p>});
+type View="stylised"|"real"|"lod2";
 const VIEW_KEY="house-view"; // ours: per-session choice; Stylised is the fast, reliable default for the demo
-const readView=():"stylised"|"real"=>{try{return sessionStorage.getItem(VIEW_KEY)==="real"?"real":"stylised";}catch{return "stylised";}};
+const readView=():View=>{try{const v=sessionStorage.getItem(VIEW_KEY);return v==="real"||v==="lod2"?v:"stylised";}catch{return "stylised";}};
 const EMPTY:HouseLayout={surfaces:[],width:0,height:0,gap:0.02,setback:0.3};
 class ModelBoundary extends Component<{children:ReactNode;fallback:ReactNode},{failed:boolean}> {
   state={failed:false};
@@ -24,12 +26,12 @@ type Props={
 };
 export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv,fallback,onAsset,onLayout,onCapacity}:Props){
   const [job,setJob]=useState<HouseJob|null>(null),[roof,setRoof]=useState<{key:string;data:RoofInfo}|null>(null);
-  const [error,setError]=useState<string|null>(null),[starting,setStarting]=useState(false),[view,setViewState]=useState<"stylised"|"real">("stylised");
+  const [error,setError]=useState<string|null>(null),[starting,setStarting]=useState(false),[view,setViewState]=useState<View>("stylised");
   const [mark,setMark]=useState<"roof"|"exclusion"|null>(null),[draft,setDraft]=useState<Vec3[]>([]);
   const [report,setReport]=useState<{count:number;error:string|null}>({count:0,error:null}),[spaces,setSpaces]=useState("");
   const [reviewed,setReviewed]=useState(false),[gone,setGone]=useState(false),[adjustOpen,setAdjustOpen]=useState(false); // ours: gone = saved import vanished (404); adjustOpen = "Adjust roof" panel
   useEffect(()=>{setViewState(readView());},[]); // eslint-disable-line react-hooks/set-state-in-effect -- ours: sessionStorage is client-only; read after hydration
-  const setView=(v:"stylised"|"real")=>{setViewState(v);try{sessionStorage.setItem(VIEW_KEY,v);}catch{/* private mode */}};
+  const setView=(v:View)=>{setViewState(v);try{sessionStorage.setItem(VIEW_KEY,v);}catch{/* private mode */}};
   const fallbackMode=view==="stylised";
   const key=location?locationKey(location.lat,location.lng):"";
   const latitude=location?.lat, longitude=location?.lng;
@@ -93,7 +95,8 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
   const canConfirm=reviewed&&Number.isInteger(capacity)&&capacity>=0&&capacity<=report.count&&report.count>0;
   const solar=roof?.key===key?roof.data:null;
   return <div>
-    {location&&<div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-3 py-2"><span className="text-xs text-quiet">House view</span><div className="w-56"><Segmented name="house-view" label="House view" value={view} options={[{value:"stylised",label:"Stylised"},{value:"real",label:"Real 3D"}]} onChange={setView}/></div></div>}
+    {location&&<div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-3 py-2"><span className="text-xs text-quiet">House view</span><div className="w-72"><Segmented name="house-view" label="House view" value={view} options={[{value:"stylised",label:"Stylised"},{value:"real",label:"Real 3D"},{value:"lod2",label:"LoD2"}]} onChange={setView}/></div></div>}
+    {view==="lod2"?<Lod2 location={location} fallback={fallback}/>:<>
     {location&&!ready&&view==="real"&&<div className="space-y-2 border-b border-zinc-200 p-3 text-xs">
       {gone&&<p role="status" className="text-amber-900">The saved 3D import is no longer available.</p>}
       <div className="flex flex-wrap items-center gap-2"><Button variant="secondary" disabled={starting||activeJob?.state==="running"} onClick={start}>{starting?"Starting…":activeJob?.state==="running"?"Importing house…":gone?"Start a fresh import":"Load the 3D model of this building"}</Button><span className="text-quiet">Loading confirms the pin marks the right building.</span></div>
@@ -127,5 +130,6 @@ export function RealHouse({location,asset,layout=EMPTY,proposedPanels,existingPv
         <label className="flex items-start gap-2 text-quiet"><Checkbox /* ours: custom control */ className="mt-0.5" checked={reviewed} onChange={e=>{setReviewed(e.target.checked);if(e.target.checked)setError(null);}}/>I checked the roof, exclusions, module dimensions and spaces available for the new installation.</label>
       </div></details>
     </div>}
+    </>}
   </div>;
 }

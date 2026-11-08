@@ -289,3 +289,4 @@ def test_inputs_from_row_roundtrips_through_the_feature_row():
 def test_cors_allows_the_web_dev_origin():
     r = TestClient(app).options("/design", headers={"Origin": "http://localhost:3000", "Access-Control-Request-Method": "POST"})
     assert r.headers.get("access-control-allow-origin") == "http://localhost:3000"
+

@@ -167,7 +167,7 @@ export const SLIDES: Slide[] = [
     notes:
       "Das ist der Link, den der Planer teilt. Der Hausbesitzer sieht das Angebot in einfachen Worten, Bandbreiten statt Scheingenauigkeit, und kann nur zwischen den Optionen wechseln, die der Planer freigegeben hat, z. B. Speicher ja/nein. Einmal umschalten, dann zurück zu den Folien. ~20 s. Absturzsicher: Falls die Engine ausfällt, D drücken für Offline-Demodaten.",
     steps: [
-      { label: "The offer", hint: "Plain words, the house, and only the options the planner allowed. Try switching the battery." },
+      { label: "The offer", hint: "Plain words, the house, and only the options the planner allowed. Try the heat-pump option." },
     ],
   },
   {
@@ -175,7 +175,7 @@ export const SLIDES: Slide[] = [
     id: "proof",
     title: "Honest proof",
     notes:
-      "Beweis, ~20 s, ehrlich. Test: 325 Projekte aus 2026, nie zur Modellwahl benutzt. „Bei der PV-Größe sind wir 17 Punkte besser als die Gewohnheit des Installateurs selbst (59,7 gegen 42,5 Prozent innerhalb ±20 %). Beim ganzen Design gleichauf: 20,9 gegen 20,6 Prozent, das sagen wir offen. Und eine einzige Frage, die nach dem Dach, ist bis zu 12 Punkte wert: das ist eine Obergrenze.“",
+      "Beweis, ~20 s, ehrlich. Test: 325 Projekte aus 2026, nie zur Modellwahl benutzt. „Bei der PV-Größe sind wir 17 Punkte besser als die Gewohnheit des Installateurs selbst (59,7 gegen 42,5 Prozent innerhalb ±20 %). Beim ganzen Design gleichauf: 22,2 gegen 20,6 Prozent, das sagen wir offen. Und eine einzige Frage, die nach dem Dach, ist bis zu 11 Punkte wert: das ist eine Obergrenze.“",
     body: () => (
       <Canvas tone="sand" n={7}>
         <div className="flex flex-1 items-stretch gap-8">

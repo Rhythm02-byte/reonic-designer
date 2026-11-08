@@ -10,7 +10,7 @@ From a few facts about a home (annual consumption, people, heating, electric car
 - hands the homeowner an **offer link / QR** where they can compare only the options the planner approved.
 
 ## Results (honest, on projects the model never saw)
-Trained on offers up to 2025, choices made on a Q4 2025 validation window, then scored on **325 projects from 2026** (never used to choose a model; scored in 3 recorded runs so far (the /lab counter shows every look)).
+Trained on offers up to 2025, choices made on a Q4 2025 validation window, then scored on **325 projects from 2026** (never used to choose a model; scored in 4 recorded runs so far (`/lab` lists the runs)).
 
 | 2026 projects (n = 325) | Whole design right¹ | PV within ±20% | Battery within ±25% | Closeness² |
 |---|---|---|---|---|

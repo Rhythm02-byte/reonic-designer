@@ -2,7 +2,7 @@
 // for one part. Mounted in his SystemCard under the size; his card already lists warn/error messages, so this adds
 // the range, an "Must fix" marker for rule errors, and the info notes he doesn't show.
 import type { Design, Target } from "@/lib/api";
-import { num, pct, UNIT } from "@/lib/copy";
+import { num, UNIT } from "@/lib/copy";
 
 export function PartRange({ t, design }: { t: Target; design: Design }) {
   const r = design.ranges?.[t];
@@ -20,9 +20,9 @@ export function PartRange({ t, design }: { t: Target; design: Design }) {
       : `Experts usually pick ${num(r.p10)} to ${num(r.p90)} ${UNIT[t]}${v < r.p10 || v > r.p90 ? "; this is outside that range" : ""}`;
   } else if (r && v === 0 && r.p90 > 0 && design.probability[t] >= 0.5) {
     text = `Similar homes usually have one: ${num(r.p10)} to ${num(r.p90)} ${UNIT[t]}`;
-  } else if (r && v === 0) {
-    text = `${pct(1 - design.probability[t])} of similar homes have none`;
   }
+  // No "x% of similar homes have none" here: the model's probability is not the neighbours' share, and the reasons
+  // list already states the neighbours' share. Two numbers for one claim contradicted each other.
   const max = r ? Math.max(r.p90, v, 1) * 1.1 : 1;
   const at = (x: number) => `${(x / max) * 100}%`;
 

@@ -199,6 +199,9 @@ function includeSize(t: Target, d: EngineDesign, catalog: number[]): number | nu
   return catalog.length ? catalog[Math.floor(catalog.length / 2)] : null;
 }
 
+/** Display only: internal rule ids ("R06: ...") mean nothing to the reader. */
+const plain = (s: string) => s.replace(/^R\d\d:?\s*/, "");
+
 async function toDesign(d: EngineDesign, h: HomeInputs, locked: Partial<Values>, source: "live" | "demo"): Promise<Design> {
   const values = toValues(d.sizes);
   const { data: meta } = await engineMeta();
@@ -218,7 +221,7 @@ async function toDesign(d: EngineDesign, h: HomeInputs, locked: Partial<Values>,
           .validate(h, toSizes(alt) as Sizes)
           .then((r) => {
             validated = r.source === "live" || source === "demo";
-            return validated ? r.data.filter((f) => f.severity !== "info").map((f) => f.message) : ["Not validated: the engine is unavailable."];
+            return validated ? r.data.filter((f) => f.severity !== "info").map((f) => plain(f.message)) : ["Not validated: the engine is unavailable."];
           })
           .catch(() => ["Not validated: the check failed. Retry before sharing this option."]);
         return [t, { value: v, values: alt, flags, validated }] as const;
@@ -234,12 +237,12 @@ async function toDesign(d: EngineDesign, h: HomeInputs, locked: Partial<Values>,
   return {
     values,
     probability: Object.fromEntries(TARGETS.map((t) => [t, d.confidence[CAMEL[t]]?.probIncluded ?? (values[t] > 0 ? 1 : 0)])) as Values,
-    explanation: d.reasons.map((r) => r.text),
-    flags: d.flags.filter((f) => f.severity !== "info").map((f) => f.message),
+    explanation: d.reasons.map((r) => plain(r.text)),
+    flags: d.flags.filter((f) => f.severity !== "info").map((f) => plain(f.message)),
     economics: economics(d.metrics),
     alternatives,
     ranges,
-    notes: d.flags.map((f) => ({ target: f.component ? (COMPONENT[f.component] ?? null) : null, severity: f.severity, message: f.message })),
+    notes: d.flags.map((f) => ({ target: f.component ? (COMPONENT[f.component] ?? null) : null, severity: f.severity, message: plain(f.message) })),
     askNext: d.askNext.map((a) => ({
       field: FLAT_OF[a.field] ?? a.field,
       question: a.question,

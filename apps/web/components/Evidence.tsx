@@ -1,7 +1,7 @@
 "use client";
 // ours: replaces his Reality panel in the Planner (same look). The comparison is our model against the installer's
 // usual design (B0), worded honestly; a generic rule of thumb (B1) is shown only as a footnote.
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api, TARGETS, type Evaluation, type HoldoutRow, type Target } from "@/lib/api";
 import { LABEL, pct, size, UNIT } from "@/lib/copy";
 import { Badge, Button, ErrorNote } from "./ui";
@@ -39,9 +39,11 @@ function headline(r: Evaluation) {
         : "Solar matches the experts about as often";
   const second = level(m.whole_design_within_tolerance, b.whole_design_within_tolerance)
     ? "the whole design is level with the installer's own habit"
-    : whole > 0
-      ? "the whole design matches more often than the installer's own habit"
-      : "the whole design matches less often than the installer's own habit";
+    : Math.abs(whole) < 0.05
+      ? "the whole design is on par with the installer's own habit (within noise)"
+      : whole > 0
+        ? "the whole design matches more often than the installer's own habit"
+        : "the whole design matches less often than the installer's own habit";
   return `${first}; ${second}.`;
 }
 
@@ -92,12 +94,22 @@ export function Evidence({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
     api.holdout().then((r) => setRows(r.rows), (e: Error) => setError(e.message));
   }, []);
 
-  const row = rows && i >= 0 ? rows[i] : null;
+  // Fixed order (by project id), starting with the first project where every part matches, so the first one shown
+  // does not depend on the draw. Labelled below: this is not a typical project.
+  const ordered = useMemo(() => {
+    if (!rows) return null;
+    const sorted = [...rows].sort((a, b) => a.project_id.localeCompare(b.project_id));
+    const ok = (r: HoldoutRow) => TARGETS.every((t) => matches(t, r.ours[t], r.expert[t]));
+    const start = Math.max(0, sorted.findIndex(ok));
+    return [...sorted.slice(start), ...sorted.slice(0, start)];
+  }, [rows]);
+  const allMatch = ordered ? ordered.filter((r) => TARGETS.every((t) => matches(t, r.ours[t], r.expert[t]))).length : 0;
+  const row = ordered && i >= 0 ? ordered[i] : null;
   const next = () => {
-    if (!rows?.length) return;
-    const k = (i + 1) % rows.length;
+    if (!ordered?.length) return;
+    const k = (i + 1) % ordered.length;
     setI(k);
-    onLoad(rows[k]);
+    onLoad(ordered[k]);
   };
   const ready = report !== null && "model" in report;
 
@@ -131,7 +143,7 @@ export function Evidence({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
             </p>
           </>
         )}
-        <Button variant="secondary" className="w-full" onClick={next} disabled={!rows?.length}>
+        <Button variant="secondary" className="w-full" onClick={next} disabled={!ordered?.length}>
           {row ? "Next real project" : "Try a real project"}
         </Button>
         {row && (
@@ -163,7 +175,9 @@ export function Evidence({ onLoad }: { onLoad: (row: HoldoutRow) => void }) {
               </tbody>
             </table>
             <p className="mt-2 text-xs text-zinc-400">
-              &ldquo;Ours&rdquo; never saw this project. The house shows the live model, which was trained on all projects.
+              &ldquo;Ours&rdquo; never saw this project: the model was trained only on projects before 2026. The house shows
+              that same model. These {ordered?.length} projects are drawn to cover different kinds of homes, in a fixed order; the
+              first is one where every part matches, so it is not typical (all parts match in {allMatch} of {ordered?.length}).
             </p>
           </div>
         )}

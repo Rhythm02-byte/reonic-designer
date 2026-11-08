@@ -12,7 +12,7 @@ type View="stylised"|"real"; // ours: LoD2 is the stylised view itself (House mo
 const VIEW_KEY="house-view"; // ours: per-session choice; Stylised is the fast, reliable default for the demo
 const readView=():View=>{try{const v=sessionStorage.getItem(VIEW_KEY);return v==="real"?v:"stylised";}catch{return "stylised";}};
 // ours: the 3D import is local-only (apps/web/proxy.ts); through a tunnel the toggle would only show a 403
-const isLocalHost=()=>["localhost","127.0.0.1","[::1]"].includes(window.location.hostname);
+const isLocalHost=()=>process.env.NEXT_PUBLIC_TUNNEL_3D==="1"||["localhost","127.0.0.1","[::1]"].includes(window.location.hostname);
 const noop=()=>()=>{};
 const EMPTY:HouseLayout={surfaces:[],width:0,height:0,gap:0.02,setback:0.3};
 class ModelBoundary extends Component<{children:ReactNode;fallback:ReactNode},{failed:boolean}> {

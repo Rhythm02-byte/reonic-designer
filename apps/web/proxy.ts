@@ -28,6 +28,8 @@ function decoded(pathname: string): string {
 export function proxy(req: NextRequest) {
   if (!GUARDED.test(decoded(req.nextUrl.pathname))) return NextResponse.next();
   const h = req.headers;
+  // ours: NEXT_PUBLIC_TUNNEL_3D=1 (dev only) lets the map and house routes through; holdout and lab stay local
+  if (process.env.NEXT_PUBLIC_TUNNEL_3D === "1" && process.env.NODE_ENV !== "production" && /^\/api\/(geocode|solar|real-house)(\/|$)/i.test(decoded(req.nextUrl.pathname))) return NextResponse.next();
   const local = !h.get("cf-connecting-ip") && isLocal(h.get("host")) && (!h.get("x-forwarded-host") || isLocal(h.get("x-forwarded-host")));
   if (!local) return NextResponse.json({ detail: "Real projects are shown only on the presenter's machine." }, { status: 403 });
   return NextResponse.next();

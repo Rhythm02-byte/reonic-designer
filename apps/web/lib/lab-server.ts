@@ -30,3 +30,14 @@ export function isLocalMutation(req: Request): boolean {
   const origin = req.headers.get("origin");
   return origin === null || origin === new URL(req.url).origin;
 }
+
+// ours: NEXT_PUBLIC_TUNNEL_3D=1 opens the map and the house imports/renders (not project data or the lab) to a tunnel
+// in dev. Anyone with the link can then spend the Google key and start Blender jobs on this machine.
+export const tunnelHouse = process.env.NEXT_PUBLIC_TUNNEL_3D === "1" && process.env.NODE_ENV !== "production";
+export const isHouseRequest = (h: Headers) => tunnelHouse || isLocalRequest(h);
+/** Same-origin check by Host: behind cloudflared the request URL is the local origin, the Origin header the public one. */
+export function isHouseMutation(req: Request): boolean {
+  if (!tunnelHouse) return isLocalMutation(req);
+  const origin = req.headers.get("origin");
+  return origin === null || new URL(origin).host === req.headers.get("host");
+}

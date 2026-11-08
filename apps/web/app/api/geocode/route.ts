@@ -1,11 +1,11 @@
 // Address <-> coordinates, proxied so the server-only Google key never reaches the browser.
 import { NextResponse } from "next/server";
-import { isLocalMutation } from "@/lib/lab-server";
+import { isHouseMutation } from "@/lib/lab-server";
 
 const KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 export async function POST(req: Request) {
-  if (!isLocalMutation(req)) return NextResponse.json({ error: "Address lookup is local-only." }, { status: 403 });
+  if (!isHouseMutation(req)) return NextResponse.json({ error: "Address lookup is local-only." }, { status: 403 });
   if (!KEY) return NextResponse.json({ error: "GOOGLE_MAPS_API_KEY is not set" }, { status: 500 });
   const body = await req.json().catch(() => null);
   const params = new URLSearchParams({ key: KEY });

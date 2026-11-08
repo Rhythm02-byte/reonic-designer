@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
-import { isLocalRequest } from "@/lib/lab-server";
+import { isHouseRequest } from "@/lib/lab-server";
 import { housePaths, houseStatus } from "@/lib/real-house-jobs";
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isLocalRequest(req.headers)) return new Response("Local model only.", { status: 403 });
+  if (!isHouseRequest(req.headers)) return new Response("Local model only.", { status: 403 });
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/.test(id)) return new Response("Invalid model id.", { status: 400 });
   const job = await houseStatus(id);

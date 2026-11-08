@@ -148,7 +148,7 @@ full pills. Icons are 16px line icons at 1.75 stroke; check circles are filled 1
 - **Sidebar (planner, from xl):** sand column, 248px, right hairline: Rhythm logo, a customer search field, Mine/Team
   segmented control, customer list (active item white with a ring), "Signed in as" select at the bottom. Below xl a
   customer select sits in the header instead.
-- **Header:** solid `surface`, bottom border, no blur. Rhythm logo (ink rounded square with three rising paper bars,
+- **Header:** solid `surface`, bottom border, no blur. Rhythm logo (ink rounded square with a paper sine wave,
   "Rhythm" wordmark in Geist 600), a hairline divider,
   "Home Energy Designer", a neutral persona chip; on the planner the share CTA sits right.
 - **Button primary:** ink pill, paper text, 14px/500, trailing arrow-up-right; hover ink at 85%; focus-visible 2px
@@ -195,3 +195,4 @@ full pills. Icons are 16px line icons at 1.75 stroke; check circles are filled 1
 | 2026-11-07 | Planner becomes a workspace with a customer sidebar | Operating software for several planners and customers; the planner h1 is the customer name, so its gradient word is gone |
 | 2026-11-07 | Noto Serif removed | Only reonic.com's testimonials use it; the gradient sans word replaces the italic serif |
 | 2026-11-07 | Orange to pink gradient replaced by sage to mint | User request; calmer, energy without the cliché, ink text keeps AA |
+| 2026-11-08 | Logo glyph changed from three rising bars to a sine wave | User request: a literal rhythm/wave line reads better than bars, which looked like a bar chart |

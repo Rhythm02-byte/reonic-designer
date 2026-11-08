@@ -1,18 +1,20 @@
 // Small Reonic-style building blocks shared by the planner and the homeowner view (see ../../DESIGN.md).
 import type { ComponentProps, ReactNode } from "react";
 
-// Rhythm: an ink rounded square with three rising bars (output over a day), plus the wordmark in Geist.
+// Rhythm: an ink rounded square with a sine wave (the rhythm itself), plus the wordmark in Geist.
 export function Logo({ product = true }: { product?: boolean }) {
   return (
     <span className="flex items-center gap-3 text-ink">
       <span className="flex items-center gap-2" role="img" aria-label="Rhythm">
         <svg viewBox="0 0 24 24" className="size-6" aria-hidden>
           <rect width="24" height="24" rx="7" fill="currentColor" />
-          <g stroke="var(--color-paper)" strokeWidth={2.5} strokeLinecap="round">
-            <path d="M7.5 15v2" />
-            <path d="M12 11v6" />
-            <path d="M16.5 7v10" />
-          </g>
+          <path
+            d="M6 12.5c1-3.5 2-3.5 3 0s2 3.5 3 0 2-3.5 3 0 2 3.5 3 0"
+            fill="none"
+            stroke="var(--color-paper)"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+          />
         </svg>
         <span aria-hidden className="text-[19px] leading-none font-semibold tracking-[-0.03em]">
           Rhythm
